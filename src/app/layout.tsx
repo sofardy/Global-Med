@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '../shared/components/ThemeProvider';
-import { TopBar } from '../shared/components/TopBar';
+import { TopBar } from '../shared/components/TopBar/TopBar';
 import { routes } from '../shared/config/routes';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });

@@ -5,6 +5,13 @@ module.exports = {
     ],
     darkMode: 'class',
     theme: {
+        container: {
+            center: true,
+            padding: {
+                DEFAULT: '1rem',
+                md: '1.5rem',
+            },
+        },
         extend: {
             colors: {
                 // Light mode
@@ -19,6 +26,26 @@ module.exports = {
                 'dark-accent': 'var(--dark-accent)',
                 'dark-text': 'var(--dark-text)',
             },
+            backgroundColor: {
+                light: {
+                    bg: 'var(--light-bg)',
+                    block: 'var(--light-block)',
+                    accent: 'var(--light-accent)',
+                },
+                dark: {
+                    bg: 'var(--dark-bg)',
+                    block: 'var(--dark-block)',
+                    accent: 'var(--dark-accent)',
+                }
+            },
+            textColor: {
+                light: {
+                    base: 'var(--light-text)',
+                },
+                dark: {
+                    base: 'var(--dark-text)',
+                }
+            }
         },
     },
     plugins: [],

@@ -12,44 +12,27 @@ export enum RoutePathEnum {
 export const routes = [
     {
         path: RoutePathEnum.SERVICES,
-        label: {
-            ru: 'Услуги',
-            en: 'Services'
-        }
+        translationKey: 'services'
     },
     {
         path: RoutePathEnum.CHECKUPS,
-        label: {
-            ru: 'Чек-апы',
-            en: 'Checkups'
-        }
+        translationKey: 'checkups'
     },
     {
         path: RoutePathEnum.ANALYSIS,
-        label: {
-            ru: 'Анализы',
-            en: 'Analysis'
-        }
+        translationKey: 'analysis'
     },
     {
         path: RoutePathEnum.PARTNERS,
-        label: {
-            ru: 'Партнерам',
-            en: 'Partners'
-        }
+        translationKey: 'partners'
     },
     {
         path: RoutePathEnum.CLINIC,
-        label: {
-            ru: 'О клинике',
-            en: 'About clinic'
-        }
+        translationKey: 'clinic',
+        hasSubmenu: true // Только у "О клинике" есть подменю
     },
     {
         path: RoutePathEnum.CONTACTS,
-        label: {
-            ru: 'Контакты',
-            en: 'Contacts'
-        }
+        translationKey: 'contacts'
     },
 ];

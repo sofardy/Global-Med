@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Locale = 'ru' | 'en';
+export type Locale = 'ru' | 'uz';
 
 interface LanguageState {
     currentLocale: Locale;
@@ -15,7 +15,7 @@ export const useLanguageStore = create<LanguageState>()(
             currentLocale: 'ru',
             setLocale: (locale: Locale) => set({ currentLocale: locale }),
             toggleLocale: () => set((state) => ({
-                currentLocale: state.currentLocale === 'ru' ? 'en' : 'ru'
+                currentLocale: state.currentLocale === 'ru' ? 'uz' : 'ru'
             })),
         }),
         {
