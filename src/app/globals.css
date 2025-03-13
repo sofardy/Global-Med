@@ -14,20 +14,23 @@
   --dark-text: #ffffff;
 }
 
-body {
-  min-height: 100vh;
+/* Добавляем стили для светлой и темной темы */
+.light {
+  --bg-color: var(--light-bg);
+  --block-color: var(--light-block);
+  --accent-color: var(--light-accent);
+  --text-color: var(--light-text);
 }
 
-@layer components {
-  .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .card {
-    @apply bg-light-block dark:bg-dark-block rounded-lg shadow p-6;
-  }
-  
-  .btn {
-    @apply px-4 py-2 rounded-md bg-light-accent dark:bg-dark-accent text-white font-medium;
-  }
+.dark {
+  --bg-color: var(--dark-bg);
+  --block-color: var(--dark-block);
+  --accent-color: var(--dark-accent);
+  --text-color: var(--dark-text);
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
