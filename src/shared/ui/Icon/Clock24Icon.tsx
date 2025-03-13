@@ -1,4 +1,4 @@
-export function Clock24Icon({
+export default function Clock24Icon({
   color = 'white',
   size = 30,
   style = {},

@@ -1,4 +1,4 @@
-export function ArrowDownIcon({
+export default function ArrowDownIcon({
   color = '#094A54',
   size = 12,
   style = {},

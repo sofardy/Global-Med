@@ -15,7 +15,7 @@ const localization = {
       zustand: 'Управление состоянием с Zustand'
     }
   },
-  en: {
+  uz: { // Изменено с 'en' на 'uz'
     title: 'Welcome',
     description: 'This is a Next.js project template with theme and translation support',
     features: {
@@ -37,6 +37,292 @@ export default function Home() {
         <LocaleToggle />
       </div>
       
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
+      <div className="card">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="mb-6">{t('description')}</p>
+        
+        <h2 className="text-xl font-semibold mb-2">{t('features.title')}</h2>
+        <ul className="list-disc pl-5">
+          <li>{t('features.darkMode')}</li>
+          <li>{t('features.i18n')}</li>
+          <li>{t('features.zustand')}</li>
+        </ul>
+      </div>
       <div className="card">
         <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
         <p className="mb-6">{t('description')}</p>

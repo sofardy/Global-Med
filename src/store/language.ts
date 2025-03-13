@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type Locale = 'ru' | 'uz';
 
@@ -20,6 +20,12 @@ export const useLanguageStore = create<LanguageState>()(
         }),
         {
             name: 'language-storage',
+            storage: createJSONStorage(() => typeof window !== 'undefined' ? localStorage : {
+                getItem: () => null,
+                setItem: () => null,
+                removeItem: () => null,
+            }),
+            skipHydration: true,
         }
     )
 );

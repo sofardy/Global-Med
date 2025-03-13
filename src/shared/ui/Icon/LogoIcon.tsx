@@ -1,4 +1,4 @@
-export function LogoIcon({
+export default function LogoIcon({
   color = '#00C78B',
   size = 40,
   style = {},

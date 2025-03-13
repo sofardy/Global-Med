@@ -6,12 +6,12 @@ import { useTranslation } from '../../hooks/useTranslation';
 
 const localization = {
   ru: {
-    changeTo: 'English',
+    changeTo: 'O\'zbekcha',
     toggle: 'Сменить язык'
   },
-  en: {
+  uz: { // Изменено с 'en' на 'uz'
     changeTo: 'Русский',
-    toggle: 'Change language'
+    toggle: 'Tilni o\'zgartirish'
   }
 };
 

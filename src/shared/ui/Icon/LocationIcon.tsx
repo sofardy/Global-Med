@@ -1,4 +1,4 @@
-export function LocationIcon({
+export default function LocationIcon({
   color = '#094A54',
   size = 20,
   style = {},

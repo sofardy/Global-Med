@@ -10,7 +10,7 @@ const localization = {
     light: 'Светлая тема',
     toggle: 'Переключить тему'
   },
-  en: {
+  uz: { // Изменено с 'en' на 'uz'
     dark: 'Dark theme',
     light: 'Light theme',
     toggle: 'Toggle theme'

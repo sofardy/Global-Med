@@ -2,8 +2,10 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '../shared/components/ThemeProvider';
+import { LanguageProvider } from '../shared/components/LanguageProvider';
 import { TopBar } from '../shared/components/TopBar/TopBar';
 import { routes } from '../shared/config/routes';
+import { FloatingComponents } from '../shared/components/FloatingComponents';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -21,10 +23,15 @@ export default function RootLayout({
     <html lang="ru" suppressHydrationWarning>
       <body className={`${inter.className} bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text`}>
         <ThemeProvider>
-          <TopBar routes={routes} />
-          <main className="min-h-screen">
-            {children}
-          </main>
+          <LanguageProvider>
+            <div className="mx-auto p-4">
+              <TopBar routes={routes} />
+              <main className="min-h-screen">
+                {children}
+              </main>
+            </div>
+            <FloatingComponents />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

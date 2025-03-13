@@ -1,4 +1,4 @@
-export function UserIcon({
+export default function UserIcon({
   color = 'white',
   size = 30,
   style = {},

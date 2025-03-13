@@ -4,11 +4,12 @@ export const translations = {
             contactUs: 'Связаться с нами',
             login: 'Войти / Регистрация',
             menuItems: {
-                ourDoctors: 'Наши врачи',
-                ourServices: 'Наши услуги',
+                ourDoctors: 'Врачи',
+                ourServices: 'О нас',
                 aboutClinic: 'О клинике',
                 contacts: 'Контакты'
-            }
+            },
+            language: 'Язык'
         },
         routes: {
             services: 'Услуги',
@@ -28,7 +29,8 @@ export const translations = {
                 ourServices: 'Bizning xizmatlar',
                 aboutClinic: 'Klinika haqida',
                 contacts: 'Kontaktlar'
-            }
+            },
+            language: 'Til'
         },
         routes: {
             services: 'Xizmatlar',

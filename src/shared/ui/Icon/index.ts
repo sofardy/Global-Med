@@ -1,0 +1,9 @@
+export { default as ArrowDownIcon } from './ArrowDownIcon';
+export { default as Clock24Icon } from './Clock24Icon';
+export { default as LocationIcon } from './LocationIcon';
+export { default as LogoIcon } from './LogoIcon';
+export { default as UserIcon } from './UserIcon';
+export { default as LogoTextIcon } from './LogoTextIcon';
+export { default as PhoneIcon } from './PhoneIcon';
+export { default as WhatsappIcon } from './WhatsappIcon';
+export { default as ChatIcon } from './ChatIcon';
