@@ -7,7 +7,8 @@ export const translations = {
                 ourDoctors: 'Врачи',
                 ourServices: 'О нас',
                 aboutClinic: 'О клинике',
-                contacts: 'Контакты'
+                contacts: 'Контакты',
+                more: 'Ещё' 
             },
             language: 'Язык'
         },
@@ -28,7 +29,8 @@ export const translations = {
                 ourDoctors: 'Bizning shifokorlar',
                 ourServices: 'Bizning xizmatlar',
                 aboutClinic: 'Klinika haqida',
-                contacts: 'Kontaktlar'
+                contacts: 'Kontaktlar',
+                more: 'Boshqa'
             },
             language: 'Til'
         },

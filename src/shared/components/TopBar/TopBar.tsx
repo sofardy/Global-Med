@@ -31,11 +31,14 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isContactMenuOpen, setIsContactMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [hoveredRoute, setHoveredRoute] = useState<string | null>(null);
   const [isMouseInSubmenu, setIsMouseInSubmenu] = useState(false);
+  const [isCompactMode, setIsCompactMode] = useState(false);
   
   const langMenuRef = useRef<HTMLDivElement>(null);
   const contactMenuRef = useRef<HTMLDivElement>(null);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
   const submenuRef = useRef<HTMLDivElement>(null);
   const submenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
@@ -44,60 +47,93 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
     { code: 'uz', label: 'UZ' },
     { code: 'ru', label: 'RU' }
   ];
-  
-// Блокировка скролла при открытом мобильном меню или других меню
+
+  // Отслеживаем размер экрана и устанавливаем компактный режим при необходимости
 useEffect(() => {
-  const shouldLockScroll = isMobileMenuOpen || isLangMenuOpen || isContactMenuOpen;
-  
-  if (shouldLockScroll) {
-    // Сохраняем текущую позицию скролла
-    const scrollY = window.scrollY;
-    
-    // Блокируем скролл
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
-  } else {
-    // Восстанавливаем скролл
-    const scrollY = document.body.style.top;
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
-    
-    // Прокручиваем страницу до прежней позиции
-    if (scrollY) {
-      window.scrollTo(0, parseInt(scrollY.replace('px', '')) * -1);
-    }
-  }
+  const checkWindowSize = () => {
+    // Используем 991px как точку разделения
+    setIsCompactMode(window.innerWidth < 1510 && window.innerWidth >= 991);
+  };
+
+  checkWindowSize();
+  window.addEventListener('resize', checkWindowSize);
   
   return () => {
-    // Восстанавливаем при размонтировании
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
+    window.removeEventListener('resize', checkWindowSize);
   };
-}, [isMobileMenuOpen, isLangMenuOpen, isContactMenuOpen]);
+}, []);
+  
+  // Блокировка скролла при открытом мобильном меню или других меню
+  useEffect(() => {
+    const shouldLockScroll = isMobileMenuOpen || isLangMenuOpen || isContactMenuOpen;
+    
+    if (shouldLockScroll) {
+      // Сохраняем текущую позицию скролла
+      const scrollY = window.scrollY;
+      
+      // Блокируем скролл
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Восстанавливаем скролл
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      
+      // Прокручиваем страницу до прежней позиции
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY.replace('px', '')) * -1);
+      }
+    }
+    
+    return () => {
+      // Восстанавливаем при размонтировании
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen, isLangMenuOpen, isContactMenuOpen]);
 
   // Обработка клика вне выпадающих меню
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
-        setIsLangMenuOpen(false);
-      }
-      if (contactMenuRef.current && !contactMenuRef.current.contains(event.target as Node)) {
-        setIsContactMenuOpen(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+// Измените обработчик клика вне выпадающих меню
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    // Принудительно закрываем все меню при клике в любое место
+    if (!langMenuRef.current?.contains(event.target as Node)) {
+      setIsLangMenuOpen(false);
+    }
+    if (!contactMenuRef.current?.contains(event.target as Node)) {
+      setIsContactMenuOpen(false);
+    }
+    if (!moreMenuRef.current?.contains(event.target as Node)) {
+      setIsMoreMenuOpen(false);
+    }
+  };
   
+  // Использовать capture: true для перехвата событий до того, как они будут остановлены
+  document.addEventListener('mousedown', handleClickOutside, { capture: true });
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside, { capture: true });
+  };
+}, []);
+  
+  useEffect(() => {
+  const closeMenus = () => {
+    if (isContactMenuOpen) setIsContactMenuOpen(false);
+    if (isMoreMenuOpen) setIsMoreMenuOpen(false);
+  };
+
+  document.addEventListener('click', closeMenus);
+  return () => document.removeEventListener('click', closeMenus);
+}, [isLangMenuOpen, isContactMenuOpen]);
+  const handleMenuClick = (e: React.MouseEvent) => {
+  e.stopPropagation();
+};
   // Очистка таймера при размонтировании
   useEffect(() => {
     return () => {
@@ -116,6 +152,11 @@ useEffect(() => {
   // Переключение мобильного меню
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Переключение меню "Ещё"
+  const toggleMoreMenu = () => {
+    setIsMoreMenuOpen(!isMoreMenuOpen);
   };
   
   // Обработка ховера для роутов
@@ -159,9 +200,13 @@ useEffect(() => {
     setIsMouseInSubmenu(false);
     setHoveredRoute(null);
   };
+
+  // В компактном режиме показываем только первые несколько роутов, остальные в "Ещё"
+  const visibleRoutes = isCompactMode ? routes.slice(0, 3) : routes;
+  const hiddenRoutes = isCompactMode ? routes.slice(3) : [];
   
   return (
-    <header className={`sticky top-4 z-50 p-4 rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} shadow-sm transition-colors duration-300 w-full`}>
+    <header className={`sticky top-4 z-50 px-8 py-4 rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} shadow-sm transition-colors duration-300 w-full`}>
       <div className="">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Лого */}
@@ -171,46 +216,46 @@ useEffect(() => {
               <LogoTextIcon size={90} color={theme === 'light' ? '#094A54' : 'white'} />
             </Link>
           </div>
-          
+        
           {/* Навигация для десктопа - на широком экране больше компактность */}
-          <nav className="hidden lg:flex space-x-2 xl:space-x-6">
-            {routes.map((route) => (
-              <div 
+          <nav className="hidden tablet:flex xl:flex space-x-2 xl:space-x-6">
+            {visibleRoutes.map((route) => (
+              <div
                 key={route.path}
                 className="relative"
                 onMouseEnter={() => handleRouteHover(route.path)}
                 onMouseLeave={handleRouteLeave}
               >
-                <Link 
+                <Link
                   href={route.path}
                   className={`
-                    p-3 xl:p-4 font-regular text-lg xl:text-xl transition-colors duration-300 flex items-center rounded-2xl border-2 border-transparent
-                    ${pathname === route.path 
-                      ? `${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border-light-accent` 
+                  p-3 xl:p-4 font-regular text-lg xl:text-xl transition-colors duration-300 flex items-center rounded-2xl border-2 border-transparent
+                  ${pathname === route.path
+                      ? `${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border-light-accent`
                       : 'hover:border-light-accent/30'}
-                  `}
+                `}
                 >
                   {t(`routes.${route.translationKey}`)}
                   {route.hasSubmenu && (
                     <ArrowDownIcon className="ml-1" color={theme === 'light' ? '#094A54' : 'white'} />
                   )}
                 </Link>
-                
+              
                 {/* Выпадающее подменю только для "О клинике" */}
                 {route.hasSubmenu && hoveredRoute === route.path && (
-                  <div 
+                  <div
                     className={`absolute left-0 mt-8 w-60 rounded-2xl shadow-lg z-10 ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}
                     ref={submenuRef}
                     onMouseEnter={handleSubmenuEnter}
                     onMouseLeave={handleSubmenuLeave}
                   >
-                    <Link 
+                    <Link
                       href={`${route.path}/about-us`}
                       className={`block px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
                     >
                       {t('header.menuItems.aboutClinic')}
                     </Link>
-                    <Link 
+                    <Link
                       href={`${route.path}/doctors`}
                       className={`block px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
                     >
@@ -220,60 +265,97 @@ useEffect(() => {
                 )}
               </div>
             ))}
+
+            {/* Кнопка "Ещё" для компактного режима */}
+            {isCompactMode && hiddenRoutes.length > 0 && (
+              <div ref={moreMenuRef} className="relative">
+                <button
+                  onClick={toggleMoreMenu}
+                  className={`
+                  p-3 xl:p-4 font-regular text-lg xl:text-xl transition-colors duration-300 flex items-center rounded-2xl border-2 border-transparent
+                  ${isMoreMenuOpen
+                      ? `${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border-light-accent`
+                      : 'hover:border-light-accent/30'}
+                `}
+                >
+                  {t('header.menuItems.more')}
+                  <ArrowDownIcon
+                    className={`ml-1 transition-transform duration-300 ${isMoreMenuOpen ? "transform rotate-180" : ""}`}
+                    color={theme === 'light' ? '#094A54' : 'white'}
+                  />
+                </button>
+                {/* Выпадающее меню "Ещё" */}
+                {isMoreMenuOpen && (
+                  <div
+                    className={`absolute right-0 mt-8 w-60 rounded-2xl shadow-lg z-10 ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}
+                  >
+                    {hiddenRoutes.map((route) => (
+                      <div key={route.path}>
+                        {route.hasSubmenu ? (
+                          <div>
+                            <button
+                              className={`
+                              w-full text-left px-4 py-3 flex justify-between items-center
+                              ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
+                              ${pathname.startsWith(route.path) ? 'bg-light-accent/10' : ''}
+                            `}
+                              onClick={() => {
+                                if (route.path === hoveredRoute) {
+                                  setHoveredRoute(null);
+                                } else {
+                                  setHoveredRoute(route.path);
+                                }
+                              }}
+                            >
+                              {t(`routes.${route.translationKey}`)}
+                              <ArrowDownIcon
+                                className={`transition-transform duration-300 ${hoveredRoute === route.path ? "transform rotate-180" : ""}`}
+                                color={theme === 'light' ? '#094A54' : 'white'}
+                              />
+                            </button>
+
+                            {/* Подменю для "О клинике" внутри "Ещё" */}
+                            {hoveredRoute === route.path && (
+                              <div>
+                                <Link
+                                  href={`${route.path}/about-us`}
+                                  className={`block px-8 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'} ${pathname === `${route.path}/about-us` ? 'bg-light-accent/10' : ''}`}
+                                  onClick={() => setIsMoreMenuOpen(false)}
+                                >
+                                  {t('header.menuItems.ourServices')}
+                                </Link>
+                                <Link
+                                  href={`${route.path}/doctors`}
+                                  className={`block px-8 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'} ${pathname === `${route.path}/doctors` ? 'bg-light-accent/10' : ''}`}
+                                  onClick={() => setIsMoreMenuOpen(false)}
+                                >
+                                  {t('header.menuItems.ourDoctors')}
+                                </Link>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <Link
+                            href={route.path}
+                            className={`block px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'} ${pathname === route.path ? 'bg-light-accent/10' : ''}`}
+                            onClick={() => setIsMoreMenuOpen(false)}
+                          >
+                            {t(`routes.${route.translationKey}`)}
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </nav>
-          
+        
           {/* Навигация для среднего экрана - сжатая версия */}
-          <nav className="hidden md:flex lg:hidden space-x-1">
-            {routes.map((route) => (
-              <div 
-                key={route.path}
-                className="relative"
-                onMouseEnter={() => handleRouteHover(route.path)}
-                onMouseLeave={handleRouteLeave}
-              >
-                <Link 
-                  href={route.path}
-                  className={`
-                    p-2 font-regular text-base transition-colors duration-300 flex items-center rounded-2xl border-2 border-transparent
-                    ${pathname === route.path 
-                      ? `${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border-light-accent` 
-                      : 'hover:border-light-accent/30'}
-                  `}
-                >
-                  {t(`routes.${route.translationKey}`)}
-                  {route.hasSubmenu && (
-                    <ArrowDownIcon className="ml-1" color={theme === 'light' ? '#094A54' : 'white'} />
-                  )}
-                </Link>
-                
-                {/* Выпадающее подменю только для "О клинике" */}
-                {route.hasSubmenu && hoveredRoute === route.path && (
-                  <div 
-                    className={`absolute left-0 mt-8 w-60 rounded-2xl shadow-lg z-10 ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}
-                    ref={submenuRef}
-                    onMouseEnter={handleSubmenuEnter}
-                    onMouseLeave={handleSubmenuLeave}
-                  >
-                    <Link 
-                      href={`${route.path}/about-us`}
-                      className={`block px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
-                    >
-                      {t('header.menuItems.aboutClinic')}
-                    </Link>
-                    <Link 
-                      href={`${route.path}/doctors`}
-                      className={`block px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
-                    >
-                      {t('header.menuItems.ourDoctors')}
-                    </Link>
-                  </div>
-                )}
-              </div>
-            ))}
-          </nav>
-          
+    
+        
           {/* Правая часть шапки для десктопа */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden tablet:flex items-center">
             {/* Кнопка связаться с нами */}
             <div className="relative" ref={contactMenuRef}>
               <button
@@ -287,11 +369,11 @@ useEffect(() => {
                   {t('header.contactUs')}
                 </span>
               </button>
-              
+            
               {/* Выпадающее меню для связи */}
               {isContactMenuOpen && (
                 <div className={`absolute right-6 mt-7 w-[250px] rounded-2xl shadow-lg z-10 ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}>
-                  <a 
+                  <a
                     href={`tel:${CONTACT_INFO.phone.replace(/[\s()-]/g, '')}`}
                     className={`flex items-center px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
                   >
@@ -300,7 +382,7 @@ useEffect(() => {
                     </div>
                     {CONTACT_INFO.phone}
                   </a>
-                  <a 
+                  <a
                     href={`https://wa.me/${CONTACT_INFO.whatsapp.replace(/[\s()-]/g, '')}`}
                     className={`flex items-center px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
                   >
@@ -312,12 +394,12 @@ useEffect(() => {
                 </div>
               )}
             </div>
-            
+          
             {/* Выбор языка */}
-            <div className="relative" ref={langMenuRef}>
+     <div ref={langMenuRef} className="relative" onClick={handleMenuClick}>
               <button
                 className={`flex items-center gap-2 mr-4 justify-center border h-[60px] w-[75px] rounded-2xl
-                  ${theme === 'light'
+                ${theme === 'light'
                     ? 'border-light-accent'
                     : 'border-dark-accent'
                   } transition-colors duration-300`}
@@ -326,24 +408,24 @@ useEffect(() => {
                 <span className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}>{currentLocale.toUpperCase()}</span>
                 <ArrowDownIcon className="ml-1" color={theme === 'light' ? '#094A54' : 'white'} />
               </button>
-              
+            
               {/* Выпадающее меню языков */}
               {isLangMenuOpen && (
                 <div className={`absolute right-2 mt-7 w-[84px] rounded-2xl shadow-lg z-10
-                  ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}>
+                ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}>
                   {languages.map((lang) => (
                     <button
                       key={lang.code}
                       className={`flex items-center w-full px-4 py-3 text-left
-                        ${theme === 'light' 
-                          ? 'text-light-text' 
+                      ${theme === 'light'
+                          ? 'text-light-text'
                           : 'text-dark-text'
                         } ${currentLocale === lang.code ? 'font-normal' : 'font-normal'}`}
                       onClick={() => handleLanguageChange(lang.code as 'ru' | 'uz')}
                     >
                       <div className="h-6 mr-2 flex items-center">
                         {lang.code === 'uz' && <span className="text-sm"><img src="/icon/icon-uzbekistan.svg" className='w-[20px] h-[14px]' alt="uz" /></span>}
-                        {lang.code === 'ru' && <span className="text-sm"><img src="/icon/icon-russia.svg" className='w-[20px] h-[14px]' alt="uz" /></span>}
+                        {lang.code === 'ru' && <span className="text-sm"><img src="/icon/icon-russia.svg" className='w-[20px] h-[14px]' alt="ru" /></span>}
                       </div>
                       {lang.label}
                     </button>
@@ -351,17 +433,17 @@ useEffect(() => {
                 </div>
               )}
             </div>
-            
+          
             {/* Иконка пользователя */}
             <button className={`h-[60px] w-[60px] rounded-2xl ${theme === 'light' ? 'bg-light-accent' : 'bg-light-accent'} text-white flex items-center justify-center`}>
               <UserIcon size={30} />
             </button>
           </div>
-          
+        
           {/* Мобильное меню иконка */}
-          <div className="md:hidden flex items-center space-x-4">
+          <div className="tablet:hidden flex items-center space-x-4">
             {/* Бургер меню */}
-            <button 
+            <button
               className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
               onClick={toggleMobileMenu}
             >
@@ -372,209 +454,208 @@ useEffect(() => {
           </div>
         </div>
       </div>
-      
-      {/* Мобильное меню - фиксированная позиция, чтобы не двигать контент */}
-  {/* Современное полноэкранное мобильное меню */}
-<div className={`fixed inset-0 z-50 md:hidden ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-  {/* Анимированный фон */}
-  <div 
-    className={`absolute inset-0 backdrop-blur-lg transition-all duration-300 ${isMobileMenuOpen ? 'bg-black/50' : 'bg-black/0'}`} 
-    onClick={toggleMobileMenu}
-  />
-  
-  {/* Контент меню с анимацией */}
-  <div 
-    className={`absolute inset-0 flex flex-col ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} transform transition-all duration-300 ease-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-  >
-    {/* Шапка меню с логотипом и крестиком */}
-    <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200 dark:border-gray-800">
-      <Link href={'/'} className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-        <LogoIcon size={32} />
-        <LogoTextIcon size={75} color={theme === 'light' ? '#094A54' : 'white'} />
-      </Link>
-      
-      <button 
-        className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'} p-1 rounded-full transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-0' : 'rotate-180'}`}
-        onClick={toggleMobileMenu}
-      >
-        <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
     
-    {/* Основное содержимое с прокруткой */}
-    <div className="flex-1 overflow-y-auto">
-      {/* Навигация */}
-      <div className="p-6">
-        <div className="space-y-3">
-          {routes.map((route, index) => (
-            <div 
-              key={route.path} 
-              className={`mb-2 transform transition-all duration-500 ${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {route.hasSubmenu ? (
-                <div>
-                  <button
-                    className={`
-                      relative flex justify-between items-center w-full p-5 text-lg font-medium rounded-2xl overflow-hidden
-                      ${pathname.startsWith(route.path) 
-                        ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl' 
-                        : `${theme === 'light' ? '' : ''}`}
-                      ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
-                    `}
-                    onClick={() => {
-                      if (route.path === hoveredRoute) {
-                        setHoveredRoute(null);
-                      } else {
-                        setHoveredRoute(route.path);
-                      }
-                    }}
-                  >
-                    <span className="relative z-10">{t(`routes.${route.translationKey}`)}</span>
-                    <ArrowDownIcon 
-                      className={`relative z-10 transition-transform duration-300 ${hoveredRoute === route.path ? "transform rotate-180" : ""}`}
-                      color={theme === 'light' ? '#094A54' : 'white'}
-                    />
-                    {pathname.startsWith(route.path) && (
-                      <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
-                    )}
-                  </button>
-                  
-                  {/* Анимированное подменю */}
-                  <div 
-                    className={`overflow-hidden transition-all duration-500 ease-in-out pl-4
-                      ${hoveredRoute === route.path ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'}
-                    `}
-                  >
-                    <Link 
-                      href={`${route.path}/about-us`}
-                      className={`
-                        relative block p-5 mb-2 rounded-2xl overflow-hidden
-                        ${pathname === `${route.path}/about-us` 
-                          ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl' 
-                          : ''}
-                        ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
-                      `}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <span className="relative z-10">{t('header.menuItems.aboutClinic') || 'О нас'}</span>
-                      {pathname === `${route.path}/about-us` && (
-                        <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
-                      )}
-                    </Link>
-                    <Link 
-                      href={`${route.path}/doctors`}
-                      className={`
-                        relative block p-5 rounded-2xl overflow-hidden
-                        ${pathname === `${route.path}/doctors` 
-                          ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl' 
-                          : ''}
-                        ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
-                      `}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <span className="relative z-10">{t('header.menuItems.ourDoctors') || 'Врачи'}</span>
-                      {pathname === `${route.path}/doctors` && (
-                        <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
-                      )}
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  href={route.path}
-                  className={`
-                    relative flex justify-between items-center w-full p-5 text-lg font-medium rounded-2xl overflow-hidden
-                    ${pathname === route.path 
-                      ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl' 
-                      : ''}
-                    ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
-                  `}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="relative z-10">{t(`routes.${route.translationKey}`)}</span>
-                  {pathname === route.path && (
-                    <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
-                  )}
-                </Link>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Мобильное меню - фиксированная позиция, чтобы не двигать контент */}
+      <div className={`fixed inset-0 z-50 tablet:hidden ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        {/* Анимированный фон */}
+        <div
+          className={`absolute inset-0 backdrop-blur-lg transition-all duration-300 ${isMobileMenuOpen ? 'bg-black/50' : 'bg-black/0'}`}
+          onClick={toggleMobileMenu}
+        />
       
-      {/* Контакты и настройки */}
-      <div className="mx-6 mb-8 pt-6 border-t border-gray-200 dark:border-gray-800">
-        {/* Языки */}
-        <div 
-          className={`mb-8 ${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
-          style={{ animationDelay: '600ms' }}
+        {/* Контент меню с анимацией */}
+        <div
+          className={`absolute inset-0 flex flex-col ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} transform transition-all duration-300 ease-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
-          <h3 className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'} text-sm uppercase font-medium mb-4`}>
-            {t('header.language') || 'Язык'}
-          </h3>
-          <div className="flex gap-4">
-            {languages.map((lang) => (
-              <button
-                key={lang.code}
-                className={`relative overflow-hidden flex items-center justify-center gap-3 p-4 rounded-2xl transition-all duration-300
-                  ${currentLocale === lang.code 
-                    ? 'bg-light-accent text-white shadow-lg shadow-light-accent/20' 
-                    : `${theme === 'light' ? 'bg-light-bg text-light-text' : 'bg-dark-bg text-dark-text'}`
-                  }`}
-                onClick={() => handleLanguageChange(lang.code as 'ru' | 'uz')}
-              >
-                <div className="flex items-center justify-center">
-                  {lang.code === 'uz' && <img src="/icon/icon-uzbekistan.svg" className='w-[24px] h-[16px]' alt="uz" />}
-                  {lang.code === 'ru' && <img src="/icon/icon-russia.svg" className='w-[24px] h-[16px]' alt="ru" />}
-                </div>
-                <span className="text-lg">{lang.label}</span>
-              </button>
-            ))}
+          {/* Шапка меню с логотипом и крестиком */}
+          <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200 dark:border-gray-800">
+            <Link href={'/'} className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+              <LogoIcon size={32} />
+              <LogoTextIcon size={75} color={theme === 'light' ? '#094A54' : 'white'} />
+            </Link>
+          
+            <button
+              className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'} p-1 rounded-full transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-0' : 'rotate-180'}`}
+              onClick={toggleMobileMenu}
+            >
+              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-        </div>
         
-        {/* Контакты */}
-        <div 
-          className={`${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
-          style={{ animationDelay: '700ms' }}
-        >
-          <h3 className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'} text-sm uppercase font-medium mb-4`}>
-            {t('header.contactUs')}
-          </h3>
-          <div className="space-y-3">
-            <a 
-              href={`tel:${CONTACT_INFO.phone.replace(/[\s()-]/g, '')}`}
-              className={`flex items-center  rounded-2xl bg-light-accent/5 transform transition-all duration-300 hover:scale-[1.02]
-                ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
-            >
-              <div className="w-12 h-12 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white shadow-lg shadow-light-accent/20">
-                <PhoneIcon size={18} />
+          {/* Основное содержимое с прокруткой */}
+          <div className="flex-1 overflow-y-auto">
+            {/* Навигация */}
+            <div className="p-6">
+              <div className="space-y-3">
+                {routes.map((route, index) => (
+                  <div
+                    key={route.path}
+                    className={`mb-2 transform transition-all duration-500 ${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    {route.hasSubmenu ? (
+                      <div>
+                        <button
+                          className={`
+                          relative flex justify-between items-center w-full p-5 text-lg font-medium rounded-2xl overflow-hidden
+                          ${pathname.startsWith(route.path)
+                              ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl'
+                              : `${theme === 'light' ? '' : ''}`}
+                          ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
+                        `}
+                          onClick={() => {
+                            if (route.path === hoveredRoute) {
+                              setHoveredRoute(null);
+                            } else {
+                              setHoveredRoute(route.path);
+                            }
+                          }}
+                        >
+                          <span className="relative z-10">{t(`routes.${route.translationKey}`)}</span>
+                          <ArrowDownIcon
+                            className={`relative z-10 transition-transform duration-300 ${hoveredRoute === route.path ? "transform rotate-180" : ""}`}
+                            color={theme === 'light' ? '#094A54' : 'white'}
+                          />
+                          {pathname.startsWith(route.path) && (
+                            <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
+                          )}
+                        </button>
+                      
+                        {/* Анимированное подменю */}
+                        <div
+                          className={`overflow-hidden transition-all duration-500 ease-in-out pl-4
+                          ${hoveredRoute === route.path ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'}
+                        `}
+                        >
+                          <Link
+                            href={`${route.path}/about-us`}
+                            className={`
+                            relative block p-5 mb-2 rounded-2xl overflow-hidden
+                            ${pathname === `${route.path}/about-us`
+                                ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl'
+                                : ''}
+                            ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
+                          `}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <span className="relative z-10">{t('header.menuItems.aboutClinic') || 'О нас'}</span>
+                            {pathname === `${route.path}/about-us` && (
+                              <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
+                            )}
+                          </Link>
+                          <Link
+                            href={`${route.path}/doctors`}
+                            className={`
+                            relative block p-5 rounded-2xl overflow-hidden
+                            ${pathname === `${route.path}/doctors`
+                                ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl'
+                                : ''}
+                            ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
+                          `}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <span className="relative z-10">{t('header.menuItems.ourDoctors') || 'Врачи'}</span>
+                            {pathname === `${route.path}/doctors` && (
+                              <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
+                            )}
+                          </Link>
+                        </div>
+                      </div>
+                    ) : (
+                      <Link
+                        href={route.path}
+                        className={`
+                        relative flex justify-between items-center w-full p-5 text-lg font-medium rounded-2xl overflow-hidden
+                        ${pathname === route.path
+                            ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl'
+                            : ''}
+                        ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
+                      `}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <span className="relative z-10">{t(`routes.${route.translationKey}`)}</span>
+                        {pathname === route.path && (
+                          <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
+                        )}
+                      </Link>
+                    )}
+                  </div>
+                ))}
               </div>
-              <span className="text-lg">{CONTACT_INFO.phone}</span>
-            </a>
-            <a 
-              href={`https://wa.me/${CONTACT_INFO.whatsapp.replace(/[\s()-]/g, '')}`}
-              className={`flex items-center rounded-2xl bg-light-accent/5 transform transition-all duration-300 hover:scale-[1.02]
-                ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
-            >
-              <div className="w-12 h-12 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white shadow-lg shadow-light-accent/20">
-                <WhatsappIcon size={18} />
+            </div>
+          
+            {/* Контакты и настройки */}
+            <div className="mx-6 mb-8 pt-6 border-t border-gray-200 dark:border-gray-800">
+              {/* Языки */}
+              <div
+                className={`mb-8 ${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
+                style={{ animationDelay: '600ms' }}
+              >
+                <h3 className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'} text-sm uppercase font-medium mb-4`}>
+                  {t('header.language') || 'Язык'}
+                </h3>
+                <div className="flex gap-4">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      className={`relative overflow-hidden flex items-center justify-center gap-3 p-4 rounded-2xl transition-all duration-300
+                      ${currentLocale === lang.code
+                          ? 'bg-light-accent text-white shadow-lg shadow-light-accent/20'
+                          : `${theme === 'light' ? 'bg-light-bg text-light-text' : 'bg-dark-bg text-dark-text'}`
+                        }`}
+                      onClick={() => handleLanguageChange(lang.code as 'ru' | 'uz')}
+                    >
+                      <div className="flex items-center justify-center">
+                        {lang.code === 'uz' && <img src="/icon/icon-uzbekistan.svg" className='w-[24px] h-[16px]' alt="uz" />}
+                        {lang.code === 'ru' && <img src="/icon/icon-russia.svg" className='w-[24px] h-[16px]' alt="ru" />}
+                      </div>
+                      <span className="text-lg">{lang.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <span className="text-lg">{CONTACT_INFO.whatsapp}</span>
-            </a>
+            
+              {/* Контакты */}
+              <div
+                className={`${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
+                style={{ animationDelay: '700ms' }}
+              >
+                <h3 className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'} text-sm uppercase font-medium mb-4`}>
+                  {t('header.contactUs')}
+                </h3>
+                <div className="space-y-3">
+                  <a
+                    href={`tel:${CONTACT_INFO.phone.replace(/[\s()-]/g, '')}`}
+                    className={`flex items-center p-4 rounded-2xl bg-light-accent/5 transform transition-all duration-300 hover:scale-[1.02]
+                    ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
+                  >
+                    <div className="w-12 h-12 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white shadow-lg shadow-light-accent/20">
+                      <PhoneIcon size={18} />
+                    </div>
+                    <span className="text-lg">{CONTACT_INFO.phone}</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/${CONTACT_INFO.whatsapp.replace(/[\s()-]/g, '')}`}
+                    className={`flex items-center p-4 rounded-2xl bg-light-accent/5 transform transition-all duration-300 hover:scale-[1.02]
+                   ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
+                  >
+                    <div className="w-12 h-12 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white shadow-lg shadow-light-accent/20">
+                      <WhatsappIcon size={18} />
+                    </div>
+                    <span className="text-lg">{CONTACT_INFO.whatsapp}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-      
+   
       {/* Языковое меню для мобильных устройств - фиксированная позиция */}
       {isLangMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40">
+        <div className="tablet:hidden fixed inset-0 z-40">
           <div className="fixed inset-0 bg-black bg-opacity-25" onClick={() => setIsLangMenuOpen(false)}></div>
           <div className="fixed top-16 right-4 w-48 rounded-2xl shadow-lg z-50">
             <div className={`py-1 rounded-2xl overflow-hidden ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}>
@@ -582,8 +663,8 @@ useEffect(() => {
                 <button
                   key={lang.code}
                   className={`flex items-center w-full px-4 py-3 text-left text-sm
-                    ${theme === 'light' 
-                      ? 'text-light-text' 
+                 ${theme === 'light'
+                      ? 'text-light-text'
                       : 'text-dark-text'
                     } ${currentLocale === lang.code ? 'bg-light-accent/10' : ''}`}
                   onClick={() => handleLanguageChange(lang.code as 'ru' | 'uz')}
@@ -599,14 +680,14 @@ useEffect(() => {
           </div>
         </div>
       )}
-      
+   
       {/* Выпадающее меню для связи на мобильном - фиксированная позиция */}
       {isContactMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40">
+        <div className="tablet:hidden fixed inset-0 z-40">
           <div className="fixed inset-0 bg-black bg-opacity-25" onClick={() => setIsContactMenuOpen(false)}></div>
           <div className="fixed top-16 right-4 w-56 rounded-2xl shadow-lg z-50">
             <div className={`py-1 rounded-2xl overflow-hidden ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}>
-              <a 
+              <a
                 href={`tel:${CONTACT_INFO.phone.replace(/[\s()-]/g, '')}`}
                 className={`flex items-center px-4 py-3 text-sm ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
               >
@@ -615,7 +696,7 @@ useEffect(() => {
                 </div>
                 {CONTACT_INFO.phone}
               </a>
-              <a 
+              <a
                 href={`https://wa.me/${CONTACT_INFO.whatsapp.replace(/[\s()-]/g, '')}`}
                 className={`flex items-center px-4 py-3 text-sm ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
               >
@@ -629,5 +710,5 @@ useEffect(() => {
         </div>
       )}
     </header>
-  );
-};
+  )
+}
