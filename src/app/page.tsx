@@ -15,7 +15,7 @@ const localization = {
       zustand: 'Управление состоянием с Zustand'
     }
   },
-  uz: { // Изменено с 'en' на 'uz'
+  uz: {
     title: 'Welcome',
     description: 'This is a Next.js project template with theme and translation support',
     features: {

@@ -211,7 +211,7 @@ export const FloatingComponents: React.FC = () => {
     <>
       {/* Кнопка скролла наверх */}
       <button 
-        className={`fixed right-6 bottom-[120px] md:right-8 md:bottom-28 z-30 p-4 rounded-full transition-opacity duration-300 
+        className={`fixed right-6 bottom-[120px] md:right-8 md:bottom-[120px] z-30 p-4 rounded-full transition-opacity duration-300 
           border-2 ${theme === 'light' ? 'border-light-text' : 'border-dark-text'}
           ${showScrollButton ? 'opacity-100' : 'opacity-0 pointer-events-none'}
         `}
@@ -219,8 +219,8 @@ export const FloatingComponents: React.FC = () => {
         aria-label={t('scroll.upButton')}
       >
         <svg 
-          width="24"
-          height="24"
+          width="26"
+          height="26"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
