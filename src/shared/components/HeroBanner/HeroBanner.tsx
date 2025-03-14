@@ -22,9 +22,11 @@ export const HeroBanner: React.FC = () => {
   const slidesArray = Array.isArray(slides) ? slides : [];
   
   // Ref для Swiper инстанса
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const swiperRef = useRef<any>(null);
 
   // Обработчик изменения индекса слайда
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSlideChange = (swiper: any) => {
     setActiveIndex(swiper.activeIndex);
   };
@@ -83,7 +85,7 @@ export const HeroBanner: React.FC = () => {
                       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#094A54] mb-3 sm:mb-4 md:mb-5 leading-[1.15]">
                         {slide.title_parts ? (
                           <>
-                            {slide.title_parts.map((part, i) => (
+                            {slide.title_parts.map((part : string, i : number) => (
                               <React.Fragment key={i}>
                                 {part}
                                 {i < slide.title_parts.length - 1 && <br />}

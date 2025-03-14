@@ -1,5 +1,9 @@
 // src/shared/config/routes.ts
-
+export interface Route {
+    path: RoutePathEnum;
+    translationKey: 'services' | 'checkups' | 'analysis' | 'partners' | 'clinic' | 'contacts';
+    hasSubmenu?: boolean;
+}
 export enum RoutePathEnum {
     SERVICES = '/services',
     CHECKUPS = '/checkups',
@@ -9,7 +13,7 @@ export enum RoutePathEnum {
     CONTACTS = '/contacts',
 }
 
-export const routes = [
+export const routes: Route[] = [
     {
         path: RoutePathEnum.SERVICES,
         translationKey: 'services'
