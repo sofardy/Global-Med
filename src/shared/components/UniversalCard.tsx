@@ -106,11 +106,11 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     return `border ${borderColor || defaultBorder}`;
   };
   
-  const getBackgroundClass = () => {
-    if (isHovered) return hoverColor || 'bg-light-accent';
-    if (theme === 'light') return bgColorLight || 'bg-light-block';
-    return bgColorDark || 'bg-dark-block';
-  };
+const getBackgroundClass = () => {
+  if (isHovered) return hoverColor || 'bg-light-accent';
+  if (theme === 'light') return bgColorLight || 'bg-light-block'; 
+  return bgColorDark || 'bg-dark-block';
+};
   
   const getBorderRadiusClass = () => {
     switch (borderRadius) {

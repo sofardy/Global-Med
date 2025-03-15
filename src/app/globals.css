@@ -12,6 +12,7 @@
   --dark-block: #094a54;
   --dark-accent: #00c78b;
   --dark-text: #ffffff;
+
 }
 
 /* Add card component class */
@@ -27,6 +28,7 @@
   --block-color: var(--light-block);
   --accent-color: var(--light-accent);
   --text-color: var(--light-text);
+
 }
 
 .dark {

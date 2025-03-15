@@ -96,7 +96,7 @@ export const MedicalServices: React.FC = () => {
   const { theme } = useThemeStore();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const services = t('services', { returnObjects: true }) as any[];
-
+const iconColor = theme === 'dark' ? 'var(--dark-text)' : 'var(--light-text)';
   return (
     <div className="w-full">
       <div className="mt-40">
@@ -148,11 +148,9 @@ export const MedicalServices: React.FC = () => {
                   title={service.title}
                   description={service.description}
                   additionalInfo={service.servicesCount}
-                  icon={React.isValidElement(service.iconPath) 
-                    ? React.cloneElement(service.iconPath, { 
-                        color: theme === 'dark' ? '#ffffff' : '#094A54' 
-                      })
-                    : service.iconPath}
+               icon={React.isValidElement(service.iconPath) 
+  ? React.cloneElement(service.iconPath, { color: iconColor })
+  : service.iconPath}
                   link={`/services/${service.id}`}
                   buttonText={t('moreButton')}
                   className="h-full"
