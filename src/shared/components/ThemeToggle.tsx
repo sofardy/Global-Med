@@ -8,12 +8,14 @@ const localization = {
   ru: {
     dark: 'Темная тема',
     light: 'Светлая тема',
+    system: 'Системная тема',
     toggle: 'Переключить тему'
   },
-  uz: { // Изменено с 'en' на 'uz'
-    dark: 'Dark theme',
-    light: 'Light theme',
-    toggle: 'Toggle theme'
+  uz: {
+    dark: 'Qorong\'i mavzu',
+    light: 'Yorug\' mavzu',
+    system: 'Tizim mavzusi',
+    toggle: 'Mavzuni o\'zgartirish'
   }
 };
 
@@ -27,7 +29,7 @@ export const ThemeToggle: React.FC = () => {
       className="px-4 py-2 rounded-md bg-light-accent dark:bg-dark-accent text-white"
       aria-label={t('toggle')}
     >
-      {theme === 'light' ? t('dark') : t('light')}
+      {theme === 'light' ? t('dark') : theme === 'dark' ? t('system') : t('light')}
     </button>
   );
 };

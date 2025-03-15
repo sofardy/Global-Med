@@ -8,14 +8,26 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const { theme } = useThemeStore();
+  const { theme, resolvedTheme, setTheme } = useThemeStore();
   
   useEffect(() => {
-    // Remove the current theme class
+    // Применяем тему
     document.documentElement.classList.remove('light', 'dark');
-    // Add the new theme class
-    document.documentElement.classList.add(theme);
-  }, [theme]);
+    document.documentElement.classList.add(resolvedTheme);
+    
+    // Слушаем изменения системных настроек
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        setTheme('system'); // Обновит resolvedTheme
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme, resolvedTheme, setTheme]);
 
   return <>{children}</>;
 };
