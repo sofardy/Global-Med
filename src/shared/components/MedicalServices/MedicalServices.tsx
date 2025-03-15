@@ -19,7 +19,7 @@ const translations = {
         title: 'Лор 24/7',
         description: 'Круглосуточная диагностика и лечение заболеваний уха, горла и носа',
         servicesCount: '12 услуг',
-        iconPath: <LightbulbIcon/>,
+        iconPath: <LightbulbIcon />,
         backgroundImage: '/images/lor-bg.png'
       },
       {
@@ -27,7 +27,7 @@ const translations = {
         title: 'Офтальмология',
         description: 'Проверка зрения, лечение воспалений и консультации по подбору очков и линз',
         servicesCount: '15 услуг',
-        iconPath: <EyeIcon/>,
+        iconPath: <EyeIcon />,
         backgroundImage: '/images/eye-bg.png'
       },
       {
@@ -35,7 +35,7 @@ const translations = {
         title: 'Офтальмология',
         description: 'Проверка зрения, лечение воспалений и консультации по подбору очков и линз',
         servicesCount: '15 услуг',
-        iconPath: <ButterflyIcon/>,
+        iconPath: <ButterflyIcon />,
         backgroundImage: '/images/eye-bg.png'
       },
       {
@@ -43,33 +43,49 @@ const translations = {
         title: 'Офтальмология',
         description: 'Проверка зрения, лечение воспалений и консультации по подбору очков и линз',
         servicesCount: '15 услуг',
-        iconPath: <AngelIcon/>,
+        iconPath: <AngelIcon />,
         backgroundImage: '/images/eye-bg.png'
       },
     ],
     moreButton: 'Подробнее'
   },
   uz: {
-    title: 'Bitta klinikada tibbiy xizmatlarning to\'liq spektri',
-    description: 'Bizning klinikamiz tibbiyotning yetakchi yo\'nalishlarini birlashtiradi, kompleks diagnostika, davolash va bemorlarni kuzatib borishni ta\'minlaydi. Tajribali mutaxassislar, zamonaviy uskunalar va sutkalik yordam — barchasi sizning sog\'lig\'ingiz uchun',
-    viewAllServices: 'Barcha xizmat turlari',
+    title: 'Bitta klinikada to‘liq tibbiy xizmatlar spektri',
+    description: 'Klinikamiz tibbiyotning yetakchi yo‘nalishlarini birlashtirib, kompleks diagnostika, davolash va bemorlarni kuzatib borishni ta’minlaydi. Tajribali mutaxassislar, zamonaviy uskunalar va 24/7 yordam — barchasi sizning sog‘lig‘ingiz uchun.',
+    viewAllServices: 'Barcha xizmatlar',
     services: [
       {
         id: 'lor',
         title: 'LOR 24/7',
         description: 'Quloq, tomoq va burun kasalliklarini sutkalik diagnostikasi va davolash',
         servicesCount: '12 ta xizmat',
-        iconPath: <LightbulbIcon/>,
+        iconPath: <LightbulbIcon />,
         backgroundImage: '/images/lor-bg.png'
       },
       {
         id: 'ophthalmology',
         title: 'Oftalmologiya',
-        description: 'Ko\'rishni tekshirish, yallig\'lanishlarni davolash va ko\'zoynak va linzalar bo\'yicha maslahatlar',
+        description: 'Ko‘rishni tekshirish, yallig‘lanishlarni davolash va ko‘zoynak hamda linzalar bo‘yicha maslahatlar',
         servicesCount: '15 ta xizmat',
-        iconPath: <EyeIcon/>,
+        iconPath: <EyeIcon />,
         backgroundImage: '/images/eye-bg.png'
-      }
+      },
+      {
+        id: 'butterfly',
+        title: 'Oftalmologiya',
+        description: 'Ko‘rishni tekshirish, yallig‘lanishlarni davolash va ko‘zoynak hamda linzalar bo‘yicha maslahatlar',
+        servicesCount: '15 ta xizmat',
+        iconPath: <ButterflyIcon />,
+        backgroundImage: '/images/eye-bg.png'
+      },
+      {
+        id: 'angel',
+        title: 'Oftalmologiya',
+        description: 'Ko‘rishni tekshirish, yallig‘lanishlarni davolash va ko‘zoynak hamda linzalar bo‘yicha maslahatlar',
+        servicesCount: '15 ta xizmat',
+        iconPath: <AngelIcon />,
+        backgroundImage: '/images/eye-bg.png'
+      },
     ],
     moreButton: 'Batafsil'
   }
