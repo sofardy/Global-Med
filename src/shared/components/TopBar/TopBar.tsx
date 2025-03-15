@@ -207,7 +207,7 @@ useEffect(() => {
   const hiddenRoutes = isCompactMode ? routes.slice(3) : [];
   
   return (
-    <header className={`sticky top-4 z-50 px-8 py-4 rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} shadow-sm transition-colors duration-300 w-full`}>
+    <header className={`px-8 py-4 rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} shadow-sm transition-colors duration-300 w-full`}>
       <div className="">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Лого */}
