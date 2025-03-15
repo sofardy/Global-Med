@@ -26,8 +26,8 @@ export const translations = {
             contactUs: 'Biz bilan bog\'laning',
             login: 'Kirish / Ro\'yxatdan o\'tish',
             menuItems: {
-                ourDoctors: 'Bizning shifokorlar',
-                ourServices: 'Bizning xizmatlar',
+                ourDoctors: 'Shifokorlar',
+                ourServices: 'Xizmatlar',
                 aboutClinic: 'Klinika haqida',
                 contacts: 'Kontaktlar',
                 more: 'Boshqa'
@@ -39,7 +39,7 @@ export const translations = {
             checkups: 'Tekshiruvlar',
             analysis: 'Tahlillar',
             partners: 'Hamkorlarga',
-            clinic: 'Klinika haqida',
+            clinic: 'Klinika',
             contacts: 'Kontaktlar'
         }
     }
