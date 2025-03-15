@@ -124,6 +124,7 @@ useEffect(() => {
   
   useEffect(() => {
   const closeMenus = () => {
+    // if (isLangMenuOpen) setIsLangMenuOpen(false);
     if (isContactMenuOpen) setIsContactMenuOpen(false);
     if (isMoreMenuOpen) setIsMoreMenuOpen(false);
   };

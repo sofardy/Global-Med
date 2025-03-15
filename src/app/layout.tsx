@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text`}>
         <ThemeProvider>
           <LanguageProvider>
-            <div className="mx-auto p-4">
+            <div className="mx-auto max-w-8xl p-4">
               <TopBar routes={routes} />
               <main className="min-h-screen">
                 {children}

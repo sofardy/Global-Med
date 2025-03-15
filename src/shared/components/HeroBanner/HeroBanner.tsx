@@ -39,7 +39,7 @@ export const HeroBanner: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-[400px] sm:h-[450px] md:h-[550px] lg:h-[650px] rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-10 mt-4">
+    <div className="relative w-full  h-[400px] sm:h-[450px] md:h-[550px] lg:h-[650px] rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-10 mt-4">
       {slidesArray.length === 0 ? (
         <div className="absolute inset-0 w-full h-full bg-dark-bg flex items-center justify-center">
           <p className="text-white text-xl">Слайды не загружены</p>
@@ -71,7 +71,7 @@ export const HeroBanner: React.FC = () => {
                         src={slide.image}
                         fill
                         alt={slide.title}
-                        className="object-cover object-[70%_center]" 
+                         className="object-cover object-[70%_center]" 
                         priority={index === 0}
                       />
                       <div className="absolute inset-0 bg-gradient-to-r from-dark-bg/70 via-dark-bg/40 to-transparent"></div>
@@ -79,7 +79,7 @@ export const HeroBanner: React.FC = () => {
                   </div>
                   
                   {/* Контент слайда */}
-                  <div className="relative h-full  px-4 flex flex-col justify-center">
+                  <div className="relative h-full  px-8 flex flex-col justify-center">
                     <div className="max-w-[700px] ">
                       {/* Заголовок с переносами строк */}
                       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#094A54] mb-3 sm:mb-4 md:mb-5 leading-[1.15]">

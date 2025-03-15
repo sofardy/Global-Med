@@ -21,6 +21,9 @@ module.exports = {
                 '2xl': '1536px',
             },
         extend: {
+            maxWidth: {
+                '8xl': '1560px',
+            },
             colors: {
                 // Light mode
                 'light-bg': 'var(--light-bg)',
