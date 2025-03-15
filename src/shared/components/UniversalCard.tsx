@@ -60,7 +60,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   };
   
 const cardClasses = `
-  relative rounded-xl p-6 transition-all duration-300 min-h-[375px]
+   relative rounded-xl p-6 transition-all duration-300 min-h-[375px] h-full
   ${isHovered 
     ? 'bg-light-accent' 
     : theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}

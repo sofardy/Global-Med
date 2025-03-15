@@ -391,7 +391,7 @@ export const SymptomSelector: React.FC = () => {
           {cards.map((card, index) => (
             <div 
               key={card.id}
-              className={`w-full transform transition-all duration-700 ${
+            className={`w-full h-full transform transition-all duration-700 ${
                 visibleCards.includes(index) 
                   ? 'opacity-100 translate-y-0' 
                   : 'opacity-0 translate-y-16'
