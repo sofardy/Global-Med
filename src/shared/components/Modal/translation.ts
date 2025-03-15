@@ -1,6 +1,4 @@
-import { LocaleMessages } from "@/src/types/locale";
-
-const modalLocales: LocaleMessages = {
+export const  LocaleMessages = {
     ru: {
         close: 'Закрыть',
         confirm: 'Подтвердить',
@@ -28,5 +26,3 @@ const modalLocales: LocaleMessages = {
         success: 'Muvaffaqiyat'
     }
 };
-
-export default modalLocales;

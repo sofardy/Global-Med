@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -77,7 +78,8 @@ const translations = {
 export const MedicalServices: React.FC = () => {
   const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
-  const services = t('services', { returnObjects: true });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const services = t('services', { returnObjects: true }) as any[];
 
   return (
     <div className="w-full">
@@ -123,7 +125,7 @@ export const MedicalServices: React.FC = () => {
             
           {/* Карточки услуг - правая колонка */}
           <div className="col-span-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {services.map((service, index) => (
+            {Array.isArray(services) && services.map((service, index) => (
               <div key={service.id + index} className="h-full">
                 <UniversalCard
                   variant="service"

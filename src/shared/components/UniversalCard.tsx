@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { ReactNode, useState } from 'react';
@@ -217,11 +218,11 @@ const AdditionalInfoBlock = () => (
   const IconBlock = () => (
     icon && (
       <div className={getIconPositionClass()} style={styles.icon}>
-        {React.isValidElement(icon) ? 
-         React.cloneElement(icon as React.ReactElement, {
-           className: `${(icon as React.ReactElement).props.className || ''} ${isHovered ? 'text-white' : `text-${iconColorLight} dark:text-${iconColorDark}`}`
-         }) : icon
-        }
+      {React.isValidElement(icon) ? 
+  React.cloneElement(icon as React.ReactElement<any>, {
+    className: `${(icon as React.ReactElement<any>).props.className || ''} ${isHovered ? 'text-white' : `text-${iconColorLight} dark:text-${iconColorDark}`}`
+  }) : icon
+}
       </div>
     )
   );

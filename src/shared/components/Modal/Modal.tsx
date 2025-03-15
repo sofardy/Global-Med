@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import localization from './translation';
+import {LocaleMessages} from './translation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from '@/src/hooks/useTranslation';
 // import { useThemeStore } from '@/src/store/theme';
@@ -64,7 +64,7 @@ export default function Modal({
   draggable = true,
   footer
 }: ModalProps) {
-  const { t } = useTranslation(localization);
+  const { t } = useTranslation(LocaleMessages);
   // const { theme: appTheme } = useThemeStore();
   // const isDarkMode = appTheme === 'dark';
   

@@ -375,9 +375,10 @@ export const HeroBanner: React.FC = () => {
                     required
                     disabled={isSubmitting}
                     autoFocus
-                    onKeyDown={(e) => {
+                onKeyDown={(e) => {
                       if (e.key === 'Enter') {
-                        document.querySelector('input[name="phone"]')?.focus();
+                        const phoneInput = document.querySelector('input[name="phone"]') as HTMLInputElement;
+                        phoneInput?.focus();
                       }
                     }}
                   />
@@ -423,8 +424,8 @@ export const HeroBanner: React.FC = () => {
                       } cursor-pointer flex justify-between items-center`}
                       onClick={() => !isSubmitting && setIsPurposeOpen(!isPurposeOpen)}
                     >
-                      <span className={formData.purpose ? 'text-light-text dark:text-dark-text' : 'text-gray-400'}>
-                        {formData.purpose ? purposeOptions[formData.purpose as keyof typeof purposeOptions] : t('modal.purposePlaceholder')}
+                   <span className={formData.purpose ? 'text-light-text dark:text-dark-text' : 'text-gray-400'}>
+                        {formData.purpose ? (purposeOptions[formData.purpose as keyof typeof purposeOptions] as string) : t('modal.purposePlaceholder')}
                       </span>
                       <ArrowDownIcon 
                         size={16} 

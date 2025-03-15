@@ -189,10 +189,13 @@ export const SymptomSelector: React.FC = () => {
     // Создаем новый массив карточек с обновленными иконками
     return originalCards.map(card => {
       // Клонируем оригинальную иконку и устанавливаем цвет в зависимости от темы
-      const iconWithThemeColor = React.cloneElement(
-        card.iconPath as React.ReactElement,
-        { color: iconColor }
-      );
+   const iconWithThemeColor = React.isValidElement(card.iconPath) 
+  ? React.cloneElement(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      card.iconPath as React.ReactElement<any>,
+      { color: iconColor }
+    )
+  : card.iconPath;
       
       return {
         ...card,
