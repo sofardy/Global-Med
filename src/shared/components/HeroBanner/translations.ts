@@ -35,7 +35,35 @@ export const heroTranslations = {
             }
         ],
         appointmentButton: 'Записаться на прием',
-        location: 'г. Ташкент, ул. Янги Сергели, д. 35'
+        location: 'г. Ташкент, ул. Янги Сергели, д. 35',
+
+        // Переводы для модального окна
+        modal: {
+            title: 'Записаться на прием',
+            subtitle: 'Оставьте свои контактные данные, чтобы оператор мог с вами связаться',
+            namePlaceholder: 'Имя',
+            phonePlaceholder: '+998 (__) ___ __ __',
+            submitButton: 'Записаться',
+            submitting: 'Отправка...',
+            consentText: 'Даю согласие на',
+            consentLink: 'обработку персональных данных',
+            consentRest: 'для ответа на обращение',
+            successTitle: 'Мы получили вашу заявку',
+            successMessage: 'Оператор свяжется с вами для уточнения деталей в рабочее время с 9:00 до 18:00',
+            closeButton: 'Закрыть',
+            formError: 'Пожалуйста, заполните все поля корректно',
+            purposeLabel: 'Цель обращения',
+            purposePlaceholder: 'Выберите цель обращения',
+            purposeOptions: {
+                consultation: 'Консультация врача',
+                analysis: 'Сдача анализов',
+                checkup: 'Прохождение чек-апа'
+            },
+            nameError: 'Пожалуйста, введите имя',
+            phoneError: 'Пожалуйста, введите корректный номер телефона',
+            purposeError: 'Пожалуйста, выберите цель обращения',
+            consentError: 'Необходимо согласие на обработку персональных данных'
+        }
     },
     uz: {
         slides: [
@@ -71,6 +99,34 @@ export const heroTranslations = {
             }
         ],
         appointmentButton: 'Qabulga yozilish',
-        location: 'Toshkent sh., Yangi Sergeli ko\'chasi, 35-uy'
+        location: 'Toshkent sh., Yangi Sergeli ko\'chasi, 35-uy',
+
+        // Переводы для модального окна
+        modal: {
+            title: 'Qabulga yozilish',
+            subtitle: 'Operator siz bilan bog\'lanishi uchun aloqa ma\'lumotlaringizni qoldiring',
+            namePlaceholder: 'Ism',
+            phonePlaceholder: '+998 (__) ___ __ __',
+            submitButton: 'Yozilish',
+            submitting: 'Yuborilmoqda...',
+            consentText: 'Men',
+            consentLink: 'shaxsiy ma\'lumotlarni qayta ishlashga',
+            consentRest: 'murojaatga javob berish uchun rozilik beraman',
+            successTitle: 'Arizangizni qabul qildik',
+            successMessage: 'Operator tafsilotlarni aniqlashtirish uchun ish vaqtida 9:00 dan 18:00 gacha siz bilan bog\'lanadi',
+            closeButton: 'Yopish',
+            formError: 'Iltimos, barcha maydonlarni to\'g\'ri to\'ldiring',
+            purposeLabel: 'Murojaat maqsadi',
+            purposePlaceholder: 'Murojaat maqsadini tanlang',
+            purposeOptions: {
+                consultation: 'Shifokor maslahati',
+                analysis: 'Tahlil topshirish',
+                checkup: 'Tekshiruvdan o\'tish'
+            },
+            nameError: 'Iltimos, ismingizni kiriting',
+            phoneError: 'Iltimos, to\'g\'ri telefon raqamini kiriting',
+            purposeError: 'Iltimos, murojaat maqsadini tanlang',
+            consentError: 'Shaxsiy ma\'lumotlarni qayta ishlashga rozilik zarur'
+        }
     }
 };

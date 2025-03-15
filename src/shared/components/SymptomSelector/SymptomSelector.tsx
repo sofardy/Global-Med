@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { UniversalCard } from '../UniversalCard';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import Image from 'next/image';
-import {  ButterflyLogoIcon, CalculatorIcon, ChecklistMedicalIcon,  MedicalTrackerIcon, NeuralNetworkIcon, TabletIcon } from '../../ui/Icon';
+import { CalculatorIcon, ChecklistMedicalIcon,  MedicalTrackerIcon, TabletIcon } from '../../ui/Icon';
 import Modal from '../Modal/Modal';
 
 interface CardData {
@@ -144,6 +144,8 @@ const translations = {
   }
 };
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const SymptomSelector: React.FC = () => {
   const { t } = useTranslation(translations);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
@@ -151,6 +153,10 @@ export const SymptomSelector: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
   const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Состояние для анимации карточек
+  const [visibleCards, setVisibleCards] = useState<number[]>([]);
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   // Effect для отслеживания ширины окна
   useEffect(() => {
@@ -168,7 +174,7 @@ export const SymptomSelector: React.FC = () => {
     }
   }, []);
 
-  // List of all available symptoms
+  // Список доступных симптомов
   const symptoms = t('symptoms', { returnObjects: true }) as string[];
   
   // Получаем карточки для текущего языка
@@ -177,13 +183,37 @@ export const SymptomSelector: React.FC = () => {
   const firstRowSymptoms = symptoms.slice(0, 7); 
   const secondRowSymptoms = symptoms.slice(7); 
 
+  // Эффект для установки showResults
   useEffect(() => {
     if (selectedSymptoms.length >= 3) {
       setShowResults(true);
     } else {
       setShowResults(false);
+      // Сбрасываем анимацию при скрытии результатов
+      setVisibleCards([]);
+      setAnimationComplete(false);
     }
   }, [selectedSymptoms]);
+
+  // Эффект для запуска анимации появления карточек
+  useEffect(() => {
+    const animateCards = async () => {
+      if (showResults && !animationComplete) {
+        // Сбрасываем состояние видимых карточек
+        setVisibleCards([]);
+        
+        // Последовательно показываем каждую карточку с небольшой задержкой
+        for (let i = 0; i < cards.length; i++) {
+          await sleep(150); // Задержка между появлением карточек
+          setVisibleCards(prev => [...prev, i]);
+        }
+        
+        setAnimationComplete(true);
+      }
+    };
+    
+    animateCards();
+  }, [showResults, cards.length, animationComplete]);
 
   const toggleSymptom = (symptom: string) => {
     if (selectedSymptoms.includes(symptom)) {
@@ -289,7 +319,7 @@ export const SymptomSelector: React.FC = () => {
                 {selectedSymptoms.map((symptom, index) => (
                   <div 
                     key={index} 
-                    className="py-2 px-4 rounded-2xl bg-white text-light-accent font-medium flex items-center"
+                    className="py-2 px-4 rounded-2xl bg-white text-light-accent font-medium flex items-center animate-fadeIn"
                   >
                     {symptom}
                     <button 
@@ -358,17 +388,28 @@ export const SymptomSelector: React.FC = () => {
       {/* Results section (outside the main selector) */}
       {showResults ? (
         <div className="mt-6 md:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
-          {cards.map(card => (
-                          <UniversalCard
+          {cards.map((card, index) => (
+            <div 
               key={card.id}
-              title={card.title}
-              subtitle={card.subtitle}
-              description={card.description}
-              icon={card.iconPath}
-              link={`/${card.id}/${card.subtitle.toLowerCase()}`}
-              listStyle="disc"
-              className="mx-auto w-full max-w-full md:max-w-[375px]"
-            />
+              className={`w-full transform transition-all duration-700 ${
+                visibleCards.includes(index) 
+                  ? 'opacity-100 translate-y-0' 
+                  : 'opacity-0 translate-y-16'
+              }`}
+              style={{ 
+                transitionDelay: `${index * 300}ms`,
+              }}
+            >
+              <UniversalCard
+                title={card.title}
+                subtitle={card.subtitle}
+                description={card.description}
+                icon={card.iconPath}
+                link={`/${card.id}/${card.subtitle.toLowerCase()}`}
+                listStyle="disc"
+                className="mx-auto w-full max-w-full md:max-w-[375px]"
+              />
+            </div>
           ))}
         </div>
       ) : (
@@ -391,7 +432,7 @@ export const SymptomSelector: React.FC = () => {
         showCloseButton={false}
         noPadding={false}
         draggable={true}
-        theme="primary"
+        theme="brand"
         footer={
           <div className="flex flex-col w-full">
             <button 
@@ -435,6 +476,54 @@ export const SymptomSelector: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Добавляем CSS анимации */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .animate-slideIn {
+          animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .animate-fadeInScale {
+          animation: fadeInScale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+      `}</style>
     </div>
   );
 };

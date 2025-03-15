@@ -60,7 +60,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   };
   
 const cardClasses = `
-  relative rounded-xl p-6 transition-all duration-300 min-h-[360px]
+  relative rounded-xl p-6 transition-all duration-300 min-h-[375px]
   ${isHovered 
     ? 'bg-light-accent' 
     : theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}
@@ -76,9 +76,9 @@ const cardClasses = `
   const getListStyleClass = () => {
     switch (listStyle) {
       case 'disc':
-        return 'list-disc';
+        return 'list-disc marker-accent';
       case 'decimal':
-        return 'list-decimal';
+        return 'list-decimal marker-accent';
       default:
         return 'list-none';
     }
@@ -138,13 +138,27 @@ const cardClasses = `
           {buttonText}
         </button>
       )}
+
+      {/* Добавляем CSS для зеленых маркеров списка (при ховере - белых) */}
+      <style jsx global>{`
+        .marker-accent li::marker {
+          color: #00c78b;
+          transition: color 0.3s ease;
+        }
+        
+        ${isHovered ? `
+        .marker-accent li::marker {
+          color: #ffffff;
+        }
+        ` : ''}
+      `}</style>
     </div>
   );
 
   // Обертка в Link если есть ссылка
   if (link) {
     return (
-      <Link href={link} className='h-full min-h-[320px] md:min-h-[400px] w-full'>
+      <Link href={link} className='h-full min-h-[375px] md:min-h-[400px] w-full'>
         <div 
           className={cardClasses}
           onMouseEnter={handleMouseEnter}
