@@ -7,7 +7,8 @@ import { useThemeStore } from '@/src/store/theme';
 export interface UniversalCardProps {
   // Основное содержимое
   title: string;
-  description?: string | React.ReactNode;
+  description?: string | string[] | React.ReactNode;
+  subtitle?: string;
   icon?: ReactNode;
   
   // Дополнительная информация
@@ -16,6 +17,7 @@ export interface UniversalCardProps {
   // Варианты отображения
   variant?: 'default' | 'checkup' | 'specialist' | 'analysis';
   iconPosition?: 'center';
+  listStyle?: 'none' | 'disc' | 'decimal'; // Добавляем опцию для стиля списка
   
   // Действия и навигация
   link?: string;
@@ -30,10 +32,12 @@ export interface UniversalCardProps {
 export const UniversalCard: React.FC<UniversalCardProps> = ({
   title,
   description,
+  subtitle,
   icon,
   additionalInfo,
   variant = 'default',
   iconPosition = 'center',
+  listStyle = 'disc', // По умолчанию используем диски для списков
   link,
   buttonText = 'Подробнее',
   onClick,
@@ -55,18 +59,30 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     if (onClick) onClick();
   };
   
-  const cardClasses = `
-    relative rounded-xl p-6 transition-all duration-300 h-full w-[375px]
-    ${isHovered 
-      ? 'bg-light-accent' 
-      : theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}
-    ${bordered ? `border ${theme === 'light' ? 'border-gray-200' : 'border-gray-700'}` : ''}
-    ${link || onClick ? 'cursor-pointer hover:shadow-md' : ''}
-    ${className}
-  `;
+const cardClasses = `
+  relative rounded-xl p-6 transition-all duration-300 min-h-[360px]
+  ${isHovered 
+    ? 'bg-light-accent' 
+    : theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}
+  ${bordered ? `border ${theme === 'light' ? 'border-gray-200' : 'border-gray-700'}` : ''}
+  ${link || onClick ? 'cursor-pointer hover:shadow-md' : ''}
+  ${className}
+`;
   
   const titleColor = isHovered ? 'text-white' : '';
   const descriptionColor = isHovered ? 'text-white' : '';
+
+  // Получаем класс для стиля списка
+  const getListStyleClass = () => {
+    switch (listStyle) {
+      case 'disc':
+        return 'list-disc';
+      case 'decimal':
+        return 'list-decimal';
+      default:
+        return 'list-none';
+    }
+  };
   
   const CardContent = () => (
     <div className="flex flex-col h-full">
@@ -77,21 +93,35 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         }`}
       ></div>
       
-      {/* Иконка в центре */}
-    
-      
-      {/* Заголовок и описание */}
+      {/* Заголовок */}
       <div className="flex flex-col flex-grow">
         <h3 className={`text-[24px] font-medium mb-2 ${titleColor}`}>{title}</h3>
-          {icon && iconPosition === 'center' && (
-        <div className="flex justify-center mt-[50px] mb-[50px]">
-          {icon}
-        </div>
-      )}
-        {description && typeof description === 'string' ? (
-          <p className={`text-[18px] font-medium mb-4 ${descriptionColor}`}>{description}</p>
-        ) : (
-          <div className={`text-[18px] font-normal mb-4 ${descriptionColor}`}>{description}</div>
+        
+        {/* Иконка в центре */}
+        {icon && iconPosition === 'center' && (
+          <div className="flex justify-center mt-[50px] mb-[50px]">
+            {icon}
+          </div>
+        )}
+        
+        {/* Подзаголовок */}
+        {subtitle && (
+          <h4 className={`font-medium text-[18px] mb-2 ${titleColor}`}>{subtitle}</h4>
+        )}
+        
+        {/* Описание */}
+        {description && (
+          Array.isArray(description) ? (
+            <ul className={`${getListStyleClass()} pl-5 text-[18px] ${descriptionColor}`}>
+              {description.map((item, idx) => (
+                <li key={idx} className="mb-1">{item}</li>
+              ))}
+            </ul>
+          ) : typeof description === 'string' ? (
+            <p className={`text-[18px] font-normal ${descriptionColor}`}>{description}</p>
+          ) : (
+            <div className={descriptionColor}>{description}</div>
+          )
         )}
         
         {/* Дополнительная информация */}
@@ -114,7 +144,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   // Обертка в Link если есть ссылка
   if (link) {
     return (
-      <Link href={link}>
+      <Link href={link} className='h-full min-h-[320px] md:min-h-[400px] w-full'>
         <div 
           className={cardClasses}
           onMouseEnter={handleMouseEnter}

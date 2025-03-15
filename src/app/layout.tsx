@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '../shared/components/ThemeProvider';
 import { LanguageProvider } from '../shared/components/LanguageProvider';
-import { TopBar } from '../shared/components/TopBar/TopBar';
+import { TopBar } from '../shared/layout/TopBar/TopBar';
 import { routes } from '../shared/config/routes';
 import { FloatingComponents } from '../shared/components/FloatingComponents';
 
