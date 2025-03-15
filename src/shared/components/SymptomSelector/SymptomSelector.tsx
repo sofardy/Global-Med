@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { UniversalCard } from '../UniversalCard';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import Image from 'next/image';
-import { CalculatorIcon, ChecklistMedicalIcon,  MedicalTrackerIcon, TabletIcon } from '../../ui/Icon';
+import { CalculatorIcon, ChecklistMedicalIcon, MedicalTrackerIcon, TabletIcon } from '../../ui/Icon';
 import Modal from '../Modal/Modal';
+import { useThemeStore } from '@/src/store/theme';
 
 interface CardData {
   id: string;
@@ -68,7 +69,7 @@ const translations = {
           'Аллергопробы',
           'Консультация пульмонолога'
         ],
-        iconPath: < ChecklistMedicalIcon size={80} />
+        iconPath: <ChecklistMedicalIcon size={80} />
       },
       {
         id: 'specialist',
@@ -148,6 +149,7 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const SymptomSelector: React.FC = () => {
   const { t } = useTranslation(translations);
+  const { theme } = useThemeStore();
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [tempSelectedSymptoms, setTempSelectedSymptoms] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -177,8 +179,27 @@ export const SymptomSelector: React.FC = () => {
   // Список доступных симптомов
   const symptoms = t('symptoms', { returnObjects: true }) as string[];
   
-  // Получаем карточки для текущего языка
-  const cards = t('cards', { returnObjects: true }) as CardData[];
+  // Получаем карточки для текущего языка и настраиваем цвет иконок согласно теме
+  const cards = React.useMemo(() => {
+    const originalCards = t('cards', { returnObjects: true }) as CardData[];
+    
+    // Определяем цвет иконок в зависимости от темы
+    const iconColor = theme === 'light' ? '#094a54' : '#ffffff';
+    
+    // Создаем новый массив карточек с обновленными иконками
+    return originalCards.map(card => {
+      // Клонируем оригинальную иконку и устанавливаем цвет в зависимости от темы
+      const iconWithThemeColor = React.cloneElement(
+        card.iconPath as React.ReactElement,
+        { color: iconColor }
+      );
+      
+      return {
+        ...card,
+        iconPath: iconWithThemeColor
+      };
+    });
+  }, [t, theme]); // Пересчитываем при изменении языка или темы
   
   const firstRowSymptoms = symptoms.slice(0, 7); 
   const secondRowSymptoms = symptoms.slice(7); 
@@ -391,7 +412,7 @@ export const SymptomSelector: React.FC = () => {
           {cards.map((card, index) => (
             <div 
               key={card.id}
-            className={`w-full h-full transform transition-all duration-700 ${
+              className={`w-full h-full transform transition-all duration-700 ${
                 visibleCards.includes(index) 
                   ? 'opacity-100 translate-y-0' 
                   : 'opacity-0 translate-y-16'
@@ -400,21 +421,27 @@ export const SymptomSelector: React.FC = () => {
                 transitionDelay: `${index * 300}ms`,
               }}
             >
-              <UniversalCard
-                title={card.title}
-                subtitle={card.subtitle}
-                description={card.description}
-                icon={card.iconPath}
-                link={`/${card.id}/${card.subtitle.toLowerCase()}`}
-                listStyle="disc"
-                className="mx-auto w-full max-w-full md:max-w-[375px]"
-              />
+  <UniversalCard
+  variant="analysis"
+  title={card.title}
+  subtitle={card.subtitle}
+  description={card.description}
+  icon={card.iconPath}
+  showButton={false}
+  link={`/${card.id}/${card.subtitle.toLowerCase()}`}
+  listStyle="disc"
+  className="mx-auto w-full max-w-full md:max-w-[375px]"
+/>
             </div>
           ))}
         </div>
       ) : (
         <div className="mt-6 md:mt-10 bg-white dark:bg-dark-block p-6 md:p-10 rounded-2xl text-center flex flex-col items-center justify-center min-h-[200px] md:min-h-[360px]">
-          <MedicalTrackerIcon size={80} color="#00C78B" className="mb-6" />
+          <MedicalTrackerIcon 
+            size={80} 
+            color={theme === 'light' ? '#094a54' : '#00C78B'} 
+            className="mb-6" 
+          />
           <p className="text-lg md:text-xl text-light-text dark:text-dark-text">
             {t('noSymptomsSelected')}
           </p>

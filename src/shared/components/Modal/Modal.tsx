@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import localization from './translation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from '@/src/hooks/useTranslation';
-import { useThemeStore } from '@/src/store/theme';
+// import { useThemeStore } from '@/src/store/theme';
 
 // Типы для модальных окон
 type ModalPosition = 'bottom' | 'center' | 'top';
@@ -65,8 +65,8 @@ export default function Modal({
   footer
 }: ModalProps) {
   const { t } = useTranslation(localization);
-  const { theme: appTheme } = useThemeStore();
-  const isDarkMode = appTheme === 'dark';
+  // const { theme: appTheme } = useThemeStore();
+  // const isDarkMode = appTheme === 'dark';
   
   const modalRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);

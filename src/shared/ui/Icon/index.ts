@@ -18,3 +18,7 @@ export { default as NeuralNetworkIcon } from './NeuralNetworkIcon';
 export { default as CalculatorIcon } from './CalculatorIcon';
 export { default as TabletIcon } from './TabletIcon';
 export { default as ChecklistMedicalIcon } from './ChecklistMedicalIcon';
+export { default as AngelIcon } from './AngelIcon';
+export { default as EyeIcon } from './EyeIcon';
+export { default as LightbulbIcon } from './LightbulbIcon';
+export { default as ButterflyIcon } from './ButterflyIcon';
