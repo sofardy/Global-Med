@@ -52,7 +52,7 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
 useEffect(() => {
   const checkWindowSize = () => {
     // Используем 991px как точку разделения
-    setIsCompactMode(window.innerWidth < 1510 && window.innerWidth >= 991);
+    setIsCompactMode(window.innerWidth < 1550 && window.innerWidth >= 991);
   };
 
   checkWindowSize();

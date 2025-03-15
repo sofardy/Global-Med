@@ -22,7 +22,7 @@ module.exports = {
             },
         extend: {
             maxWidth: {
-                '8xl': '1560px',
+                '8xl': '1600px',
             },
             colors: {
                 // Light mode
