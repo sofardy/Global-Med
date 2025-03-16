@@ -99,7 +99,7 @@ export const MedicalServices: React.FC = () => {
 const iconColor = theme === 'dark' ? 'var(--dark-text)' : 'var(--light-text)';
   return (
     <div className="w-full">
-      <div className="mt-40">
+      <div className="mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Информационный блок с заголовком и описанием */}
           <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto md:h-[500px] lg:h-[700px] p-8 md:p-10 bg-white dark:bg-dark-block text-[#173F46] dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[700px] flex flex-col">
