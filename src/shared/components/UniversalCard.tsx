@@ -12,7 +12,7 @@ export interface UniversalCardProps {
   subtitle?: string;
   icon?: ReactNode;
   additionalInfo?: string;
-  variant?: 'default' | 'checkup' | 'specialist' | 'analysis' | 'service' | 'custom' | 'family';
+  variant?: 'default' | 'checkup' | 'specialist' | 'analysis' | 'service' | 'custom' | 'family' | 'analysis-card';
   iconPosition?: 'center' | 'top' | 'bottom' | 'left' | 'right';
   iconAlignment?: 'left' | 'right';
   listStyle?: 'none' | 'disc' | 'decimal';
@@ -46,12 +46,18 @@ export interface UniversalCardProps {
     icon?: React.CSSProperties;
     button?: React.CSSProperties;
   };
+    hoverBgColor?: string;
+  buttonTextSize?: string;
+  buttonPadding?: string;
 }
 
 export const UniversalCard: React.FC<UniversalCardProps> = ({
   title,
   description,
   subtitle,
+  hoverBgColor,
+buttonTextSize,
+  buttonPadding,
   icon,
   additionalInfo,
   variant = 'default',
@@ -341,7 +347,7 @@ const descriptionSizeClass = isMobile
                 {showButton && (
                   <Link href={link || '#'} className="inline-block">
                     <button 
-                      className={`mt-4 sm:mt-6 px-4 sm:px-6 rounded-xl font-medium transition-colors 
+                      className={`mt-4 sm:mt-6 px-4 sm:px-6 rounded-2xl font-medium transition-colors 
                         w-full sm:w-[280px] md:w-[330px] h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
                         ${isHovered 
                           ? 'bg-white text-light-accent' 
@@ -363,7 +369,7 @@ const descriptionSizeClass = isMobile
                 {showButton && (
                   <Link href={link || '#'} className="inline-block">
                     <button 
-                      className={`mt-4 sm:mt-6 px-4 sm:px-6 rounded-xl font-medium transition-colors 
+                      className={`mt-4 sm:mt-6 px-4 sm:px-6 rounded-2xl font-medium transition-colors 
                         w-full sm:w-[280px] md:w-[330px] h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
                         ${isHovered 
                           ? 'bg-white text-light-accent' 
@@ -381,8 +387,42 @@ const descriptionSizeClass = isMobile
         </div>
       </div>
     );
-  }
-
+  }else if (variant === 'analysis-card') {
+  return (
+    <div 
+      className={`${cardClasses} flex flex-col w-[375px] h-[320px]`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={styles.container}
+    >
+      <div className="flex flex-col  justify-between h-full">
+        {/* Заголовок вверху */}
+        <h3 className={`${titleSizeClass} font-medium ${titleColor}`}>
+          {title}
+        </h3>
+        
+        {/* Иконка по центру */}
+        <div className="flex items-center justify-center flex-grow">
+          {icon}
+        </div>
+        
+        {/* Кнопка внизу */}
+        <Link href={link || '#'} className="w-full block mt-4">
+          <button 
+            className={`w-full ${buttonPadding || 'py-3'} px-4 rounded-2xl font-medium transition-colors ${buttonTextSize || 'text-base'}
+              ${isHovered 
+                ? `bg-white text-light-accent ${hoverBgColor === 'white' ? 'border border-light-accent' : ''}` 
+                : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
+              }`}
+            style={styles.button}
+          >
+            {buttonText || 'Подробнее'}
+          </button>
+        </Link>
+      </div>
+    </div>
+  );
+}
   // Содержимое карточки для других вариантов
   const CardContent = () => (
     <div className="flex flex-col h-full">
@@ -451,7 +491,7 @@ const descriptionSizeClass = isMobile
       {/* Кнопка внизу карточки */}
       {showButton && (variant === 'service' || buttonText) && (
         <button 
-          className={`mt-auto px-4 sm:px-6 rounded-xl font-medium transition-colors
+          className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
             w-full sm:w-[280px] md:w-[330px] h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
             ${isHovered 
               ? 'bg-white text-light-accent' 

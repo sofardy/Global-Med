@@ -324,27 +324,28 @@ export const HeroBanner: React.FC = () => {
         position="center"
         size="full"
         theme="brand"
-        className="!w-[640px] h-[640px] p-4 sm:p-6 md:p-8 lg:p-50"
-        backdropClassName="flex items-center justify-center"
+className="!w-[640px] max-w-[95vw] p-4 sm:p-6 md:p-8 lg:p-50"
+   backdropClassName="flex items-center justify-center px-3 py-4"     
         contentClassName="flex flex-col"
         showCloseButton={false}
         showCloseIcon={true}
         titleClassName="text-xl md:text-2xl lg:text-3xl" 
         subtitleClassName="text-base md:text-lg"
       >
-        <div className="space-y-6 flex flex-col flex-grow">
+<div className="space-y-4 flex flex-col flex-grow">
           {isSuccess ? (
             /* Экран успешной отправки - без заголовка и подзаголовка */
-            <div className="py-12 flex flex-col items-center justify-center text-center flex-grow">
-              <div className="bg-light-accent rounded-full p-6 mb-8">
-                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-light-text dark:text-dark-text mb-6">{t('modal.successTitle')}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-12 text-lg md:text-xl">
-                {t('modal.successMessage')}
-              </p>
+        // На
+<div className="py-6 flex flex-col items-center justify-center text-center">
+  <div className="bg-light-accent rounded-full p-5 mb-6">
+    <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+  </div>
+  <h3 className="text-2xl md:text-3xl font-bold text-light-text dark:text-dark-text mb-4">{t('modal.successTitle')}</h3>
+  <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg md:text-xl">
+    {t('modal.successMessage')}
+  </p>
               <button 
                 onClick={() => {
                   setIsModalOpen(false);
@@ -484,7 +485,7 @@ export const HeroBanner: React.FC = () => {
               {/* Кнопка отправки */}
               <button
                 onClick={handleSubmit}
-                className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center text-base md:text-xl"
+                className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center text-base md:text-xl mt-2"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

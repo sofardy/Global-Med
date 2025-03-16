@@ -131,7 +131,7 @@ const iconColor = theme === 'dark' ? 'var(--dark-text)' : 'var(--light-text)';
               </p>
             </div>
             
-            <a href="/services" className="relative z-10 inline-flex items-center justify-center border border-[#173F46] dark:border-white text-[#173F46] dark:text-white hover:bg-[#173F46]/5 dark:hover:bg-white/10 rounded-lg px-6 py-3 transition-colors mt-auto self-start">
+            <a href="/services" className="relative z-10 h-[58px] inline-flex items-center justify-center border border-[#173F46] dark:border-white text-[#173F46] dark:text-white hover:bg-[#173F46]/5 dark:hover:bg-white/10 rounded-2xl px-6 py-3 transition-colors mt-auto self-start">
               <span className="tracking-wide">{t('viewAllServices')}</span>
               <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
