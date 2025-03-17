@@ -50,9 +50,9 @@ export const AppointmentSection: React.FC<AppointmentSectionProps> = ({
 
   return (
     <>
-      <div className={`w-full flex flex-col md:flex-row gap-5 rounded-3xl overflow-hidden ${className}`}>
+      <div className={`w-full flex flex-col md:flex-row gap-5  overflow-hidden ${className}`}>
         {/* Левая колонка - информация (25%) */}
-        <div className={`p-6 md:p-8 ${theme === 'dark' ? 'bg-dark-block' : 'bg-light-block'} md:w-1/4`}>
+        <div className={`p-6 md:p-8 rounded-2xl ${theme === 'dark' ? 'bg-dark-block' : 'bg-light-block'} md:w-1/4`}>
           <div>
             <h2 
               className="text-light-text dark:text-dark-text mb-4"
@@ -82,7 +82,7 @@ export const AppointmentSection: React.FC<AppointmentSectionProps> = ({
         </div>
         
         {/* Центральная колонка - форма (50%) */}
-        <div className={`p-6 md:p-8 ${theme === 'dark' ? 'bg-dark-block' : 'bg-white'} md:w-1/2`}>
+        <div className={`p-6 md:p-8 rounded-2xl ${theme === 'dark' ? 'bg-dark-block' : 'bg-white'} md:w-1/2`}>
           <AppointmentForm
             onSuccess={handleFormSuccess}
             onCancel={() => {}}
@@ -93,9 +93,9 @@ export const AppointmentSection: React.FC<AppointmentSectionProps> = ({
         {/* Правая колонка - изображение (25%) */}
         <div className="hidden md:block md:w-1/4 relative">
           <Image
-            src="/images/doctor-form.jpg"
+            src="/images/doctor-form.png"
             alt="Доктор и пациент"
-            className="object-cover h-full w-full"
+            className="object-cover h-full w-full rounded-2xl"
             fill
           />
         </div>
