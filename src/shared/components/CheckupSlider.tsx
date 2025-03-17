@@ -182,7 +182,6 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
     return (
       <UniversalCard
         key={checkup.id}
-        id={checkup.id}
         title={checkup.title}
         description={checkup.description}
         investigationsCount={checkup.investigationsCount}
@@ -219,7 +218,7 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
       navigationNextLabel={t('nextSlide')}
       showPagination={false}
       className={className}
-      titleClassName="text-3xl md:text-[40px] font-bold text-light-text dark:text-dark-text"
+      titleClassName="text-3xl md:text-[40px] mt-20 font-bold text-light-text dark:text-dark-text"
       descriptionClassName="text-light-text dark:text-dark-text text-base md:text-lg"
       wrapperClassName="mt-20"
     />

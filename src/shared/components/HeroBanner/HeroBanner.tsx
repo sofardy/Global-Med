@@ -1,89 +1,34 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { heroTranslations } from './translations';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import Modal from '@/src/shared/components/Modal/Modal';
+import { AppointmentForm } from '../AppointmentForm';
 
 // Импорт стилей Swiper
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import { LocationIcon, ArrowDownIcon } from '../../ui/Icon';
+import { LocationIcon } from '../../ui/Icon';
 
 export const HeroBanner: React.FC = () => {
   const { t } = useTranslation(heroTranslations);
   
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    purpose: '',
-  });
-  
-  // Состояние для отслеживания ошибок в полях
-  const [formErrors, setFormErrors] = useState({
-    name: false,
-    phone: false,
-    purpose: false,
-    consent: false
-  });
-  
-  // Открыт ли выпадающий список
-  const [isPurposeOpen, setIsPurposeOpen] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   
   // Получаем данные слайдов из переводов
   const slides = t('slides', { returnObjects: true });
   const slidesArray = Array.isArray(slides) ? slides : [];
   
-  // Получаем опции для выпадающего списка
-  const purposeOptions = t('modal.purposeOptions', { returnObjects: true });
-  
   // Ref для Swiper инстанса
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const swiperRef = useRef<any>(null);
-  const selectRef = useRef<HTMLDivElement>(null);
-
-  // Эффект для закрытия выпадающего списка при клике вне него
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-        setIsPurposeOpen(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Эффект для сброса состояний при открытии/закрытии модального окна
-  useEffect(() => {
-    if (!isModalOpen) {
-      // При закрытии модалки сбрасываем все состояния
-      setIsSubmitting(false);
-      setIsSuccess(false);
-      setFormData({
-        name: '',
-        phone: '',
-        purpose: '',
-      });
-      setFormErrors({
-        name: false,
-        phone: false,
-        purpose: false,
-        consent: false
-      });
-      setIsPurposeOpen(false);
-    }
-  }, [isModalOpen]);
 
   // Обработчик изменения индекса слайда
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,114 +46,18 @@ export const HeroBanner: React.FC = () => {
   // Открытие модального окна
   const openModal = () => {
     setIsModalOpen(true);
+    setFormSubmitted(false);
   };
   
-  // Валидация отдельных полей
-  const validateField = (name: string, value: string | boolean): boolean => {
-    switch (name) {
-      case 'name':
-        return value !== '';
-      case 'phone':
-        const phoneDigits = (value as string).replace(/\D/g, '');
-        return phoneDigits.length >= 12;
-      case 'purpose':
-        return value !== '';
-      case 'consent':
-        return !!value;
-      default:
-        return true;
-    }
+  // Закрытие модального окна
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setFormSubmitted(false);
   };
   
-  // Проверка валидности всей формы и установка ошибок
-  const validateForm = () => {
-    const nameValid = validateField('name', formData.name);
-    const phoneValid = validateField('phone', formData.phone);
-    const purposeValid = validateField('purpose', formData.purpose);
-    
-    // Проверяем состояние чекбокса согласия
-    const consentCheckbox = document.querySelector('input[name="consent"]') as HTMLInputElement;
-    const consentValid = consentCheckbox?.checked || false;
-    
-    // Обновляем состояние ошибок
-    setFormErrors({
-      name: !nameValid,
-      phone: !phoneValid,
-      purpose: !purposeValid,
-      consent: !consentValid
-    });
-    
-    return nameValid && phoneValid && purposeValid && consentValid;
-  };
-  
-  // Обработка отправки формы
-  const handleSubmit = () => {
-    // Проверяем валидность формы
-    if (!validateForm()) {
-      return;
-    }
-    
-    // Показываем состояние загрузки
-    setIsSubmitting(true);
-    
-    // Имитация отправки данных на сервер
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 1500);
-  };
-  
-  // Обработка изменения полей формы
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Сбрасываем ошибку для этого поля при вводе
-    setFormErrors(prev => ({ ...prev, [name]: false }));
-  };
-  
-  // Обработка выбора цели из выпадающего списка
-  const handlePurposeSelect = (value: string) => {
-    setFormData(prev => ({ ...prev, purpose: value }));
-    setFormErrors(prev => ({ ...prev, purpose: false }));
-    setIsPurposeOpen(false);
-  };
-  
-  // Форматирование телефона
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '');
-    
-    // Сохраняем +998 в начале
-    if (!value.startsWith('998') && value.length > 0) {
-      value = '998' + value;
-    }
-    
-    // Форматируем телефон
-    let formattedValue = '';
-    if (value.length > 0) {
-      formattedValue = '+' + value.substring(0, 3);
-      
-      if (value.length > 3) {
-        formattedValue += ' (' + value.substring(3, 5) + ')';
-      }
-      
-      if (value.length > 5) {
-        formattedValue += ' ' + value.substring(5, 8);
-      }
-      
-      if (value.length > 8) {
-        formattedValue += '-' + value.substring(8, 10);
-      }
-      
-      if (value.length > 10) {
-        formattedValue += '-' + value.substring(10, 12);
-      }
-    }
-    
-    setFormData(prev => ({ ...prev, phone: formattedValue }));
-    
-    // Сбрасываем ошибку для телефона при вводе
-    setFormErrors(prev => ({ ...prev, phone: false }));
+  // Обработчик успешной отправки формы
+  const handleFormSuccess = () => {
+    setFormSubmitted(true);
   };
 
   return (
@@ -318,191 +167,45 @@ export const HeroBanner: React.FC = () => {
       {/* Модальное окно записи на прием */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={!isSuccess ? t('modal.title') : ""}
-        subtitle={!isSuccess ? t('modal.subtitle') : ""}
+        onClose={closeModal}
+        title={formSubmitted ? "" : t('modal.title')}
+        subtitle={formSubmitted ? "" : t('modal.subtitle')}
         position="center"
         size="full"
         theme="brand"
-className="!w-[640px] max-w-[95vw] p-4 sm:p-6 md:p-8 lg:p-50"
-   backdropClassName="flex items-center justify-center px-3 py-4"     
+        className="!w-[640px] max-w-[95vw] p-4 sm:p-6 md:p-8 lg:p-50"
+        backdropClassName="flex items-center justify-center px-3 py-4"     
         contentClassName="flex flex-col"
         showCloseButton={false}
         showCloseIcon={true}
         titleClassName="text-xl md:text-2xl lg:text-3xl" 
         subtitleClassName="text-base md:text-lg"
       >
-<div className="space-y-4 flex flex-col flex-grow">
-          {isSuccess ? (
-            /* Экран успешной отправки - без заголовка и подзаголовка */
-        // На
-<div className="py-6 flex flex-col items-center justify-center text-center">
-  <div className="bg-light-accent rounded-full p-5 mb-6">
-    <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-    </svg>
-  </div>
-  <h3 className="text-2xl md:text-3xl font-bold text-light-text dark:text-dark-text mb-4">{t('modal.successTitle')}</h3>
-  <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg md:text-xl">
-    {t('modal.successMessage')}
-  </p>
-              <button 
-                onClick={() => {
-                  setIsModalOpen(false);
-                }}
-                className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors text-lg md:text-xl"
-              >
-                {t('modal.closeButton')}
-              </button>
+        {formSubmitted ? (
+          <div className="py-6 flex flex-col items-center justify-center text-center">
+            <div className="bg-light-accent rounded-full p-5 mb-6">
+              <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
             </div>
-          ) : (
-            /* Форма заполнения */
-            <>
-              {/* Поле имени */}
-              <div className="flex-1 mb-20">
-                <div className="mb-5">
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder={t('modal.namePlaceholder')}
-                    className={`w-full p-4 md:p-5 text-base md:text-lg bg-gray-50 dark:bg-gray-800 rounded-xl border ${
-                      formErrors.name 
-                        ? 'border-red-500 focus:ring-red-500' 
-                        : 'border-gray-200 dark:border-gray-700 focus:ring-light-accent'
-                    } focus:outline-none focus:ring-2`}
-                    required
-                    disabled={isSubmitting}
-                    autoFocus
-                onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        const phoneInput = document.querySelector('input[name="phone"]') as HTMLInputElement;
-                        phoneInput?.focus();
-                      }
-                    }}
-                  />
-                  {formErrors.name && (
-                    <p className="mt-2 text-sm text-red-500">
-                      {t('modal.nameError')}
-                    </p>
-                  )}
-                </div>
-                
-                {/* Поле телефона */}
-                <div className="mb-5">
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handlePhoneChange}
-                    placeholder={t('modal.phonePlaceholder')}
-                    className={`w-full p-4 md:p-5 text-base md:text-lg bg-gray-50 dark:bg-gray-800 rounded-xl border ${
-                      formErrors.phone 
-                        ? 'border-red-500 focus:ring-red-500' 
-                        : 'border-gray-200 dark:border-gray-700 focus:ring-light-accent'
-                    } focus:outline-none focus:ring-2`}
-                    required
-                    disabled={isSubmitting}
-                  />
-                  {formErrors.phone && (
-                    <p className="mt-2 text-sm text-red-500">
-                      {t('modal.phoneError')}
-                    </p>
-                  )}
-                </div>
-                
-                {/* Кастомный выпадающий список с целью обращения */}
-                <div className="mb-5">
-                  <div ref={selectRef} className="relative">
-                    <div
-                      className={`w-full p-4 md:p-5 text-base md:text-lg bg-gray-50 dark:bg-gray-800 rounded-xl border ${
-                        formErrors.purpose 
-                          ? 'border-red-500' 
-                          : 'border-gray-200 dark:border-gray-700'
-                      } cursor-pointer flex justify-between items-center`}
-                      onClick={() => !isSubmitting && setIsPurposeOpen(!isPurposeOpen)}
-                    >
-                   <span className={formData.purpose ? 'text-light-text dark:text-dark-text' : 'text-gray-400'}>
-                        {formData.purpose ? (purposeOptions[formData.purpose as keyof typeof purposeOptions] as string) : t('modal.purposePlaceholder')}
-                      </span>
-                      <ArrowDownIcon 
-                        size={16} 
-                        className={`transition-transform duration-300 ${isPurposeOpen ? 'transform rotate-180' : ''}`} 
-                      />
-                    </div>
-                    
-                    {/* Выпадающий список */}
-                    {isPurposeOpen && (
-                      <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700 py-1 max-h-52 overflow-auto">
-                        {Object.entries(purposeOptions).map(([key, value]) => (
-                          <div
-                            key={key}
-                            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-light-text dark:text-dark-text text-base md:text-lg transition-colors"
-                            onClick={() => handlePurposeSelect(key)}
-                          >
-                            {value}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {formErrors.purpose && (
-                    <p className="mt-2 text-sm text-red-500">
-                      {t('modal.purposeError')}
-                    </p>
-                  )}
-                </div>
-                
-                {/* Согласие на обработку данных */}
-                <div className="flex items-start mt-4">
-                  <input 
-                    type="checkbox" 
-                    id="consent" 
-                    name="consent" 
-                    className={`mt-1 w-5 h-5 md:w-6 md:h-6 ${
-                      formErrors.consent 
-                        ? 'border-red-500 text-red-500' 
-                        : 'text-light-accent border-gray-300'
-                    } bg-gray-100 rounded focus:ring-light-accent`}
-                    required
-                    disabled={isSubmitting}
-                    onChange={() => setFormErrors(prev => ({ ...prev, consent: false }))}
-                  />
-                  <label htmlFor="consent" className="ml-3 text-base md:text-lg text-gray-500 dark:text-gray-400">
-                    {t('modal.consentText')} <span className="text-light-accent cursor-pointer hover:underline">{t('modal.consentLink')}</span> {t('modal.consentRest')}
-                  </label>
-                </div>
-                {formErrors.consent && (
-                  <p className="mt-2 text-sm text-red-500">
-                    {t('modal.consentError')}
-                  </p>
-                )}
-              </div>
-              
-              {/* Кнопка отправки */}
-              <button
-                onClick={handleSubmit}
-                className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center text-base md:text-xl mt-2"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 md:h-6 md:w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    {t('modal.submitting')}
-                  </>
-                ) : (
-                  t('modal.submitButton')
-                )}
-              </button>
-            </>
-          )}
-        </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-light-text dark:text-dark-text mb-4">{t('modal.successTitle')}</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg md:text-xl">
+              {t('modal.successMessage')}
+            </p>
+            <button 
+              onClick={closeModal}
+              className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors text-lg md:text-xl"
+            >
+              {t('modal.closeButton')}
+            </button>
+          </div>
+        ) : (
+          <AppointmentForm 
+            onSuccess={handleFormSuccess}
+            onCancel={closeModal}
+            translationNamespace={heroTranslations}
+          />
+        )}
       </Modal>
       
       {/* CSS для анимации кнопки */}

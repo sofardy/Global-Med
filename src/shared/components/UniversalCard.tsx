@@ -5,14 +5,17 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useThemeStore } from '@/src/store/theme';
+import Image from 'next/image';
+import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
 
 export interface UniversalCardProps {
   title: string;
   description?: string | string[] | React.ReactNode;
   subtitle?: string;
-  icon?: ReactNode;
   additionalInfo?: string;
-  variant?: 'default' | 'checkup' | 'specialist' | 'analysis' | 'service' | 'custom' | 'family' | 'analysis-card';
+  variant?: 'default' | 'checkup' | 'specialist' | 'analysis' | 'service' | 'custom' | 'family' | 'analysis-card' | 'surgery';
+    features?: string[];
+  imageSrc?: string; 
   iconPosition?: 'center' | 'top' | 'bottom' | 'left' | 'right';
   iconAlignment?: 'left' | 'right';
   listStyle?: 'none' | 'disc' | 'decimal';
@@ -49,6 +52,8 @@ export interface UniversalCardProps {
     hoverBgColor?: string;
   buttonTextSize?: string;
   buttonPadding?: string;
+   icon?: React.ReactNode;
+  iconColor?: string; 
 }
 
 export const UniversalCard: React.FC<UniversalCardProps> = ({
@@ -74,8 +79,7 @@ buttonTextSize,
   bordered = false,
   borderColor,
   borderRadius = 'xl',
-  iconColorLight = '#00c78b', 
-  iconColorDark = '#11363C',
+  iconColor,
   hoverColor,
   bgColorLight,
   bgColorDark,
@@ -88,11 +92,16 @@ buttonTextSize,
   timeRequired,
   investigationsCount,
   styles = {},
+  imageSrc,
+  features
 }) => {
   const { theme } = useThemeStore();
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+    const finalIconColor = getIconColorByTheme(theme, iconColor);
   
+  // Обрабатываем иконку с правильным цветом
+  const processedIcon = applyColorToIcon(icon, finalIconColor);
   // Определение мобильного устройства
   useEffect(() => {
     const checkMobile = () => {
@@ -107,23 +116,20 @@ buttonTextSize,
     };
   }, []);
   
-  // Значения по умолчанию для вариантов
-  if (variant === 'service') {
-    iconColorLight = '#173F46';
-    iconColorDark = 'white';
-  } else if (variant === 'analysis') {
-    iconColorLight = '#00c78b';
-    iconColorDark = '#11363C';
-  }
   
-  const handleMouseEnter = () => {
+ const handleMouseEnter = () => {
+  // Активируем эффект наведения только на десктопах
+  if (!isMobile) {
     setIsHovered(true);
     if (onHover) onHover();
-  };
+  }
+};
   
-  const handleMouseLeave = () => {
+const handleMouseLeave = () => {
+  if (!isMobile) {
     setIsHovered(false);
-  };
+  }
+};
   
   const handleClick = () => {
     if (onClick) onClick();
@@ -281,16 +287,16 @@ const descriptionSizeClass = isMobile
   
   // Блок с иконкой
   const IconBlock = () => {
-    if (!icon) return null;
+    if (!processedIcon) return null;
     
     const iconClasses = variant === 'family' ? 'universal-card-icon' : getIconPositionClass();
     
     // Определение размера иконки в зависимости от устройства
     const getScaledIcon = () => {
-      if (!React.isValidElement(icon)) return icon;
+      if (!React.isValidElement(processedIcon)) return processedIcon;
       
       // Извлекаем текущий размер иконки
-      const currentSize = (icon as React.ReactElement<any>).props.size || 80;
+      const currentSize = (processedIcon as React.ReactElement<any>).props.size || 80;
       
       // Вычисляем новый размер для мобильных устройств
       const newSize = isMobile ? Math.floor(currentSize * 0.7) : currentSize;
@@ -316,7 +322,7 @@ const descriptionSizeClass = isMobile
     )
   );
 
-  // Рендер для варианта 'family' (по изображению)
+  // Рендер для варианта 'family'
   if (variant === 'family') {
     return (
       <div 
@@ -390,7 +396,7 @@ const descriptionSizeClass = isMobile
   }else if (variant === 'analysis-card') {
   return (
     <div 
-      className={`${cardClasses} flex flex-col w-[375px] h-[320px]`}
+      className={`${cardClasses} flex flex-col w-[375px] min-h-[320px]`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={styles.container}
@@ -403,7 +409,7 @@ const descriptionSizeClass = isMobile
         
         {/* Иконка по центру */}
         <div className="flex items-center justify-center flex-grow">
-          {icon}
+          {processedIcon}
         </div>
         
         {/* Кнопка внизу */}
@@ -422,8 +428,73 @@ const descriptionSizeClass = isMobile
       </div>
     </div>
   );
+  }
+else if (variant === 'surgery') {
+  return (
+    <div 
+      className={`${cardClasses} flex flex-col w-full h-full`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={styles.container}
+    >
+      {/* Dot in top right corner */}
+      <div 
+        className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 rounded-full transition-colors duration-300 ${
+          isHovered 
+            ? 'bg-white' 
+            : theme === 'light' ? 'bg-[#F7F7F7]' : 'bg-[#11363C]'
+        }`}
+      ></div>
+      
+      <div className="flex flex-col justify-between h-full">
+        {/* Heading */}
+        <h3 className={`${titleSizeClass} font-medium ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>
+          {title}
+        </h3>
+        
+        {/* Description */}
+        {description && (
+          <p className={`${descriptionSizeClass} ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} opacity-80 mb-6`}>
+            {typeof description === 'string' ? description : ''}
+          </p>
+        )}
+        
+        {/* Features list */}
+        {features && features.length > 0 && (
+          <ul className="space-y-2 mb-6">
+            {features.map((feature, index) => (
+              <li key={index} className="flex items-start">
+                <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
+                <span className={`${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        
+        {/* Icon - hidden on mobile */}
+        <div className="absolute bottom-6 right-6 hidden md:block">
+          {icon}
+        </div>
+        
+        {/* Button */}
+        {showButton && (
+          <Link href={link || '#'} className="block mt-4">
+            <button 
+              className={`w-[330px] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
+                ${isHovered 
+                  ? 'bg-white text-light-accent border border-light-accent' 
+                  : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
+                }`}
+              style={styles.button}
+            >
+              {buttonText || 'Подробнее'}
+            </button>
+          </Link>
+        )}
+      </div>
+    </div>
+  );
 }
-  // Содержимое карточки для других вариантов
   const CardContent = () => (
     <div className="flex flex-col h-full">
       {/* Круглый элемент в правом верхнем углу */}

@@ -22,3 +22,6 @@ export { default as AngelIcon } from './AngelIcon';
 export { default as EyeIcon } from './EyeIcon';
 export { default as LightbulbIcon } from './LightbulbIcon';
 export { default as ButterflyIcon } from './ButterflyIcon';
+export { default as ButterflyLogoSmallIcon } from './ButterflyLogoSmallIcon';
+export { default as CandleIcon } from './CandleIcon';
+export { default as FamilyIcon } from './FamilyIcon';

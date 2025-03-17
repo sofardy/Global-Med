@@ -356,20 +356,22 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
       
       {/* Стили для слайдера */}
       <style jsx global>{`
-        .universal-slider {
-          width: 100%;
-          overflow: visible !important;
-          padding-bottom: 20px;
-          position: relative;
-          z-index: 1;
-        }
-        
-        .universal-slide {
-          height: auto;
-          display: flex;
-          align-items: stretch;
-          transition: transform 0.3s ease;
-        }
+       .universal-slider {
+    width: 100%;
+    overflow-x: hidden !important; /* Изменено с visible на hidden */
+    padding-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .swiper-slide {
+    /* width: ${100 / activeSlidePerView}% !important; Явно задаем ширину слайда */
+    height: auto;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  
         
         .swiper-wrapper {
           display: flex;

@@ -1,13 +1,14 @@
 'use client';
 
-import { ThemeToggle } from '../shared/components/ThemeToggle';
-import { LocaleToggle } from '../shared/components/LocaleToggle';
+// import { ThemeToggle } from '../shared/components/ThemeToggle';
+// import { LocaleToggle } from '../shared/components/LocaleToggle';
 import { HeroBanner } from '../shared/components/HeroBanner/HeroBanner';
 import { SymptomSelector } from '../shared/components/SymptomSelector/SymptomSelector';
 import { MedicalServices } from '../shared/components/MedicalServices/MedicalServices';
 import { CheckupSlider } from '../shared/components/CheckupSlider';
 import { AnalysisGrid } from '../shared/components/AnalysisGrid';
 import { SurgerySlider } from '../shared/components/SurgerySlider';
+import { AppointmentSection } from '../shared/components/AppointmentFormSection';
 
 
 export default function Home() {
@@ -19,8 +20,9 @@ export default function Home() {
       <CheckupSlider />
       <AnalysisGrid />
       <SurgerySlider />
-        <ThemeToggle />
-        <LocaleToggle />
+      <AppointmentSection />
+        {/* <ThemeToggle />
+        <LocaleToggle /> */}
     </main>
   );
 }

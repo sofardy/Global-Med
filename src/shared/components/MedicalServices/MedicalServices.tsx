@@ -6,6 +6,7 @@ import { UniversalCard } from '../UniversalCard';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { useThemeStore } from '@/src/store/theme';
 import { AngelIcon, ButterflyIcon, EyeIcon, LightbulbIcon } from '../../ui/Icon';
+import { applyColorToIcon, getIconColorByTheme } from '../../utils/iconUtils';
 
 // Переводы для компонента
 const translations = {
@@ -96,7 +97,6 @@ export const MedicalServices: React.FC = () => {
   const { theme } = useThemeStore();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const services = t('services', { returnObjects: true }) as any[];
-const iconColor = theme === 'dark' ? 'var(--dark-text)' : 'var(--light-text)';
   return (
     <div className="w-full">
       <div className="mt-20">
@@ -148,9 +148,7 @@ const iconColor = theme === 'dark' ? 'var(--dark-text)' : 'var(--light-text)';
                   title={service.title}
                   description={service.description}
                   additionalInfo={service.servicesCount}
-               icon={React.isValidElement(service.iconPath) 
-  ? React.cloneElement(service.iconPath, { color: iconColor })
-  : service.iconPath}
+             icon={applyColorToIcon(service.iconPath, getIconColorByTheme(theme))}
                   link={`/services/${service.id}`}
                   buttonText={t('moreButton')}
                   className="h-full"
