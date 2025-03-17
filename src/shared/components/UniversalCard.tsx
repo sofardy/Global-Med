@@ -54,6 +54,8 @@ export interface UniversalCardProps {
   buttonPadding?: string;
    icon?: React.ReactNode;
   iconColor?: string; 
+  minHeight?: string;
+  heightMobile?: string;
 }
 
 export const UniversalCard: React.FC<UniversalCardProps> = ({
@@ -93,7 +95,9 @@ buttonTextSize,
   investigationsCount,
   styles = {},
   imageSrc,
-  features
+  features,
+  minHeight,
+  heightMobile,
 }) => {
   const { theme } = useThemeStore();
   const [isHovered, setIsHovered] = useState(false);
@@ -179,7 +183,7 @@ const handleMouseLeave = () => {
   
   const cardClasses = `
     universal-card relative ${getBorderRadiusClass()} ${getPaddingClass()} transition-all duration-300 
-    ${isMobile ? 'min-h-[300px]' : 'min-h-[375px]'} h-full
+    ${isMobile ? `${heightMobile}]` : `${minHeight}`} h-full
     ${getBackgroundClass()}
     ${getBorderClass()}
     ${link || onClick ? 'cursor-pointer hover:shadow-md' : ''}
@@ -396,7 +400,7 @@ const descriptionSizeClass = isMobile
   }else if (variant === 'analysis-card') {
   return (
     <div 
-      className={`${cardClasses} flex flex-col w-[375px] min-h-[320px]`}
+      className={`${cardClasses} flex flex-col  min-h-[320px]`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={styles.container}
@@ -480,7 +484,7 @@ else if (variant === 'surgery') {
         {showButton && (
           <Link href={link || '#'} className="block mt-4">
             <button 
-              className={`w-[330px] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
+              className={`w-[310px] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
                 ${isHovered 
                   ? 'bg-white text-light-accent border border-light-accent' 
                   : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
@@ -703,7 +707,7 @@ else if (variant === 'surgery') {
   // Обертка в Link если есть ссылка
   if (link) {
     return (
-      <Link href={link} className={`h-full ${isMobile ? 'min-h-[300px]' : 'min-h-[375px] md:min-h-[400px]'} w-full`}>
+      <Link href={link} className={`h-full ${isMobile ? 'min-h-[300px]' : 'min-h-[340px] md:min-h-[340px]'} w-full`}>
         <div 
           className={cardClasses}
           onMouseEnter={handleMouseEnter}

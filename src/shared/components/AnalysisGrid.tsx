@@ -91,7 +91,7 @@ export const AnalysisGrid: React.FC<AnalysisGridProps> = ({
   
   <Link 
     href={buttonLink || "/analysis"}
-    className="mt-auto flex items-center gap-2 p-3 md:p-4 text-white border border-white rounded-full transition-all hover:bg-white/10 self-start relative z-10 w-[280px]"
+    className="mt-auto flex items-center gap-2 p-3 md:p-4 text-white border border-white rounded-2xl transition-all hover:bg-white/10 self-start relative z-10"
   >
     <span className='text-[14px] md:text-[16px]'>{localizedButtonText}</span>
     <ArrowDownIcon color="white" size={12} className="transform rotate-[-90deg] ml-auto" />

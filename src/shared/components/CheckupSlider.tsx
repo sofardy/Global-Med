@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React from 'react';
@@ -141,8 +142,8 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
   const { t } = useTranslation(translations);
   
   // Получаем локализованные данные
-  const sliderTitle = title || t('title');
-  const sliderDescription = description || t('description');
+  const sliderTitle = title || t('title') || '';
+  const sliderDescription = description || t('description')||'';
   const checkups = t('checkups', { returnObjects: true }) as any[];
   
   // Разделение текстов на строки

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect, useRef, ReactNode } from 'react';
@@ -222,69 +223,75 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
   };
   
   // Рендер навигационных кнопок (если они не должны быть рядом с описанием)
-  const renderNavigation = () => {
-    if (!showNavigation || (description && !customPrevButton && !customNextButton)) return null;
-    
-    return (
-      <div className="flex items-center gap-2 mb-6">
-        {customPrevButton ? (
-          React.cloneElement(customPrevButton as React.ReactElement, { 
-            ref: prevButtonRef,
-            className: `swiper-button-prev-custom ${(customPrevButton as React.ReactElement)?.props?.className || ''}` 
-          })
-        ) : (
-          <button
-            ref={prevButtonRef}
-            className={`w-12 h-12 rounded-lg border ${
-              theme === 'light' ? 'border-light-text' : 'border-dark-text'
-            } flex items-center justify-center transition-colors swiper-button-prev-custom`}
-            aria-label={navigationPrevLabel}
+const renderNavigation = () => {
+  if (!showNavigation || (description && !customPrevButton && !customNextButton)) return null;
+
+  return (
+    <div className="flex items-center gap-2 mb-6">
+      {customPrevButton ? (
+        React.cloneElement(
+          customPrevButton as React.ReactElement<any>, 
+          { 
+            ref: prevButtonRef as React.Ref<any>,
+            className: `swiper-button-prev-custom ${(customPrevButton as React.ReactElement<any>).props.className || ''}` 
+          }
+        )
+      ) : (
+        <button
+          ref={prevButtonRef}
+          className={`w-12 h-12 rounded-lg border ${
+            theme === 'light' ? 'border-light-text' : 'border-dark-text'
+          } flex items-center justify-center transition-colors swiper-button-prev-custom`}
+          aria-label={navigationPrevLabel}
+        >
+          <svg 
+            className={`w-6 h-6 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`} 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
           >
-            <svg 
-              className={`w-6 h-6 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`} 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
-                d="M15 19l-7-7 7-7" 
-              />
-            </svg>
-          </button>
-        )}
-        
-        {customNextButton ? (
-          React.cloneElement(customNextButton as React.ReactElement, { 
-            ref: nextButtonRef,
-            className: `swiper-button-next-custom ${(customNextButton as React.ReactElement)?.props?.className || ''}` 
-          })
-        ) : (
-          <button
-            ref={nextButtonRef}
-            className={`w-12 h-12 rounded-lg bg-light-accent text-white flex items-center justify-center transition-colors swiper-button-next-custom`}
-            aria-label={navigationNextLabel}
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth="2" 
+              d="M15 19l-7-7 7-7" 
+            />
+          </svg>
+        </button>
+      )}
+      
+      {customNextButton ? (
+        React.cloneElement(
+          customNextButton as React.ReactElement<any>, 
+          { 
+            ref: nextButtonRef as React.Ref<any>,
+            className: `swiper-button-next-custom ${(customNextButton as React.ReactElement<any>).props.className || ''}` 
+          }
+        )
+      ) : (
+        <button
+          ref={nextButtonRef}
+          className={`w-12 h-12 rounded-lg bg-light-accent text-white flex items-center justify-center transition-colors swiper-button-next-custom`}
+          aria-label={navigationNextLabel}
+        >
+          <svg 
+            className="w-6 h-6" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
           >
-            <svg 
-              className="w-6 h-6" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
-                d="M9 5l7 7-7 7" 
-              />
-            </svg>
-          </button>
-        )}
-      </div>
-    );
-  };
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth="2" 
+              d="M9 5l7 7-7 7" 
+            />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+};
   
   // Если нет слайдов, не рендерим слайдер
   if (!slides || slides.length === 0) {

@@ -174,8 +174,8 @@ export const formatPhoneNumber = (value: string): string => {
  *   );
  */
 export const useFormValidation = (
-    initialData: FormData,
-    rules?: ValidationRules
+    // initialData: FormData,
+    // rules?: ValidationRules
 ) => {
     // Здесь должна быть React-реализация хука, которая использует useState
     // для управления состоянием формы и ошибок

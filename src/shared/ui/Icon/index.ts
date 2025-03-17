@@ -25,3 +25,4 @@ export { default as ButterflyIcon } from './ButterflyIcon';
 export { default as ButterflyLogoSmallIcon } from './ButterflyLogoSmallIcon';
 export { default as CandleIcon } from './CandleIcon';
 export { default as FamilyIcon } from './FamilyIcon';
+export { default as HeartHandIcon } from './HeartHandIcon';

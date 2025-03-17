@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React from 'react';
@@ -70,8 +71,8 @@ export const SurgerySlider: React.FC<SurgerySliderProps> = ({
   const { t } = useTranslation(surgeryData);
   
   // Получаем локализованные данные
-  const sliderTitle = title || t('title');
-  const sliderDescription = description || t('description');
+  const sliderTitle = title || t('title') || '';
+  const sliderDescription = description || t('description') || '';
   const services = t('services', { returnObjects: true }) as any[];
   const detailsButtonText = t('detailsButton');
   

@@ -13,7 +13,9 @@ export const applyColorToIcon = (
     color: string
 ): React.ReactNode => {
     if (React.isValidElement(icon)) {
-        return React.cloneElement(icon as React.ReactElement, { color });
+        return React.cloneElement(icon as React.ReactElement, {
+            ...(icon.type === 'svg' ? { fill: color, stroke: color } : { style: { color } })
+        });
     }
     return icon;
 };

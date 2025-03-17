@@ -1,23 +1,26 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { ArrowDownIcon } from '../ui/Icon';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import { ValidationRules } from '../utils/formValidation';
 
 interface AppointmentFormProps {
-  onSuccess?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSuccess?: (formData: any) => void; // Изменен для передачи данных формы
   onCancel?: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   translationNamespace?: any;
+  keepFormAfterSubmit?: boolean; // Параметр для сохранения формы после отправки
 }
 
-export const AppointmentForm: React.FC<AppointmentFormProps> = ({
+// Используем forwardRef для передачи ссылки от родителя
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
   onSuccess,
-  onCancel,
-  translationNamespace
-}) => {
+  translationNamespace,
+}, ref) => {
   const { t } = useTranslation(translationNamespace);
   const [isPurposeOpen, setIsPurposeOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
@@ -47,28 +50,58 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     formData,
     formErrors,
     isSubmitting,
-    isSuccess,
     handleInputChange,
     handlePhoneChange,
     handleSelectValue,
-    submitForm
+    submitForm,
+    setFormData,
+    setFormErrors
   } = useFormValidation(
     { name: '', phone: '', purpose: '', consent: false },
     validationRules
   );
+
+  // Экспортируем метод сброса формы через ref
+  useImperativeHandle(ref, () => ({
+    resetFormData: () => {
+      // Напрямую сбрасываем значения в форме
+      setFormData({ name: '', phone: '', purpose: '', consent: false });
+      setFormErrors({ name: false, phone: false, purpose: false, consent: false });
+    }
+  }));
+  
+  // Получаем перевод выбранной цели обращения
+const getSelectedPurposeText = (purposeKey: string) => {
+  if (!purposeKey) return '';
+
+  try {
+    const options: Record<string, string> = t('modal.purposeOptions', { returnObjects: true });
+    return options[purposeKey] || purposeKey;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return purposeKey;
+  }
+};
   
   // Обработка отправки формы
   const handleSubmit = () => {
-    submitForm(
+    // Проверяем валидность формы
+    const isValid = submitForm(
       // Функция успешной отправки
       () => {
-        if (onSuccess) onSuccess();
+        // Передаем данные формы обратно для подтверждения
+        if (onSuccess) onSuccess({...formData});
       },
       // Функция при ошибке
       (error) => {
         console.error('Form submission error:', error);
-      }
+      },
     );
+    
+    // Если валидация не прошла, не делаем ничего
+    if (!isValid) {
+      console.log('Validation failed');
+    }
   };
   
   // Обработка выбора из выпадающего списка
@@ -76,31 +109,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     handleSelectValue('purpose', value);
     setIsPurposeOpen(false);
   };
-  
-  // Если форма отправлена успешно, показываем сообщение об успехе
-  if (isSuccess) {
-    return (
-      <div className="py-6 flex flex-col items-center justify-center text-center">
-        <div className="bg-light-accent rounded-full p-5 mb-6">
-          <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-        </div>
-        <h3 className="text-2xl md:text-3xl font-bold text-light-text dark:text-dark-text mb-4">
-          {t('modal.successTitle')}
-        </h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg md:text-xl">
-          {t('modal.successMessage')}
-        </p>
-        <button 
-          onClick={onCancel}
-          className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors text-lg md:text-xl"
-        >
-          {t('modal.closeButton')}
-        </button>
-      </div>
-    );
-  }
   
   return (
     <div className="space-y-4 flex flex-col flex-grow">
@@ -173,12 +181,12 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
             >
               <span className={formData.purpose ? 'text-light-text dark:text-dark-text' : 'text-gray-400'}>
                 {formData.purpose 
-                  ? (purposeOptions[formData.purpose as keyof typeof purposeOptions] as string) 
+                  ? getSelectedPurposeText(formData.purpose as string)
                   : t('modal.purposePlaceholder')}
               </span>
               <ArrowDownIcon 
                 size={16} 
-                className={`transition-transform duration-300 ${isPurposeOpen ? 'transform rotate-180' : ''}`} 
+                className={`transition-transform duration-300 ${isPurposeOpen ? "transform rotate-180" : ""}`} 
               />
             </div>
             
@@ -218,9 +226,10 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
             required
             disabled={isSubmitting}
             onChange={(e) => handleSelectValue('consent', e.target.checked.toString())}
+            checked={formData.consent as boolean}
           />
           <label htmlFor="consent" className="ml-3 text-base md:text-lg text-gray-500 dark:text-gray-400">
-            {t('modal.consentText')} <span className="text-light-accent cursor-pointer hover:underline">{t('modal.consentLink')}</span> {t('modal.consentRest')}
+            Соглашаюсь с политикой в отношении обработки персональных данных
           </label>
         </div>
         {formErrors.consent && (
@@ -250,4 +259,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       </button>
     </div>
   );
-};
+});
+
+// Имя для отладки
+AppointmentForm.displayName = 'AppointmentForm';
