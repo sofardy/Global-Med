@@ -112,7 +112,7 @@ const gridDescription = description || t('description') || '';
           <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto md:h-[500px] lg:h-[700px] p-8 md:p-10 bg-white dark:bg-dark-block text-[#173F46] dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[728px] flex flex-col">
             <div className="relative z-10 max-w-3xl">
               <div className="space-y-6">
-     <h2 className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-[40%] font-['Graphik_LCG'] space-y-6">
+     <h2 className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-[40%]  space-y-6">
   {gridTitle.split(' ').map((word, index) => {
     const wordsPerLine = Math.ceil(gridTitle.split(' ').length / 2);
     return (

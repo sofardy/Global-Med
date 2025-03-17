@@ -1,5 +1,3 @@
-// src/shared/utils/iconUtils.ts
-
 import React from 'react';
 
 /**
