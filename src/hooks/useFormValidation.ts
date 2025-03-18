@@ -1,6 +1,6 @@
 // src/shared/hooks/useFormValidation.ts
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
     FormData,
     ValidationErrors,
@@ -22,12 +22,19 @@ export const useFormValidation = (
     initialData: FormData,
     validationRules: ValidationRules = standardValidationRules
 ) => {
-    const [formData, setFormData] = useState<FormData>(initialData);
-    const [formErrors, setFormErrors] = useState<ValidationErrors>(
+    // Создаем локальную копию initialData для каждого экземпляра хука
+    const [formData, setFormData] = useState<FormData>(() => ({ ...initialData }));
+    const [formErrors, setFormErrors] = useState<ValidationErrors>(() =>
         Object.keys(initialData).reduce((acc, key) => ({ ...acc, [key]: false }), {})
     );
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    // Обновляем состояние, если изменился initialData
+    useEffect(() => {
+        setFormData({ ...initialData });
+        setFormErrors(Object.keys(initialData).reduce((acc, key) => ({ ...acc, [key]: false }), {}));
+    }, [JSON.stringify(initialData)]);
 
     /**
      * Обработчик изменения текстовых полей формы
@@ -71,9 +78,9 @@ export const useFormValidation = (
     }, []);
 
     /**
-     * Установка значения для выпадающего списка
+     * Установка значения для выпадающего списка или чекбоксов
      */
-    const handleSelectValue = useCallback((name: string, value: string) => {
+    const handleSelectValue = useCallback((name: string, value: any) => {
         setFormData(prev => ({ ...prev, [name]: value }));
 
         // Сбрасываем ошибку при изменении поля
@@ -100,7 +107,7 @@ export const useFormValidation = (
      * Сброс формы к начальному состоянию
      */
     const resetForm = useCallback(() => {
-        setFormData(initialData);
+        setFormData({ ...initialData });
         setFormErrors(Object.keys(initialData).reduce((acc, key) => ({ ...acc, [key]: false }), {}));
         setIsSubmitting(false);
         setIsSuccess(false);

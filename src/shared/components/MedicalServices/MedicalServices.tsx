@@ -20,7 +20,7 @@ const translations = {
         title: 'Лор 24/7',
         description: 'Круглосуточная диагностика и лечение заболеваний уха, горла и носа',
         servicesCount: '12 услуг',
-        iconPath: <LightbulbIcon />,
+        iconPath: <LightbulbIcon size={80} />,
         backgroundImage: '/images/lor-bg.png'
       },
       {
@@ -28,7 +28,7 @@ const translations = {
         title: 'Офтальмология',
         description: 'Проверка зрения, лечение воспалений и консультации по подбору очков и линз',
         servicesCount: '15 услуг',
-        iconPath: <EyeIcon />,
+        iconPath: <EyeIcon size={80}/>,
         backgroundImage: '/images/eye-bg.png'
       },
       {
@@ -36,7 +36,7 @@ const translations = {
         title: 'Офтальмология',
         description: 'Проверка зрения, лечение воспалений и консультации по подбору очков и линз',
         servicesCount: '15 услуг',
-        iconPath: <ButterflyIcon />,
+        iconPath: <ButterflyIcon size={80}/>,
         backgroundImage: '/images/eye-bg.png'
       },
       {
@@ -44,7 +44,7 @@ const translations = {
         title: 'Офтальмология',
         description: 'Проверка зрения, лечение воспалений и консультации по подбору очков и линз',
         servicesCount: '15 услуг',
-        iconPath: <AngelIcon />,
+        iconPath: <AngelIcon size={80}/>,
         backgroundImage: '/images/eye-bg.png'
       },
     ],
@@ -60,7 +60,7 @@ const translations = {
         title: 'LOR 24/7',
         description: 'Quloq, tomoq va burun kasalliklarini sutkalik diagnostikasi va davolash',
         servicesCount: '12 ta xizmat',
-        iconPath: <LightbulbIcon />,
+        iconPath: <LightbulbIcon size={80}/>,
         backgroundImage: '/images/lor-bg.png'
       },
       {
@@ -68,7 +68,7 @@ const translations = {
         title: 'Oftalmologiya',
         description: 'Ko‘rishni tekshirish, yallig‘lanishlarni davolash va ko‘zoynak hamda linzalar bo‘yicha maslahatlar',
         servicesCount: '15 ta xizmat',
-        iconPath: <EyeIcon />,
+        iconPath: <EyeIcon size={80}/>,
         backgroundImage: '/images/eye-bg.png'
       },
       {
@@ -76,7 +76,7 @@ const translations = {
         title: 'Oftalmologiya',
         description: 'Ko‘rishni tekshirish, yallig‘lanishlarni davolash va ko‘zoynak hamda linzalar bo‘yicha maslahatlar',
         servicesCount: '15 ta xizmat',
-        iconPath: <ButterflyIcon />,
+        iconPath: <ButterflyIcon size={80}/>,
         backgroundImage: '/images/eye-bg.png'
       },
       {
@@ -84,7 +84,7 @@ const translations = {
         title: 'Oftalmologiya',
         description: 'Ko‘rishni tekshirish, yallig‘lanishlarni davolash va ko‘zoynak hamda linzalar bo‘yicha maslahatlar',
         servicesCount: '15 ta xizmat',
-        iconPath: <AngelIcon />,
+        iconPath: <AngelIcon size={80}/>,
         backgroundImage: '/images/eye-bg.png'
       },
     ],

@@ -477,7 +477,7 @@ else if (variant === 'surgery') {
         
         {/* Icon - hidden on mobile */}
         <div className="absolute bottom-6 right-6 hidden md:block">
-          {icon}
+          {processedIcon}
         </div>
         
         {/* Button */}

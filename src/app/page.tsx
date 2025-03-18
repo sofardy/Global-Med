@@ -1,7 +1,6 @@
 'use client';
 
-import { ThemeToggle } from '../shared/components/ThemeToggle';
-import { LocaleToggle } from '../shared/components/LocaleToggle';
+
 import { HeroBanner } from '../shared/components/HeroBanner/HeroBanner';
 import { SymptomSelector } from '../shared/components/SymptomSelector/SymptomSelector';
 import { MedicalServices } from '../shared/components/MedicalServices/MedicalServices';
@@ -11,7 +10,11 @@ import { SurgerySlider } from '../shared/components/SurgerySlider';
 import { AppointmentSection } from '../shared/components/AppointmentSection';
 import { VideoBanner } from '../shared/components/VideoBanner';
 import { BenefitsGrid } from '../shared/components/BenefitsGrid';
-import MedicalGallery  from '../shared/components/MedicalGallery';
+import {MedicalGallery}  from '../shared/components/MedicalGallery';
+import {DoctorsSlider}  from '../shared/components/DoctorsSlider';
+import {ReviewsSlider}  from '../shared/components/Review/ReviewsSlider';
+import CareerForm from '../shared/components/CareerForm';
+import {ContactInfo} from '../shared/components/ContactInfo';
 
 
 export default function Home() {
@@ -27,9 +30,11 @@ export default function Home() {
       <VideoBanner />
       <BenefitsGrid />
       <MedicalGallery />
+      <DoctorsSlider />
+      <CareerForm />
+      <ReviewsSlider />
+      <ContactInfo />
 
-        <ThemeToggle />
-        <LocaleToggle />
     </main>
   );
 }

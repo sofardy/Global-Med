@@ -9,7 +9,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import Image from 'next/image';
 
-const MedicalGallery = ({ 
+export const MedicalGallery = ({ 
   images = [
     '/images/medical-image-1.png',
     '/images/medical-image-2.png',
@@ -112,5 +112,3 @@ const MedicalGallery = ({
     </div>
   );
 };
-
-export default MedicalGallery;

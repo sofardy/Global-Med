@@ -1,16 +1,15 @@
 export default function LightbulbIcon({
   color = '#094A54',
-  size = 55,
+  size = 80,
   style = {},
   ...props
 }) {
   // Calculate height proportionally based on original viewBox
-  const height = (size / 55) * 78;
   
   return (
     <svg
       width={size}
-      height={height}
+      height={size}
       viewBox="0 0 55 78"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

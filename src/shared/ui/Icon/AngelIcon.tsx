@@ -5,12 +5,11 @@ export default function AngelIcon({
   ...props
 }) {
   // Calculate height proportionally based on original viewBox
-  const height = (size / 90) * 68;
   
   return (
     <svg
       width={size}
-      height={height}
+      height={size}
       viewBox="0 0 90 68"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

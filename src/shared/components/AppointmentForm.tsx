@@ -7,16 +7,12 @@ import { useFormValidation } from '../../hooks/useFormValidation';
 import { ValidationRules } from '../utils/formValidation';
 
 interface AppointmentFormProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSuccess?: (formData: any) => void; // Изменен для передачи данных формы
+  onSuccess?: (formData: any) => void;
   onCancel?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   translationNamespace?: any;
-  keepFormAfterSubmit?: boolean; // Параметр для сохранения формы после отправки
+  keepFormAfterSubmit?: boolean;
 }
 
-// Используем forwardRef для передачи ссылки от родителя
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
   onSuccess,
   translationNamespace,
@@ -25,10 +21,10 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
   const [isPurposeOpen, setIsPurposeOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
   
-  // Получаем опции для выпадающего списка
-  const purposeOptions = t('modal.purposeOptions', { returnObjects: true });
+  // Локальное состояние для чекбокса
+  const [consentChecked, setConsentChecked] = useState(false);
   
-  // Определяем правила валидации
+  // Правила валидации
   const validationRules: ValidationRules = {
     name: { required: true },
     phone: { 
@@ -64,24 +60,35 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
   // Экспортируем метод сброса формы через ref
   useImperativeHandle(ref, () => ({
     resetFormData: () => {
-      // Напрямую сбрасываем значения в форме
+      // Сбрасываем локальное состояние чекбокса
+      setConsentChecked(false);
+      // Сбрасываем основную форму
       setFormData({ name: '', phone: '', purpose: '', consent: false });
       setFormErrors({ name: false, phone: false, purpose: false, consent: false });
     }
   }));
   
   // Получаем перевод выбранной цели обращения
-const getSelectedPurposeText = (purposeKey: string) => {
-  if (!purposeKey) return '';
-
-  try {
-    const options: Record<string, string> = t('modal.purposeOptions', { returnObjects: true });
-    return options[purposeKey] || purposeKey;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    return purposeKey;
-  }
-};
+  const getSelectedPurposeText = (purposeKey: string) => {
+    if (!purposeKey) return '';
+    try {
+      const options: Record<string, string> = t('modal.purposeOptions', { returnObjects: true });
+      return options[purposeKey] || purposeKey;
+    } catch (error) {
+      return purposeKey;
+    }
+  };
+  
+  // Обработка чекбокса с локальным состоянием
+  const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault(); // Предотвращаем дефолтное поведение
+    const isChecked = e.target.checked;
+    setConsentChecked(isChecked);
+    // Обновляем значение в formData напрямую
+    setFormData(prev => ({ ...prev, consent: isChecked }));
+    // Сбрасываем ошибку
+    setFormErrors(prev => ({ ...prev, consent: false }));
+  };
   
   // Обработка отправки формы
   const handleSubmit = () => {
@@ -193,7 +200,7 @@ const getSelectedPurposeText = (purposeKey: string) => {
             {/* Выпадающий список */}
             {isPurposeOpen && (
               <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700 py-1 max-h-52 overflow-auto">
-                {Object.entries(purposeOptions).map(([key, value]) => (
+                {Object.entries(t('modal.purposeOptions', { returnObjects: true })).map(([key, value]) => (
                   <div
                     key={key}
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-light-text dark:text-dark-text text-base md:text-lg transition-colors"
@@ -212,24 +219,23 @@ const getSelectedPurposeText = (purposeKey: string) => {
           )}
         </div>
         
-        {/* Согласие на обработку данных */}
-        <div className="flex items-start mt-4">
+        {/* Согласие на обработку данных - с локальным состоянием */}
+        <div className="flex items-center mt-4">
           <input 
             type="checkbox" 
-            id="consent" 
+            id="appointment-consent" // Уникальный ID для этой формы
             name="consent" 
-            className={`mt-1 w-5 h-5 md:w-6 md:h-6 ${
+            className={`mt-0 w-5 h-5 md:w-6 md:h-6 ${
               formErrors.consent 
                 ? 'border-red-500 text-red-500' 
                 : 'text-light-accent border-gray-300'
             } bg-gray-100 rounded focus:ring-light-accent`}
-            required
+            checked={consentChecked}
+            onChange={handleConsentChange}
             disabled={isSubmitting}
-            onChange={(e) => handleSelectValue('consent', e.target.checked.toString())}
-            checked={formData.consent as boolean}
           />
-          <label htmlFor="consent" className="ml-3 text-base md:text-lg text-gray-500 dark:text-gray-400">
-            Соглашаюсь с политикой в отношении обработки персональных данных
+          <label htmlFor="appointment-consent" className="ml-3 text-base md:text-lg text-gray-500 dark:text-gray-400">
+            {'Соглашаюсь с политикой в отношении обработки персональных данных'}
           </label>
         </div>
         {formErrors.consent && (

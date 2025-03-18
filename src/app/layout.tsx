@@ -6,7 +6,9 @@ import { LanguageProvider } from '../shared/components/LanguageProvider';
 import { TopBar } from '../shared/layout/TopBar/TopBar';
 import { routes } from '../shared/config/routes';
 import { FloatingComponents } from '../shared/components/FloatingComponents';
-
+import { Footer } from '../shared/layout/Footer/Footer';
+// import { ThemeToggle } from '../shared/components/ThemeToggle';
+// import { LocaleToggle } from '../shared/components/LocaleToggle';
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
 export const metadata: Metadata = {
@@ -29,7 +31,12 @@ export default function RootLayout({
               <main className="min-h-screen">
                 {children}
               </main>
+              
+              {/* <ThemeToggle />
+              <LocaleToggle /> */}
+              <Footer />
             </div>
+            
             <FloatingComponents />
           </LanguageProvider>
         </ThemeProvider>

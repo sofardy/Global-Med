@@ -1,4 +1,3 @@
-// src/shared/ui/Icon/TabletIcon.tsx
 export default function TabletIcon({
   color = '#094A54',
   size = 80,
