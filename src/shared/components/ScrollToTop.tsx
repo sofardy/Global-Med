@@ -1,13 +1,12 @@
-// src/shared/components/ScrollToTop.tsx
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 /**
- * Компонент для прокрутки страницы вверх при изменении маршрута
+ * Внутренний компонент для обработки прокрутки
  */
-export const ScrollToTop = () => {
+function ScrollToTopContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -38,4 +37,16 @@ export const ScrollToTop = () => {
   }, [pathname, searchParams]);
 
   return null;
+}
+
+/**
+ * Компонент для прокрутки страницы вверх при изменении маршрута
+ * Обернут в Suspense для совместимости с Next.js 14
+ */
+export const ScrollToTop = () => {
+  return (
+    <Suspense fallback={null}>
+      <ScrollToTopContent />
+    </Suspense>
+  );
 };
