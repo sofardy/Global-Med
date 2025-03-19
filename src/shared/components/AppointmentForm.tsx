@@ -92,6 +92,11 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
   
   // Обработка отправки формы
   const handleSubmit = () => {
+    // Убираем фокус с текущего элемента перед отправкой
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    
     // Проверяем валидность формы
     const isValid = submitForm(
       // Функция успешной отправки
@@ -117,6 +122,14 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
     setIsPurposeOpen(false);
   };
   
+  // Обработчик снятия фокуса
+  const handleBlur = () => {
+    // Гарантируем что после потери фокуса страница не будет прокручиваться
+    setTimeout(() => {
+      window.scrollTo(window.scrollX, window.scrollY);
+    }, 0);
+  };
+
   return (
     <div className="space-y-4 flex flex-col flex-grow">
       <div className="flex-1 mb-8">
@@ -131,14 +144,15 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
             placeholder={t('modal.namePlaceholder')}
             className={`w-full p-4 md:p-5 text-base md:text-lg bg-gray-50 dark:bg-gray-800 rounded-xl border ${
               formErrors.name 
-                ? 'border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 dark:border-gray-700 focus:ring-light-accent'
-            } focus:outline-none focus:ring-2`}
+                ? 'border-red-500' 
+                : 'border-gray-200 dark:border-gray-700'
+            } outline-none`}
             required
             disabled={isSubmitting}
-            autoFocus
+            onBlur={handleBlur}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
+                e.preventDefault();
                 const phoneInput = document.querySelector('input[name="phone"]') as HTMLInputElement;
                 phoneInput?.focus();
               }
@@ -162,11 +176,12 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
             placeholder={t('modal.phonePlaceholder')}
             className={`w-full p-4 md:p-5 text-base md:text-lg bg-gray-50 dark:bg-gray-800 rounded-xl border ${
               formErrors.phone 
-                ? 'border-red-500 focus:ring-red-500' 
-                : 'border-gray-200 dark:border-gray-700 focus:ring-light-accent'
-            } focus:outline-none focus:ring-2`}
+                ? 'border-red-500' 
+                : 'border-gray-200 dark:border-gray-700'
+            } outline-none`}
             required
             disabled={isSubmitting}
+            onBlur={handleBlur}
           />
           {formErrors.phone && (
             <p className="mt-2 text-sm text-red-500">
@@ -185,6 +200,14 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
                   : 'border-gray-200 dark:border-gray-700'
               } cursor-pointer flex justify-between items-center`}
               onClick={() => !isSubmitting && setIsPurposeOpen(!isPurposeOpen)}
+              tabIndex={0}
+              onBlur={(e) => {
+                // Закрываем список только если клик был не по дочернему элементу
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                  setTimeout(() => setIsPurposeOpen(false), 100);
+                }
+                handleBlur();
+              }}
             >
               <span className={formData.purpose ? 'text-light-text dark:text-dark-text' : 'text-gray-400'}>
                 {formData.purpose 
@@ -205,6 +228,8 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
                     key={key}
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-light-text dark:text-dark-text text-base md:text-lg transition-colors"
                     onClick={() => handlePurposeSelect(key)}
+                    tabIndex={0}
+                    onBlur={handleBlur}
                   >
                     {value}
                   </div>
@@ -229,10 +254,11 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
               formErrors.consent 
                 ? 'border-red-500 text-red-500' 
                 : 'text-light-accent border-gray-300'
-            } bg-gray-100 rounded focus:ring-light-accent`}
+            } bg-gray-100 rounded outline-none`}
             checked={consentChecked}
             onChange={handleConsentChange}
             disabled={isSubmitting}
+            onBlur={handleBlur}
           />
           <label htmlFor="appointment-consent" className="ml-3 text-base md:text-lg text-gray-500 dark:text-gray-400">
             {'Соглашаюсь с политикой в отношении обработки персональных данных'}
@@ -248,8 +274,9 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
       {/* Кнопка отправки */}
       <button
         onClick={handleSubmit}
-        className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center text-base md:text-xl mt-2"
+        className="w-full p-4 md:p-5 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center text-base md:text-xl mt-2 outline-none"
         disabled={isSubmitting}
+        onBlur={handleBlur}
       >
         {isSubmitting ? (
           <>

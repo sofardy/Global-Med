@@ -5,7 +5,7 @@ import { AngelIcon } from '@/src/shared/ui/Icon';
 export interface AnalysisItem {
     id: string;
     title: string;
-    icon: React.ReactNode;
+    iconPath: React.ReactNode;
     link: string;
 }
 
@@ -14,151 +14,151 @@ export const analysisData: AnalysisItem[] = [
     {
         id: 'coagulogram',
         title: 'Коагулограмма',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/coagulogram'
     },
     {
         id: 'biochemistry',
         title: 'Биохимические анализы',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/biochemistry'
     },
     {
         id: 'express',
         title: 'Экспресс-тест',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/express'
     },
     {
         id: 'urine',
         title: 'Биохимия мочи',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/urine'
     },
     {
         id: 'rheumatoid',
         title: 'Ревматоидные факторы',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/rheumatoid'
     },
     {
         id: 'torch-igm',
         title: 'TORCH-инфекции IgM',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/torch-igm'
     },
     {
         id: 'torch-igg',
         title: 'TORCH-инфекции IgG',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/torch-igg'
     },
     {
         id: 'infections',
         title: 'Инфекции',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/infections'
     },
     {
         id: 'viral-hepatitis',
         title: 'Вирусные гепатиты',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/viral-hepatitis'
     },
     {
         id: 'parasites',
         title: 'Паразиты',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/parasites'
     },
     {
         id: 'hematology',
         title: 'Гематология',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/hematology'
     },
     {
         id: 'blood-analysis',
         title: 'Анализы крови',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/blood-analysis'
     },
     {
         id: 'hormones',
         title: 'Гормоны',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/hormones'
     },
     {
         id: 'blood-enzymes',
         title: 'Ферменты крови',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/blood-enzymes'
     },
     {
         id: 'general-blood',
         title: 'Общий анализ крови',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/general-blood'
     },
     {
         id: 'tumor-markers',
         title: 'Опухолевые маркеры',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/tumor-markers'
     },
     {
         id: 'blood-group',
         title: 'Группа крови + RH',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/blood-group'
     },
     {
         id: 'microscopic',
         title: 'Микроскопические анализы',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/microscopic'
     },
     {
         id: 'bacterial-culture',
         title: 'Бак. посев',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/bacterial-culture'
     },
     {
         id: 'allergy',
         title: 'Аллергология',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/allergy'
     },
     {
         id: 'vitamins',
         title: 'Витамины',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/vitamins'
     },
     {
         id: 'genetics',
         title: 'Генетика',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/genetics'
     },
     {
         id: 'immunology',
         title: 'Иммунология',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/immunology'
     },
     {
         id: 'cytology',
         title: 'Цитология',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/cytology'
     },
     {
         id: 'pcr',
         title: 'ПЦР-диагностика',
-        icon: <AngelIcon />,
+        iconPath: <AngelIcon />,
     link: '/analysis/pcr'
     }
 ];

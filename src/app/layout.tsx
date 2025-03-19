@@ -7,8 +7,11 @@ import { TopBar } from '../shared/layout/TopBar/TopBar';
 import { routes } from '../shared/config/routes';
 import { FloatingComponents } from '../shared/components/FloatingComponents';
 import { Footer } from '../shared/layout/Footer/Footer';
-// import { ThemeToggle } from '../shared/components/ThemeToggle';
-// import { LocaleToggle } from '../shared/components/LocaleToggle';
+import Breadcrumbs from '../shared/components/Breadcrumbs';
+import { ThemeToggle } from '../shared/components/ThemeToggle';
+import { LocaleToggle } from '../shared/components/LocaleToggle';
+import { ScrollToTop } from '../shared/components/ScrollToTop';
+
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
 export const metadata: Metadata = {
@@ -28,12 +31,14 @@ export default function RootLayout({
           <LanguageProvider>
             <div className="mx-auto max-w-8xl p-4">
               <TopBar routes={routes} />
+              <ScrollToTop />
+              <Breadcrumbs />
               <main className="min-h-screen">
                 {children}
               </main>
               
-              {/* <ThemeToggle />
-              <LocaleToggle /> */}
+              <ThemeToggle />
+              <LocaleToggle />
               <Footer />
             </div>
             

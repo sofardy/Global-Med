@@ -205,9 +205,9 @@ useEffect(() => {
   // В компактном режиме показываем только первые несколько роутов, остальные в "Ещё"
   const visibleRoutes = isCompactMode ? routes.slice(0, 3) : routes;
   const hiddenRoutes = isCompactMode ? routes.slice(3) : [];
-  
+  const headerRef = useRef<HTMLDivElement>(null);
   return (
-    <header className={`px-8 py-4 rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} shadow-sm transition-colors duration-300 w-full`}>
+    <header   id="page-header"  ref={headerRef}  className={`px-8 py-4 rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} shadow-sm transition-colors duration-300 w-full`}>
       <div className="">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Лого */}

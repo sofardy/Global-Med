@@ -289,6 +289,43 @@ const descriptionSizeClass = isMobile
     )
   );
   
+const renderFeatures = () => {
+  if (!features || features.length === 0) return null;
+  
+  return (
+    <ul className="space-y-2 mb-6">
+      {features.map((feature, index) => {
+        // Проверяем, строка это или объект с иконкой
+        const isFeatureObject = typeof feature === 'object' && feature !== null;
+        const featureText = isFeatureObject ? feature.text : feature;
+        
+        return (
+          <li key={index} className="flex items-start">
+            {isFeatureObject && feature.icon ? (
+              <>
+                {feature.icon === 'doc' ? (
+              <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+                ) : feature.icon === 'time' ? (
+           <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+                ) : (
+                  <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
+                )}
+              </>
+            ) : (
+              <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
+            )}
+            <span className={`${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>{featureText}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
   // Блок с иконкой
   const IconBlock = () => {
     if (!processedIcon) return null;
@@ -452,28 +489,19 @@ else if (variant === 'surgery') {
       
       <div className="flex flex-col justify-between h-full">
         {/* Heading */}
-        <h3 className={`${titleSizeClass} font-medium ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>
-          {title}
-        </h3>
-        
-        {/* Description */}
-        {description && (
-          <p className={`${descriptionSizeClass} ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} opacity-80 mb-6`}>
-            {typeof description === 'string' ? description : ''}
-          </p>
-        )}
+      <h3 className={`${titleSizeClass} font-medium max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>
+    {title}
+  </h3>
+  
+  {/* Description */}
+  {description && (
+    <p className={`text-sm md:text-base max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} opacity-80 mb-4`}>
+      {typeof description === 'string' ? description : ''}
+    </p>
+  )}
         
         {/* Features list */}
-        {features && features.length > 0 && (
-          <ul className="space-y-2 mb-6">
-            {features.map((feature, index) => (
-              <li key={index} className="flex items-start">
-                <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
-                <span className={`${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+  {renderFeatures()}
         
         {/* Icon - hidden on mobile */}
         <div className="absolute bottom-6 right-6 hidden md:block">
@@ -484,7 +512,7 @@ else if (variant === 'surgery') {
         {showButton && (
           <Link href={link || '#'} className="block mt-4">
             <button 
-              className={`w-[310px] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
+              className={`w-[70%] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
                 ${isHovered 
                   ? 'bg-white text-light-accent border border-light-accent' 
                   : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
@@ -567,7 +595,7 @@ else if (variant === 'surgery') {
       {showButton && (variant === 'service' || buttonText) && (
         <button 
           className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
-            w-full sm:w-[280px] md:w-[330px] h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
+            w-full  h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
             ${isHovered 
               ? 'bg-white text-light-accent' 
               : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'

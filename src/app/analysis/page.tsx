@@ -1,10 +1,14 @@
-export default function Analysis() {
+'use client';
 
+import React from 'react';
+import { AnalysisHeroSection } from '@/src/shared/components/AnalysisHeroSection';
+import AnalysisGridTho from '@/src/shared/components/AnalysisGridTho';
+
+export default function AnalysisPage() {
   return (
-    <main className="container py-10">
-          <div className="flex justify-end space-x-4 mb-8">
-              Analysis
-      </div>
+    <main>
+      <AnalysisHeroSection />
+      <AnalysisGridTho />
     </main>
   );
 }
