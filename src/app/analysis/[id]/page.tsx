@@ -1,31 +1,38 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '@/src/hooks/useTranslation';
-import DoctorBenefits from '@/src/shared/components/DoctorBenefits';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { analysisDetails, translations } from '@/src/shared/mocks/analysisData';
 
-interface AnalysisDetailProps {
-  params: {
-    id: string;
-  };
+// Define correct types
+interface PriceItem {
+  name: string;
+  price: string;
 }
 
+interface Recommendation {
+  id: string;
+  title: string;
+  description: string;
+  iconPath: React.ReactNode;
+  link: string;
+}
 
-const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
-  const { t } = useTranslation(translations);
-  const { id } = params;
+// Most basic possible type for Next.js 15
+export default function Page(props: any) {
+  // Extract ID safely
+  const id = props?.params?.id || 'coagulogram';
   
+  const { t } = useTranslation(translations);
   const [isMobile, setIsMobile] = useState(false);
   const [showAllPrices, setShowAllPrices] = useState(false);
-  
-  // Для эффекта пульсации кнопки
   const [pulsePower, setPulsePower] = useState(1);
   
-  // Эффект для пульсации кнопки с изменяющейся интенсивностью
+  // Pulsation effect
   useEffect(() => {
     let power = 1;
     let increasing = true;
@@ -41,6 +48,7 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
     return () => clearInterval(interval);
   }, []);
   
+  // Mobile detection
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -54,10 +62,10 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
     };
   }, []);
   
-  // Получаем данные по ID анализа или используем первый по умолчанию
-  const analysisData = analysisDetails[id] || analysisDetails.coagulogram;
+  // Get data by ID or use default
+  const analysisData = (analysisDetails as any)[id] || analysisDetails.coagulogram;
   
-  // Функция для перехода к форме записи
+  // Scroll to appointment form
   const handleAppointment = () => {
     const appointmentSection = document.getElementById('appointment-section');
     if (appointmentSection) {
@@ -65,16 +73,15 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
     }
   };
 
-  // Ограничиваем список цен для мобильных устройств
+  // Limit prices list for mobile
   const displayedPrices = isMobile && !showAllPrices 
     ? analysisData.prices.slice(0, 5) 
     : analysisData.prices;
 
   return (
     <main className="overflow-hidden">
-      {/* Верхний баннер как на фото */}
+      {/* Banner */}
       <div className="w-full rounded-xl sm:rounded-2xl overflow-hidden mb-8 md:mb-12 relative bg-light-accent">
-        {/* Фоновый паттерн */}
         <div 
           className="absolute -right-[10px] -bottom-[180px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block" 
           style={{
@@ -86,7 +93,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
           }}
         />
         
-        {/* Контентная часть баннера */}
         <div className="relative z-10 p-10 text-white">
           <h1 className="text-2xl sm:text-3xl md:text-[56px] font-medium mb-3 md:mb-6">
             Анализы: {analysisData.title}
@@ -97,8 +103,7 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
           </p>
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            {/* Блок с количеством анализов */}
-            <div className="flex items-center bg-[#0AD195] px-10  py-4 rounded-2xl">
+            <div className="flex items-center bg-[#0AD195] px-10 py-4 rounded-2xl">
               <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
@@ -107,15 +112,12 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
               </span>
             </div>
             
-            {/* Анимированная кнопка записи - такая же как в чек-апе */}
             <button 
               onClick={handleAppointment}
               className="w-full sm:w-auto px-4 sm:px-6 md:px-10 lg:px-20 py-3 sm:py-4 border-2 border-white rounded-lg sm:rounded-xl transition-all duration-300 relative overflow-hidden group hover:bg-white hover:text-light-accent hover:scale-105 hover:shadow-lg hover:shadow-white/30 focus:outline-none text-xs sm:text-sm md:text-base"
             >
-              {/* Основной текст */}
               <span className="relative z-10 group-hover:font-bold">{t('appointmentButton')}</span>
               
-              {/* Пульсирующий фон - переменная интенсивность */}
               <span 
                 className="absolute inset-0 bg-white/30 rounded-lg sm:rounded-xl opacity-100 group-hover:opacity-0"
                 style={{
@@ -123,7 +125,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
                 }}
               />
               
-              {/* Свечение вокруг кнопки */}
               <span 
                 className="absolute -inset-1 bg-white/20 rounded-lg sm:rounded-xl blur-sm group-hover:bg-transparent"
                 style={{
@@ -131,7 +132,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
                 }}
               />
               
-              {/* Эффект движущихся бликов */}
               <span className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-lg sm:rounded-xl">
                 <span 
                   className="absolute h-8 sm:h-12 md:h-20 w-8 sm:w-12 md:w-20 -top-4 sm:-top-6 md:-top-10 -left-4 sm:-left-6 md:-left-10 bg-white/40 rounded-full blur-md transform rotate-45 group-hover:scale-150"
@@ -144,7 +144,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
                 ></span>
               </span>
               
-              {/* Эффект при наведении - рябь по воде */}
               <span 
                 className="absolute inset-0 scale-0 rounded-lg sm:rounded-xl bg-white/40 group-hover:animate-ripple"
               ></span>
@@ -153,9 +152,8 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
         </div>
       </div>
 
-      {/* Блок с информацией и ценами - соответствует макету на фото */}
+      {/* Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
-        {/* Левый блок - информация и симптомы */}
         <div className="bg-white dark:bg-dark-block rounded-xl p-6 sm:p-8 h-[700px] overflow-y-auto">
           <h2 className="text-[38px] sm:text-[40px] md:text-[56px] font-medium mb-6 text-light-text dark:text-dark-text leading-[1]">
             {analysisData.subtitle}
@@ -169,7 +167,7 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
           </h3>
           
           <ul className="space-y-3">
-            {analysisData.symptoms.map((symptom, index) => (
+            {analysisData.symptoms.map((symptom: string, index: number) => (
               <li key={index} className="flex items-start">
                 <span className="text-light-accent mr-2 flex-shrink-0">•</span>
                 <span className="text-light-text dark:text-dark-text">{symptom}</span>
@@ -178,7 +176,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
           </ul>
         </div>
         
-        {/* Правый блок - цены на услуги с кнопкой показать больше на мобильных */}
         <div className="bg-white dark:bg-dark-block rounded-xl px-4 sm:px-8">
           <div className="pt-6 pb-4 sm:pt-8 sm:pb-6 flex justify-between items-center">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-light-text dark:text-dark-text">
@@ -187,7 +184,7 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
           </div>
           
           <div className="space-y-0 divide-y divide-gray-200 dark:divide-gray-700">
-            {displayedPrices.map((item, index) => (
+            {displayedPrices.map((item: PriceItem, index: number) => (
               <div 
                 key={index}
                 className="py-3 sm:py-4 flex justify-between items-center"
@@ -198,7 +195,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
             ))}
           </div>
           
-          {/* Кнопка "Показать все/Свернуть" для мобильных */}
           {isMobile && analysisData.prices.length > 5 && (
             <div className="py-4 flex justify-center">
               <button 
@@ -220,14 +216,14 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
         </div>
       </div>
       
-      {/* Блок с рекомендуемыми анализами */}
+      {/* Recommendations */}
       <div className="mb-12">
         <h2 className="text-3xl md:text-4xl font-medium mb-8 text-light-text dark:text-dark-text">
           {t('recommendationsTitle')}
         </h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {analysisData.recommendations.map((recommendation) => (
+          {analysisData.recommendations.map((recommendation: Recommendation) => (
             <UniversalCard
               key={recommendation.id}
               variant="analysis-card"
@@ -248,15 +244,15 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
         </div>
       </div>
       
-      {/* Секция записи на приём */}
+      {/* Appointment section */}
       <div id="appointment-section">
         <AppointmentSection />
       </div>
       
-      {/* Контактная информация */}
+      {/* Contact info */}
       <ContactInfo />
 
-      {/* CSS для анимаций */}
+      {/* Animations */}
       <style jsx>{`
         @keyframes pulse {
           0%, 100% {
@@ -302,6 +298,4 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
       `}</style>
     </main>
   );
-};
-
-export default AnalysisDetail;
+}

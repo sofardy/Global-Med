@@ -45,8 +45,14 @@ const socialNetworks = [
     icon: FacebookIcon
   }
 ];
-
-const ContactCard = ({ 
+interface ContactCardProps {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  showCircle?: boolean;
+  bgColor?: string;
+}
+const ContactCard: React.FC<ContactCardProps> = ({ 
   title, 
   children, 
   className = '', 

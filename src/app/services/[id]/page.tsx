@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import DoctorBenefits from '@/src/shared/components/DoctorBenefits';
@@ -24,12 +24,6 @@ interface ServiceDetailData {
 
 interface ServiceDetailsCollection {
   [key: string]: ServiceDetailData;
-}
-
-export interface ServiceDetailProps {
-  params: {
-    id: string;
-  };
 }
 
 // Переводы для страницы услуг
@@ -92,13 +86,55 @@ const serviceDetails: ServiceDetailsCollection = {
       { name: 'Промывание слёзных путей', price: '65 000 сум' },
       { name: 'Расширение зрачков', price: '35 000 сум' }
     ]
+  },
+  lor: {
+    title: 'Лор 24/7',
+    description: 'Круглосуточная диагностика и лечение заболеваний уха, горла и носа. Наша клиника предлагает полный спектр ЛОР-услуг как для взрослых, так и для детей. Своевременное лечение позволяет предотвратить осложнения и значительно улучшить качество жизни.',
+    bannerBg: 'bg-light-accent',
+    introduction: 'Мы предлагаем комплексный подход к диагностике и лечению ЛОР-заболеваний с применением современных малоинвазивных методик. Наши опытные специалисты проводят консультации и лечение пациентов любого возраста с различными заболеваниями уха, горла и носа.',
+    symptoms: [
+      'Боль в ухе или выделения из уха',
+      'Снижение слуха или шум в ушах',
+      'Частые головные боли и заложенность носа',
+      'Выделения из носа, затруднение носового дыхания',
+      'Боль в горле или затруднение глотания',
+      'Охриплость голоса или его потеря',
+      'Частые ангины или тонзиллит',
+      'Хронический кашель или першение в горле',
+      'Головокружение или нарушения равновесия',
+      'Храп или апноэ сна'
+    ],
+    services: [
+      { name: 'Консультация ЛОР-врача', price: '220 000 сум' },
+      { name: 'Повторная консультация ЛОР-врача', price: '120 000 сум' },
+      { name: 'Консультация детского ЛОР-врача', price: '250 000 сум' },
+      { name: 'Эндоскопическое исследование носа', price: '180 000 сум' },
+      { name: 'Эндоскопическое исследование гортани', price: '250 000 сум' },
+      { name: 'Аудиометрия', price: '170 000 сум' },
+      { name: 'Промывание носа (кукушка)', price: '150 000 сум' },
+      { name: 'Промывание миндалин', price: '180 000 сум' },
+      { name: 'Удаление серной пробки (одно ухо)', price: '100 000 сум' },
+      { name: 'Пневмомассаж барабанных перепонок', price: '120 000 сум' },
+      { name: 'Анемизация слизистой носа', price: '80 000 сум' },
+      { name: 'Продувание слуховых труб', price: '120 000 сум' },
+      { name: 'Вскрытие паратонзиллярного абсцесса', price: '350 000 сум' },
+      { name: 'Остановка носового кровотечения', price: '200 000 сум' },
+      { name: 'Удаление инородного тела из уха/носа/горла', price: '180 000 сум' }
+    ]
   }
 };
 
-export default function ServiceDetail({ params }: ServiceDetailProps) {
+export default function ServiceDetail({ params }: { params: { id: string } }) {
+  return (
+    <Suspense fallback={<div>Загрузка...</div>}>
+      <ServiceDetailContent id={params.id} />
+    </Suspense>
+  );
+}
+
+function ServiceDetailContent({ id }: { id: string }) {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
-  const { id } = params;
   
   // Для усиленной пульсации кнопки
   const [pulsePower, setPulsePower] = useState(1);
@@ -146,6 +182,12 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
   // Функция для открытия формы записи
   const handleAppointment = () => {
     console.log('Открытие формы записи');
+    
+    // Прокрутка к форме записи
+    const appointmentSection = document.querySelector('#appointment-section');
+    if (appointmentSection) {
+      appointmentSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
   
   // Количество видимых симптомов на мобильных устройствах
@@ -348,8 +390,15 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
       
       {/* DoctorBenefits компонент */}
       <DoctorBenefits />
-      <AppointmentSection />
+      
+      {/* Секция записи на приём */}
+      <div id="appointment-section">
+        <AppointmentSection />
+      </div>
+      
+      {/* Контактная информация */}
       <ContactInfo />
+      
       {/* CSS для анимаций */}
       <style jsx>{`
         @keyframes pulse {

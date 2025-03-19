@@ -1,50 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
 
 interface BreadcrumbsProps {
-  /**
-   * Опциональный класс для контейнера
-   */
   className?: string;
-  
-  /**
-   * Кастомные наименования путей (для переопределения автоматически созданных)
-   * Ключ - путь, значение - наименование
-   * Пример: { '/services': 'Услуги', '/services/checkups': 'Чекапы' }
-   */
   pathNames?: Record<string, string>;
-  
-  /**
-   * Иконка разделителя (по умолчанию - ChevronRightIcon)
-   */
   separator?: React.ReactNode;
-  
-  /**
-   * Опционально: не отображать домашнюю страницу
-   */
   hideHome?: boolean;
-  
-  /**
-   * Опционально: не отображать текущую страницу
-   */
   hideCurrent?: boolean;
 }
 
-/**
- * Компонент для отображения хлебных крошек (breadcrumbs) на основе текущего пути.
- * Не отображается на главной странице.
- */
-export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
+function BreadcrumbsContent({
   className = '',
   pathNames = {},
   separator = <ChevronRightIcon className="h-4 w-4 text-gray-400" />,
   hideHome = false,
   hideCurrent = false,
-}) => {
+}: BreadcrumbsProps) {
   const pathname = usePathname();
   
   // Не отображаем компонент на главной странице
@@ -124,6 +99,15 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
       </ol>
     </nav>
   );
-};
+}
 
-export default Breadcrumbs;
+export default function Breadcrumbs(props: BreadcrumbsProps) {
+  return (
+    <Suspense fallback={<div className="py-4">Загрузка...</div>}>
+      <BreadcrumbsContent {...props} />
+    </Suspense>
+  );
+}
+
+// Экспортируем именованный компонент для обратной совместимости
+export { BreadcrumbsContent as Breadcrumbs };

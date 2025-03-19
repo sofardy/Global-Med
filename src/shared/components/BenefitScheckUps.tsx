@@ -66,7 +66,7 @@ export const BenefitsCheckUps: React.FC<BenefitsCheckUpsProps> = ({
 
       {/* Сетка карточек с брейкпоинтом на 1600px */}
       <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4 sm:gap-6">
-        {benefits.map((benefit, index) => (
+        {benefits.map((benefit) => (
           <UniversalCard
             key={benefit.id}
             title={benefit.title}

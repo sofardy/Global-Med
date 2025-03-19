@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/shared/hooks/useFormValidation.ts
 
 import { useState, useCallback, useEffect } from 'react';

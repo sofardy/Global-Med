@@ -101,7 +101,7 @@ export const MedicalGallery = ({
           className="w-1/4 p-1 md:p-2"
         >
           <div className="h-[460px] relative overflow-hidden rounded-lg">
-            <img
+            <Image
               src={src}
               alt={`${alt} ${index + 1}`}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"

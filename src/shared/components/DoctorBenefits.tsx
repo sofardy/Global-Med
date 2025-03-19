@@ -7,6 +7,14 @@ import { MedicalIcon } from '@/src/shared/ui/Icon';
 import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
 import { useThemeStore } from '@/src/store/theme';
 
+interface Benefit {
+  id: string;
+  title: string;
+  description: string;
+  iconPath: React.ReactNode;
+  isActive?: boolean;
+}
+
 // Локализация для компонента
 const translations = {
   ru: {
@@ -71,12 +79,12 @@ const translations = {
   }
 };
 
-
 export default function DoctorBenefits() {
   const { t } = useTranslation(translations);
-    const { theme } = useThemeStore();
-  // Получаем локализованные данные
-  const benefits = t('benefits', { returnObjects: true });
+  const { theme } = useThemeStore();
+  
+  // Получаем локализованные данные и явно типизируем их
+  const benefits = t('benefits', { returnObjects: true }) as Benefit[];
   
   return (
     <div className="w-full mt-16 md:mt-20">
@@ -90,7 +98,7 @@ export default function DoctorBenefits() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        {benefits.map((benefit) => {
+        {benefits.map((benefit: Benefit) => {
           return (
             <UniversalCard
               key={benefit.id}
@@ -103,7 +111,6 @@ export default function DoctorBenefits() {
               iconPosition="top"
               minHeight="h-[300px]"
               titleSize="text-[22px] font-medium mb-4"
-            //   descriptionSize="text-base"
               padding="6"
               bordered={!benefit.isActive}
             />

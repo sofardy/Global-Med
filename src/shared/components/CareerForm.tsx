@@ -63,11 +63,17 @@ const translations = {
 const CareerForm = () => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Модальные окна
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  
+  // Локальное состояние для чекбокса
+  const [consentChecked, setConsentChecked] = useState(false);
+  
+  // Локальное состояние для хранения файла, чтобы обойти ограничения типов
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   
   // Используем хук валидации формы
   const {
@@ -75,16 +81,16 @@ const CareerForm = () => {
     formErrors,
     handleInputChange,
     handlePhoneChange,
-    handleSelectValue,
     validateForm,
     setFormData,
+    setFormErrors,
     resetForm
   } = useFormValidation(
     {
       name: '',
       phone: '',
       coverLetter: '',
-      resume: null,
+      resume: '',  // Изменено с null на пустую строку для совместимости
       consent: false
     },
     {
@@ -103,21 +109,20 @@ const CareerForm = () => {
     }
   );
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData(prev => ({ ...prev, resume: file }));
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setResumeFile(file);
+    // В formData храним только строку - имя файла или идентификатор
+    setFormData({ ...formData, resume: file ? file.name : '' });
   };
 
-  // Локальное состояние для чекбокса вместо использования хука
-  const [consentChecked, setConsentChecked] = useState(false);
-
   // Обработка чекбокса с локальным состоянием
-  const handleConsentChange = (e) => {
+  const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConsentChecked(e.target.checked);
-    // Обновляем значение в formData без вызова handleCheckboxChange
-    setFormData(prev => ({ ...prev, consent: e.target.checked }));
+    // Обновляем значение в formData
+    setFormData({ ...formData, consent: e.target.checked });
     // Сбрасываем ошибку
-    setFormErrors(prev => ({ ...prev, consent: false }));
+    setFormErrors({ ...formErrors, consent: false });
   };
 
   const handleSubmitClick = () => {
@@ -127,14 +132,19 @@ const CareerForm = () => {
   };
 
   const handleAttachClick = () => {
-    fileInputRef.current.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
   
   const handleConfirmSubmit = () => {
     setIsConfirmModalOpen(false);
     
-    // Здесь была бы логика отправки формы на сервер
-    console.log('Form submitted:', formData);
+    // Здесь была бы логика отправки формы на сервер, где объединяем formData и файл
+    console.log('Form submitted:', { 
+      ...formData, 
+      resumeFile // Здесь мы добавляем сам файл для отправки
+    });
     
     // Показываем модальное окно успеха
     setIsSuccessModalOpen(true);
@@ -143,13 +153,20 @@ const CareerForm = () => {
   const handleSuccessClose = () => {
     setIsSuccessModalOpen(false);
     resetForm();
+    setConsentChecked(false);
+    setResumeFile(null);
+  };
+
+  // Получение имени файла безопасно
+  const getFileName = () => {
+    return resumeFile ? resumeFile.name : t('notSelected');
   };
 
   return (
     <>
       <div className="w-full flex flex-col md:flex-row gap-5 rounded-2xl overflow-hidden">
         {/* Left section with background image */}
-    <div className="w-full md:w-1/2 bg-light-accent text-white p-8 relative min-h-[340px] md:min-h-[490px] rounded-2xl overflow-hidden">
+        <div className="w-full md:w-1/2 bg-light-accent text-white p-8 relative min-h-[340px] md:min-h-[490px] rounded-2xl overflow-hidden">
           
           {/* Добавлен новый фоновый элемент */}
           <div 
@@ -189,7 +206,7 @@ const CareerForm = () => {
               <input
                 type="text"
                 name="name"
-                value={formData.name}
+                value={formData.name as string}
                 onChange={handleInputChange}
                 placeholder={t('namePlaceholder')}
                 className={`w-full p-4 rounded-xl bg-light-bg dark:bg-dark-bg border ${
@@ -208,7 +225,7 @@ const CareerForm = () => {
               <input
                 type="text"
                 name="phone"
-                value={formData.phone}
+                value={formData.phone as string}
                 onChange={handlePhoneChange}
                 placeholder={t('phonePlaceholder')}
                 className={`w-full p-4 rounded-xl bg-light-bg dark:bg-dark-bg border ${
@@ -232,7 +249,7 @@ const CareerForm = () => {
                 <svg className="w-6 h-6 text-light-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
                 </svg>
-                <span className="flex-1 text-left">{formData.resume ? formData.resume.name : t('attachResume')}</span>
+                <span className="flex-1 text-left">{getFileName()}</span>
               </button>
               <input
                 type="file"
@@ -240,6 +257,7 @@ const CareerForm = () => {
                 onChange={handleFileChange}
                 accept=".pdf"
                 className="hidden"
+                aria-label={t('attachResume')}
               />
             </div>
             
@@ -247,7 +265,7 @@ const CareerForm = () => {
             <div>
               <textarea
                 name="coverLetter"
-                value={formData.coverLetter}
+                value={formData.coverLetter as string}
                 onChange={handleInputChange}
                 placeholder={t('coverLetter')}
                 rows={4}
@@ -255,7 +273,7 @@ const CareerForm = () => {
               />
             </div>
             
-            {/* Исправлено: корректное выравнивание чекбокса и текста */}
+            {/* Checkbox with proper alignment */}
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -314,7 +332,7 @@ const CareerForm = () => {
             
             <div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('resume')}:</div>
-              <div className="font-medium">{formData.resume ? formData.resume.name : t('notSelected')}</div>
+              <div className="font-medium">{getFileName()}</div>
             </div>
             
             {formData.coverLetter && (

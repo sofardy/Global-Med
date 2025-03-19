@@ -8,6 +8,12 @@ import { translations } from './translations';
 import { CONTACT_INFO } from '@/src/shared/constants/contact';
 import { TelegramIcon, InstagramIcon, WhatsapppIcon, FacebookIcon } from '../../ui/Icon';
 
+// Types for translation items
+interface LinkItem {
+  title: string;
+  link: string;
+}
+
 // Компонент ссылки футера
 const FooterLink: React.FC<{
   href: string;
@@ -57,13 +63,15 @@ const ExternalLink: React.FC<{
   );
 };
 
-// Компонент иконки социальной сети
-// Компонент иконки социальной сети с адаптивностью
-const SocialIcon: React.FC<{
+// Тип для иконки социальной сети
+interface SocialIconProps {
   href: string;
   icon: React.FC<{ size: number; color: string; className?: string }>;
   label: string;
-}> = ({ href, icon: Icon, label }) => {
+}
+
+// Компонент иконки социальной сети с адаптивностью
+const SocialIcon: React.FC<SocialIconProps> = ({ href, icon: Icon, label }) => {
   const { theme } = useThemeStore();
   
   // Динамические стили в зависимости от темы
@@ -122,6 +130,14 @@ const ViewAllLink: React.FC<{ href: string; children: React.ReactNode }> = ({
   );
 };
 
+// Тип для социальной сети
+interface SocialNetwork {
+  id: string;
+  url: string;
+  icon: React.FC<{ size: number; color: string; className?: string }>;
+  label: string;
+}
+
 export const Footer: React.FC = () => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
@@ -130,12 +146,18 @@ export const Footer: React.FC = () => {
   const textColorMuted = theme === 'dark' ? 'text-white/60' : 'text-light-text/60';
   
   // Данные для социальных сетей
-  const socialNetworks = [
+  const socialNetworks: SocialNetwork[] = [
     { id: 'telegram', url: 'https://t.me/globalmedcenter', icon: TelegramIcon, label: 'Telegram' },
     { id: 'instagram', url: 'https://instagram.com/globalmedcenter', icon: InstagramIcon, label: 'Instagram' },
     { id: 'whatsapp', url: 'https://wa.me/+998712005550', icon: WhatsapppIcon, label: 'WhatsApp' },
     { id: 'facebook', url: 'https://facebook.com/globalmedcenter', icon: FacebookIcon, label: 'Facebook' }
   ];
+  
+  // Получаем типизированные массивы для каждой секции
+  const serviceLinks = t('serviceLinks', { returnObjects: true }) as LinkItem[];
+  const checkupLinks = t('checkupLinks', { returnObjects: true }) as LinkItem[];
+  const analysisLinks = t('analysisLinks', { returnObjects: true }) as LinkItem[];
+  const navigationLinks = t('navigationLinks', { returnObjects: true }) as LinkItem[];
   
   return (
     <footer className="mt-20">
@@ -146,7 +168,7 @@ export const Footer: React.FC = () => {
           <div>
             <SectionTitle>{t('sections.services')}</SectionTitle>
             <ul className="space-y-3">
-              {t('serviceLinks', { returnObjects: true }).map((item: { title: string; link: string }) => (
+              {serviceLinks.map((item) => (
                 <li key={item.link}>
                   <FooterLink href={item.link}>
                     {item.title}
@@ -165,7 +187,7 @@ export const Footer: React.FC = () => {
           <div>
             <SectionTitle>{t('sections.checkups')}</SectionTitle>
             <ul className="space-y-3">
-              {t('checkupLinks', { returnObjects: true }).map((item: { title: string; link: string }) => (
+              {checkupLinks.map((item) => (
                 <li key={item.link}>
                   <FooterLink href={item.link}>
                     {item.title}
@@ -181,7 +203,7 @@ export const Footer: React.FC = () => {
             
             <SectionTitle className="mt-8">{t('sections.analyses')}</SectionTitle>
             <ul className="space-y-3">
-              {t('analysisLinks', { returnObjects: true }).map((item: { title: string; link: string }) => (
+              {analysisLinks.map((item) => (
                 <li key={item.link}>
                   <FooterLink href={item.link}>
                     {item.title}
@@ -200,7 +222,7 @@ export const Footer: React.FC = () => {
           <div>
             <SectionTitle>{t('sections.navigation')}</SectionTitle>
             <ul className="space-y-3">
-              {t('navigationLinks', { returnObjects: true }).map((item: { title: string; link: string }) => (
+              {navigationLinks.map((item) => (
                 <li key={item.link}>
                   <FooterLink href={item.link}>
                     {item.title}

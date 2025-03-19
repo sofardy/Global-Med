@@ -288,29 +288,37 @@ const descriptionSizeClass = isMobile
       </p>
     )
   );
-  
-const renderFeatures = () => {
+  interface Feature {
+  icon?: string;
+  text: string;
+}
+const renderFeatures = (
+  features: Array<string | Feature> | undefined, 
+  isHovered: boolean, 
+  theme: string
+) => {
   if (!features || features.length === 0) return null;
   
   return (
     <ul className="space-y-2 mb-6">
       {features.map((feature, index) => {
-        // Проверяем, строка это или объект с иконкой
+        // Check if feature is an object with icon
         const isFeatureObject = typeof feature === 'object' && feature !== null;
-        const featureText = isFeatureObject ? feature.text : feature;
+        // Get feature text safely
+        const featureText = isFeatureObject ? (feature as Feature).text : (feature as string);
         
         return (
           <li key={index} className="flex items-start">
-            {isFeatureObject && feature.icon ? (
+            {isFeatureObject && (feature as Feature).icon ? (
               <>
-                {feature.icon === 'doc' ? (
-              <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-                ) : feature.icon === 'time' ? (
-           <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+                {(feature as Feature).icon === 'doc' ? (
+                  <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                ) : (feature as Feature).icon === 'time' ? (
+                  <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 ) : (
                   <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
                 )}
@@ -501,7 +509,7 @@ else if (variant === 'surgery') {
   )}
         
         {/* Features list */}
-  {renderFeatures()}
+  {renderFeatures(features, isHovered, theme)}
         
         {/* Icon - hidden on mobile */}
         <div className="absolute bottom-6 right-6 hidden md:block">

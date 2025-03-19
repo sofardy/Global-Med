@@ -1,25 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { UniversalCard } from '../components/UniversalCard';
-import { analysisData } from '../mocks/analysisData';
+import { analysisData, AnalysisItem } from '../mocks/analysisData';
 import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
 import { useThemeStore } from '@/src/store/theme';
+
+// If AnalysisItem doesn't have these properties, extend the interface in this file
+// or update the original interface in analysisData.ts
+interface ExtendedAnalysisItem extends AnalysisItem {
+  description?: string;
+  servicesCount?: string;
+}
 
 export const AnalysisGridTho = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [visibleGroups, setVisibleGroups] = useState(1);
   const { theme } = useThemeStore();
   
+  // Cast to the extended type
+  const typedAnalysisData = analysisData as ExtendedAnalysisItem[];
+  
   // Группировка данных по 4 элемента
   const itemsPerGroup = 4;
-  const groupedData = [];
-  for (let i = 0; i < analysisData.length; i += itemsPerGroup) {
-    groupedData.push(analysisData.slice(i, i + itemsPerGroup));
+  const groupedData: ExtendedAnalysisItem[][] = [];
+  for (let i = 0; i < typedAnalysisData.length; i += itemsPerGroup) {
+    groupedData.push(typedAnalysisData.slice(i, i + itemsPerGroup));
   }
   
   // Определяем общее количество видимых элементов
   const visibleItems = isMobile ? 
     (groupedData.slice(0, visibleGroups).flat()) : 
-    analysisData;
+    typedAnalysisData;
   
   // Обработка размера экрана
   useEffect(() => {
@@ -51,8 +61,8 @@ export const AnalysisGridTho = () => {
             <UniversalCard
               variant="analysis-card"
               title={analysis.title}
-              description={analysis.description}
-              additionalInfo={analysis.servicesCount}
+              description={analysis.description || ''} // Provide default value
+              additionalInfo={analysis.servicesCount || ''} // Provide default value
               icon={applyColorToIcon(analysis.iconPath, getIconColorByTheme(theme))}
               link={analysis.link}
               buttonText="Подробнее"
@@ -67,7 +77,7 @@ export const AnalysisGridTho = () => {
             onClick={showMoreItems}
             className="px-6 py-3 bg-light-accent text-white rounded-xl hover:bg-light-accent/90 transition-colors"
           >
-            Показать ещё {Math.min(itemsPerGroup, analysisData.length - visibleItems.length)} анализа
+            Показать ещё {Math.min(itemsPerGroup, typedAnalysisData.length - visibleItems.length)} анализа
           </button>
         </div>
       )}

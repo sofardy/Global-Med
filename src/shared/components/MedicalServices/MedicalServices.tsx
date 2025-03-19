@@ -7,6 +7,7 @@ import { useTranslation } from '@/src/hooks/useTranslation';
 import { useThemeStore } from '@/src/store/theme';
 import { AngelIcon, ButterflyIcon, EyeIcon, LightbulbIcon } from '../../ui/Icon';
 import { applyColorToIcon, getIconColorByTheme } from '../../utils/iconUtils';
+import Link from 'next/link';
 
 // Переводы для компонента
 const translations = {
@@ -131,12 +132,12 @@ export const MedicalServices: React.FC = () => {
               </p>
             </div>
             
-            <a href="/services" className="relative z-10 h-[58px] inline-flex items-center justify-center border border-[#173F46] dark:border-white text-[#173F46] dark:text-white hover:bg-[#173F46]/5 dark:hover:bg-white/10 rounded-2xl px-6 py-3 transition-colors mt-auto self-start">
+            <Link  href="/services" className="relative z-10 h-[58px] inline-flex items-center justify-center border border-[#173F46] dark:border-white text-[#173F46] dark:text-white hover:bg-[#173F46]/5 dark:hover:bg-white/10 rounded-2xl px-6 py-3 transition-colors mt-auto self-start">
               <span className="tracking-wide">{t('viewAllServices')}</span>
               <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
               </svg>
-            </a>
+            </Link>
           </div>
             
           {/* Карточки услуг - правая колонка */}
@@ -148,7 +149,7 @@ export const MedicalServices: React.FC = () => {
                   title={service.title}
                   description={service.description}
                   additionalInfo={service.servicesCount}
-             icon={applyColorToIcon(service.iconPath, getIconColorByTheme(theme))}
+                  icon={applyColorToIcon(service.iconPath, getIconColorByTheme(theme))}
                   link={`/services/${service.id}`}
                   buttonText={t('moreButton')}
                   className="h-full"

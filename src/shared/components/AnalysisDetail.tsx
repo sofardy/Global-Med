@@ -1,10 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '@/src/hooks/useTranslation';
-import DoctorBenefits from '@/src/shared/components/DoctorBenefits';
-import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
-import { ContactInfo } from '@/src/shared/components/ContactInfo';
 
 interface AnalysisDetailProps {
   params: {
@@ -122,13 +120,10 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
   const { t } = useTranslation(translations);
   const { id } = params;
   
-  const [activeTab, setActiveTab] = useState('preparation');
-  const [isMobile, setIsMobile] = useState(false);
+  const [, setIsMobile] = useState(false);
   
-  // Для эффекта пульсации кнопки
   const [pulsePower, setPulsePower] = useState(1);
   
-  // Эффект для пульсации кнопки с изменяющейся интенсивностью
   useEffect(() => {
     let power = 1;
     let increasing = true;
@@ -158,7 +153,7 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
   }, []);
   
   // Получаем данные по ID анализа или используем первый по умолчанию
-  const analysisData = analysisDetails[id] || analysisDetails.coagulogram;
+  const analysisData = (analysisDetails as any)[id] || analysisDetails.coagulogram;
   
   // Функция для перехода к форме записи
   const handleAppointment = () => {

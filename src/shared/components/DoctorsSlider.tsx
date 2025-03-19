@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { UniversalSlider } from '../components/UniversalSlider';
 import { DoctorCard } from './DoctorCard';

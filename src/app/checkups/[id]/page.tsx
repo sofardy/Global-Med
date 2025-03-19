@@ -7,6 +7,15 @@ import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { BenefitsCheckUps } from '@/src/shared/components/BenefitScheckUps';
 
+  interface FAQItem {
+  title: string;
+  content: string;
+}
+
+interface OpenItemsState {
+  [key: number]: boolean;
+}
+
 const CheckupDetail = () => {
   const { t } = useTranslation(checkupDetailTranslations);
   
@@ -14,11 +23,11 @@ const CheckupDetail = () => {
   const [pulsePower, setPulsePower] = useState(1);
   
   // Состояние для аккордеона FAQ
-  const [openItems, setOpenItems] = useState({}); 
+ const [openItems, setOpenItems] = useState<OpenItemsState>({});
   
   // Состояние определения мобильного устройства
-  const [isMobile, setIsMobile] = useState(false);
-  
+  const [, setIsMobile] = useState(false);
+  const faqItems = t('faqItems', { returnObjects: true }) as FAQItem[];
   // Определяем размер экрана при загрузке и изменении размера окна
   useEffect(() => {
     const checkMobile = () => {
@@ -59,14 +68,14 @@ const CheckupDetail = () => {
       appointmentSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
+
   // Функция для управления аккордеоном
-  const toggleItem = (index) => {
-    setOpenItems(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
-  };
+ const toggleItem = (index: number): void => {
+  setOpenItems((prev: OpenItemsState) => ({
+    ...prev,
+    [index]: !prev[index]
+  }));
+};
 
   return (
     <main className="overflow-hidden">
@@ -199,7 +208,7 @@ const CheckupDetail = () => {
         
         {/* Правый блок - FAQ селекты */}
         <div className="w-full md:w-3/5 flex flex-col gap-2">
-          {t('faqItems', { returnObjects: true }).map((item, index) => (
+         {faqItems.map((item: FAQItem, index: number) => (
             <div key={index} className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
               <button 
                 onClick={() => toggleItem(index)}
