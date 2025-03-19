@@ -5,8 +5,6 @@ import { useTranslation } from '@/src/hooks/useTranslation';
 import DoctorBenefits from '@/src/shared/components/DoctorBenefits';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
-import { UniversalCard } from '@/src/shared/components/UniversalCard';
-import { analysisDetails, translations } from '@/src/shared/mocks/analysisData';
 
 interface AnalysisDetailProps {
   params: {
@@ -14,13 +12,118 @@ interface AnalysisDetailProps {
   };
 }
 
+const analysisDetails = {
+  coagulogram: {
+    title: 'Коагулограмма',
+    description: 'Коагулограмма — это набор анализов, позволяющих оценить свертывающую способность крови и выявить возможные нарушения. Проведение коагулограммы важно для предотвращения тромбообразования, оценки состояния при заболеваниях печени, а также для подготовки к операциям.',
+    testsCount: 18,
+    buttonText: 'Записаться на сдачу анализов'
+  },
+};
+
+const translations = {
+  ru: {
+    appointmentButton: 'Записаться на сдачу анализов',
+    tests: 'анализов',
+    prepareTitle: 'Как подготовиться к сдаче анализа',
+    prepareDesc: 'Для получения точных результатов важно правильно подготовиться к сдаче анализа',
+    preparationSteps: [
+      'Сдавать кровь рекомендуется утром, натощак (после 8-12 часов голодания)',
+      'За 1-2 дня до сдачи крови исключите жирную пищу и алкоголь',
+      'За 1 час до анализа воздержитесь от курения и физических нагрузок',
+      'Избегайте эмоционального стресса за 24 часа до анализа',
+      'Сообщите врачу о принимаемых лекарствах, так как некоторые препараты могут влиять на результаты'
+    ],
+    indicatorsTitle: 'Основные показатели',
+    indicators: [
+      {
+        name: 'МНО (INR)',
+        description: 'Международное нормализованное отношение, оценивает внешний путь свертывания крови',
+        norm: '0.85 - 1.25'
+      },
+      {
+        name: 'Протромбиновое время (PT)',
+        description: 'Оценивает время, необходимое для образования сгустка',
+        norm: '11 - 16 сек'
+      },
+      {
+        name: 'АЧТВ (APTT)',
+        description: 'Активированное частичное тромбопластиновое время, характеризует внутренний путь свертывания',
+        norm: '26 - 36 сек'
+      },
+      {
+        name: 'Тромбиновое время (TT)',
+        description: 'Показывает время превращения фибриногена в фибрин',
+        norm: '15 - 22 сек'
+      },
+      {
+        name: 'Фибриноген',
+        description: 'Белок, участвующий в последнем этапе свертывания крови',
+        norm: '1.8 - 4.0 г/л'
+      },
+      {
+        name: 'D-димер',
+        description: 'Продукт распада фибрина, маркер тромбозов',
+        norm: '< 0.5 мкг/мл'
+      }
+    ],
+    backButton: 'Назад к анализам'
+  },
+  uz: {
+    appointmentButton: 'Tahlil topshirishga yozilish',
+    tests: 'tahlil',
+    prepareTitle: 'Tahlil topshirishga qanday tayyorlanish kerak',
+    prepareDesc: 'Aniq natijalar olish uchun tahlil topshirishga to\'g\'ri tayyorlanish muhim',
+    preparationSteps: [
+      'Qon topshirish uchun ertalab, och qoringa tavsiya etiladi (8-12 soat ochlik)',
+      'Qon topshirishdan 1-2 kun oldin yog\'li ovqat va spirtli ichimliklardan saqlanish lozim',
+      'Tahlildan 1 soat oldin chekishdan va jismoniy mashqlardan saqlanish kerak',
+      'Tahlildan 24 soat oldin hissiy stressdan qoching',
+      'Qabul qilinayotgan dorilar haqida shifokorga xabar bering, chunki ayrim dorilar natijaga ta\'sir qilishi mumkin'
+    ],
+    indicatorsTitle: 'Asosiy ko\'rsatkichlar',
+    indicators: [
+      {
+        name: 'XNK (INR)',
+        description: 'Xalqaro normallashtirilgan koeffitsient, qon ivishining tashqi yo\'lini baholaydi',
+        norm: '0.85 - 1.25'
+      },
+      {
+        name: 'Protrombin vaqti (PT)',
+        description: 'Qon laxtasining hosil bo\'lishi uchun zarur bo\'lgan vaqtni baholaydi',
+        norm: '11 - 16 sek'
+      },
+      {
+        name: 'FQTV (APTT)',
+        description: 'Faollashtirilgan qisman tromboplastin vaqti, qon ivishining ichki yo\'lini baholaydi',
+        norm: '26 - 36 sek'
+      },
+      {
+        name: 'Trombin vaqti (TT)',
+        description: 'Fibrinogenning fibringa aylanish vaqtini ko\'rsatadi',
+        norm: '15 - 22 sek'
+      },
+      {
+        name: 'Fibrinogen',
+        description: 'Qon ivishining oxirgi bosqichida ishtirok etuvchi oqsil',
+        norm: '1.8 - 4.0 g/l'
+      },
+      {
+        name: 'D-dimer',
+        description: 'Fibrin parchalanish mahsuloti, tromboz markeri',
+        norm: '< 0.5 mkg/ml'
+      }
+    ],
+    backButton: 'Tahlillarga qaytish'
+  }
+};
 
 const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
   const { t } = useTranslation(translations);
   const { id } = params;
   
+  const [activeTab, setActiveTab] = useState('preparation');
   const [isMobile, setIsMobile] = useState(false);
-  const [showAllPrices, setShowAllPrices] = useState(false);
   
   // Для эффекта пульсации кнопки
   const [pulsePower, setPulsePower] = useState(1);
@@ -65,11 +168,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
     }
   };
 
-  // Ограничиваем список цен для мобильных устройств
-  const displayedPrices = isMobile && !showAllPrices 
-    ? analysisData.prices.slice(0, 5) 
-    : analysisData.prices;
-
   return (
     <main className="overflow-hidden">
       {/* Верхний баннер как на фото */}
@@ -87,7 +185,7 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
         />
         
         {/* Контентная часть баннера */}
-        <div className="relative z-10 p-10 text-white">
+        <div className="relative z-10 p-6 sm:p-8 md:p-10 text-white">
           <h1 className="text-2xl sm:text-3xl md:text-[56px] font-medium mb-3 md:mb-6">
             Анализы: {analysisData.title}
           </h1>
@@ -98,7 +196,7 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             {/* Блок с количеством анализов */}
-            <div className="flex items-center bg-[#0AD195] px-10  py-4 rounded-2xl">
+            <div className="flex items-center bg-[#0AD195] px-10 py-4 rounded-2xl">
               <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
@@ -152,110 +250,6 @@ const AnalysisDetail: React.FC<AnalysisDetailProps> = ({ params }) => {
           </div>
         </div>
       </div>
-
-      {/* Блок с информацией и ценами - соответствует макету на фото */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
-        {/* Левый блок - информация и симптомы */}
-        <div className="bg-white dark:bg-dark-block rounded-xl p-6 sm:p-8 h-[700px] overflow-y-auto">
-          <h2 className="text-[38px] sm:text-[40px] md:text-[56px] font-medium mb-6 text-light-text dark:text-dark-text leading-[1]">
-            {analysisData.subtitle}
-          </h2>
-          <p className="text-light-text/80 dark:text-dark-text/80 mb-8 w-[70%] text-base">
-            {analysisData.subtitle_desc}
-          </p>
-          
-          <h3 className="text-lg sm:text-xl font-medium mb-4 text-light-text dark:text-dark-text">
-            {analysisData.symptoms_title}
-          </h3>
-          
-          <ul className="space-y-3">
-            {analysisData.symptoms.map((symptom, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-light-accent mr-2 flex-shrink-0">•</span>
-                <span className="text-light-text dark:text-dark-text">{symptom}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        
-        {/* Правый блок - цены на услуги с кнопкой показать больше на мобильных */}
-        <div className="bg-white dark:bg-dark-block rounded-xl px-4 sm:px-8">
-          <div className="pt-6 pb-4 sm:pt-8 sm:pb-6 flex justify-between items-center">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-light-text dark:text-dark-text">
-              {t('prices')}
-            </h2>
-          </div>
-          
-          <div className="space-y-0 divide-y divide-gray-200 dark:divide-gray-700">
-            {displayedPrices.map((item, index) => (
-              <div 
-                key={index}
-                className="py-3 sm:py-4 flex justify-between items-center"
-              >
-                <span className="text-sm sm:text-base text-light-text dark:text-dark-text pr-4">{item.name}</span>
-                <span className="font-medium text-sm sm:text-base text-light-text dark:text-dark-text whitespace-nowrap">{item.price}</span>
-              </div>
-            ))}
-          </div>
-          
-          {/* Кнопка "Показать все/Свернуть" для мобильных */}
-          {isMobile && analysisData.prices.length > 5 && (
-            <div className="py-4 flex justify-center">
-              <button 
-                onClick={() => setShowAllPrices(!showAllPrices)}
-                className="flex items-center gap-2 px-6 py-3 border border-gray-300 rounded-xl text-light-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                <span>{showAllPrices ? t('mobileCollapseButton') : t('mobileExpandButton')}</span>
-                <svg 
-                  className={`w-5 h-5 transform transition-transform ${showAllPrices ? 'rotate-180' : ''}`} 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Блок с рекомендуемыми анализами */}
-      <div className="mb-12">
-        <h2 className="text-3xl md:text-4xl font-medium mb-8 text-light-text dark:text-dark-text">
-          {t('recommendationsTitle')}
-        </h2>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {analysisData.recommendations.map((recommendation) => (
-            <UniversalCard
-              key={recommendation.id}
-              variant="analysis-card"
-              title={recommendation.title}
-              description={recommendation.description}
-              icon={recommendation.iconPath}
-              link={recommendation.link}
-              buttonText="Подробнее"
-              className="h-full min-h-[270px]"
-              iconPosition="center"
-              showButton={true}
-              buttonStyle="outline"
-              bordered={true}
-              borderRadius="xl"
-              hoverBgColor="white"
-            />
-          ))}
-        </div>
-      </div>
-      
-      {/* Секция записи на приём */}
-      <div id="appointment-section">
-        <AppointmentSection />
-      </div>
-      
-      {/* Контактная информация */}
-      <ContactInfo />
-
       {/* CSS для анимаций */}
       <style jsx>{`
         @keyframes pulse {

@@ -72,17 +72,6 @@ const CheckupDetail = () => {
     <main className="overflow-hidden">
       {/* Верхний баннер */}
       <div className="w-full rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-16 relative bg-light-accent">
-        {/* Фоновый паттерн ДНК */}
-        <div 
-          className="absolute inset-0 z-0 opacity-10" 
-          style={{
-            backgroundImage: 'url(/images/dna-pattern.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        
-        {/* Фон с доктором (паттерн) - скрыт на мобильных */}
         <div 
           className="absolute -right-[70px] -bottom-[180px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block" 
           style={{
