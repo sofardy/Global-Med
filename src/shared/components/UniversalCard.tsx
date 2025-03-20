@@ -559,10 +559,9 @@ else if (variant === 'surgery') {
       
       {/* Заголовок */}
       <div className="flex flex-col flex-grow leading-normal">
-   <h3 className={`${titleSizeClass} font-medium mb-2 ${titleColor} leading-tight`} style={styles.title}>
+   <h3 className={`${titleSizeClass} w-[70%] font-medium mb-2 ${titleColor} leading-tight`} style={styles.title}>
   {title}
 </h3>
-        
         {/* Специфичная структура для каждого варианта */}
         {variant === 'analysis' ? (
           // Для анализов: заголовок → иконка → подзаголовок → описание

@@ -5,8 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
-import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { analysisDetails, translations } from '@/src/shared/mocks/analysisData';
+import AnalysisRecommendations from '@/src/shared/components/AnalysisRecommendations';
 
 // Define correct types
 interface PriceItem {
@@ -14,13 +14,7 @@ interface PriceItem {
   price: string;
 }
 
-interface Recommendation {
-  id: string;
-  title: string;
-  description: string;
-  iconPath: React.ReactNode;
-  link: string;
-}
+
 
 // Most basic possible type for Next.js 15
 export default function Page(props: any) {
@@ -217,32 +211,7 @@ export default function Page(props: any) {
       </div>
       
       {/* Recommendations */}
-      <div className="mb-12">
-        <h2 className="text-3xl md:text-4xl font-medium mb-8 text-light-text dark:text-dark-text">
-          {t('recommendationsTitle')}
-        </h2>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {analysisData.recommendations.map((recommendation: Recommendation) => (
-            <UniversalCard
-              key={recommendation.id}
-              variant="analysis-card"
-              title={recommendation.title}
-              description={recommendation.description}
-              icon={recommendation.iconPath}
-              link={recommendation.link}
-              buttonText="Подробнее"
-              className="h-full min-h-[270px]"
-              iconPosition="center"
-              showButton={true}
-              buttonStyle="outline"
-              bordered={true}
-              borderRadius="xl"
-              hoverBgColor="white"
-            />
-          ))}
-        </div>
-      </div>
+      <AnalysisRecommendations/>
       
       {/* Appointment section */}
       <div id="appointment-section">

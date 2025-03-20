@@ -18,7 +18,8 @@ interface Benefit {
 // Локализация для компонента
 const translations = {
   ru: {
-    title: 'Почему стоит выбирать наших врачей',
+    title: 'Почему стоит',
+    titleSecond: 'выбирать наших врачей',
     subtitle: 'Мы гарантируем индивидуальный подход, внимание к каждой детали и комфорт на всех этапах лечения',
     benefits: [
       {
@@ -48,7 +49,8 @@ const translations = {
     ]
   },
   uz: {
-    title: 'Nima uchun shifokorlarimizni tanlash kerak',
+    title: 'Nima uchun',
+    titleSecond: 'shifokorlarimizni tanlash kerak',
     subtitle: 'Biz individual yondashuvni, har bir detalga e\'tiborni va davolashning barcha bosqichlarida qulaylikni kafolatlaymiz',
     benefits: [
       {
@@ -88,13 +90,20 @@ export default function DoctorBenefits() {
   
   return (
     <div className="w-full mt-16 md:mt-20">
-      <div className="mb-8 md:mb-12">
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-light-text dark:text-dark-text mb-4">
-          {t('title')}
-        </h2>
-        <p className="text-base md:text-lg text-light-text/80 dark:text-dark-text/80 max-w-xl">
-          {t('subtitle')}
-        </p>
+      <div className="mb-8 md:mb-12 flex flex-col md:flex-row">
+        <div className="w-full md:w-1/2">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-light-text dark:text-dark-text">
+            {t('title')}
+          </h2>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-light-text dark:text-dark-text mt-1 md:mt-2">
+            {t('titleSecond')}
+          </h2>
+        </div>
+        <div className="w-full md:w-1/2 mt-4 md:mt-0">
+          <p className="text-base md:text-lg text-light-text/80 dark:text-dark-text/80 max-w-xl w-full md:w-[80%] lg:w-[40%]">
+            {t('subtitle')}
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">

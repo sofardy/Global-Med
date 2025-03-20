@@ -55,11 +55,15 @@ export const MedicalGallery = ({
           {images.map((src, index) => (
             <SwiperSlide key={index}>
               <div className="relative w-full h-[460px]">
-                <Image
-                  src={src}
-                  alt={`${alt} ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
+               <Image
+  src={src}
+  width={0}
+  height={0}
+  sizes="100vw"
+  alt={`${alt} ${index + 1}`}
+  className="w-full h-full object-cover"
+  style={{ width: '100%', height: 'auto' }}
+/>
               </div>
             </SwiperSlide>
           ))}
@@ -102,6 +106,9 @@ export const MedicalGallery = ({
         >
           <div className="h-[460px] relative overflow-hidden rounded-lg">
             <Image
+                width={0}
+  height={0}
+  sizes="100vw"
               src={src}
               alt={`${alt} ${index + 1}`}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"

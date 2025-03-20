@@ -30,7 +30,7 @@ export const BenefitsCheckUps: React.FC<BenefitsCheckUpsProps> = ({
       id: 'precision',
       title: 'Точные результаты',
       description: 'Современные технологии обеспечивают точность диагностики',
-      icon: <ButterflyIcon size={80} color="white" />
+      icon: <ButterflyIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'}  />
     },
     {
       id: 'price',
