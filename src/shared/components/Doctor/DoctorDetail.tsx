@@ -8,8 +8,69 @@ import DoctorCertificates from './CertificateCard';
 import AppointmentScheduler from './AppointmentScheduler';
 import { ContactInfo } from '../ContactInfo';
 
+// Define types for the doctor data
+export interface Education {
+  years?: string;
+  institution: string;
+  course?: string;
+}
+
+export interface Certificate {
+  id: string;
+  imageUrl: string;
+  title: string;
+  expiryDate: string;
+}
+
+export interface Doctor {
+  id?: string;
+  name: string;
+  specialization: string;
+  photoUrl?: string;
+  qualification?: string;
+  category?: string;
+  languages?: string;
+  experience?: string;
+  appointmentCost?: string;
+  basicEducation?: Education[];
+  additionalEducation?: Education[];
+  certificates?: Certificate[];
+}
+
+// Type for translations
+interface LocaleMessages {
+  ru: {
+    qualification: string;
+    category: string;
+    languages: string;
+    experience: string;
+    appointmentCost: string;
+    basicEducation: string;
+    additionalEducation: string;
+    bookAppointment: string;
+    certificates: {
+      title: string;
+      description: string;
+    };
+  };
+  uz: {
+    qualification: string;
+    category: string;
+    languages: string;
+    experience: string;
+    appointmentCost: string;
+    basicEducation: string;
+    additionalEducation: string;
+    bookAppointment: string;
+    certificates: {
+      title: string;
+      description: string;
+    };
+  };
+}
+
 // Пример данных сертификатов для тестирования
-const certificatesData = [
+const certificatesData: Certificate[] = [
   {
     id: '1',
     imageUrl: '/images/certificate.png', 
@@ -48,7 +109,7 @@ const certificatesData = [
   },
 ];
 
-const translations = {
+const translations: LocaleMessages = {
   ru: {
     qualification: 'Квалификация',
     category: 'Категория',
@@ -79,12 +140,16 @@ const translations = {
   }
 };
 
+interface DoctorDetailProps {
+  doctor: Doctor;
+}
+
 // Основной компонент деталей врача, включающий секцию сертификатов
-export default function DoctorDetail({ doctor }) {
-  const { t } = useTranslation(translations);
+export default function DoctorDetail({ doctor }: DoctorDetailProps): React.ReactElement {
+  const { t } = useTranslation<LocaleMessages>(translations);
   
   // Функция для перехода на страницу записи
-  const handleAppointment = () => {
+  const handleAppointment = (): void => {
     // Перенаправление на страницу записи с ID доктора
     window.location.href = `/appointment?doctor=${doctor.id || ''}`;
   };

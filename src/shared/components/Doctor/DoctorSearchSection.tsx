@@ -5,7 +5,21 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import Modal from '@/src/shared/components/Modal/Modal';
 
-// Локализация
+interface DropdownPosition {
+ top: number;
+ left: number;
+ width: number;
+}
+
+interface SpecialtiesDropdownProps {
+ isOpen: boolean;
+ onClose: () => void;
+ specialties: string[];
+ onSelect: (specialty: string) => void;
+ placeholder: string;
+ buttonRef: React.RefObject<HTMLButtonElement>;
+}
+
 const translations = {
  ru: {
    title: 'Найдите специалиста',
@@ -38,7 +52,7 @@ const translations = {
 };
 
 // Компонент выпадающего списка с порталом только для десктопной версии
-const SpecialtiesDropdown = ({ 
+const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({ 
  isOpen, 
  onClose, 
  specialties, 
@@ -46,10 +60,10 @@ const SpecialtiesDropdown = ({
  placeholder, 
  buttonRef
 }) => {
- const dropdownRef = useRef(null);
- const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+ const dropdownRef = useRef<HTMLDivElement>(null);
+ const [position, setPosition] = useState<DropdownPosition>({ top: 0, left: 0, width: 0 });
  
- const updatePosition = () => {
+ const updatePosition = (): void => {
    if (buttonRef.current) {
      const rect = buttonRef.current.getBoundingClientRect();
      setPosition({
@@ -74,9 +88,13 @@ const SpecialtiesDropdown = ({
  }, [isOpen]);
  
  useEffect(() => {
-   const handleClickOutside = (e) => {
-     if (dropdownRef.current && !dropdownRef.current.contains(e.target) && 
-         buttonRef.current && !buttonRef.current.contains(e.target)) {
+   const handleClickOutside = (e: MouseEvent): void => {
+     if (
+       dropdownRef.current && 
+       !dropdownRef.current.contains(e.target as Node) && 
+       buttonRef.current && 
+       !buttonRef.current.contains(e.target as Node)
+     ) {
        onClose();
      }
    };
@@ -130,21 +148,21 @@ const SpecialtiesDropdown = ({
  );
 };
 
-export default function DoctorSearchSection() {
+const DoctorSearchSection: React.FC = () => {
  const { t } = useTranslation(translations);
  
- const [nameQuery, setNameQuery] = useState('');
- const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
- const [isModalOpen, setIsModalOpen] = useState(false);
- const [selectedSpecialty, setSelectedSpecialty] = useState('');
- const [isMobile, setIsMobile] = useState(false);
- const [isMounted, setIsMounted] = useState(false);
+ const [nameQuery, setNameQuery] = useState<string>('');
+ const [isSpecialtyOpen, setIsSpecialtyOpen] = useState<boolean>(false);
+ const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+ const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
+ const [isMobile, setIsMobile] = useState<boolean>(false);
+ const [isMounted, setIsMounted] = useState<boolean>(false);
  
- const specialtyButtonRef = useRef(null);
+ const specialtyButtonRef = useRef<HTMLButtonElement>(null);
  
  useEffect(() => {
    setIsMounted(true);
-   const checkMobile = () => {
+   const checkMobile = (): void => {
      setIsMobile(window.innerWidth < 768);
    };
    
@@ -156,20 +174,20 @@ export default function DoctorSearchSection() {
    };
  }, []);
  
- const handleSearch = () => {
+ const handleSearch = (): void => {
    console.log('Searching for:', { nameQuery, selectedSpecialty });
  };
  
- const specialties = t('specialties', { returnObjects: true });
+ const specialties = t('specialties', { returnObjects: true }) as string[];
  const displaySpecialty = selectedSpecialty || t('selectPlaceholder');
  
- const handleSelectSpecialty = (specialty) => {
+ const handleSelectSpecialty = (specialty: string): void => {
    setSelectedSpecialty(specialty);
    setIsSpecialtyOpen(false);
    setIsModalOpen(false);
  };
  
- const handleSpecialtyButtonClick = () => {
+ const handleSpecialtyButtonClick = (): void => {
    if (isMobile) {
      setIsModalOpen(true);
    } else {
@@ -317,4 +335,6 @@ export default function DoctorSearchSection() {
      `}</style>
    </div>
  );
-}
+};
+
+export default DoctorSearchSection;

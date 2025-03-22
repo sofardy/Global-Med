@@ -1,10 +1,17 @@
-export default function Partners() {
+import ComprehensiveApproach from "@/src/shared/components/ComprehensiveApproach";
+import ContactForm from "@/src/shared/components/ContactForm";
+import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import PartnerBenefits from "@/src/shared/components/PartnerBenefits";
+import WhyChooseUs from "@/src/shared/components/WhyChooseUs";
 
+export default function Partners() {
   return (
-    <main className="container py-10">
-          <div className="flex justify-end space-x-4 mb-8">
-              Partners
-      </div>
+    <main>
+      <PartnerBenefits />
+      <ComprehensiveApproach />
+      <WhyChooseUs />
+      <ContactForm />
+       <ContactInfo />
     </main>
   );
 }

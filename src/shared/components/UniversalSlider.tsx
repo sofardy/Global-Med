@@ -49,6 +49,14 @@ export interface UniversalSliderProps {
   
   // События
   onSlideChange?: (index: number) => void;
+
+   breakpoints?: {
+    [width: number]: {
+      slidesPerView?: number;
+      spaceBetween?: number;
+    };
+  };
+  
   onInit?: (swiper: any) => void;
 }
 
