@@ -6,8 +6,9 @@ import { checkupDetailTranslations } from '@/src/shared/mocks/checkupHeroData';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { BenefitsCheckUps } from '@/src/shared/components/BenefitScheckUps';
+import { AnimatedButton, AnimatedButtonWrapper } from '@/src/shared/ui/Button/AnimatedButton';
 
-  interface FAQItem {
+interface FAQItem {
   title: string;
   content: string;
 }
@@ -19,15 +20,13 @@ interface OpenItemsState {
 const CheckupDetail = () => {
   const { t } = useTranslation(checkupDetailTranslations);
   
-  // Для усиленной пульсации кнопки
-  const [pulsePower, setPulsePower] = useState(1);
-  
   // Состояние для аккордеона FAQ
- const [openItems, setOpenItems] = useState<OpenItemsState>({});
+  const [openItems, setOpenItems] = useState<OpenItemsState>({});
   
   // Состояние определения мобильного устройства
   const [, setIsMobile] = useState(false);
   const faqItems = t('faqItems', { returnObjects: true }) as FAQItem[];
+  
   // Определяем размер экрана при загрузке и изменении размера окна
   useEffect(() => {
     const checkMobile = () => {
@@ -42,22 +41,6 @@ const CheckupDetail = () => {
     };
   }, []);
   
-  // Эффект для пульсации кнопки с изменяющейся интенсивностью
-  useEffect(() => {
-    let power = 1;
-    let increasing = true;
-    
-    const interval = setInterval(() => {
-      if (power >= 1.8) increasing = false;
-      if (power <= 1) increasing = true;
-      
-      power = increasing ? power + 0.05 : power - 0.05;
-      setPulsePower(power);
-    }, 500);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
   // Функция для открытия формы записи
   const handleAppointment = () => {
     console.log('Открытие формы записи');
@@ -70,12 +53,12 @@ const CheckupDetail = () => {
   };
 
   // Функция для управления аккордеоном
- const toggleItem = (index: number): void => {
-  setOpenItems((prev: OpenItemsState) => ({
-    ...prev,
-    [index]: !prev[index]
-  }));
-};
+  const toggleItem = (index: number): void => {
+    setOpenItems((prev: OpenItemsState) => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
 
   return (
     <main className="overflow-hidden">
@@ -137,49 +120,16 @@ const CheckupDetail = () => {
           </div>
           
           {/* Кнопка записи - в верхнем правом углу на мобильных, в правом нижнем на десктопе */}
-          <div className="flex justify-center sm:justify-end mt-6 md:mt-0">
-            <button 
+          <AnimatedButtonWrapper className="mt-6 md:mt-0">
+            <AnimatedButton 
               onClick={handleAppointment}
-              className="w-full sm:w-auto px-4 sm:px-6 md:px-10 lg:px-20 py-3 sm:py-4 border-2 border-white rounded-lg sm:rounded-xl transition-all duration-300 relative overflow-hidden group hover:bg-white hover:text-light-accent hover:scale-105 hover:shadow-lg hover:shadow-white/30 focus:outline-none text-xs sm:text-sm md:text-base"
+              borderColor="white"
+              hoverTextColor="light-accent"
+              width="w-full sm:w-auto"
             >
-              {/* Основной текст */}
-              <span className="relative z-10 group-hover:font-bold">{t('bookButton')}</span>
-              
-              {/* Пульсирующий фон - переменная интенсивность */}
-              <span 
-                className="absolute inset-0 bg-white/30 rounded-lg sm:rounded-xl opacity-100 group-hover:opacity-0"
-                style={{
-                  animation: `pulse ${pulsePower}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-                }}
-              />
-              
-              {/* Свечение вокруг кнопки */}
-              <span 
-                className="absolute -inset-1 bg-white/20 rounded-lg sm:rounded-xl blur-sm group-hover:bg-transparent"
-                style={{
-                  animation: `pulse ${pulsePower + 0.3}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-                }}
-              />
-              
-              {/* Эффект движущихся бликов */}
-              <span className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-lg sm:rounded-xl">
-                <span 
-                  className="absolute h-8 sm:h-12 md:h-20 w-8 sm:w-12 md:w-20 -top-4 sm:-top-6 md:-top-10 -left-4 sm:-left-6 md:-left-10 bg-white/40 rounded-full blur-md transform rotate-45 group-hover:scale-150"
-                  style={{ animation: 'moveHighlight1 6s infinite linear' }}
-                ></span>
-                
-                <span 
-                  className="absolute h-6 sm:h-10 md:h-16 w-6 sm:w-10 md:w-16 -bottom-3 sm:-bottom-5 md:-bottom-8 -right-3 sm:-right-5 md:-right-8 bg-white/30 rounded-full blur-md transform rotate-45 group-hover:scale-150"
-                  style={{ animation: 'moveHighlight2 8s infinite linear' }}
-                ></span>
-              </span>
-              
-              {/* Эффект при наведении - рябь по воде */}
-              <span 
-                className="absolute inset-0 scale-0 rounded-lg sm:rounded-xl bg-white/40 group-hover:animate-ripple"
-              ></span>
-            </button>
-          </div>
+              {t('bookButton')}
+            </AnimatedButton>
+          </AnimatedButtonWrapper>
         </div>
       </div>
 
@@ -247,47 +197,6 @@ const CheckupDetail = () => {
       
       {/* Контактная информация */}
       <ContactInfo />
-      
-      {/* CSS для анимаций */}
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 0.6;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-        
-        @keyframes moveHighlight1 {
-          0% {
-            transform: translateX(-100%) translateY(-20%) rotate(45deg);
-          }
-          100% {
-            transform: translateX(200%) translateY(100%) rotate(45deg);
-          }
-        }
-        
-        @keyframes moveHighlight2 {
-          0% {
-            transform: translateX(200%) translateY(100%) rotate(45deg);
-          }
-          100% {
-            transform: translateX(-100%) translateY(-20%) rotate(45deg);
-          }
-        }
-        
-        @keyframes ripple {
-          0% {
-            transform: scale(0);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(4);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </main>
   );
 };

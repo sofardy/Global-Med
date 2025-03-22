@@ -1,10 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {LocaleMessages} from './translation';
+import { LocaleMessages } from './translation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from '@/src/hooks/useTranslation';
-// import { useThemeStore } from '@/src/store/theme';
 
-// Типы для модальных окон
+// Types for modal windows
 type ModalPosition = 'bottom' | 'center' | 'top';
 type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 type ModalTheme = 'primary' | 'success' | 'danger' | 'warning' | 'info' | 'neutral' | 'brand';
@@ -65,21 +64,30 @@ export default function Modal({
   footer
 }: ModalProps) {
   const { t } = useTranslation(LocaleMessages);
-  // const { theme: appTheme } = useThemeStore();
-  // const isDarkMode = appTheme === 'dark';
   
   const modalRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   
-  // Состояния для взаимодействия и дизайна
+  // States for interaction and design
   const [startY, setStartY] = useState(0);
   const [currentY, setCurrentY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   
   const isBottomPosition = position === 'bottom';
 
-  // Блокировка скролла при открытом модальном окне
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Lock scroll when modal is open
   useEffect(() => {
     if (isOpen && preventScroll) {
       document.body.style.overflow = 'hidden';
@@ -95,10 +103,10 @@ export default function Modal({
     };
   }, [isOpen, preventScroll]);
 
-  // Если модальное окно закрыто, не рендерим его
+  // Don't render if modal is closed
   if (!isOpen) return null;
 
-  // Обработчики свайпа
+  // Swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!draggable || !isBottomPosition) return;
     setStartY(e.touches[0].clientY);
@@ -122,24 +130,26 @@ export default function Modal({
     setIsDragging(false);
   };
 
-  // Обработка клика по оверлею
+  // Handle overlay click
   const handleOverlayClick = () => {
     if (closeOnOverlayClick) {
       onClose();
     }
   };
 
-  // Классы для размеров
+  // Check if we should use mobile layout
+  const isMobile = windowWidth < 640; // sm breakpoint in Tailwind
+  
+  // Size classes with mobile responsiveness
   const sizeClasses = {
-    sm: isBottomPosition ? 'w-full' : 'max-w-sm',
-    md: isBottomPosition ? 'w-full' : 'max-w-md',
-    lg: isBottomPosition ? 'w-full' : 'max-w-lg',
-    xl: isBottomPosition ? 'w-full' : 'max-w-xl',
+    sm: isMobile && position === 'center' ? 'w-[calc(100%-20px)] max-w-sm' : isBottomPosition ? 'w-full' : 'max-w-sm',
+    md: isMobile && position === 'center' ? 'w-[calc(100%-20px)] max-w-md' : isBottomPosition ? 'w-full' : 'max-w-md',
+    lg: isMobile && position === 'center' ? 'w-[calc(100%-20px)] max-w-lg' : isBottomPosition ? 'w-full' : 'max-w-lg',
+    xl: isMobile && position === 'center' ? 'w-[calc(100%-20px)] max-w-xl' : isBottomPosition ? 'w-full' : 'max-w-xl',
     full: 'w-full max-w-full mx-0'
   };
 
-  // Основные цвета проекта
-  // Customize theme classes to use project colors
+  // Theme classes
   const themeClasses = {
     brand: {
       title: 'text-light-text dark:text-dark-text',
@@ -185,28 +195,28 @@ export default function Modal({
     }
   };
 
-  // Классы для позиционирования
+  // Position classes
   const positionClasses = {
     top: 'top-0 left-1/2 -translate-x-1/2',
-    center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+    center: isMobile ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mx-auto' : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
     bottom: 'bottom-0 left-0 right-0'
   };
 
-  // Классы для скругления углов
+  // Border radius classes
   const roundedClasses = {
     top: 'rounded-b-2xl',
     center: 'rounded-2xl',
     bottom: 'rounded-t-2xl'
   };
 
-  // Анимационные классы
+  // Animation classes
   const animationClasses = {
     top: 'animate-slideDown',
     center: 'animate-fadeIn',
     bottom: 'animate-slideUp'
   };
 
-  // Оптимизированный рендеринг для модального окна снизу
+  // Optimized rendering for bottom modal
   if (isBottomPosition) {
     return (
       <div 
@@ -215,7 +225,7 @@ export default function Modal({
         aria-modal="true"
         role="dialog"
       >
-        {/* Контейнер для модалки снизу */}
+        {/* Container for bottom modal */}
         <div 
           ref={wrapperRef}
           className={`
@@ -240,14 +250,14 @@ export default function Modal({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Ручка для перетаскивания */}
+          {/* Drag handle */}
           {draggable && (
             <div className="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mt-3 mb-1 cursor-grab active:cursor-grabbing" />
           )}
           
-          {/* Содержимое с внутренним скроллом */}
+          {/* Content with internal scroll */}
           <div ref={modalRef} className="relative flex-1 overflow-hidden">
-            {/* Заголовок - остается фиксированным сверху */}
+            {/* Title - stays fixed at the top */}
             {(title || subtitle) && (
               <div className={`sticky top-0 z-10 ${themeClasses[theme].bg} py-3 px-4 ${showCloseIcon ? 'pr-12' : ''}`}>
                 {title && (
@@ -263,7 +273,7 @@ export default function Modal({
               </div>
             )}
             
-            {/* Кнопка закрытия - абсолютно позиционированная */}
+            {/* Close button - absolutely positioned */}
             {showCloseIcon && (
               <button
                 onClick={onClose}
@@ -274,28 +284,28 @@ export default function Modal({
               </button>
             )}
             
-            {/* Скроллируемый контейнер для основного содержимого */}
+            {/* Scrollable container for main content */}
             <div 
               ref={contentRef}
               className={`overflow-y-auto ${noPadding ? '' : 'p-4'} ${title ? 'pt-2' : ''} ${contentClassName}`}
               style={{
-                maxHeight: 'calc(90vh - 60px)' // Учитываем предполагаемую высоту заголовка и футера
+                maxHeight: 'calc(90vh - 60px)' // Account for estimated header and footer height
               }}
             >
               {children}
             </div>
           </div>
           
-          {/* Футер - остается фиксированным снизу */}
+          {/* Footer - stays fixed at the bottom */}
           {(footer || showCloseButton) && (
             <div className={`px-4 py-3 ${themeClasses[theme].bg} border-t ${themeClasses[theme].border}`}>
               {footer}
               
-              {/* Кнопка закрытия */}
+              {/* Close button */}
               {showCloseButton && (
                 <button
                   onClick={onClose}
-                  className={`w-full ${themeClasses[theme].button} rounded-xl py-3 text-sm font-medium transition-colors ${!footer ? 'mt-0' : 'mt-3'}`}
+                  className={`w-full ${themeClasses[theme].button} rounded-xl py-3 text-sm font-medium transition-colors ${!footer ? 'mt-0ы' : 'mt-3'}`}
                 >
                   {closeText || t('close')}
                 </button>
@@ -304,7 +314,7 @@ export default function Modal({
           )}
         </div>
         
-        {/* CSS-анимации */}
+        {/* CSS animations */}
         <style jsx global>{`
           @keyframes slideUp {
             from {
@@ -353,7 +363,7 @@ export default function Modal({
     );
   }
 
-  // Стандартный рендеринг для других позиций (top, center)
+  // Standard rendering for other positions (top, center)
   return (
     <div 
       className={`fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center ${backdropClassName}`}
@@ -373,9 +383,13 @@ export default function Modal({
           shadow-xl
           ${className}
         `}
+        style={{
+          maxHeight: isMobile ? '85vh' : '80vh',
+          ...(isMobile && position === 'center' ? { margin: '' } : {})
+        }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Кнопка закрытия */}
+        {/* Close button */}
         {showCloseIcon && (
           <button
             onClick={onClose}
@@ -386,7 +400,7 @@ export default function Modal({
           </button>
         )}
         
-        {/* Заголовок */}
+        {/* Title */}
         {(title || subtitle) && (
           <div className={`text-center ${showCloseIcon ? 'pr-8' : ''} mb-4`}>
             {title && (
@@ -402,17 +416,17 @@ export default function Modal({
           </div>
         )}
         
-        {/* Основное содержимое */}
+        {/* Main content */}
         <div className={contentClassName}>
           {children}
         </div>
         
-        {/* Футер */}
+        {/* Footer */}
         {(footer || showCloseButton) && (
           <div className="mt-6">
             {footer}
             
-            {/* Кнопка закрытия */}
+            {/* Close button */}
             {showCloseButton && (
               <button
                 onClick={onClose}
@@ -425,7 +439,7 @@ export default function Modal({
         )}
       </div>
       
-      {/* CSS-анимации */}
+      {/* CSS animations */}
       <style jsx global>{`
         @keyframes slideUp {
           from {

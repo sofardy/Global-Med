@@ -160,7 +160,7 @@ export const Footer: React.FC = () => {
   const navigationLinks = t('navigationLinks', { returnObjects: true }) as LinkItem[];
   
   return (
-    <footer className="mt-20">
+    <footer className="mt-40">
       {/* Main footer content */}
       <div className={`rounded-2xl p-8 md:p-10 ${bgColor}`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

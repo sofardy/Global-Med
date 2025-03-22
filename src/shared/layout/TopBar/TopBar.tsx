@@ -252,7 +252,7 @@ useEffect(() => {
                     onMouseLeave={handleSubmenuLeave}
                   >
                     <Link
-                      href={`${route.path}/about-us`}
+                      href={`${route.path}`}
                       className={`block px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
                     >
                       {t('header.menuItems.aboutClinic')}

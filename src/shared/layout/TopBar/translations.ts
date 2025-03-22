@@ -6,7 +6,7 @@ export const translations = {
             menuItems: {
                 ourDoctors: 'Врачи',
                 ourServices: 'О нас',
-                aboutClinic: 'О клинике',
+                aboutClinic: 'О нас',
                 contacts: 'Контакты',
                 more: 'Ещё' 
             },
