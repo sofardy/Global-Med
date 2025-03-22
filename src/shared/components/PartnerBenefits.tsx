@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useThemeStore } from '@/src/store/theme';
 import Image from 'next/image';
+import { BrainIcon } from '../ui/Icon';
 
 export default function PartnerBenefits() {
   const { theme } = useThemeStore();
@@ -79,43 +80,6 @@ export default function PartnerBenefits() {
     );
   };
 
-  // Adaptive icon sizes
-  const getIconSize = () => {
-    if (isMobile) return 50;
-    if (isTablet) return 65;
-    if (isLaptop) return 80;
-    return 100;
-  };
-
-  const LoyaltyIcon = () => {
-    const iconSize = getIconSize();
-    return (
-      <svg width={iconSize} height={iconSize} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M40 10L45.8 27.32H64L49.1 38.18L54.9 55.5L40 44.64L25.1 55.5L30.9 38.18L16 27.32H34.2L40 10Z" 
-          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M65 22L70 30H78L71.5 35L76.5 45L70 40L63.5 45L68.5 35L62 30H70L65 22Z" 
-          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M15 22L20 30H28L21.5 35L26.5 45L20 40L13.5 45L18.5 35L12 30H20L15 22Z" 
-          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M40 60L44 68H52L45.5 73L49.5 83L43 78L36.5 83L40.5 73L34 68H42L40 60Z" 
-          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    );
-  };
-
-  const HRIcon = () => {
-    const iconSize = getIconSize();
-    return (
-      <svg width={iconSize} height={iconSize} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="40" cy="30" r="15" stroke="currentColor" strokeWidth="2"/>
-        <path d="M65 65C65 51.19 53.81 40 40 40C26.19 40 15 51.19 15 65" stroke="currentColor" strokeWidth="2"/>
-        <circle cx="60" cy="55" r="15" stroke="currentColor" strokeWidth="2"/>
-        <path d="M55 55L58 58L65 51" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    );
-  };
-
-  // Dynamic banner height
   const getBannerHeight = () => {
     if (isMobile) return 'h-[250px]';
     if (isTablet) return 'h-[300px]';
@@ -135,14 +99,6 @@ export default function PartnerBenefits() {
           sizes="(max-width: 768px) 100vw, (max-width: 1520px) 100vw, 100vw"
           priority
         />
-        {/* <Image 
-          src="https://i.imgur.com/tC3O1mk.jpg" 
-          alt="Медицинская страховка" 
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1520px) 100vw, 100vw"
-          priority
-        /> */}
       </div>
 
       {/* Блоки с изменением расположения и размеров */}
@@ -165,7 +121,7 @@ export default function PartnerBenefits() {
             <FeatureCard
               title="Лояльность сотрудников"
               description="Забота о здоровье команды повышает мотивацию, укрепляет доверие и снижает текучесть кадров в компании"
-              icon={<LoyaltyIcon />}
+              icon={<BrainIcon />}
             />
           </div>
         </div>
@@ -176,7 +132,7 @@ export default function PartnerBenefits() {
             <FeatureCard
               title="Сильный HR-бренд"
               description="ДМС делает компанию привлекательной для специалистов и помогает конкурировать за лучшие кадры"
-              icon={<HRIcon />}
+              icon={<BrainIcon />}
             />
           </div>
         </div>
