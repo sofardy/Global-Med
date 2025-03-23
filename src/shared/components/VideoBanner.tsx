@@ -48,7 +48,7 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
 
   return (
     <div 
-      className={`relative w-full overflow-hidden rounded-2xl mt-10 md:mt-20 cursor-pointer ${className}`} 
+      className={`relative w-full overflow-hidden rounded-2xl mb-6 sm:mb-8 md:mb-40 cursor-pointer ${className}`} 
       onClick={handleClick}
     >
       {/* Видео - адаптивная высота */}

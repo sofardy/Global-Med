@@ -33,7 +33,7 @@ const FooterLink: React.FC<{
   return (
     <Link 
       href={href} 
-      className={`${textColorMuted} ${hoverColor} transition-colors ${className}`}
+      className={`${textColorMuted} ${hoverColor} transition-colors text-lg ${className}`}
       {...props}
     >
       {children}
@@ -56,7 +56,7 @@ const ExternalLink: React.FC<{
       href={href} 
       target="_blank" 
       rel="noopener noreferrer"
-      className={`${textColorMuted} ${hoverColor} transition-colors ${className}`}
+      className={`${textColorMuted} ${hoverColor} transition-colors text-lg ${className}`}
     >
       {children}
     </a>
@@ -106,7 +106,7 @@ const SectionTitle: React.FC<{ children: React.ReactNode; className?: string }> 
   const textColor = theme === 'dark' ? 'text-white' : 'text-light-text';
   
   return (
-    <h3 className={`${textColor} text-xl font-medium mb-6 ${className}`}>
+    <h3 className={`${textColor} text-xl font-semibold mb-6 ${className}`}>
       {children}
     </h3>
   );
@@ -123,7 +123,7 @@ const ViewAllLink: React.FC<{ href: string; children: React.ReactNode }> = ({
   return (
     <Link 
       href={href} 
-      className={`${textColor} hover:underline font-medium`}
+      className={`${textColor} underline font-semibold text-lg`}
     >
       {children}
     </Link>
@@ -259,7 +259,7 @@ export const Footer: React.FC = () => {
             </ul>
 
             <SectionTitle className="mb-4">{t('sections.address')}</SectionTitle>
-            <p className={`${textColorMuted} mb-6`}>
+            <p className={`${textColorMuted} mb-6 text-lg`}>
               {t('address')}
             </p>
 
@@ -281,18 +281,18 @@ export const Footer: React.FC = () => {
       {/* Bottom footer */}
       <div className={`p-6 md:p-8 rounded-2xl mt-4 ${bgColor}`}>
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className={`${textColorMuted} text-sm mb-4 md:mb-0`}>
+          <div className={`${textColorMuted} text-lg mb-4 md:mb-0`}>
             2025 © Global Medical Center
           </div>
           
           <FooterLink 
             href="/privacy-policy" 
-            className="text-sm mb-4 md:mb-0"
+            className="mb-4 md:mb-0"
           >
             {t('privacyPolicy')}
           </FooterLink>
           
-          <div className={`${textColorMuted} text-sm`}>
+          <div className={`${textColorMuted} text-lg`}>
             {t('designedBy')} <ExternalLink href="https://kelyanmedia.com">
               KelyanMedia
             </ExternalLink>

@@ -228,13 +228,13 @@ useEffect(() => {
                 onMouseEnter={() => handleRouteHover(route.path)}
                 onMouseLeave={handleRouteLeave}
               >
-                <Link
+              <Link
                   href={route.path}
                   className={`
                   p-3 xl:p-4 font-regular text-lg xl:text-xl transition-colors duration-300 flex items-center rounded-2xl border-2 border-transparent
                   ${pathname === route.path
                       ? `${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border-light-accent`
-                      : 'hover:border-light-accent/30'}
+                      : 'hover:border-light-accent/30 hover:text-light-accent'}
                 `}
                 >
                   {t(`routes.${route.translationKey}`)}

@@ -8,7 +8,7 @@ import { routes } from '../shared/config/routes';
 import { FloatingComponents } from '../shared/components/FloatingComponents';
 import { Footer } from '../shared/layout/Footer/Footer';
 import Breadcrumbs from '../shared/components/Breadcrumbs';
-// import { ThemeToggle } from '../shared/components/ThemeToggle';
+import { ThemeToggle } from '../shared/components/ThemeToggle';
 import { ScrollToTop } from '../shared/components/ScrollToTop';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
@@ -36,7 +36,7 @@ export default function RootLayout({
                 {children}
               </main>
               
-              {/* <ThemeToggle /> */}
+              <ThemeToggle />
               <Footer />
             </div>
             

@@ -95,6 +95,34 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     return () => clearInterval(interval);
   }, [pulsation]);
   
+  // Определяем нужные классы в зависимости от свойств
+  const getBorderColorClass = () => {
+    return borderColor === 'white' ? 'border-white' : `border-${borderColor}`;
+  };
+  
+  const getHoverBgClass = () => {
+    return borderColor === 'white' ? 'hover:bg-white' : `hover:bg-${borderColor}`;
+  };
+  
+  const getHoverTextClass = () => {
+    return hoverTextColor === 'light-accent' ? 'hover:text-light-accent' : `hover:text-${hoverTextColor}`;
+  };
+  
+  const getHoverShadowClass = () => {
+    return borderColor === 'white' ? 'hover:shadow-white/30' : `hover:shadow-${borderColor}/30`;
+  };
+  
+  // Классы для бликов и анимации
+  const getHighlightClasses = () => {
+    return {
+      bg30: borderColor === 'white' ? 'bg-white/30' : `bg-${borderColor}/30`,
+      bg20: borderColor === 'white' ? 'bg-white/20' : `bg-${borderColor}/20`,
+      bg40: borderColor === 'white' ? 'bg-white/40' : `bg-${borderColor}/40`
+    };
+  };
+  
+  const highlightClasses = getHighlightClasses();
+  
   return (
     <button 
       onClick={onClick}
@@ -104,32 +132,35 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         ${widthClasses}
         px-4 sm:px-6 md:px-10 lg:px-20 
         py-3 sm:py-4 
-        border-2 border-${borderColor} 
+        border-2 ${getBorderColorClass()} 
         rounded-lg sm:rounded-xl 
         transition-all duration-300 
         relative overflow-hidden 
         group 
-        hover:bg-${borderColor} 
-        hover:text-${hoverTextColor} 
+        bg-white
+        text-light-accent
+        font-medium
+        ${getHoverBgClass()} 
+        ${getHoverTextClass()} 
         hover:scale-105 
         active:scale-95
         hover:shadow-lg 
-        hover:shadow-${borderColor}/30 
+        ${getHoverShadowClass()} 
         focus:outline-none 
         text-xs sm:text-sm md:text-base
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${className}
       `}
     >
-      {/* Основной текст */}
-      <span className="relative z-10 group-hover:font-bold">
+      {/* Основной текст - убрана смена жирности при наведении */}
+      <span className="relative z-10">
         {children}
       </span>
       
       {/* Пульсирующий фон - переменная интенсивность */}
       {pulsation && (
         <span 
-          className={`absolute inset-0 bg-${borderColor}/30 rounded-lg sm:rounded-xl opacity-100 group-hover:opacity-0`}
+          className={`absolute inset-0 ${highlightClasses.bg30} rounded-lg sm:rounded-xl opacity-100 group-hover:opacity-0`}
           style={{
             animation: `pulse ${pulsePower}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
           }}
@@ -138,7 +169,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       
       {/* Свечение вокруг кнопки */}
       <span 
-        className={`absolute -inset-1 bg-${borderColor}/20 rounded-lg sm:rounded-xl blur-sm group-hover:bg-transparent`}
+        className={`absolute -inset-1 ${highlightClasses.bg20} rounded-lg sm:rounded-xl blur-sm group-hover:bg-transparent`}
         style={{
           animation: pulsation ? `pulse ${pulsePower + 0.3}s cubic-bezier(0.4, 0, 0.6, 1) infinite` : 'none',
         }}
@@ -147,19 +178,19 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       {/* Эффект движущихся бликов */}
       <span className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-lg sm:rounded-xl">
         <span 
-          className={`absolute h-8 sm:h-12 md:h-20 w-8 sm:w-12 md:w-20 -top-4 sm:-top-6 md:-top-10 -left-4 sm:-left-6 md:-left-10 bg-${borderColor}/40 rounded-full blur-md transform rotate-45 group-hover:scale-150`}
+          className={`absolute h-8 sm:h-12 md:h-20 w-8 sm:w-12 md:w-20 -top-4 sm:-top-6 md:-top-10 -left-4 sm:-left-6 md:-left-10 ${highlightClasses.bg40} rounded-full blur-md transform rotate-45 group-hover:scale-150`}
           style={{ animation: 'moveHighlight1 6s infinite linear' }}
         />
         
         <span 
-          className={`absolute h-6 sm:h-10 md:h-16 w-6 sm:w-10 md:w-16 -bottom-3 sm:-bottom-5 md:-bottom-8 -right-3 sm:-right-5 md:-right-8 bg-${borderColor}/30 rounded-full blur-md transform rotate-45 group-hover:scale-150`}
+          className={`absolute h-6 sm:h-10 md:h-16 w-6 sm:w-10 md:w-16 -bottom-3 sm:-bottom-5 md:-bottom-8 -right-3 sm:-right-5 md:-right-8 ${highlightClasses.bg30} rounded-full blur-md transform rotate-45 group-hover:scale-150`}
           style={{ animation: 'moveHighlight2 8s infinite linear' }}
         />
       </span>
       
       {/* Эффект при наведении - рябь по воде */}
       <span 
-        className={`absolute inset-0 scale-0 rounded-lg sm:rounded-xl bg-${borderColor}/40 group-hover:animate-ripple`}
+        className={`absolute inset-0 scale-0 rounded-lg sm:rounded-xl ${highlightClasses.bg40} group-hover:animate-ripple`}
       />
     </button>
   );

@@ -66,10 +66,10 @@ export const AnalysisGrid: React.FC<AnalysisGridProps> = ({
   const hasMoreItems = visibleItems < analysisList.length;
   
   return (
-    <div className="w-full mt-20">
+    <div className="w-full mt-6 sm:mt-8 md:mt-40 mb-6 sm:mb-8 md:mb-40">
       <div className="flex flex-col md:flex-row gap-4 md:gap-6">
         {/* Информационный блок - адаптивная высота */}
-   <div className="w-full md:w-[24%] bg-light-accent text-white p-6 md:p-10 rounded-2xl flex flex-col h-[400px] md:h-[700px] relative overflow-hidden">
+   <div className="w-full md:w-[24%] bg-light-accent text-white p-6 md:p-10 rounded-2xl flex flex-col h-[400px] md:h-[654px] relative overflow-hidden">
   {/* Контейнер с overflow-visible для фонового элемента */}
   <div className="absolute inset-0 overflow-visible">
     <div 
@@ -88,14 +88,23 @@ export const AnalysisGrid: React.FC<AnalysisGridProps> = ({
     <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4">{localizedTitle}</h2>
     <p className="text-sm md:text-base lg:text-lg mb-6 md:mb-8">{localizedDescription}</p>
   </div>
-  
-  <Link 
-    href={buttonLink || "/analysis"}
-    className="mt-auto flex items-center gap-2 p-3 md:p-4 text-white border border-white rounded-2xl transition-all hover:bg-white/10 self-start relative z-10"
+<Link 
+  href={buttonLink || "/analysis"}
+  className="mt-auto flex items-center gap-2 p-3 md:p-4 text-white border border-white rounded-2xl transition-all hover:bg-white hover:text-light-accent hover:border-white self-start relative z-10"
+>
+  <span className='text-[14px] md:text-[16px]'>{localizedButtonText}</span>
+  <svg 
+    width="24" 
+    height="24" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className="transform rotate-[-90deg] ml-auto"
   >
-    <span className='text-[14px] md:text-[16px]'>{localizedButtonText}</span>
-    <ArrowDownIcon color="white" size={12} className="transform rotate-[-90deg] ml-auto" />
-  </Link>
+    <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+</Link>
 </div>
         
         {/* Сетка анализов */}

@@ -41,7 +41,7 @@ export const MedicalGallery = ({
   // Mobile slider view
   if (isMobile) {
     return (
-      <div className="w-full relative mt-20">
+      <div className="w-full relative mb-6 sm:mb-8 md:mb-40">
         <Swiper
           modules={[Navigation]}
           navigation={{
@@ -98,7 +98,7 @@ export const MedicalGallery = ({
 
   // Desktop grid view
   return (
-    <div className="w-full flex flex-row flex-wrap mt-20">
+    <div className="w-full flex flex-row flex-wrap mb-6 sm:mb-8 md:mb-40">
       {images.map((src, index) => (
         <div 
           key={index}

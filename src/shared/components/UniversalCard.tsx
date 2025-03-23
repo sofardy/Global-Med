@@ -14,7 +14,7 @@ export interface UniversalCardProps {
   subtitle?: string;
   additionalInfo?: string;
   variant?: 'default' | 'checkup' | 'specialist' | 'analysis' | 'service' | 'custom' | 'family' | 'analysis-card' | 'surgery';
-    features?: string[];
+    features?: Array<string | Feature>;
   imageSrc?: string; 
   iconPosition?: 'center' | 'top' | 'bottom' | 'left' | 'right';
   iconAlignment?: 'left' | 'right';
@@ -56,6 +56,11 @@ export interface UniversalCardProps {
   iconColor?: string; 
   minHeight?: string;
   heightMobile?: string;
+}
+
+export interface Feature {
+  text: string;
+  icon: 'doc' | 'time' | string;
 }
 
 export const UniversalCard: React.FC<UniversalCardProps> = ({
@@ -105,7 +110,8 @@ buttonTextSize,
     const finalIconColor = getIconColorByTheme(theme, iconColor);
   
   // Обрабатываем иконку с правильным цветом
-  const processedIcon = applyColorToIcon(icon, finalIconColor);
+// В UniversalCard меняем обработку иконки:
+const processedIcon = applyColorToIcon(icon, finalIconColor, isHovered);
   // Определение мобильного устройства
   useEffect(() => {
     const checkMobile = () => {
@@ -351,10 +357,11 @@ const renderFeatures = (
       const newSize = isMobile ? Math.floor(currentSize * 0.7) : currentSize;
       
       // Создаем копию иконки с новым размером
-      return React.cloneElement(icon as React.ReactElement<any>, {
-        size: newSize,
-        className: `${(icon as React.ReactElement<any>).props.className || ''} ${isHovered ? 'text-white' : ''}`
-      });
+   return React.cloneElement(processedIcon as React.ReactElement<any>, {
+  size: newSize,
+  className: `${(processedIcon as React.ReactElement<any>).props.className || ''} ${isHovered ? 'text-white' : ''}`,
+  color: isHovered ? 'white' : undefined
+});
     };
     
     return (
@@ -520,7 +527,7 @@ else if (variant === 'surgery') {
         {showButton && (
           <Link href={link || '#'} className="block mt-4">
             <button 
-              className={`w-[70%] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
+              className={`w-[60%] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
                 ${isHovered 
                   ? 'bg-white text-light-accent border border-light-accent' 
                   : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'

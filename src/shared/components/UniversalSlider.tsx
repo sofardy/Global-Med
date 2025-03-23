@@ -5,107 +5,80 @@ import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { useThemeStore } from '@/src/store/theme';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import type { SwiperOptions } from 'swiper/types';
 
-// Импорт стилей Swiper
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-// Интерфейс для универсального слайдера
 export interface UniversalSliderProps {
-  // Содержимое слайдера
   slides: ReactNode[];
-  
-  // Настройки слайдера
   slidesPerView?: number;
   slidesPerMobileView?: number;
-  mobileBreakpoint?: number; // Брейкпоинт для переключения на мобильное представление
+  slidesPerView768?: number;
+  slidesPerView1024?: number;
+  slidesPerView1280?: number;
+  slidesPerView1536?: number;
+  mobileBreakpoint?: number;
   spaceBetween?: number;
   loop?: boolean;
   speed?: number;
   autoplay?: boolean | { delay: number; disableOnInteraction?: boolean };
-  
-  // Настройки навигации
   showNavigation?: boolean;
   navigationPrevLabel?: string;
   navigationNextLabel?: string;
   customPrevButton?: ReactNode;
   customNextButton?: ReactNode;
-  
-  // Настройки пагинации
   showPagination?: boolean;
   paginationClassName?: string;
-  
-  // Заголовок слайдера
   title?: string | ReactNode;
   description?: string | ReactNode;
   titleClassName?: string;
   descriptionClassName?: string;
-  
-  // Стилизация
   className?: string;
   slideClassName?: string;
   wrapperClassName?: string;
-  
-  // События
   onSlideChange?: (index: number) => void;
-
-   breakpoints?: {
-    [width: number]: {
-      slidesPerView?: number;
-      spaceBetween?: number;
-    };
-  };
-  
+  breakpoints?: { [key: number]: SwiperOptions };
   onInit?: (swiper: any) => void;
 }
 
 export const UniversalSlider: React.FC<UniversalSliderProps> = ({
-  // Содержимое
   slides = [],
-  
-  // Настройки слайдера
   slidesPerView = 2,
   slidesPerMobileView = 1,
-  mobileBreakpoint = 768,
+  slidesPerView768,
+  slidesPerView1024,
+  slidesPerView1280,
+  slidesPerView1536,
+  mobileBreakpoint = 878,
   spaceBetween = 20,
   loop = false,
   speed = 500,
   autoplay = false,
-  
-  // Навигация
   showNavigation = true,
   navigationPrevLabel = "Предыдущий слайд",
   navigationNextLabel = "Следующий слайд",
   customPrevButton,
   customNextButton,
-  
-  // Пагинация
   showPagination = false,
   paginationClassName = "swiper-pagination-custom",
-  
-  // Заголовок
   title,
   description,
   titleClassName = "text-3xl md:text-4xl font-bold text-light-text dark:text-dark-text mb-4",
   descriptionClassName = "text-light-text dark:text-dark-text text-base md:text-lg mb-6",
-  
-  // Стилизация
   className = "",
   slideClassName = "",
   wrapperClassName = "",
-  
-  // События
   onSlideChange,
+  breakpoints,
   onInit,
 }) => {
   const { theme } = useThemeStore();
   
-  // Рефы для кнопок навигации
   const prevButtonRef = useRef<HTMLButtonElement>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
   
-  // Состояние для адаптивности
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [activeSlidePerView, setActiveSlidePerView] = useState<number>(
     typeof window !== 'undefined' && window.innerWidth < mobileBreakpoint 
@@ -113,7 +86,6 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
       : slidesPerView
   );
   
-  // Определение размера экрана
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < mobileBreakpoint;
@@ -121,29 +93,21 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
       setActiveSlidePerView(mobile ? slidesPerMobileView : slidesPerView);
     };
     
-    // Инициализация при монтировании
     handleResize();
-    
-    // Подписка на изменение размера окна
     window.addEventListener('resize', handleResize);
     
-    // Отписка при размонтировании
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [mobileBreakpoint, slidesPerMobileView, slidesPerView]);
   
-  // Обработчик смены слайда
   const handleSlideChange = (swiper: any) => {
-    // Сохраняем позицию скролла чтобы избежать прыжков
     const currentScrollPosition = window.scrollY;
     
-    // Вызываем пользовательский обработчик, если он предоставлен
     if (onSlideChange) {
       onSlideChange(swiper.activeIndex);
     }
     
-    // Восстанавливаем позицию скролла после небольшой задержки
     setTimeout(() => {
       window.scrollTo({
         top: currentScrollPosition,
@@ -152,7 +116,6 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
     }, 50);
   };
   
-  // Рендер заголовка и описания
   const renderHeader = () => {
     if (!title && !description) return null;
     
@@ -177,18 +140,15 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
                 description
               )}
               
-              {/* Если navigation кнопки должны быть рядом с описанием */}
               {showNavigation && !customPrevButton && !customNextButton && (
                 <div className="flex items-center gap-2 mt-4">
                   <button
                     ref={prevButtonRef}
-                    className={`w-12 h-12 rounded-lg border ${
-                      theme === 'light' ? 'border-light-text' : 'border-dark-text'
-                    } flex items-center justify-center transition-colors swiper-button-prev-custom`}
+                    className="w-12 h-12 rounded-lg border border-black dark:border-white bg-transparent flex items-center justify-center transition-all swiper-button-prev-custom hover:bg-light-accent hover:border-light-accent group"
                     aria-label={navigationPrevLabel}
                   >
                     <svg 
-                      className={`w-6 h-6 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`} 
+                      className="w-6 h-6 text-black dark:text-white transition-colors group-hover:text-white" 
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
@@ -204,11 +164,11 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
                   
                   <button
                     ref={nextButtonRef}
-                    className={`w-12 h-12 rounded-lg bg-light-accent text-white flex items-center justify-center transition-colors swiper-button-next-custom`}
+                    className="w-12 h-12 rounded-lg border border-black dark:border-white bg-transparent flex items-center justify-center transition-all swiper-button-next-custom hover:bg-light-accent hover:border-light-accent group"
                     aria-label={navigationNextLabel}
                   >
                     <svg 
-                      className="w-6 h-6" 
+                      className="w-6 h-6 text-black dark:text-white transition-colors group-hover:text-white" 
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
@@ -230,91 +190,109 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
     );
   };
   
-  // Рендер навигационных кнопок (если они не должны быть рядом с описанием)
-const renderNavigation = () => {
-  if (!showNavigation || (description && !customPrevButton && !customNextButton)) return null;
+  const renderNavigation = () => {
+    if (!showNavigation || (description && !customPrevButton && !customNextButton)) return null;
 
-  return (
-    <div className="flex items-center gap-2 mb-6">
-      {customPrevButton ? (
-        React.cloneElement(
-          customPrevButton as React.ReactElement<any>, 
-          { 
-            ref: prevButtonRef as React.Ref<any>,
-            className: `swiper-button-prev-custom ${(customPrevButton as React.ReactElement<any>).props.className || ''}` 
-          }
-        )
-      ) : (
-        <button
-          ref={prevButtonRef}
-          className={`w-12 h-12 rounded-lg border ${
-            theme === 'light' ? 'border-light-text' : 'border-dark-text'
-          } flex items-center justify-center transition-colors swiper-button-prev-custom`}
-          aria-label={navigationPrevLabel}
-        >
-          <svg 
-            className={`w-6 h-6 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`} 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
+    return (
+      <div className="flex items-center gap-2 mb-6">
+        {customPrevButton ? (
+          React.cloneElement(
+            customPrevButton as React.ReactElement<any>, 
+            { 
+              ref: prevButtonRef as React.Ref<any>,
+              className: `swiper-button-prev-custom ${(customPrevButton as React.ReactElement<any>).props.className || ''}` 
+            }
+          )
+        ) : (
+          <button
+            ref={prevButtonRef}
+            className="w-12 h-12 rounded-lg border border-black dark:border-white bg-transparent flex items-center justify-center transition-all swiper-button-prev-custom hover:bg-light-accent hover:border-light-accent group"
+            aria-label={navigationPrevLabel}
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth="2" 
-              d="M15 19l-7-7 7-7" 
-            />
-          </svg>
-        </button>
-      )}
-      
-      {customNextButton ? (
-        React.cloneElement(
-          customNextButton as React.ReactElement<any>, 
-          { 
-            ref: nextButtonRef as React.Ref<any>,
-            className: `swiper-button-next-custom ${(customNextButton as React.ReactElement<any>).props.className || ''}` 
-          }
-        )
-      ) : (
-        <button
-          ref={nextButtonRef}
-          className={`w-12 h-12 rounded-lg bg-light-accent text-white flex items-center justify-center transition-colors swiper-button-next-custom`}
-          aria-label={navigationNextLabel}
-        >
-          <svg 
-            className="w-6 h-6" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
+            <svg 
+              className="w-6 h-6 text-black dark:text-white transition-colors group-hover:text-white" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth="2" 
+                d="M15 19l-7-7 7-7" 
+              />
+            </svg>
+          </button>
+        )}
+        
+        {customNextButton ? (
+          React.cloneElement(
+            customNextButton as React.ReactElement<any>, 
+            { 
+              ref: nextButtonRef as React.Ref<any>,
+              className: `swiper-button-next-custom ${(customNextButton as React.ReactElement<any>).props.className || ''}` 
+            }
+          )
+        ) : (
+          <button
+            ref={nextButtonRef}
+            className="w-12 h-12 rounded-lg border border-black dark:border-white bg-transparent flex items-center justify-center transition-all swiper-button-next-custom hover:bg-light-accent hover:border-light-accent group"
+            aria-label={navigationNextLabel}
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth="2" 
-              d="M9 5l7 7-7 7" 
-            />
-          </svg>
-        </button>
-      )}
-    </div>
-  );
-};
+            <svg 
+              className="w-6 h-6 text-black dark:text-white transition-colors group-hover:text-white" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth="2" 
+                d="M9 5l7 7-7 7" 
+              />
+            </svg>
+          </button>
+        )}
+      </div>
+    );
+  };
   
-  // Если нет слайдов, не рендерим слайдер
   if (!slides || slides.length === 0) {
     return null;
   }
   
+  // Формируем объект с брейкпоинтами для Swiper с правильной типизацией
+  const customBreakpoints: { [key: number]: SwiperOptions } = {};
+  
+  if (slidesPerView768) {
+    customBreakpoints[768] = { slidesPerView: slidesPerView768, spaceBetween };
+  }
+  
+  if (slidesPerView1024) {
+    customBreakpoints[1024] = { slidesPerView: slidesPerView1024, spaceBetween };
+  }
+  
+  if (slidesPerView1280) {
+    customBreakpoints[1280] = { slidesPerView: slidesPerView1280, spaceBetween };
+  }
+  
+  if (slidesPerView1536) {
+    customBreakpoints[1536] = { slidesPerView: slidesPerView1536, spaceBetween };
+  }
+  
+  if (mobileBreakpoint) {
+    customBreakpoints[mobileBreakpoint] = { slidesPerView, spaceBetween };
+  }
+
+  // Объединяем с переданными брейкпоинтами, если они есть
+  const finalBreakpoints = breakpoints ? { ...customBreakpoints, ...breakpoints } : customBreakpoints;
+  
   return (
-    <div className={`w-full ${className}`}>
-      {/* Рендер заголовка и описания */}
+    <div className={`w-full ${className} mb-6 sm:mb-8 md:mb-40`}>
       {renderHeader()}
-      
-      {/* Рендер навигации, если она должна быть отдельно */}
       {renderNavigation()}
       
-      {/* Слайдер */}
       <div className="relative">
         <Swiper
           modules={[Navigation, Pagination]}
@@ -323,12 +301,7 @@ const renderNavigation = () => {
           loop={loop}
           speed={speed}
           autoplay={autoplay}
-          breakpoints={{
-            [mobileBreakpoint]: {
-              slidesPerView: slidesPerView,
-              spaceBetween: spaceBetween,
-            }
-          }}
+          breakpoints={finalBreakpoints}
           onSlideChange={handleSlideChange}
           watchSlidesProgress={true}
           preventInteractionOnTransition={true}
@@ -343,13 +316,11 @@ const renderNavigation = () => {
             bulletActiveClass: `${paginationClassName}-bullet-active`,
           } : false}
           onBeforeInit={(swiper) => {
-            // Настройка навигационных элементов
             if (showNavigation && typeof swiper.params.navigation !== 'boolean' && swiper.params.navigation) {
               swiper.params.navigation.prevEl = prevButtonRef.current;
               swiper.params.navigation.nextEl = nextButtonRef.current;
             }
             
-            // Вызов пользовательского обработчика инициализации
             if (onInit) {
               onInit(swiper);
             }
@@ -363,30 +334,26 @@ const renderNavigation = () => {
           ))}
         </Swiper>
         
-        {/* Пагинация */}
         {showPagination && (
           <div className={`${paginationClassName} flex justify-center space-x-2 mt-4`}></div>
         )}
       </div>
       
-      {/* Стили для слайдера */}
       <style jsx global>{`
-       .universal-slider {
-    width: 100%;
-    overflow-x: hidden !important; /* Изменено с visible на hidden */
-    padding-bottom: 20px;
-    position: relative;
-    z-index: 1;
-  }
-  
-  .swiper-slide {
-    /* width: ${100 / activeSlidePerView}% !important; Явно задаем ширину слайда */
-    height: auto;
-    backface-visibility: hidden;
-    transform: translateZ(0);
-    will-change: transform;
-  }
-  
+        .universal-slider {
+          width: 100%;
+          overflow-x: hidden !important;
+          padding-bottom: 20px;
+          position: relative;
+          z-index: 1;
+        }
+        
+        .swiper-slide {
+          height: auto;
+          backface-visibility: hidden;
+          transform: translateZ(0);
+          will-change: transform;
+        }
         
         .swiper-wrapper {
           display: flex;
@@ -396,13 +363,6 @@ const renderNavigation = () => {
         
         .swiper-container {
           touch-action: pan-y;
-        }
-        
-        .swiper-slide {
-          height: auto;
-          backface-visibility: hidden;
-          transform: translateZ(0);
-          will-change: transform;
         }
         
         .${paginationClassName}-bullet {
@@ -428,6 +388,49 @@ const renderNavigation = () => {
         .swiper-button-next-custom.swiper-button-disabled {
           opacity: 0.5;
           cursor: not-allowed;
+        }
+        
+        .swiper-button-prev-custom,
+        .swiper-button-next-custom {
+          background-color: transparent !important;
+          border: 1px solid #000 !important;
+          transition: all 0.3s ease;
+        }
+        
+        .dark .swiper-button-prev-custom,
+        .dark .swiper-button-next-custom {
+          border-color: #fff !important;
+        }
+
+        .swiper-button-prev-custom svg,
+        .swiper-button-next-custom svg {
+          color: #000 !important;
+        }
+        
+        .dark .swiper-button-prev-custom svg,
+        .dark .swiper-button-next-custom svg {
+          color: #fff !important;
+        }
+        
+        .swiper-button-prev-custom:hover,
+        .swiper-button-next-custom:hover {
+          background-color: var(--light-accent) !important;
+          border-color: var(--light-accent) !important;
+        }
+        
+        .swiper-button-prev-custom:hover svg,
+        .swiper-button-next-custom:hover svg {
+          color: white !important;
+        }
+        
+        /* Специальные переопределения для конкретных слайдеров */
+        .certificates-slider .swiper-button-next-custom,
+        .certificates-slider .swiper-button-prev-custom,
+        .reviews-slider .swiper-button-next-custom,
+        .reviews-slider .swiper-button-prev-custom,
+        .analysis-slider .swiper-button-next-custom,
+        .analysis-slider .swiper-button-prev-custom {
+          background-color: transparent !important;
         }
         
         @media (max-width: ${mobileBreakpoint}px) {

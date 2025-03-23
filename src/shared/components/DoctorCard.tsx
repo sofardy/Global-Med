@@ -23,13 +23,11 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
   className = '',
 }) => {
   const { theme } = useThemeStore();
-  const [isHovered, setIsHovered] = useState(false);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
   
   return (
     <div 
-      className={`flex flex-col h-full border border-gray-200  dark:border-gray-700 rounded-xl overflow-hidden p-6 transition-all ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`flex flex-col h-full border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden p-6 transition-all ${className}`}
     >
       {/* Doctor Image */}
       <div className="relative w-full h-[300px] mb-4 rounded-xl overflow-hidden">
@@ -52,16 +50,19 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
         </p>
       </div>
       
-      {/* Button */}
+      {/* Button with its own hover state */}
       <Link 
         href={`/doctors/${id}`} 
         className={`
           mt-auto w-full py-4 px-6 rounded-xl text-center transition-all duration-300
-          ${isActive || isHovered
+          ${isActive 
             ? 'bg-light-accent text-white' 
             : `${theme === 'light' ? 'border border-light-text text-light-text' : 'border border-dark-text text-dark-text'}`
-          }
+          } 
+          ${!isActive && 'hover:bg-light-accent hover:text-white hover:border-light-accent'}
         `}
+        onMouseEnter={() => setIsButtonHovered(true)}
+        onMouseLeave={() => setIsButtonHovered(false)}
       >
         {buttonText}
       </Link>

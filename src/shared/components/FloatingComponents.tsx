@@ -211,7 +211,7 @@ export const FloatingComponents: React.FC = () => {
     <>
       {/* Кнопка скролла наверх */}
       <button 
-        className={`fixed right-6 bottom-[120px] md:right-8 md:bottom-[120px] z-30 p-4 rounded-full transition-opacity duration-300 
+        className={`fixed right-10 bottom-[120px] md:right-11 md:bottom-[120px] z-30 p-4 rounded-full transition-opacity duration-300 
           border-2 ${theme === 'light' ? 'border-light-text' : 'border-dark-text'}
           ${showScrollButton ? 'opacity-100' : 'opacity-0 pointer-events-none'}
         `}

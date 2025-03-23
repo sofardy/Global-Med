@@ -22,7 +22,10 @@ export default function Checkups() {
         {checkupItemsData.map((item) => (
           <UniversalCard
             key={item.id}
-               features={item.stats.map(stat => stat.value)}
+                features={[
+    { text: "12 исследований", icon: "doc" },
+    { text: "2 часа", icon: "time" }
+  ]}
             variant="surgery"
             title={item.title}
             description={item.description}

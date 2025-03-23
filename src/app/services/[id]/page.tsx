@@ -6,6 +6,7 @@ import { useTranslation } from '@/src/hooks/useTranslation';
 import DoctorBenefits from '@/src/shared/components/DoctorBenefits';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
+import { AnimatedButton } from '@/src/shared/ui/Button/AnimatedButton';
 
 // Типизация для данных
 interface ServicePrice {
@@ -100,9 +101,6 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
   const { t } = useTranslation(translations);
   const { id } = params;
   
-  // Для усиленной пульсации кнопки
-  const [pulsePower, setPulsePower] = useState(1);
-  
   // Состояния для показа/скрытия длинных списков
   const [expandedSymptoms, setExpandedSymptoms] = useState(false);
   const [expandedServices, setExpandedServices] = useState(false);
@@ -124,28 +122,18 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
     };
   }, []);
   
-  // Эффект для пульсации кнопки с изменяющейся интенсивностью
-  useEffect(() => {
-    let power = 1;
-    let increasing = true;
-    
-    const interval = setInterval(() => {
-      if (power >= 1.8) increasing = false;
-      if (power <= 1) increasing = true;
-      
-      power = increasing ? power + 0.05 : power - 0.05;
-      setPulsePower(power);
-    }, 500);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
   // Получаем данные по ID услуги или используем офтальмологию по умолчанию
   const serviceData = serviceDetails[id] || serviceDetails.ophthalmology;
   
   // Функция для открытия формы записи
   const handleAppointment = () => {
     console.log('Открытие формы записи');
+    
+    // Скроллинг к форме записи
+    const appointmentSection = document.getElementById('appointment-section');
+    if (appointmentSection) {
+      appointmentSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
   
   // Количество видимых симптомов на мобильных устройствах
@@ -195,48 +183,17 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium mb-4 md:mb-6">{serviceData.title}</h1>
           <p className="text-base sm:text-lg max-w-2xl">{serviceData.description}</p>
           
-          {/* Улучшенная пульсирующая кнопка записи с бликами - адаптивные размеры */}
-          <button 
-            onClick={handleAppointment}
-            className="mt-6 md:mt-8 px-6 sm:px-20 py-3 sm:py-4 border-2 border-white rounded-xl transition-all duration-300 relative overflow-hidden group hover:bg-white hover:text-light-accent hover:scale-105 hover:shadow-lg hover:shadow-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-light-accent text-sm sm:text-base"
-          >
-            {/* Основной текст */}
-            <span className="relative z-10 group-hover:font-bold">{t('appointmentButton')}</span>
-            
-            {/* Пульсирующий фон - переменная интенсивность */}
-            <span 
-              className="absolute inset-0 bg-white/30 rounded-xl opacity-100 group-hover:opacity-0"
-              style={{
-                animation: `pulse ${pulsePower}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-              }}
-            />
-            
-            {/* Свечение вокруг кнопки */}
-            <span 
-              className="absolute -inset-1 bg-white/20 rounded-xl blur-sm group-hover:bg-transparent"
-              style={{
-                animation: `pulse ${pulsePower + 0.3}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-              }}
-            />
-            
-            {/* Эффект движущихся бликов */}
-            <span className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-xl">
-              <span 
-                className="absolute h-12 sm:h-20 w-12 sm:w-20 -top-6 sm:-top-10 -left-6 sm:-left-10 bg-white/40 rounded-full blur-md transform rotate-45 group-hover:scale-150"
-                style={{ animation: 'moveHighlight1 6s infinite linear' }}
-              ></span>
-              
-              <span 
-                className="absolute h-10 sm:h-16 w-10 sm:w-16 -bottom-5 sm:-bottom-8 -right-5 sm:-right-8 bg-white/30 rounded-full blur-md transform rotate-45 group-hover:scale-150"
-                style={{ animation: 'moveHighlight2 8s infinite linear' }}
-              ></span>
-            </span>
-            
-            {/* Эффект при наведении - рябь по воде */}
-            <span 
-              className="absolute inset-0 scale-0 rounded-xl bg-white/40 group-hover:animate-ripple"
-            ></span>
-          </button>
+          {/* Анимированная кнопка с компонентом AnimatedButton */}
+          <div className="mt-6 md:mt-8">
+            <AnimatedButton 
+              onClick={handleAppointment}
+              borderColor="white"
+              hoverTextColor="light-accent"
+              pulsation={true}
+            >
+              {t('appointmentButton')}
+            </AnimatedButton>
+          </div>
         </div>
       </div>
       
@@ -348,58 +305,10 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
       
       {/* DoctorBenefits компонент */}
       <DoctorBenefits />
-      <AppointmentSection />
+      <div id="appointment-section">
+        <AppointmentSection />
+      </div>
       <ContactInfo />
-      {/* CSS для анимаций */}
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.5;
-            transform: scale(1.05);
-          }
-        }
-        
-        @keyframes moveHighlight1 {
-          0% {
-            transform: translate(-50%, -50%) rotate(0deg);
-          }
-          100% {
-            transform: translate(200%, 200%) rotate(360deg);
-          }
-        }
-        
-        @keyframes moveHighlight2 {
-          0% {
-            transform: translate(50%, 50%) rotate(0deg);
-          }
-          100% {
-            transform: translate(-200%, -200%) rotate(-360deg);
-          }
-        }
-        
-        @keyframes ripple {
-          0% {
-            transform: scale(0);
-            opacity: 1;
-          }
-          40% {
-            transform: scale(1);
-            opacity: 0.8;
-          }
-          100% {
-            transform: scale(1.5);
-            opacity: 0;
-          }
-        }
-        
-        .animate-ripple {
-          animation: ripple 1s cubic-bezier(0, 0, 0.2, 1);
-        }
-      `}</style>
     </main>
   );
 }

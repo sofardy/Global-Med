@@ -24,36 +24,36 @@ const ServiceCardWithImage: React.FC<{
   const { theme } = useThemeStore();
   
   return (
-    <div className="flex flex-col md:flex-row gap-0 md:gap-5 w-full rounded-2xl h-full">
-      {/* Image - full width on mobile, 50% on desktop */}
-      <div className="w-full md:w-[50%] relative h-[200px] md:h-auto rounded-t-2xl md:rounded-2xl overflow-hidden">
-        <Image 
-          src={imageSrc} 
-          alt={title}
-          fill
-          className="object-cover" 
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-      </div>
-      
-      {/* Card - full width on mobile, 50% on desktop */}
-      <div className="w-full md:w-[50%] -mt-4 md:mt-0">
-        <UniversalCard
-          variant="surgery"
-          title={title}
-          description={description}
-          icon={applyColorToIcon(iconPath, getIconColorByTheme(theme))}
-          features={features}
-          link={`/services/${id}`}
-          buttonText={buttonText}
-          showButton={true}
-          buttonStyle="filled"
-          hoverBgColor="light-accent"
-          titleSize="text-2xl md:text-3xl"
-          className="h-full border-none shadow-none rounded-b-2xl md:rounded-2xl pt-8 md:pt-6"
-        />
-      </div>
-    </div>
+  <div className="flex flex-col md:flex-row gap-0 md:gap-5 w-full rounded-2xl md:h-[420px]">
+  {/* Image - full width on mobile, 50% on desktop */}
+  <div className="w-full md:w-[50%] relative h-[200px] md:h-full rounded-t-2xl md:rounded-2xl overflow-hidden">
+    <Image 
+      src={imageSrc} 
+      alt={title}
+      fill
+      className="object-cover" 
+      sizes="(max-width: 768px) 100vw, 50vw"
+    />
+  </div>
+  
+  {/* Card - full width on mobile, 50% on desktop */}
+  <div className="w-full md:w-[50%] -mt-4 md:mt-0 md:h-full">
+    <UniversalCard
+      variant="surgery"
+      title={title}
+      description={description}
+      icon={applyColorToIcon(iconPath, getIconColorByTheme(theme))}
+      features={features}
+      link={`/services/${id}`}
+      buttonText={buttonText}
+      showButton={true}
+      buttonStyle="filled"
+      hoverBgColor="light-accent"
+      titleSize="text-2xl md:text-3xl"
+      className="h-full border-none shadow-none rounded-b-2xl md:rounded-2xl pt-8 md:pt-6"
+    />
+  </div>
+</div>
   );
 };
 

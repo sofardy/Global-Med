@@ -164,7 +164,7 @@ const CareerForm = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col md:flex-row gap-5 rounded-2xl overflow-hidden">
+      <div className="w-full flex flex-col md:flex-row gap-5 rounded-2xl overflow-hidden  mt-6 sm:mt-8 md:mt-40 mb-6 sm:mb-8 md:mb-40">
         {/* Left section with background image */}
         <div className="w-full md:w-1/2 bg-light-accent text-white p-8 relative min-h-[340px] md:min-h-[490px] rounded-2xl overflow-hidden">
           

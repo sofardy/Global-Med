@@ -7,6 +7,7 @@ import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { analysisDetails, translations } from '@/src/shared/mocks/analysisData';
 import AnalysisRecommendations from '@/src/shared/components/AnalysisRecommendations';
+import { AnimatedButton } from '@/src/shared/ui/Button/AnimatedButton';
 
 // Define correct types
 interface PriceItem {
@@ -105,43 +106,14 @@ export default function Page(props: any) {
                 {analysisData.testsCount} {t('tests')}
               </span>
             </div>
-            
-            <button 
+             <AnimatedButton
               onClick={handleAppointment}
-              className="w-full sm:w-auto px-4 sm:px-6 md:px-10 lg:px-20 py-3 sm:py-4 border-2 border-white rounded-lg sm:rounded-xl transition-all duration-300 relative overflow-hidden group hover:bg-white hover:text-light-accent hover:scale-105 hover:shadow-lg hover:shadow-white/30 focus:outline-none text-xs sm:text-sm md:text-base"
+              borderColor="white"
+              hoverTextColor="light-accent"
+              width="w-full sm:w-auto"
             >
-              <span className="relative z-10 group-hover:font-bold">{t('appointmentButton')}</span>
-              
-              <span 
-                className="absolute inset-0 bg-white/30 rounded-lg sm:rounded-xl opacity-100 group-hover:opacity-0"
-                style={{
-                  animation: `pulse ${pulsePower}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-                }}
-              />
-              
-              <span 
-                className="absolute -inset-1 bg-white/20 rounded-lg sm:rounded-xl blur-sm group-hover:bg-transparent"
-                style={{
-                  animation: `pulse ${pulsePower + 0.3}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-                }}
-              />
-              
-              <span className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-lg sm:rounded-xl">
-                <span 
-                  className="absolute h-8 sm:h-12 md:h-20 w-8 sm:w-12 md:w-20 -top-4 sm:-top-6 md:-top-10 -left-4 sm:-left-6 md:-left-10 bg-white/40 rounded-full blur-md transform rotate-45 group-hover:scale-150"
-                  style={{ animation: 'moveHighlight1 6s infinite linear' }}
-                ></span>
-                
-                <span 
-                  className="absolute h-6 sm:h-10 md:h-16 w-6 sm:w-10 md:w-16 -bottom-3 sm:-bottom-5 md:-bottom-8 -right-3 sm:-right-5 md:-right-8 bg-white/30 rounded-full blur-md transform rotate-45 group-hover:scale-150"
-                  style={{ animation: 'moveHighlight2 8s infinite linear' }}
-                ></span>
-              </span>
-              
-              <span 
-                className="absolute inset-0 scale-0 rounded-lg sm:rounded-xl bg-white/40 group-hover:animate-ripple"
-              ></span>
-            </button>
+              {t('appointmentButton')}
+            </AnimatedButton>
           </div>
         </div>
       </div>

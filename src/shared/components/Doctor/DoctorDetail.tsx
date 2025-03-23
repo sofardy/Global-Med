@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { AnimatedButton, AnimatedButtonWrapper } from '../../ui/Button/AnimatedButton';
-import DoctorCertificates from './CertificateCard';
+import CertificatesSlider from './CertificateCard';
 import AppointmentScheduler from './AppointmentScheduler';
 import { ContactInfo } from '../ContactInfo';
 
@@ -73,37 +73,37 @@ interface LocaleMessages {
 const certificatesData: Certificate[] = [
   {
     id: '1',
-    imageUrl: '/images/certificate.png', 
+    imageUrl: '/images/certificate-1.png', 
     title: 'Сертификат по гинекологии',
     expiryDate: '19 мая 2027'
   },
   {
     id: '2',
-    imageUrl: '/images/certificate.png', 
+    imageUrl: '/images/certificate-1.png', 
     title: 'Сертификат по гинекологии',
     expiryDate: '19 мая 2027'
   },
   {
     id: '3',
-    imageUrl: '/images/certificate.png', 
+    imageUrl: '/images/certificate-1.png', 
     title: 'Сертификат по гинекологии',
     expiryDate: '19 мая 2027'
   },
   {
     id: '4',
-    imageUrl: '/images/certificate.png', 
+    imageUrl: '/images/certificate-1.png', 
     title: 'Сертификат по гинекологии',
     expiryDate: '19 мая 2027'
   },
   {
     id: '5',
-    imageUrl: '/images/certificate.png', 
+    imageUrl: '/images/certificate-1.png', 
     title: 'Сертификат по гинекологии',
     expiryDate: '19 мая 2027'
   },
   {
     id: '6',
-    imageUrl: '/images/certificate.png', 
+    imageUrl: '/images/certificate-1.png', 
     title: 'Сертификат по гинекологии',
     expiryDate: '19 мая 2027'
   },
@@ -157,20 +157,22 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
   return (
     <div>
       {/* Верхний блок с основной информацией */}
-      <div className="bg-white dark:bg-dark-block rounded-2xl overflow-hidden mb-6">
+      <div className="bg-white dark:bg-dark-block rounded-[24px] overflow-hidden mb-8 shadow-sm">
         <div className="flex flex-col md:flex-row">
-          {/* Фото врача */}
-          <div className="w-full md:w-1/4 h-[430px] relative flex-shrink-0">
-            <Image 
-              src={doctor.photoUrl || "/images/doctor-placeholder.jpg"} 
-              alt={doctor.name}
-              fill
-              className="object-cover object-center" 
-              sizes="(max-width: 768px) 100vw, 25vw"
-            />
+          {/* Фото врача с скругленными углами */}
+          <div className="w-full md:w-1/4 h-[430px] relative flex-shrink-0 p-4">
+            <div className="w-full h-full relative overflow-hidden rounded-[16px]">
+              <Image 
+                src={doctor.photoUrl || "/images/doctor-placeholder.jpg"} 
+                alt={doctor.name}
+                fill
+                className="object-cover object-center" 
+                sizes="(max-width: 768px) 100vw, 25vw"
+              />
+            </div>
           </div>
           
-          {/* Информация о враче - добавлен отступ слева */}
+          {/* Информация о враче */}
           <div className="p-8 md:pl-12 flex-1">
             <h1 className="text-[44px] font-semibold text-[#23464e] dark:text-white mb-2">
               {doctor.name}
@@ -237,37 +239,33 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
             </div>
             
             <div className="mt-8">
-              <AnimatedButtonWrapper>
-                <AnimatedButton 
-                  onClick={handleAppointment}
-                  borderColor="light-accent"
-                  hoverTextColor="white"
-                  width="w-full md:w-auto"
-                  className="text-[#23464e] dark:text-white"
-                >
-                  {t('bookAppointment')}
-                </AnimatedButton>
-              </AnimatedButtonWrapper>
+              {/* Кнопка с темной обводкой */}
+              <button 
+                onClick={handleAppointment}
+                className="px-8 py-4 rounded-[12px] bg-transparent text-[#23464e] dark:text-white border-2 border-[#23464e] dark:border-white hover:bg-[#00c78b] hover:text-white hover:border-[#00c78b] transition-all duration-300 font-medium w-full md:w-auto"
+              >
+                {t('bookAppointment')}
+              </button>
             </div>
           </div>
         </div>
       </div>
       
       {/* Образование */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         {/* Основное образование */}
-        <div className="bg-white dark:bg-dark-block rounded-2xl p-12">
-          <h2 className="text-xl font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-dark-block rounded-[24px] p-12 shadow-sm">
+          <h2 className="text-[24px] font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
             {t('basicEducation')}
           </h2>
           
           <div className="space-y-6">
             {doctor.basicEducation && doctor.basicEducation.map((edu, index) => (
               <div key={index} className="pb-4 last:pb-0">
-                <div className="font-medium text-[#23464e] dark:text-white mb-1">
+                <div className="font-medium text-[18px] text-[#23464e] dark:text-white mb-1">
                   {edu.years}
                 </div>
-                <div className="text-[#23464e]/80 dark:text-white/80">
+                <div className="text-[#23464e] text-[18px] dark:text-white opacity-80">
                   {edu.institution}
                 </div>
               </div>
@@ -276,18 +274,18 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
         </div>
         
         {/* Дополнительное образование */}
-        <div className="bg-white dark:bg-dark-block rounded-2xl p-12">
-          <h2 className="text-xl font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-dark-block rounded-[24px] p-12 shadow-sm">
+          <h2 className="text-[24px] font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
             {t('additionalEducation')}
           </h2>
           
           <div className="space-y-6">
             {doctor.additionalEducation && doctor.additionalEducation.map((edu, index) => (
               <div key={index} className="pb-4 last:pb-0">
-                <div className="font-medium text-[#23464e] dark:text-white mb-1">
+                <div className="font-medium text-[18px] text-[#23464e] dark:text-white mb-1">
                   {edu.course}
                 </div>
-                <div className="text-[#23464e]/80 dark:text-white/80">
+                <div className="text-[#23464e] text-[18px] dark:text-white opacity-80">
                   {edu.institution}
                 </div>
               </div>
@@ -297,14 +295,14 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
       </div>
       
       {/* Секция сертификатов - используем реальные данные врача или тестовые */}
-      <DoctorCertificates 
+      <CertificatesSlider 
         certificates={doctor.certificates || certificatesData}
         title={t('certificates.title')}
         description={t('certificates.description')}
       />
 
       <AppointmentScheduler />
-        <ContactInfo />
+      <ContactInfo />
     </div>
   );
 }

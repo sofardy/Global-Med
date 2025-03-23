@@ -64,7 +64,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
   };
 
   return (
-    <div className={`p-6 rounded-2xl min-h-[420px] flex flex-col ${theme === 'light' ? 'bg-white' : 'bg-dark-block'} ${className}`}>
+    <div className={`p-6 rounded-2xl h-[420px] flex flex-col ${theme === 'light' ? 'bg-white' : 'bg-dark-block'} ${className}`}>
       {/* Шапка карточки с аватаром и именем */}
       <div className="flex items-center mb-4">
         <div className="w-[60px] h-[60px] relative rounded-full overflow-hidden mr-3">
@@ -82,25 +82,27 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
         </div>
       </div>
       
-      {/* Текст отзыва */}
-      <div className="mb-auto">
-        <p className="text-lg text-[#173F46] dark:text-dark-text">{text}</p>
+      {/* Текст отзыва с ограничением по высоте и текстовым эллипсисом */}
+      <div className="flex-grow overflow-hidden">
+        <p className="text-lg text-[#173F46] dark:text-dark-text line-clamp-6">{text}</p>
       </div>
       
-      {/* Услуга */}
-      {service && (
-        <div className="mt-auto mb-4">
-          <div className="text-[#173F46] dark:text-gray-400 font-medium text-lg">{t('service')}</div>
-          <div className="flex items-center">
-            <HeartCheckIcon size={20} className="text-light-accent mr-2" />
-            <span className="text-[#173F46] dark:text-dark-text">{service}</span>
+      {/* Услуга - всегда внизу карточки */}
+      <div className="mt-auto">
+        {service && (
+          <div className="mb-4">
+            <div className="text-[#173F46] dark:text-gray-400 font-medium text-lg">{t('service')}</div>
+            <div className="flex items-center">
+              <HeartCheckIcon size={20} className="text-light-accent mr-2" />
+              <span className="text-[#173F46] dark:text-dark-text">{service}</span>
+            </div>
           </div>
+        )}
+        
+        {/* Ссылка на источник отзыва */}
+        <div>
+          {getReviewSourceLink()}
         </div>
-      )}
-      
-      {/* Ссылка на источник отзыва */}
-      <div className="mt-2">
-        {getReviewSourceLink()}
       </div>
     </div>
   );

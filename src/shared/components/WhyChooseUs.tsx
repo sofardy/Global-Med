@@ -35,11 +35,11 @@ export default function WhyChooseUs(): React.ReactElement {
       >
         <div className="absolute top-4 right-4 w-3 h-3 md:w-4 md:h-4 rounded-full bg-gray-100 dark:bg-gray-700"></div>
         
-        <h3 className={`text-xl md:text-[28px] font-medium mb-8 ${textColor}`}>
+        <h3 className={`text-xl md:text-[24px] font-medium mb-8 ${textColor}`}>
           {title}
         </h3>
         
-        <p className={`mt-auto ${textColor} text-base leading-relaxed`}>
+        <p className={`mt-auto ${textColor} text-[18px] leading-relaxed`}>
           {description}
         </p>
       </div>

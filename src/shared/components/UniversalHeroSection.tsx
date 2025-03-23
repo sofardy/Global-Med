@@ -79,8 +79,8 @@ function InfoCard({
         <h3 className={`${
           isWide 
             ? 'text-xl sm:text-2xl md:text-[32px] lg:text-[40px]' 
-            : 'text-lg sm:text-xl md:text-2xl lg:text-3xl mt-2 sm:mt-3 md:mt-4'
-        } font-medium mb-1 sm:mb-2 transition-colors leading-tight ${
+            : 'text-lg sm:text-xl md:text-2xl lg:text-[56px] mt-2 sm:mt-3 md:mt-10'
+        } font-semibold mb-1 sm:mb-2 transition-colors leading-tight ${
           isHovered 
             ? 'text-white'
             : theme === 'light' ? 'text-light-text' : 'text-dark-text'
@@ -110,14 +110,14 @@ function UniversalHeroSection({
   return (
     <div className={`w-full ${className}`}>
       {/* Полноширинное изображение */}
-      <div className="w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[600px] xl:h-[700px] relative rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-5">
+      <div className="w-full h-[200px] sm:h-[200px] md:h-[300px] lg:h-[400px] xl:h-[500px] relative rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-5">
         <Image
           src={imageUrl}
           alt={imageAlt}
           fill
           className="object-cover"
           priority
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw "
         />
       </div>
       

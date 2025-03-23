@@ -189,13 +189,13 @@ export const SymptomSelector: React.FC = () => {
     // Создаем новый массив карточек с обновленными иконками
     return originalCards.map(card => {
       // Клонируем оригинальную иконку и устанавливаем цвет в зависимости от темы
-   const iconWithThemeColor = React.isValidElement(card.iconPath) 
-  ? React.cloneElement(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      card.iconPath as React.ReactElement<any>,
-      { color: iconColor }
-    )
-  : card.iconPath;
+      const iconWithThemeColor = React.isValidElement(card.iconPath)
+        ? React.cloneElement(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          card.iconPath as React.ReactElement<any>,
+          { color: iconColor }
+        )
+        : card.iconPath;
       
       return {
         ...card,
@@ -204,8 +204,8 @@ export const SymptomSelector: React.FC = () => {
     });
   }, [t, theme]); // Пересчитываем при изменении языка или темы
   
-  const firstRowSymptoms = symptoms.slice(0, 7); 
-  const secondRowSymptoms = symptoms.slice(7); 
+  const firstRowSymptoms = symptoms.slice(0, 7);
+  const secondRowSymptoms = symptoms.slice(7);
 
   // Эффект для установки showResults
   useEffect(() => {
@@ -277,10 +277,10 @@ export const SymptomSelector: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-6 sm:mb-8 md:mb-40">
       {/* Main selector block */}
-      <div 
-        className="relative rounded-2xl overflow-hidden p-6 md:p-10" 
+      <div
+        className="relative rounded-2xl overflow-hidden p-6 md:p-10"
         style={{
           backgroundImage: 'url(/images/symptom-bg.jpg)',
           backgroundSize: 'cover',
@@ -288,11 +288,11 @@ export const SymptomSelector: React.FC = () => {
         }}
       >
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-light-accent opacity-90 dark:opacity-80"></div>
-        
+        <div className="absolute inset-0 bg-light-accent"></div>
+       
         {/* Декоративное изображение поверх фона */}
-        <div 
-          className="absolute -top-[60px] left-[74px] right-0 bottom-0 z-[1] max-w-[1550px] hidden md:block" 
+        <div
+          className="absolute -top-[60px] left-[74px] right-0 bottom-0 z-[1] max-w-[1550px] hidden md:block"
           style={{
             backgroundImage: 'url(/images/doctor-pattern.png)',
             backgroundSize: 'cover',
@@ -300,7 +300,7 @@ export const SymptomSelector: React.FC = () => {
             transformOrigin: 'top right'
           }}
         ></div>
-        
+       
         {/* Content */}
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row justify-between mb-6 md:mb-10">
@@ -312,14 +312,14 @@ export const SymptomSelector: React.FC = () => {
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
                 {t('title.line2')}
               </h2>
-              
+             
               {/* Selection instructions */}
               <div className="mt-4 md:mt-6 flex items-center">
-                <Image src="/icon/icon-info.svg" alt="" width={24} height={24} className='mr-4'/>
+                <Image src="/icon/icon-info.svg" alt="" width={24} height={24} className='mr-4' />
                 <span className="text-white font-medium">{t('selectSymptoms')}</span>
               </div>
             </div>
-            
+           
             {/* Subtitle section */}
             <div className="max-w-xl">
               <div className="text-white text-base md:text-lg">
@@ -327,7 +327,7 @@ export const SymptomSelector: React.FC = () => {
               </div>
             </div>
           </div>
-          
+         
           {isMobile ? (
             // Мобильная версия с кнопкой, открывающей модальное окно
             <div className="relative w-full">
@@ -337,17 +337,17 @@ export const SymptomSelector: React.FC = () => {
               >
                 {t('selectSymptoms')}
               </button>
-              
+             
               {/* Отображение выбранных симптомов как тегов */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {selectedSymptoms.map((symptom, index) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className="py-2 px-4 rounded-2xl bg-white text-light-accent font-medium flex items-center animate-fadeIn"
                   >
                     {symptom}
-                    <button 
-                      onClick={() => toggleSymptom(symptom)} 
+                    <button
+                      onClick={() => toggleSymptom(symptom)}
                       className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-light-accent text-white text-xs"
                     >
                       ✕
@@ -366,11 +366,11 @@ export const SymptomSelector: React.FC = () => {
                     key={index}
                     onClick={() => toggleSymptom(symptom)}
                     className={`
-                      py-4 md:py-5 px-4 md:px-6 rounded-2xl flex items-center text-base md:text-lg transition-all duration-300
-                      ${selectedSymptoms.includes(symptom) 
-                        ? 'bg-white text-light-accent font-medium' 
-                        : 'bg-white/20 text-white'}
-                    `}
+                     py-4 md:py-5 px-4 md:px-6 rounded-2xl flex items-center text-base md:text-lg transition-all duration-300
+                     ${selectedSymptoms.includes(symptom)
+                        ? 'bg-white text-light-accent font-medium'
+                        : 'border border-white text-white bg-transparent'}
+                   `}
                   >
                     {symptom}
                     {selectedSymptoms.includes(symptom) && (
@@ -381,7 +381,7 @@ export const SymptomSelector: React.FC = () => {
                   </button>
                 ))}
               </div>
-              
+             
               {/* Symptom selection pills - second row */}
               <div className="flex flex-wrap gap-3">
                 {secondRowSymptoms.map((symptom, index) => (
@@ -389,11 +389,11 @@ export const SymptomSelector: React.FC = () => {
                     key={index + firstRowSymptoms.length}
                     onClick={() => toggleSymptom(symptom)}
                     className={`
-                      py-4 md:py-5 px-4 md:px-6 rounded-2xl flex items-center text-base md:text-lg transition-all duration-300
-                      ${selectedSymptoms.includes(symptom) 
-                        ? 'bg-white text-light-accent font-medium' 
-                        : 'bg-white/20 text-white'}
-                    `}
+                     py-4 md:py-5 px-4 md:px-6 rounded-2xl flex items-center text-base md:text-lg transition-all duration-300
+                     ${selectedSymptoms.includes(symptom)
+                        ? 'bg-white text-light-accent font-medium'
+                        : 'border border-white text-white bg-transparent'}
+                   `}
                   >
                     {symptom}
                     {selectedSymptoms.includes(symptom) && (
@@ -408,42 +408,41 @@ export const SymptomSelector: React.FC = () => {
           )}
         </div>
       </div>
-      
+     
       {/* Results section (outside the main selector) */}
       {showResults ? (
         <div className="mt-6 md:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
           {cards.map((card, index) => (
-            <div 
+            <div
               key={card.id}
-              className={`w-full h-full transform transition-all duration-700 ${
-                visibleCards.includes(index) 
-                  ? 'opacity-100 translate-y-0' 
+              className={`w-full h-full transform transition-all duration-700 ${visibleCards.includes(index)
+                  ? 'opacity-100 translate-y-0'
                   : 'opacity-0 translate-y-16'
-              }`}
-              style={{ 
+                }`}
+              style={{
                 transitionDelay: `${index * 300}ms`,
               }}
             >
-  <UniversalCard
-  variant="analysis"
-  title={card.title}
-  subtitle={card.subtitle}
-  description={card.description}
-  icon={card.iconPath}
-  showButton={false}
-  link={`/${card.id}/${card.subtitle.toLowerCase()}`}
-  listStyle="disc"
-  className="mx-auto w-full max-w-full md:max-w-[375px]"
-/>
+              <UniversalCard
+                variant="analysis"
+                title={card.title}
+                subtitle={card.subtitle}
+                description={card.description}
+                icon={card.iconPath}
+                showButton={false}
+                link={`/${card.id}/${card.subtitle.toLowerCase()}`}
+                listStyle="disc"
+                className="mx-auto w-full max-w-full md:max-w-[375px]"
+              />
             </div>
           ))}
         </div>
       ) : (
         <div className="mt-6 md:mt-10 bg-white dark:bg-dark-block p-6 md:p-10 rounded-2xl text-center flex flex-col items-center justify-center min-h-[200px] md:min-h-[360px]">
-          <MedicalTrackerIcon 
-            size={80} 
-            color={theme === 'light' ? '#094a54' : '#00C78B'} 
-            className="mb-6" 
+          <MedicalTrackerIcon
+            size={80}
+            color={theme === 'light' ? '#094a54' : '#00C78B'}
+            className="mb-6"
           />
           <p className="text-lg md:text-xl text-light-text dark:text-dark-text">
             {t('noSymptomsSelected')}
@@ -465,7 +464,7 @@ export const SymptomSelector: React.FC = () => {
         theme="brand"
         footer={
           <div className="flex flex-col w-full">
-            <button 
+            <button
               onClick={confirmSelection}
               className="w-full py-3 text-white bg-light-accent hover:bg-light-accent/90 rounded-xl font-medium"
               disabled={tempSelectedSymptoms.length === 0}
@@ -483,11 +482,11 @@ export const SymptomSelector: React.FC = () => {
                 key={index}
                 onClick={() => toggleTempSymptom(symptom)}
                 className={`
-                  w-full py-3 px-4 mb-2 rounded-xl flex justify-between items-center text-left text-base transition-all
-                  ${tempSelectedSymptoms.includes(symptom) 
-                    ? 'bg-light-accent/10 text-light-accent font-medium border border-light-accent' 
-                    : 'bg-white text-light-text border border-transparent'}
-                `}
+                 w-full py-3 px-4 mb-2 rounded-xl flex justify-between items-center text-left text-base transition-all
+                 ${tempSelectedSymptoms.includes(symptom)
+                    ? 'bg-light-accent/10 text-light-accent font-medium border border-light-accent'
+                    : 'bg-transparent text-light-text border border-white'}
+               `}
                 disabled={tempSelectedSymptoms.length >= 3 && !tempSelectedSymptoms.includes(symptom)}
               >
                 <span>{symptom}</span>
@@ -499,7 +498,7 @@ export const SymptomSelector: React.FC = () => {
               </button>
             ))}
           </div>
-          
+         
           {/* Индикатор выбранных симптомов */}
           <div className="pt-2 pb-4 text-center text-sm text-light-text">
             Выбрано {tempSelectedSymptoms.length} из 3 симптомов
@@ -509,51 +508,51 @@ export const SymptomSelector: React.FC = () => {
 
       {/* Добавляем CSS анимации */}
       <style jsx global>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.9) translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-        }
-        
-        .animate-fadeIn {
-          animation: fadeIn 0.4s ease-out forwards;
-        }
-        
-        .animate-slideIn {
-          animation: slideIn 0.5s ease-out forwards;
-        }
+       @keyframes fadeIn {
+         from {
+           opacity: 0;
+           transform: translateY(20px);
+         }
+         to {
+           opacity: 1;
+           transform: translateY(0);
+         }
+       }
+       
+       @keyframes slideIn {
+         from {
+           opacity: 0;
+           transform: translateY(40px);
+         }
+         to {
+           opacity: 1;
+           transform: translateY(0);
+         }
+       }
+       
+       @keyframes fadeInScale {
+         from {
+           opacity: 0;
+           transform: scale(0.9) translateY(20px);
+         }
+         to {
+           opacity: 1;
+           transform: scale(1) translateY(0);
+         }
+       }
+       
+       .animate-fadeIn {
+         animation: fadeIn 0.4s ease-out forwards;
+       }
+       
+       .animate-slideIn {
+         animation: slideIn 0.5s ease-out forwards;
+       }
 
-        .animate-fadeInScale {
-          animation: fadeInScale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-      `}</style>
+       .animate-fadeInScale {
+         animation: fadeInScale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+       }
+     `}</style>
     </div>
   );
-};
+}
