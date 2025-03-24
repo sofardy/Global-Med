@@ -13,23 +13,31 @@ function ScrollToTopContent() {
   useEffect(() => {
     // Прокрутка к верху страницы при изменении маршрута
     const scrollToTop = () => {
-      // Пытаемся найти элемент хедера по его идентификатору
-      const headerElement = document.getElementById('page-header');
-      
-      if (headerElement) {
-        // Если нашли хедер, прокручиваем к нему
-        headerElement.scrollIntoView({
-          behavior: 'instant', // можно изменить на 'smooth' для плавной прокрутки
-          block: 'start'
-        });
-      } else {
-        // Если хедер не найден, просто прокручиваем в самый верх
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'instant' // можно изменить на 'smooth' для плавной прокрутки
-        });
-      }
+      // Задержка для обеспечения корректной работы прокрутки
+      // после полной загрузки страницы
+      setTimeout(() => {
+        // Пытаемся найти элемент хедера по его идентификатору
+        const headerElement = document.getElementById('page-header');
+        
+        if (headerElement) {
+          // Если нашли хедер, прокручиваем к нему
+          headerElement.scrollIntoView({
+            behavior: 'auto', // более надежный вариант вместо 'instant'
+            block: 'start'
+          });
+        } else {
+          // Если хедер не найден, принудительно прокручиваем в самый верх
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'auto' // более надежный вариант вместо 'instant'
+          });
+          
+          // Дополнительная страховка - установка скролла напрямую
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0; // Для Safari
+        }
+      }, 100); // Небольшая задержка для более надежной работы
     };
 
     // Вызываем функцию прокрутки

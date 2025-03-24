@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useThemeStore } from '@/src/store/theme';
 import Image from 'next/image';
 import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
+import { EnhancedLink } from './EnhancedLink';
 
 export interface UniversalCardProps {
   title: string;
@@ -758,22 +759,27 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   );
 
   // Обертка в Link если есть ссылка
-  if (link) {
-    return (
-      <Link href={link} className={`h-full ${isMobile ? 'min-h-[300px]' : 'min-h-[340px] md:min-h-[340px]'} w-full`}>
-        <div 
-          className={cardClasses}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          style={styles.container}
-        >
-          <CardContent />
-        </div>
-      </Link>
-    );
-  }
+if (link) {
+  return (
+    <EnhancedLink
+      href={link} 
+      className={`h-full ${isMobile ? 'min-h-[300px]' : 'min-h-[340px] md:min-h-[340px]'} w-full`}
+      scroll={true}
+      onClick={onClick}
+    >
+      <div 
+        className={cardClasses}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={styles.container}
+      >
+        <CardContent />
+      </div>
+    </EnhancedLink>
+  );
+}
 
   // Обычная карточка
   return (
