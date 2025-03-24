@@ -9,6 +9,7 @@ import AdministrationSlider from '@/src/shared/components/Doctor/AdministrationS
 import CareerForm from '@/src/shared/components/CareerForm';
 import DoctorCertificates, { CertificatesSlider } from '@/src/shared/components/Doctor/CertificateCard';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
+import { HeartIconk2, MedicalCrossIcon } from '@/src/shared/ui/Icon';
 
 const certificatesData = [
   {
@@ -144,6 +145,13 @@ export default function Clinic() {
     );
   };
 
+  interface IconProps {
+  color?: string;
+  size?: number;
+  [key: string]: any; // Allow any additional props
+}
+
+
   // Компонент карточки с функцией
   const FeatureCard = ({ 
     title, 
@@ -157,7 +165,11 @@ export default function Clinic() {
     greenOnLoad?: boolean;
   }) => {
     const [hover, setHover] = useState(greenOnLoad);
-    
+    const coloredIcon = React.isValidElement(icon) 
+  ? React.cloneElement(icon as React.ReactElement<IconProps>, {
+      color: hover ? 'white' : (theme === 'light' ? '#094A54' : 'white'),
+    })
+  : icon;
     return (
       <div 
         className={`p-8 rounded-2xl transition-all duration-300 h-full min-h-[450px] ${
@@ -172,9 +184,9 @@ export default function Clinic() {
       >
         <div className="flex flex-col h-full">
           <h3 className="text-2xl font-medium mb-4">{title}</h3>
-          {/* <div className={`my-6 transition-all flex justify-center ${hover ? 'text-white' : 'text-light-accent dark:text-light-accent'}`}>
-            {icon}
-          </div> */}
+          <div className={`my-auto transition-all flex justify-center ${hover ? 'text-white' : 'text-light-accent dark:text-light-accent'}`}>
+            {coloredIcon}
+          </div>
           <p className="text-base opacity-80 mt-auto">{description}</p>
         </div>
       </div>
@@ -212,13 +224,7 @@ export default function Clinic() {
             <FeatureCard 
               title={t('modernMedicine.title')}
               description={t('modernMedicine.description')}
-              icon={
-                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M40 30H30V40M30 40H20M30 40V30M30 30H20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  <path d="M19 17C19 17 24 7 30 17C36 27 41 17 41 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  <circle cx="30" cy="30" r="20" stroke="currentColor" strokeWidth="1.5"/>
-                </svg>
-              }
+              icon={<MedicalCrossIcon/>}
             />
           </div>
           
@@ -227,11 +233,7 @@ export default function Clinic() {
             <FeatureCard 
               title={t('comprehensiveApproach.title')}
               description={t('comprehensiveApproach.description')}
-              icon={
-                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M30 15C30 15 25 5 15 5C5 5 5 15 5 15C5 25 15 35 30 45C45 35 55 25 55 15C55 15 55 5 45 5C35 5 30 15 30 15Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              }
+              icon={<HeartIconk2/>}
             />
           </div>
         </div>

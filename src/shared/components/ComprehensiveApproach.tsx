@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, ReactElement } from 'react';
 import { useThemeStore } from '@/src/store/theme';
-import { BrainIcon } from '../ui/Icon';
+import { BrainIcon, ClipboardIcon, DocumentIcon, HeartIconk2, MedicalTrackerIcon, PencilIcon } from '../ui/Icon';
 
 interface ServiceCardProps {
  title: string;
@@ -29,6 +29,11 @@ export default function ComprehensiveApproach(): JSX.Element {
      ? 'text-white' 
      : theme === 'light' ? 'text-light-text' : 'text-dark-text';
    
+   // Create a clone of the icon with the appropriate color prop
+   const iconWithColor = React.cloneElement(icon, { 
+     color: hover ? '#FFFFFF' : '#094A54'  // White when hovering, default accent color otherwise
+   });
+   
    return (
      <div 
        className={`p-6 rounded-xl min-h-[300px] h-full ${bgColor} flex flex-col relative transition-colors duration-300`}
@@ -43,9 +48,7 @@ export default function ComprehensiveApproach(): JSX.Element {
        </h3>
        
        <div className="flex justify-center my-6">
-         <div className={`${hover ? 'text-white' : 'text-light-accent'} transition-colors duration-300`}>
-           {icon}
-         </div>
+         {iconWithColor}
        </div>
        
        <p className={`mt-auto ${textColor} text-base leading-relaxed`}>
@@ -83,7 +86,7 @@ export default function ComprehensiveApproach(): JSX.Element {
          <ServiceCard 
            title="Комплексные медицинские осмотры" 
            description="Регулярная диагностика и оценка состояния здоровья персонала с использованием передовых технологий для раннего выявления заболеваний"
-           icon={<BrainIcon />}
+           icon={<MedicalTrackerIcon />}
          />
        </div>
        {/* Первый правый блок - 25% */}
@@ -91,7 +94,7 @@ export default function ComprehensiveApproach(): JSX.Element {
          <ServiceCard 
            title="Корпоративное страхование" 
            description="Индивидуально разработанные страховые программы"
-           icon={<BrainIcon />}
+           icon={<DocumentIcon />}
          />
        </div>
        {/* Второй правый блок - 25% */}
@@ -99,7 +102,7 @@ export default function ComprehensiveApproach(): JSX.Element {
          <ServiceCard 
            title="Профилактика и вакцинация" 
            description="Разработка и внедрение мер по профилактике заболеваний"
-           icon={<BrainIcon />}
+           icon={<PencilIcon />}
          />
        </div>
      </div>
@@ -110,14 +113,14 @@ export default function ComprehensiveApproach(): JSX.Element {
          <ServiceCard 
            title="Выездные медицинские услуги" 
            description="Организация выездных осмотров и консультаций в офисе, что позволяет сэкономить время сотрудников и обеспечить оперативную помощь"
-           icon={<BrainIcon />}
+           icon={<ClipboardIcon />}
          />
        </div>
        <div>
          <ServiceCard 
            title="Персонализированное сопровождение" 
            description="Индивидуальный подход к каждому клиенту: от разработки программы обследований до поддержки корпоративных проектов по улучшению здоровья"
-           icon={<BrainIcon />}
+           icon={<HeartIconk2 />}
          />
        </div>
      </div>

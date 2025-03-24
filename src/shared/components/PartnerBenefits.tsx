@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useThemeStore } from '@/src/store/theme';
 import Image from 'next/image';
-import { BrainIcon, HeartIconk2 } from '../ui/Icon';
+import { BrainIcon, HeartIconk2, MedicalCrossIcon, MedicalSearchIcon, RatingStarIcon } from '../ui/Icon';
 
 export default function PartnerBenefits() {
   const { theme } = useThemeStore();
@@ -41,44 +41,51 @@ export default function PartnerBenefits() {
     return 'min-h-[450px]';
   };
 
-  const FeatureCard = ({ 
-    title, 
-    description,
-    icon,
-    greenOnLoad = false 
-  }: {
-    title: string;
-    description: string;
-    icon?: React.ReactNode;
-    greenOnLoad?: boolean;
-  }) => {
-    const [hover, setHover] = useState(greenOnLoad);
+const FeatureCard = ({ 
+  title, 
+  description,
+  icon,
+  greenOnLoad = false 
+}: {
+  title: string;
+  description: string;
+  icon?: React.ReactNode;
+  greenOnLoad?: boolean;
+}) => {
+  const [hover, setHover] = useState(greenOnLoad);
+  
+  // Create a modified icon with the correct color based on hover state
+  const coloredIcon = React.isValidElement(icon) 
+    ? React.cloneElement(icon as React.ReactElement<any>, {
+        color: hover ? 'white' : (theme === 'light' ? '#094A54' : 'white'),
+      })
+    : icon;
     
-    return (
-      <div 
-        className={`p-5 md:p-6 lg:p-8 xl:p-8 rounded-2xl transition-all duration-300 h-full ${getMinHeight()} ${
-          hover 
-            ? 'bg-light-accent text-white' 
-            : theme === 'light' 
-              ? 'bg-white text-light-text' 
-              : 'bg-dark-block text-dark-text'
-        }`}
-        onMouseEnter={() => !isMobile && setHover(true)}
-        onMouseLeave={() => !isMobile && !greenOnLoad && setHover(false)}
-        onClick={() => isMobile && setHover(!hover)}
-      >
-        <div className="flex flex-col h-full justify-between">
-          <h3 className={`text-xl md:text-[22px] lg:text-[24px] font-medium ${isMobile ? 'mb-3' : 'mb-4'}`}>{title}</h3>
-          {icon && (
-            <div className={`${isMobile ? 'my-6' : isTablet ? 'my-8' : isLaptop ? 'my-10' : 'my-[90px]'} transition-all flex justify-center ${hover ? 'text-white' : 'text-light-accent dark:text-light-accent'}`}>
-              {icon}
-            </div>
-          )}
-          <p className="text-sm md:text-base lg:text-lg xl:text-[18px]">{description}</p>
-        </div>
+  return (
+    <div 
+      className={`p-5 md:p-6 lg:p-8 xl:p-8 rounded-2xl transition-all duration-300 h-full ${getMinHeight()} ${
+        hover 
+          ? 'bg-light-accent text-white' 
+          : theme === 'light' 
+            ? 'bg-white text-light-text' 
+            : 'bg-dark-block text-dark-text'
+      }`}
+      onMouseEnter={() => !isMobile && setHover(true)}
+      onMouseLeave={() => !isMobile && !greenOnLoad && setHover(false)}
+      onClick={() => isMobile && setHover(!hover)}
+    >
+      <div className="flex flex-col h-full justify-between">
+        <h3 className={`text-xl md:text-[22px] lg:text-[24px] font-medium ${isMobile ? 'mb-3' : 'mb-4'}`}>{title}</h3>
+        {icon && (
+          <div className={`${isMobile ? 'my-6' : isTablet ? 'my-8' : isLaptop ? 'my-10' : 'my-[90px]'} transition-all flex justify-center`}>
+            {coloredIcon}
+          </div>
+        )}
+        <p className="text-sm md:text-base lg:text-lg xl:text-[18px]">{description}</p>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   const getBannerHeight = () => {
     if (isMobile) return 'h-[250px]';
@@ -121,7 +128,7 @@ export default function PartnerBenefits() {
             <FeatureCard
               title="Лояльность сотрудников"
               description="Забота о здоровье команды повышает мотивацию, укрепляет доверие и снижает текучесть кадров в компании"
-              icon={<HeartIconk2 />}
+              icon={<RatingStarIcon />}
             />
           </div>
         </div>
@@ -132,7 +139,7 @@ export default function PartnerBenefits() {
             <FeatureCard
               title="Сильный HR-бренд"
               description="ДМС делает компанию привлекательной для специалистов и помогает конкурировать за лучшие кадры"
-              icon={<HeartIconk2 />}
+              icon={<MedicalSearchIcon />}
             />
           </div>
         </div>
