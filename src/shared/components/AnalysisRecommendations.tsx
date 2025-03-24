@@ -5,7 +5,10 @@ import { useTranslation } from '@/src/hooks/useTranslation';
 import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
 import { useThemeStore } from '@/src/store/theme';
-import { MedicalIcon } from '../ui/Icon';
+import { ButterflyIconk2, MedicalIcon } from '../ui/Icon';
+import { MobileDeviceIconk2 } from '../ui/Icon/MobileDeviceIconk2';
+import { CoffeeIcon } from '../ui/Icon/CoffeeIcon';
+import BrainIconk2 from '../ui/Icon/BrainIconk2';
 
 interface Recommendation {
   id: string;
@@ -26,26 +29,26 @@ const translations = {
         id: 'food',
         title: 'Избегайте жирной пищи',
         description: 'Не употребляйте жирную пищу за день до сдачи анализов',
-        iconPath: <MedicalIcon />
+        iconPath: <CoffeeIcon CoffeeIcon/>
       },
       {
         id: 'stress',
         title: 'Минимизируйте стресс',
         description: 'Старайтесь избегать сильного стресса перед сдачей анализов',
-        iconPath: <MedicalIcon />
+        iconPath: <ButterflyIconk2 CoffeeIcon/>
       },
       {
         id: 'alcohol',
         title: 'Откажитесь от алкоголя',
         description: 'Не употребляйте алкоголь за 24 часа до сдачи анализов',
-        iconPath: <MedicalIcon />,
+        iconPath: <MobileDeviceIconk2 />,
         isActive: true
       },
       {
         id: 'exercise',
         title: 'Избегайте физических нагрузок',
         description: 'Откажитесь от сильных физических нагрузок перед сдачей анализов',
-        iconPath: <MedicalIcon />
+        iconPath: <BrainIconk2 />
       }
     ]
   },

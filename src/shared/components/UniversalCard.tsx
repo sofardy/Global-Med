@@ -337,7 +337,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
               ) : (
                 <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
               )}
-              <span className={`${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>{featureText}</span>
+              <span className={`${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} text-[18px]`}>{featureText}</span>
             </li>
           );
         })}
@@ -499,7 +499,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   } else if (variant === 'surgery') {
     return (
       <div 
-        className={`${cardClasses} flex flex-col w-full h-full`}
+        className={`${cardClasses} flex flex-col w-full `}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
@@ -515,15 +515,15 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           }`}
         ></div>
         
-        <div className="flex flex-col justify-between h-full">
+        <div className="flex flex-col h-[420px]">
           {/* Heading */}
-          <h3 className={`${titleSizeClass} font-medium max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>
+          <h3 className={`${titleSizeClass} mb-8 font-medium max-w-[80%] leading-[1] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>
             {title}
           </h3>
           
           {/* Description */}
           {description && (
-            <p className={`text-sm md:text-base max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} opacity-80 mb-4`}>
+            <p className={`text-sm md:text-[18px] max-w-[90%] mb-[40px] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} opacity-80 mb-4`}>
               {typeof description === 'string' ? description : ''}
             </p>
           )}
@@ -538,7 +538,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
             
           {/* Button */}
           {showButton && (
-            <Link href={link || '#'} className="block mt-4">
+            <Link href={link || '#'} className="block mt-auto ">
               <button 
                 className={`w-[60%] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
                   ${isHovered 

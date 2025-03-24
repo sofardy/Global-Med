@@ -1,5 +1,5 @@
 export default function MobileDeviceIcon({
-  color = 'white',
+  color = '#094A54',
   size = 90,
   style = {},
   ...props

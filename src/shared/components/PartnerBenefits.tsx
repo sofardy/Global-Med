@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useThemeStore } from '@/src/store/theme';
 import Image from 'next/image';
-import { BrainIcon } from '../ui/Icon';
+import { BrainIcon, HeartIconk2 } from '../ui/Icon';
 
 export default function PartnerBenefits() {
   const { theme } = useThemeStore();
@@ -121,7 +121,7 @@ export default function PartnerBenefits() {
             <FeatureCard
               title="Лояльность сотрудников"
               description="Забота о здоровье команды повышает мотивацию, укрепляет доверие и снижает текучесть кадров в компании"
-              icon={<BrainIcon />}
+              icon={<HeartIconk2 />}
             />
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function PartnerBenefits() {
             <FeatureCard
               title="Сильный HR-бренд"
               description="ДМС делает компанию привлекательной для специалистов и помогает конкурировать за лучшие кадры"
-              icon={<BrainIcon />}
+              icon={<HeartIconk2 />}
             />
           </div>
         </div>

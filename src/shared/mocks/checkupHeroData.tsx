@@ -1,5 +1,6 @@
 import React from 'react';
-import { LightbulbIcon } from '@/src/shared/ui/Icon';
+import { ButterflyLogoSmallIcon, ConnectionsIcon, HealthMonitorIcon, LightbulbIcon, LocationPinIcon, MagnifyingGlassIcon, MuscleIcon, PacifierIcon, PregnancyIcon } from '@/src/shared/ui/Icon';
+import NeuronIcon from '../ui/Icon/NeuronIcon';
 
 export const checkupHeroData = {
   imageUrl: "/images/checkup-doctor.png",
@@ -27,7 +28,7 @@ export const checkupItemsData = [
     id: 'planned-operation',
     title: 'Плановая операция',
     description: 'Комплекс исследований для оценки общего состояния здоровья и снижения рисков перед хирургическим вмешательством',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <HealthMonitorIcon size={190} />,
     stats: [
       { icon: 'doc', value: '11 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -37,7 +38,7 @@ export const checkupItemsData = [
     id: 'womens-health',
     title: 'Женское здоровье',
     description: 'Комплексное обследование для контроля гормонального фона, репродуктивной системы и общего самочувствия',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
       { icon: 'doc', value: '6 исследований' },
       { icon: 'time', value: '1 час' }
@@ -47,7 +48,7 @@ export const checkupItemsData = [
     id: 'premium-womens-health',
     title: 'Премиум. Женское здоровье',
     description: 'Расширенная диагностика с углубленным анализом гормонов, репродуктивной системы и общего состояния организма',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
       { icon: 'doc', value: '9 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -57,7 +58,7 @@ export const checkupItemsData = [
     id: 'mens-health-under-40',
     title: 'Мужское здоровье до 40 лет',
     description: 'Комплексное обследование для оценки гормонального баланса, репродуктивной функции и общего состояния организма',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <LocationPinIcon size={190} />,
     stats: [
       { icon: 'doc', value: '5 исследований' },
       { icon: 'time', value: '1 час' }
@@ -67,7 +68,7 @@ export const checkupItemsData = [
     id: 'mens-health-over-40',
     title: 'Мужское здоровье 40+ лет',
     description: 'Комплексное обследование, включающее проверку урологического здоровья, гормонального фона и скрытых инфекций',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <LocationPinIcon size={190} />,
     stats: [
       { icon: 'doc', value: '5 исследований' },
       { icon: 'time', value: '1 час' }
@@ -77,7 +78,7 @@ export const checkupItemsData = [
     id: 'premium-mens-health-under-40',
     title: 'Премиум. Мужское здоровье до 40 лет',
     description: 'Расширенное комплексное обследование для оценки гормонального баланса, репродуктивной функции и общего состояния организма',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <LocationPinIcon size={190} />,
     stats: [
       { icon: 'doc', value: '7 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -87,7 +88,7 @@ export const checkupItemsData = [
     id: 'premium-mens-health-over-40',
     title: 'Премиум. Мужское здоровье 40+ лет',
     description: 'Расширенное комплексное обследование, включающее проверку урологического здоровья, гормонального фона и скрытых инфекций',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <LocationPinIcon size={190} />,
     stats: [
       { icon: 'doc', value: '11 исследований' },
       { icon: 'time', value: '2 часа' }
@@ -97,7 +98,7 @@ export const checkupItemsData = [
     id: 'healthy-family',
     title: 'Здоровая семья',
     description: 'Комплексное обследование для мужчин и женщин, помогающее оценить общее состояние здоровья и выявить риски заболеваний',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <ButterflyLogoSmallIcon size={190} />,
     stats: [
       { icon: 'doc', value: '11 исследований' },
       { icon: 'time', value: '2 часа' }
@@ -107,7 +108,7 @@ export const checkupItemsData = [
     id: 'premium-healthy-family',
     title: 'Премиум. Здоровая семья',
     description: 'Расширенное комплексное обследование для мужчин и женщин с детальной диагностикой, углубленными анализами и консультациями врачей',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <ButterflyLogoSmallIcon size={190} />,
     stats: [
       { icon: 'doc', value: '20 исследований' },
       { icon: 'time', value: '3 часа' }
@@ -117,7 +118,7 @@ export const checkupItemsData = [
     id: 'want-to-be-mother',
     title: 'Хочу стать мамой',
     description: 'Комплексное обследование для женщин, планирующих беременность, включающее важные анализы, УЗИ и консультации специалистов для подготовки к здоровому зачатию',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <PregnancyIcon size={190} />,
     stats: [
       { icon: 'doc', value: '12 исследований' },
       { icon: 'time', value: '2 часа' }
@@ -127,7 +128,7 @@ export const checkupItemsData = [
     id: 'want-to-be-father',
     title: 'Хочу стать папой',
     description: 'Комплексное обследование мужского здоровья, включающее анализы и диагностику репродуктивной функции, чтобы убедиться в готовности организма к зачатию ребенка',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <NeuronIcon size={190} />,
     stats: [
       { icon: 'doc', value: '10 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -137,7 +138,7 @@ export const checkupItemsData = [
     id: 'golden-age-55-plus-women',
     title: 'Золотой возраст 55+ (женщины)',
     description: 'Комплексное обследование для оценки общего состояния здоровья, работы сердца, сосудов, гормонального фона и профилактики возрастных изменений',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
       { icon: 'doc', value: '9 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -147,7 +148,7 @@ export const checkupItemsData = [
     id: 'golden-age-55-plus-men',
     title: 'Золотой возраст 55+ (мужчины)',
     description: 'Комплексное обследование, включающее проверку сердца, сосудов, гормонального баланса и ключевых показателей здоровья для активной и полноценной жизни',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <LocationPinIcon size={190} />,
     stats: [
       { icon: 'doc', value: '10 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -157,7 +158,7 @@ export const checkupItemsData = [
     id: 'healthy-child-kindergarten',
     title: 'Здоровый ребенок. Детский сад',
     description: 'Комплексное обследование, включающее анализы, осмотры специалистов и необходимые исследования для поступления в детский сад',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <PacifierIcon size={190} />,
     stats: [
       { icon: 'doc', value: '10 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -167,7 +168,7 @@ export const checkupItemsData = [
     id: 'fitness-control',
     title: 'Фитнес-контроль',
     description: 'Комплексная оценка состояния сердца, сосудов, суставов и определение уровня ключевых витаминов и микроэлементов для поддержания физической формы',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <MuscleIcon size={190} />,
     stats: [
       { icon: 'doc', value: '8 исследований' },
       { icon: 'time', value: '1,5 часа' }
@@ -177,7 +178,7 @@ export const checkupItemsData = [
     id: 'diabetes',
     title: 'Сахарный диабет',
     description: 'Комплексное обследование для раннего выявления, контроля и профилактики сахарного диабета',
-    iconPath: <LightbulbIcon size={80} />,
+    iconPath: <ConnectionsIcon size={190} />,
     stats: [
       { icon: 'doc', value: '6 исследований' },
       { icon: 'time', value: '1 час' }

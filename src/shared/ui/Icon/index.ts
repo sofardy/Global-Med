@@ -64,3 +64,8 @@ export { default as ImmuneIcon } from './ImmuneIcon';
 export { default as VirusIconK2 } from './VirusIconK2';
 export { default as PrecisionIcon } from './PrecisionIcon';
 export { default as StethoscopeIconk2 } from './StethoscopeIconk2';
+export { default as MagnifyingGlassIcon } from './MagnifyingGlassIcon';
+export { default as LocationPinIcon } from './LocationPinIcon';
+export { default as HealthMonitorIcon } from './HealthMonitorIcon';
+export { default as ButterflyIconk2 } from './ButterflyIconk2';
+export { default as HeartIconk2 } from './HeartIconk2';

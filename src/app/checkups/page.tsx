@@ -18,7 +18,7 @@ export default function Checkups() {
       />
 
 
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-20">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-20">
         {checkupItemsData.map((item) => (
           <UniversalCard
             key={item.id}
@@ -35,9 +35,9 @@ export default function Checkups() {
             showButton={true}
             buttonStyle="filled"
             hoverBgColor="light-accent"
-            titleSize="text-2xl md:text-3xl"
+            titleSize="text-2xl md:text-[40px]"
             additionalInfo={`${item.stats[0].value} • ${item.stats[1].value}`}
-            className="h-full border-none shadow-none rounded-b-2xl md:rounded-2xl pt-8 md:pt-6"
+            className=" border-none shadow-none rounded-b-2xl md:rounded-2xl p-8"
           />
         ))}
       </div>
