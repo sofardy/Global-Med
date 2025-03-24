@@ -49,11 +49,14 @@ export function PageTransition() {
     document.addEventListener('routeChangeComplete', handleRouteChangeComplete);
     
     // Custom link click handler to show loading state
-    const handleLinkClick = (e) => {
+ const handleLinkClick = (e: MouseEvent) => {
+      // Type assertion for the target element
+      const target = e.target as HTMLElement;
+      
       // Only handle internal links with href attribute
-      if (e.target.tagName === 'A' && 
-          e.target.href && 
-          e.target.href.startsWith(window.location.origin)) {
+      if (target.tagName === 'A' && 
+          (target as HTMLAnchorElement).href && 
+          (target as HTMLAnchorElement).href.startsWith(window.location.origin)) {
         setIsNavigating(true);
       }
     };
