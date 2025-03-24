@@ -7,6 +7,7 @@ import { useTranslation } from '@/src/hooks/useTranslation';
 import { translations } from './translations';
 import { CONTACT_INFO } from '@/src/shared/constants/contact';
 import { TelegramIcon, InstagramIcon, WhatsapppIcon, FacebookIcon } from '../../ui/Icon';
+import MuscleIcon from '../../ui/Icon/MuscleIcon';
 
 // Types for translation items
 interface LinkItem {

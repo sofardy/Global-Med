@@ -61,7 +61,7 @@ export const HeroBanner: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-[500px] sm:h-[500px] md:h-[480px] lg:h-[550px] rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-40 mt-4">
+    <div className="relative w-full h-[500px] sm:h-[500px] md:h-[480px] lg:h-[700px] rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-40 mt-4">
       {slidesArray.length === 0 ? (
         <div className="absolute inset-0 w-full h-full bg-dark-bg flex items-center justify-center">
           <p className="text-white text-xl">Слайды не загружены</p>
@@ -87,7 +87,7 @@ export const HeroBanner: React.FC = () => {
               <SwiperSlide key={`slide-${index}`} className="w-full">
                 <div className="relative w-full h-full">
                   {/* Фоновое изображение с позиционированием 50% справа */}
-                  <div className="absolute inset-0 w-full">
+                  <div className="absolute inset-0 w-full h-full">
                     <div className="relative w-full h-full">
                       <Image
                         src={slide.image}
