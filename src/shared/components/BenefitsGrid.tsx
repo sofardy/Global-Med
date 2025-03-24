@@ -112,16 +112,8 @@ const gridDescription = description || t('description') || '';
           <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto md:h-[500px] lg:h-[800px] p-8 md:p-10 bg-white dark:bg-dark-block text-[#173F46] dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[728px] flex flex-col">
             <div className="relative z-10 max-w-3xl">
               <div className="space-y-6">
-     <h2 className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-[40%]  space-y-6">
-  {gridTitle.split(' ').map((word, index) => {
-    const wordsPerLine = Math.ceil(gridTitle.split(' ').length / 2);
-    return (
-      <React.Fragment key={index}>
-        {index > 0 && index % wordsPerLine === 0 && <div className="h-2"></div>}
-        {word}{' '}
-      </React.Fragment>
-    );
-  })}
+  <h2 className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-[1]">
+  {gridTitle}
 </h2>
               </div>
               <p className="text-base lg:text-[18px] mt-10 mb-12 tracking-normal leading-[160%] space-y-2">

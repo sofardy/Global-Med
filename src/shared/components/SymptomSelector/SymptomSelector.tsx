@@ -159,6 +159,7 @@ export const SymptomSelector: React.FC = () => {
   // Состояние для анимации карточек
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [animationInProgress, setAnimationInProgress] = useState(false);
 
   // Effect для отслеживания ширины окна
   useEffect(() => {
@@ -207,22 +208,31 @@ export const SymptomSelector: React.FC = () => {
   const firstRowSymptoms = symptoms.slice(0, 7);
   const secondRowSymptoms = symptoms.slice(7);
 
-  // Эффект для установки showResults
+  // Эффект для установки showResults с задержкой
   useEffect(() => {
-    if (selectedSymptoms.length >= 3) {
-      setShowResults(true);
+    // Если выбран хотя бы один симптом, показываем результаты через 300 мс
+    if (selectedSymptoms.length > 0) {
+      const timer = setTimeout(() => {
+        setShowResults(true);
+      }, 300); // Задержка 300 мс для предотвращения мерцания при быстрой смене симптомов
+      
+      return () => clearTimeout(timer); // Очищаем таймер при смене зависимостей
     } else {
       setShowResults(false);
       // Сбрасываем анимацию при скрытии результатов
       setVisibleCards([]);
       setAnimationComplete(false);
+      setAnimationInProgress(false);
     }
   }, [selectedSymptoms]);
 
   // Эффект для запуска анимации появления карточек
   useEffect(() => {
     const animateCards = async () => {
-      if (showResults && !animationComplete) {
+      if (showResults && !animationComplete && !animationInProgress) {
+        // Устанавливаем флаг, что анимация началась
+        setAnimationInProgress(true);
+        
         // Сбрасываем состояние видимых карточек
         setVisibleCards([]);
         
@@ -233,11 +243,12 @@ export const SymptomSelector: React.FC = () => {
         }
         
         setAnimationComplete(true);
+        setAnimationInProgress(false);
       }
     };
     
     animateCards();
-  }, [showResults, cards.length, animationComplete]);
+  }, [showResults, cards.length, animationComplete, animationInProgress]);
 
   const toggleSymptom = (symptom: string) => {
     if (selectedSymptoms.includes(symptom)) {

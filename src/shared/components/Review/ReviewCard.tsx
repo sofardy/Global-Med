@@ -6,7 +6,7 @@ import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { HeartCheckIcon, ThoGISIcon, YouTubeIcon } from '../../ui/Icon';
 
-type ReviewSource = 'google' | 'youtube' | null;
+type ReviewSource = 'google' | 'youtube' | 'yandex' | null;
 
 interface ReviewCardProps {
   name: string;
@@ -90,7 +90,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
       {/* Услуга - всегда внизу карточки */}
       <div className="mt-auto">
         {service && (
-          <div className="mb-4">
+          <div className="mb-16">
             <div className="text-[#173F46] dark:text-gray-400 font-medium text-lg">{t('service')}</div>
             <div className="flex items-center">
               <HeartCheckIcon size={20} className="text-light-accent mr-2" />

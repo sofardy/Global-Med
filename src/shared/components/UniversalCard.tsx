@@ -14,7 +14,7 @@ export interface UniversalCardProps {
   subtitle?: string;
   additionalInfo?: string;
   variant?: 'default' | 'checkup' | 'specialist' | 'analysis' | 'service' | 'custom' | 'family' | 'analysis-card' | 'surgery';
-    features?: Array<string | Feature>;
+  features?: Array<string | Feature>;
   imageSrc?: string; 
   iconPosition?: 'center' | 'top' | 'bottom' | 'left' | 'right';
   iconAlignment?: 'left' | 'right';
@@ -49,10 +49,10 @@ export interface UniversalCardProps {
     icon?: React.CSSProperties;
     button?: React.CSSProperties;
   };
-    hoverBgColor?: string;
+  hoverBgColor?: string;
   buttonTextSize?: string;
   buttonPadding?: string;
-   icon?: React.ReactNode;
+  icon?: React.ReactNode;
   iconColor?: string; 
   minHeight?: string;
   heightMobile?: string;
@@ -68,7 +68,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   description,
   subtitle,
   hoverBgColor,
-buttonTextSize,
+  buttonTextSize,
   buttonPadding,
   icon,
   additionalInfo,
@@ -107,11 +107,11 @@ buttonTextSize,
   const { theme } = useThemeStore();
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-    const finalIconColor = getIconColorByTheme(theme, iconColor);
+  const finalIconColor = getIconColorByTheme(theme, iconColor);
   
   // Обрабатываем иконку с правильным цветом
-// В UniversalCard меняем обработку иконки:
-const processedIcon = applyColorToIcon(icon, finalIconColor, isHovered);
+  const processedIcon = applyColorToIcon(icon, finalIconColor, isHovered);
+  
   // Определение мобильного устройства
   useEffect(() => {
     const checkMobile = () => {
@@ -126,20 +126,26 @@ const processedIcon = applyColorToIcon(icon, finalIconColor, isHovered);
     };
   }, []);
   
-  
- const handleMouseEnter = () => {
-  // Активируем эффект наведения только на десктопах
-  if (!isMobile) {
+  // Обработчик события наведения - теперь работает на всех устройствах
+  const handleMouseEnter = () => {
     setIsHovered(true);
     if (onHover) onHover();
-  }
-};
+  };
   
-const handleMouseLeave = () => {
-  if (!isMobile) {
+  // Обработчик события ухода мыши - теперь работает на всех устройствах
+  const handleMouseLeave = () => {
     setIsHovered(false);
-  }
-};
+  };
+  
+  // Обработчики сенсорных событий для мобильных устройств
+  const handleTouchStart = () => {
+    setIsHovered(true);
+    if (onHover) onHover();
+  };
+  
+  const handleTouchEnd = () => {
+    // Не сбрасываем isHovered на мобильных устройствах для сохранения эффекта
+  };
   
   const handleClick = () => {
     if (onClick) onClick();
@@ -199,14 +205,15 @@ const handleMouseLeave = () => {
   
   const titleColor = isHovered ? 'text-white' : '';
   const descriptionColor = isHovered ? 'text-white' : '';
+  
   // Уменьшение размера текста для мобильных устройств
-const titleSizeClass = isMobile 
-  ? 'text-xl sm:text-2xl md:text-[24px] leading-tight sm:leading-normal md:leading-[1.2]'
-  : (titleSize || 'text-xl sm:text-2xl md:text-[24px] leading-tight sm:leading-normal md:leading-[1.2]');
+  const titleSizeClass = isMobile 
+    ? 'text-xl sm:text-2xl md:text-[24px] leading-tight sm:leading-normal md:leading-[1.2]'
+    : (titleSize || 'text-xl sm:text-2xl md:text-[24px] leading-tight sm:leading-normal md:leading-[1.2]');
 
-const descriptionSizeClass = isMobile 
-  ? 'text-sm sm:text-base md:text-[18px] leading-tight sm:leading-normal md:leading-[1.4]'
-  : (descriptionSize || 'text-base sm:text-lg md:text-[18px] leading-tight sm:leading-normal md:leading-[1.4]');
+  const descriptionSizeClass = isMobile 
+    ? 'text-sm sm:text-base md:text-[18px] leading-tight sm:leading-normal md:leading-[1.4]'
+    : (descriptionSize || 'text-base sm:text-lg md:text-[18px] leading-tight sm:leading-normal md:leading-[1.4]');
 
   // Класс для стиля списка
   const getListStyleClass = () => {
@@ -294,51 +301,48 @@ const descriptionSizeClass = isMobile
       </p>
     )
   );
-  interface Feature {
-  icon?: string;
-  text: string;
-}
-const renderFeatures = (
-  features: Array<string | Feature> | undefined, 
-  isHovered: boolean, 
-  theme: string
-) => {
-  if (!features || features.length === 0) return null;
   
-  return (
-    <ul className="space-y-2 mb-6">
-      {features.map((feature, index) => {
-        // Check if feature is an object with icon
-        const isFeatureObject = typeof feature === 'object' && feature !== null;
-        // Get feature text safely
-        const featureText = isFeatureObject ? (feature as Feature).text : (feature as string);
-        
-        return (
-          <li key={index} className="flex items-start">
-            {isFeatureObject && (feature as Feature).icon ? (
-              <>
-                {(feature as Feature).icon === 'doc' ? (
-                  <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                ) : (feature as Feature).icon === 'time' ? (
-                  <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                ) : (
-                  <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
-                )}
-              </>
-            ) : (
-              <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
-            )}
-            <span className={`${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>{featureText}</span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-};
+  const renderFeatures = (
+    features: Array<string | Feature> | undefined, 
+    isHovered: boolean, 
+    theme: string
+  ) => {
+    if (!features || features.length === 0) return null;
+    
+    return (
+      <ul className="space-y-2 mb-6">
+        {features.map((feature, index) => {
+          // Check if feature is an object with icon
+          const isFeatureObject = typeof feature === 'object' && feature !== null;
+          // Get feature text safely
+          const featureText = isFeatureObject ? (feature as Feature).text : (feature as string);
+          
+          return (
+            <li key={index} className="flex items-start">
+              {isFeatureObject && (feature as Feature).icon ? (
+                <>
+                  {(feature as Feature).icon === 'doc' ? (
+                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  ) : (feature as Feature).icon === 'time' ? (
+                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${isHovered ? 'text-white' : (theme === 'light' ? 'text-light-text' : 'text-dark-text')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  ) : (
+                    <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
+                  )}
+                </>
+              ) : (
+                <span className={`${isHovered ? 'text-white' : 'text-light-accent'} mr-2`}>•</span>
+              )}
+              <span className={`${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>{featureText}</span>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
 
   // Блок с иконкой
   const IconBlock = () => {
@@ -357,11 +361,11 @@ const renderFeatures = (
       const newSize = isMobile ? Math.floor(currentSize * 0.7) : currentSize;
       
       // Создаем копию иконки с новым размером
-   return React.cloneElement(processedIcon as React.ReactElement<any>, {
-  size: newSize,
-  className: `${(processedIcon as React.ReactElement<any>).props.className || ''} ${isHovered ? 'text-white' : ''}`,
-  color: isHovered ? 'white' : undefined
-});
+      return React.cloneElement(processedIcon as React.ReactElement<any>, {
+        size: newSize,
+        className: `${(processedIcon as React.ReactElement<any>).props.className || ''} ${isHovered ? 'text-white' : ''}`,
+        color: isHovered ? 'white' : undefined
+      });
     };
     
     return (
@@ -386,6 +390,8 @@ const renderFeatures = (
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         style={styles.container}
       >
         <div className="universal-card-dot"></div>
@@ -449,87 +455,33 @@ const renderFeatures = (
         </div>
       </div>
     );
-  }else if (variant === 'analysis-card') {
-  return (
-    <div 
-      className={`${cardClasses} flex flex-col  min-h-[320px]`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={styles.container}
-    >
-      <div className="flex flex-col  justify-between h-full">
-        {/* Заголовок вверху */}
-        <h3 className={`${titleSizeClass} font-medium ${titleColor}`}>
-          {title}
-        </h3>
-        
-        {/* Иконка по центру */}
-        <div className="flex items-center justify-center flex-grow">
-          {processedIcon}
-        </div>
-        
-        {/* Кнопка внизу */}
-        <Link href={link || '#'} className="w-full block mt-4">
-          <button 
-            className={`w-full ${buttonPadding || 'py-3'} px-4 rounded-2xl font-medium transition-colors ${buttonTextSize || 'text-base'}
-              ${isHovered 
-                ? `bg-white text-light-accent ${hoverBgColor === 'white' ? 'border border-light-accent' : ''}` 
-                : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
-              }`}
-            style={styles.button}
-          >
-            {buttonText || 'Подробнее'}
-          </button>
-        </Link>
-      </div>
-    </div>
-  );
-  }
-else if (variant === 'surgery') {
-  return (
-    <div 
-      className={`${cardClasses} flex flex-col w-full h-full`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={styles.container}
-    >
-      {/* Dot in top right corner */}
+  } else if (variant === 'analysis-card') {
+    return (
       <div 
-        className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 rounded-full transition-colors duration-300 ${
-          isHovered 
-            ? 'bg-white' 
-            : theme === 'light' ? 'bg-[#F7F7F7]' : 'bg-[#11363C]'
-        }`}
-      ></div>
-      
-      <div className="flex flex-col justify-between h-full">
-        {/* Heading */}
-      <h3 className={`${titleSizeClass} font-medium max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>
-    {title}
-  </h3>
-  
-  {/* Description */}
-  {description && (
-    <p className={`text-sm md:text-base max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} opacity-80 mb-4`}>
-      {typeof description === 'string' ? description : ''}
-    </p>
-  )}
-        
-        {/* Features list */}
-  {renderFeatures(features, isHovered, theme)}
-        
-        {/* Icon - hidden on mobile */}
-        <div className="absolute bottom-6 right-6 hidden md:block">
-          {processedIcon}
-        </div>
-        
-        {/* Button */}
-        {showButton && (
-          <Link href={link || '#'} className="block mt-4">
+        className={`${cardClasses} flex flex-col min-h-[320px]`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={styles.container}
+      >
+        <div className="flex flex-col justify-between h-full">
+          {/* Заголовок вверху */}
+          <h3 className={`${titleSizeClass} font-medium ${titleColor}`}>
+            {title}
+          </h3>
+          
+          {/* Иконка по центру */}
+          <div className="flex items-center justify-center flex-grow">
+            {processedIcon}
+          </div>
+          
+          {/* Кнопка внизу */}
+          <Link href={link || '#'} className="w-full block mt-4">
             <button 
-              className={`w-[60%] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
+              className={`w-full ${buttonPadding || 'py-3'} px-4 rounded-2xl font-medium transition-colors ${buttonTextSize || 'text-base'}
                 ${isHovered 
-                  ? 'bg-white text-light-accent border border-light-accent' 
+                  ? `bg-white text-light-accent ${hoverBgColor === 'white' ? 'border border-light-accent' : ''}` 
                   : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
                 }`}
               style={styles.button}
@@ -537,11 +489,69 @@ else if (variant === 'surgery') {
               {buttonText || 'Подробнее'}
             </button>
           </Link>
-        )}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  } else if (variant === 'surgery') {
+    return (
+      <div 
+        className={`${cardClasses} flex flex-col w-full h-full`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={styles.container}
+      >
+        {/* Dot in top right corner */}
+        <div 
+          className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 rounded-full transition-colors duration-300 ${
+            isHovered 
+              ? 'bg-white' 
+              : theme === 'light' ? 'bg-[#F7F7F7]' : 'bg-[#11363C]'
+          }`}
+        ></div>
+        
+        <div className="flex flex-col justify-between h-full">
+          {/* Heading */}
+          <h3 className={`${titleSizeClass} font-medium max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'}`}>
+            {title}
+          </h3>
+          
+          {/* Description */}
+          {description && (
+            <p className={`text-sm md:text-base max-w-[80%] ${isHovered ? 'text-white' : 'text-light-text dark:text-dark-text'} opacity-80 mb-4`}>
+              {typeof description === 'string' ? description : ''}
+            </p>
+          )}
+            
+          {/* Features list */}
+          {renderFeatures(features, isHovered, theme)}
+            
+          {/* Icon - hidden on mobile */}
+          <div className="absolute bottom-6 right-6 hidden md:block">
+            {processedIcon}
+          </div>
+            
+          {/* Button */}
+          {showButton && (
+            <Link href={link || '#'} className="block mt-4">
+              <button 
+                className={`w-[60%] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${buttonTextSize || 'text-base'}
+                  ${isHovered 
+                    ? 'bg-white text-light-accent border border-light-accent' 
+                    : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
+                  }`}
+                style={styles.button}
+              >
+                {buttonText || 'Подробнее'}
+              </button>
+            </Link>
+          )}
+        </div>
+      </div>
+    );
+  }
+  
   const CardContent = () => (
     <div className="flex flex-col h-full">
       {/* Круглый элемент в правом верхнем углу */}
@@ -566,9 +576,10 @@ else if (variant === 'surgery') {
       
       {/* Заголовок */}
       <div className="flex flex-col flex-grow leading-normal">
-   <h3 className={`${titleSizeClass} w-[70%] font-medium mb-2 ${titleColor} leading-tight`} style={styles.title}>
-  {title}
-</h3>
+        <h3 className={`${titleSizeClass} w-[70%] font-medium mb-2 ${titleColor} leading-tight`} style={styles.title}>
+          {title}
+        </h3>
+        
         {/* Специфичная структура для каждого варианта */}
         {variant === 'analysis' ? (
           // Для анализов: заголовок → иконка → подзаголовок → описание
@@ -609,7 +620,7 @@ else if (variant === 'surgery') {
       {showButton && (variant === 'service' || buttonText) && (
         <button 
           className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
-            w-full  h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
+            w-full h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
             ${isHovered 
               ? 'bg-white text-light-accent' 
               : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
@@ -754,6 +765,8 @@ else if (variant === 'surgery') {
           className={cardClasses}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
           style={styles.container}
         >
           <CardContent />
@@ -769,9 +782,11 @@ else if (variant === 'surgery') {
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       style={styles.container}
     >
       <CardContent />
     </div>
   );
-};
+}; 
