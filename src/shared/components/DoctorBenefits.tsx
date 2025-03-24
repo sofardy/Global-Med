@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { UniversalCard } from '@/src/shared/components/UniversalCard';
-import { MedicalIcon } from '@/src/shared/ui/Icon';
+import { MedicalDocumentIcon, MedicalIcon, NotesIcon, PrecisionIcon, StethoscopeIcon } from '@/src/shared/ui/Icon';
 import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
 import { useThemeStore } from '@/src/store/theme';
 
@@ -26,25 +26,25 @@ const translations = {
         id: 'qualified',
         title: 'Квалифицированные врачи',
         description: 'Обследование проводят опытные специалисты с учетом особенностей',
-        iconPath: <MedicalIcon />
+        iconPath: <StethoscopeIcon />
       },
       {
         id: 'complete',
         title: 'Полная картина здоровья',
         description: 'Обследования дают полное представление о состоянии здоровья',
-        iconPath: <MedicalIcon />
+        iconPath: <MedicalDocumentIcon />
       },
       {
         id: 'precise',
         title: 'Точные результаты',
         description: 'Современные технологии обеспечивают точность диагностики',
-        iconPath: <MedicalIcon />,
+        iconPath: <PrecisionIcon />,
       },
       {
         id: 'affordable',
         title: 'Выгодное решение',
         description: 'Цены на услуги средние по рынку, что гарантирует доступность',
-        iconPath: <MedicalIcon />
+        iconPath: <NotesIcon />
       }
     ]
   },

@@ -1,4 +1,4 @@
-import { ButterflyIcon } from "../ui/Icon";
+import { ButterflyIcon, HemoglobinIcon } from "../ui/Icon";
 
 export const analysisHeroData = {
   imageUrl: '/images/analysis-hero.png',
@@ -26,7 +26,7 @@ export const analysisData = [
     title: "Коагулограмма",
     description: "Комплексный анализ свертывающей системы крови для выявления нарушений",
     servicesCount: "8 показателей",
-    iconPath: <ButterflyIcon size={80} />,
+    iconPath: <HemoglobinIcon size={80} />,
   },
   {
     id: "biochemistry",

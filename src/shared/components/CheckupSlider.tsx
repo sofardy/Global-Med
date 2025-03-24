@@ -6,7 +6,7 @@ import { UniversalSlider } from '../components/UniversalSlider';
 import { UniversalCard } from '../components/UniversalCard';
 import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
-import { MedicalTrackerIcon, ButterflyIcon } from '../ui/Icon';
+import { MedicalTrackerIcon, ButterflyIcon, PregnancyIcon, ButterflyLogoSmallIcon } from '../ui/Icon';
 
 // Локализация
 const translations = {
@@ -176,8 +176,8 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
   const slides = checkups.map((checkup) => {
     // Определяем иконку в зависимости от типа чек-апа
     const icon = checkup.id === 'pregnancy' 
-      ? <ButterflyIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />
-      : <MedicalTrackerIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />;
+      ? <PregnancyIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />
+      : <ButterflyLogoSmallIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />;
     
     // Создаем карточку
     return (

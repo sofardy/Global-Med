@@ -33,6 +33,9 @@ export const getIconColorByTheme = (
     theme: string,
     customColor?: string
 ): string => {
-    if (customColor) return customColor;
-    return theme === 'light' ? '#094A54' : '#ffffff';
+    // Всегда возвращаем белый цвет в темном режиме
+    if (theme === 'dark') return '#ffffff';
+
+    // В светлом режиме используем customColor или значение по умолчанию
+    return customColor || '#094A54';
 };

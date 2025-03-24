@@ -4,7 +4,14 @@ import {
   EyeIcon, 
   ButterflyIcon, 
   MedicalIcon,
+  AngelIcon,
+  BlobShape,
+  ButterflyWingsIcon,
+  DocumentPenIcon,
+  MedicalMicroscopeIcon,
+  ThyroidIcon,
 } from '@/src/shared/ui/Icon';
+import BonesIcon from '../ui/Icon/BonesIcon';
 
 export const medicalServicesMockData = {
   hero: {
@@ -53,49 +60,49 @@ export const medicalServicesMockData = {
       title: "Гинекология",
       description: "Профилактика, диагностика и лечение заболеваний женской репродуктивной системы",
       servicesCount: "18 услуг",
-      iconPath: <MedicalIcon size={80} />
+      iconPath: <AngelIcon size={80} />
     },
     {
       id: "neurology",
       title: "Неврология",
       description: "Диагностика и лечение заболеваний нервной системы, включая головные боли и расстройства сна",
       servicesCount: "7 услуг",
-      iconPath: <MedicalIcon size={80} />
+      iconPath: <BlobShape size={80} />
     },
     {
       id: "oncology",
       title: "Онкология",
       description: "Диагностика и лечение раковых заболеваний, а также контроль за состоянием здоровья",
       servicesCount: "12 услуг",
-      iconPath: <MedicalIcon size={80} />
+      iconPath: <ButterflyWingsIcon size={80} />
     },
     {
       id: "surgery",
       title: "Хирургия",
       description: "Проведение операций при травмах и заболеваниях с быстрым восстановлением",
       servicesCount: "8 услуг",
-      iconPath: <MedicalIcon size={80} />
+      iconPath: <DocumentPenIcon size={80} />
     },
     {
       id: "ultrasound",
       title: "УЗИ",
       description: "Диагностика с помощью ультразвуковых волн для выявления заболеваний внутренних органов",
       servicesCount: "21 услуга",
-      iconPath: <MedicalIcon size={80} />
+      iconPath: <MedicalMicroscopeIcon size={80} />
     },
     {
       id: "endocrinology",
       title: "Эндокринология",
       description: "Диагностика и лечение заболеваний эндокринной системы, включая щитовидную железу и диабет",
       servicesCount: "11 услуг",
-      iconPath: <MedicalIcon size={80} />
+      iconPath: <ThyroidIcon size={80} />
     },
     {
       id: "traumatology",
       title: "Травматология",
       description: "Диагностика и лечение травм, заболеваний костей и суставов, восстановление после травм",
       servicesCount: "9 услуг",
-      iconPath: <MedicalIcon size={80} />
+      iconPath: <AngelIcon size={80} />
     }
   ]
 };

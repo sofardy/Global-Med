@@ -346,35 +346,38 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   };
 
   // Блок с иконкой
-  const IconBlock = () => {
-    if (!processedIcon) return null;
+ const IconBlock = () => {
+  if (!processedIcon) return null;
+  
+  const iconClasses = variant === 'family' ? 'universal-card-icon' : getIconPositionClass();
+  
+  // Определение размера иконки в зависимости от устройства
+  const getScaledIcon = () => {
+    if (!React.isValidElement(processedIcon)) return processedIcon;
     
-    const iconClasses = variant === 'family' ? 'universal-card-icon' : getIconPositionClass();
+    // Извлекаем текущий размер иконки
+    const currentSize = (processedIcon as React.ReactElement<any>).props.size || 80;
     
-    // Определение размера иконки в зависимости от устройства
-    const getScaledIcon = () => {
-      if (!React.isValidElement(processedIcon)) return processedIcon;
-      
-      // Извлекаем текущий размер иконки
-      const currentSize = (processedIcon as React.ReactElement<any>).props.size || 80;
-      
-      // Вычисляем новый размер для мобильных устройств
-      const newSize = isMobile ? Math.floor(currentSize * 0.7) : currentSize;
-      
-      // Создаем копию иконки с новым размером
-      return React.cloneElement(processedIcon as React.ReactElement<any>, {
-        size: newSize,
-        className: `${(processedIcon as React.ReactElement<any>).props.className || ''} ${isHovered ? 'text-white' : ''}`,
-        color: isHovered ? 'white' : undefined
-      });
-    };
+    // Вычисляем новый размер для мобильных устройств
+    const newSize = isMobile ? Math.floor(currentSize * 0.7) : currentSize;
     
-    return (
-      <div className={iconClasses} style={styles.icon}>
-        {getScaledIcon()}
-      </div>
-    );
+    // Задаем цвет в зависимости от темы и состояния наведения
+    const iconColor = theme === 'dark' || isHovered ? 'white' : undefined;
+    
+    // Создаем копию иконки с новым размером и правильным цветом
+    return React.cloneElement(processedIcon as React.ReactElement<any>, {
+      size: newSize,
+      className: `${(processedIcon as React.ReactElement<any>).props.className || ''} ${theme === 'dark' || isHovered ? 'text-white' : ''}`,
+      color: iconColor
+    });
   };
+  
+  return (
+    <div className={iconClasses} style={styles.icon}>
+      {getScaledIcon()}
+    </div>
+  );
+};
   
   // Блок с подзаголовком
   const SubtitleBlock = () => (

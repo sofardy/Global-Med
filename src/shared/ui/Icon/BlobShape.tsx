@@ -1,4 +1,4 @@
-export default function VirusIcon({
+export default function BlobShape({
   color = '#094A54',
   size = 90,
   style = {},
