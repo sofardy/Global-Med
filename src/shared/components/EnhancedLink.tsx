@@ -1,13 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 
-/**
- * Enhanced Link component that handles transitions between pages
- */
 interface EnhancedLinkProps {
   href: string;
   children: React.ReactNode;
@@ -15,56 +11,27 @@ interface EnhancedLinkProps {
   onClick?: () => void;
   scroll?: boolean;
   prefetch?: boolean;
-  [key: string]: any; // For any other props
+  [key: string]: any;
 }
 
-// Navigation handler with client-side hooks
-function LinkNavigation({
-  href,
-  children,
-  className,
-  onClick,
-  scroll,
-  prefetch,
-  ...rest
-}: EnhancedLinkProps) {
-  const router = useRouter();
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
+function LinkComponent(props: EnhancedLinkProps) {
+  const { href, children, className, onClick, ...rest } = props;
+  
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Skip if it's an external link or special behavior is needed
+    // Если внешняя или специальная ссылка, просто выполняем стандартное поведение
     if (href.startsWith('http') || href.startsWith('#') || href.startsWith('tel:') || href.startsWith('mailto:')) {
       if (onClick) onClick();
       return;
     }
-
-    e.preventDefault();
     
-    // Notify that we're about to change routes
-    document.dispatchEvent(new Event('beforeRouteChange'));
-    setIsTransitioning(true);
-    
-    // Call onClick handler if provided
+    // Для внутренних ссылок вызываем onClick, если он предоставлен
     if (onClick) onClick();
-    
-    // Use setTimeout to create a small delay for the loading state to be visible
-    setTimeout(() => {
-      router.push(href);
-      
-      // After navigation completes
-      setTimeout(() => {
-        document.dispatchEvent(new Event('routeChangeComplete'));
-        setIsTransitioning(false);
-      }, 300);
-    }, 100);
   };
 
   return (
     <Link
       href={href}
-      className={`${className} ${isTransitioning ? 'pointer-events-none' : ''}`}
-      scroll={scroll}
-      prefetch={prefetch}
+      className={className}
       onClick={handleClick}
       {...rest}
     >
@@ -73,11 +40,10 @@ function LinkNavigation({
   );
 }
 
-// Main component with proper Suspense boundary
 export const EnhancedLink: React.FC<EnhancedLinkProps> = (props) => {
   return (
     <Suspense fallback={<Link href={props.href} className={props.className}>{props.children}</Link>}>
-      <LinkNavigation {...props} />
+      <LinkComponent {...props} />
     </Suspense>
   );
 };

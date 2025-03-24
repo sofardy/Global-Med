@@ -2,79 +2,68 @@
 
 import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
+import { usePathname } from 'next/navigation';
 
-// Separate component that uses client hooks
+// Компонент, использующий клиентские хуки
 function NavigationHandler() {
   const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
   
-  // Listen for route changes and handle transitions
+  // Сброс состояния навигации при изменении маршрута
   useEffect(() => {
-    // Handle start of navigation
-    const handleRouteChangeStart = () => {
-      setIsNavigating(true);
-    };
+    setIsNavigating(false);
     
-    // Handle end of navigation
-    const handleRouteChangeComplete = () => {
-      // Slight delay to ensure DOM is fully updated
-      setTimeout(() => {
-        // Scroll to header or top of page
-        const headerElement = document.getElementById('page-header');
-        
-        if (headerElement) {
-          headerElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        } else {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }
-        
-        // Hide loading indicator
-        setIsNavigating(false);
-      }, 100);
-    };
-
-    // Add event listeners
-    document.addEventListener('beforeRouteChange', handleRouteChangeStart);
-    document.addEventListener('routeChangeComplete', handleRouteChangeComplete);
-    
-    // Custom link click handler to show loading state
+    // Мягкий скролл к верху после завершения навигации
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, 100);
+  }, [pathname]);
+  
+  // Отслеживание начала навигации
+  useEffect(() => {
+    // Обработчик для начала навигации
     const handleLinkClick = (e: MouseEvent) => {
-      // Type assertion for the target element
       const target = e.target as HTMLElement;
       
-      // Only handle internal links with href attribute
-      if (target.tagName === 'A' && 
-          (target as HTMLAnchorElement).href && 
-          (target as HTMLAnchorElement).href.startsWith(window.location.origin)) {
-        setIsNavigating(true);
+      // Проверяем, что это внутренняя ссылка
+      if (target.tagName === 'A' || target.closest('a')) {
+        const linkElement = target.tagName === 'A' ? target as HTMLAnchorElement : target.closest('a') as HTMLAnchorElement;
+        
+        if (linkElement && 
+            linkElement.href && 
+            linkElement.href.startsWith(window.location.origin) &&
+            linkElement.href !== window.location.href) {
+          setIsNavigating(true);
+        }
       }
     };
     
     document.addEventListener('click', handleLinkClick);
     
-    // Clean up event listeners
+    // Обработчик для отмены состояния загрузки после задержки
+    const safetyTimeout = setTimeout(() => {
+      if (isNavigating) {
+        setIsNavigating(false);
+      }
+    }, 3000); // Максимальное время ожидания
+    
     return () => {
-      document.removeEventListener('beforeRouteChange', handleRouteChangeStart);
-      document.removeEventListener('routeChangeComplete', handleRouteChangeComplete);
       document.removeEventListener('click', handleLinkClick);
+      clearTimeout(safetyTimeout);
     };
-  }, []);
+  }, [isNavigating]);
 
   return (
     <>
-      {/* Overlay loading indicator that appears during navigation */}
       {isNavigating && (
         <div 
           className="fixed inset-0 bg-white/70 dark:bg-gray-900/70 z-50 flex items-center justify-center transition-opacity duration-300"
           style={{ backdropFilter: 'blur(4px)' }}
         >
           <div className="relative">
-            {/* Pulse animation for loading */}
             <div className="w-16 h-16 rounded-full border-4 border-light-accent border-t-transparent animate-spin"></div>
             <div className="absolute inset-0 rounded-full border-4 border-transparent animate-pulse"></div>
           </div>
@@ -84,7 +73,7 @@ function NavigationHandler() {
   );
 }
 
-// Main component with Suspense boundary
+// Основной компонент с границей Suspense
 export function PageTransition() {
   return (
     <Suspense fallback={null}>
