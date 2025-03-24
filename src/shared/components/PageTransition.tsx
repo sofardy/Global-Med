@@ -1,16 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
-/**
- * Component that provides smooth page transitions with loading state
- */
-export function PageTransition() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+// Separate component that uses client hooks
+function NavigationHandler() {
   const [isNavigating, setIsNavigating] = useState(false);
   
   // Listen for route changes and handle transitions
@@ -49,7 +43,7 @@ export function PageTransition() {
     document.addEventListener('routeChangeComplete', handleRouteChangeComplete);
     
     // Custom link click handler to show loading state
- const handleLinkClick = (e: MouseEvent) => {
+    const handleLinkClick = (e: MouseEvent) => {
       // Type assertion for the target element
       const target = e.target as HTMLElement;
       
@@ -70,25 +64,6 @@ export function PageTransition() {
       document.removeEventListener('click', handleLinkClick);
     };
   }, []);
-  
-  // Reset navigation state when route actually changes
-  useEffect(() => {
-    setIsNavigating(false);
-    
-    // Smooth scroll to top on actual route change
-    const headerElement = document.getElementById('page-header');
-    if (headerElement) {
-      headerElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    } else {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }
-  }, [pathname, searchParams]);
 
   return (
     <>
@@ -106,5 +81,14 @@ export function PageTransition() {
         </div>
       )}
     </>
+  );
+}
+
+// Main component with Suspense boundary
+export function PageTransition() {
+  return (
+    <Suspense fallback={null}>
+      <NavigationHandler />
+    </Suspense>
   );
 }

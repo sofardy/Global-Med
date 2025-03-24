@@ -1,9 +1,10 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Suspense } from 'react';
 
 interface BreadcrumbsProps {
   className?: string;
@@ -21,6 +22,7 @@ function BreadcrumbsContent({
   hideCurrent = false,
 }: BreadcrumbsProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   
   // Не отображаем компонент на главной странице
   if (pathname === '/' || pathname === '') {

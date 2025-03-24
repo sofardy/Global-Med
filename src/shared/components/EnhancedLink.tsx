@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
 /**
  * Enhanced Link component that handles transitions between pages
@@ -17,15 +18,16 @@ interface EnhancedLinkProps {
   [key: string]: any; // For any other props
 }
 
-export const EnhancedLink: React.FC<EnhancedLinkProps> = ({
+// Navigation handler with client-side hooks
+function LinkNavigation({
   href,
   children,
-  className = '',
+  className,
   onClick,
-  scroll = true,
-  prefetch = true,
+  scroll,
+  prefetch,
   ...rest
-}) => {
+}: EnhancedLinkProps) {
   const router = useRouter();
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -68,5 +70,14 @@ export const EnhancedLink: React.FC<EnhancedLinkProps> = ({
     >
       {children}
     </Link>
+  );
+}
+
+// Main component with proper Suspense boundary
+export const EnhancedLink: React.FC<EnhancedLinkProps> = (props) => {
+  return (
+    <Suspense fallback={<Link href={props.href} className={props.className}>{props.children}</Link>}>
+      <LinkNavigation {...props} />
+    </Suspense>
   );
 };
