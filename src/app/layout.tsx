@@ -40,7 +40,7 @@ export default function RootLayout({
                 {children}
               </main>
               
-              <ThemeToggle />
+              {/* <ThemeToggle /> */}
               <Footer />
             </div>
             

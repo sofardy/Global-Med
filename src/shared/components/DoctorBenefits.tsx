@@ -57,25 +57,25 @@ const translations = {
         id: 'qualified',
         title: 'Malakali shifokorlar',
         description: 'Tekshiruvlarni tajribali mutaxassislar xususiyatlarni hisobga olgan holda o\'tkazadilar',
-        iconPath: <MedicalIcon />
+        iconPath: <StethoscopeIcon />
       },
       {
         id: 'complete',
         title: 'Sog\'liqning to\'liq manzarasi',
         description: 'Tekshiruvlar sog\'liq holati haqida to\'liq tasavvur beradi',
-        iconPath: <MedicalIcon />
+        iconPath: <MedicalDocumentIcon />
       },
       {
         id: 'precise',
         title: 'Aniq natijalar',
         description: 'Zamonaviy texnologiyalar diagnostika aniqligini ta\'minlaydi',
-        iconPath: <MedicalIcon />,
+        iconPath: <PrecisionIcon />,
       },
       {
         id: 'affordable',
         title: 'Foydali yechim',
         description: 'Xizmatlar narxi bozordagi o\'rtacha, bu mavjudligini kafolatlaydi',
-        iconPath: <MedicalIcon />
+        iconPath: <NotesIcon />
       }
     ]
   }

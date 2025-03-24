@@ -4,7 +4,8 @@ import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { UniversalCard } from '../components/UniversalCard';
 import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
-import { CalculatorIcon } from '../ui/Icon';
+import { CalculatorIcon, HealthPlusIcon, HeartDoubleIcon, StethoscopeIconk2 } from '../ui/Icon';
+import MobileDeviceIcon from '../ui/Icon/MobileDeviceIcon';
 
 // Переводы для компонента
 const translations = {
@@ -18,28 +19,28 @@ const translations = {
         title: 'Стационарное лечение',
         subtitle: '',
         description: 'Комфортные палаты, круглосуточный уход и индивидуальный подход к каждому пациенту',
-        iconPath: <CalculatorIcon/>,
+        iconPath: <MobileDeviceIcon/>,
       },
       {
         id: 'venography',
         title: 'Рентген вен',
         subtitle: '',
         description: 'Одна из первых клиник, где доступна передовая диагностика сосудов с высокой точностью',
-        iconPath: <CalculatorIcon/>,
+        iconPath: <StethoscopeIconk2/>,
       },
       {
         id: 'spring-water',
         title: 'Родниковая и редчайшая вода',
         subtitle: '',
         description: 'Используем чистую природную воду с уникальным составом для оздоровительных программ',
-       iconPath: <CalculatorIcon/>,
+       iconPath: <HeartDoubleIcon/>,
       },
       {
         id: 'high-level',
         title: 'Высокий уровень медицины',
         subtitle: '',
         description: 'Современное оборудование, экспертная команда и качественное обслуживание для вашего здоровья',
-         iconPath: <CalculatorIcon/>,
+         iconPath: <HealthPlusIcon/>,
       }
     ]
   },

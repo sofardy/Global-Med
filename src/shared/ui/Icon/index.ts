@@ -63,3 +63,4 @@ export { default as HealthIcon } from './HealthIcon';
 export { default as ImmuneIcon } from './ImmuneIcon';
 export { default as VirusIconK2 } from './VirusIconK2';
 export { default as PrecisionIcon } from './PrecisionIcon';
+export { default as StethoscopeIconk2 } from './StethoscopeIconk2';

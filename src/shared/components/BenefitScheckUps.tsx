@@ -1,7 +1,7 @@
 import React from 'react';
 import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { useThemeStore } from '@/src/store/theme';
-import { ButterflyIcon } from '@/src/shared/ui/Icon';
+import { MedicalDocumentIcon, NotesIcon, PrecisionIcon, StethoscopeIcon } from '@/src/shared/ui/Icon';
 
 interface BenefitsCheckUpsProps {
   className?: string;
@@ -18,25 +18,25 @@ export const BenefitsCheckUps: React.FC<BenefitsCheckUpsProps> = ({
       id: 'doctors',
       title: 'Квалифицированные врачи',
       description: 'Обследование проводят опытные специалисты с учетом особенностей',
-      icon: <ButterflyIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'} />
+      icon: <StethoscopeIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'} />
     },
     {
       id: 'health',
       title: 'Полная картина здоровья',
       description: 'Чек-апы помогают выявить скрытые риски и предупредить болезни',
-      icon: <ButterflyIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'} />
+      icon: <MedicalDocumentIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'} />
     },
     {
       id: 'precision',
       title: 'Точные результаты',
       description: 'Современные технологии обеспечивают точность диагностики',
-      icon: <ButterflyIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'}  />
+      icon: <PrecisionIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'}  />
     },
     {
       id: 'price',
       title: 'Выгодное решение',
       description: 'Комплекс обследований обходится дешевле, чем по отдельности',
-      icon: <ButterflyIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'} />
+      icon: <NotesIcon size={80} color={theme === 'light' ? '#224F5B' : 'white'} />
     }
   ];
 

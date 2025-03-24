@@ -1,7 +1,8 @@
 // src/shared/mocks/surgeryData.ts
 
 import React from 'react';
-import { AngelIcon, ButterflyIcon, ButterflyLogoIcon, EyeIcon, MedicalIcon } from '../ui/Icon';
+import { AngelIcon, ButterflyIcon, ButterflyLogoIcon, CandleIcon, DocumentPenIcon, EyeIcon, MedicalIcon, NeuralNetworkIcon, StethoscopeIcon } from '../ui/Icon';
+import NoseIcon from '../ui/Icon/NoseIcon';
 
 export const surgeryData = {
   ru: {
@@ -16,7 +17,7 @@ export const surgeryData = {
         title: "Гинекология",
         description: "Наши специалисты проводят широкий спектр гинекологических операций с высокой точностью и бережным подходом. Используем малотравматичные методы, чтобы сократить восстановительный период и сохранить ваше здоровье",
         imageSrc: "/images/gynecology.png",
-        iconPath: <ButterflyIcon size={190} />,
+        iconPath: <AngelIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
@@ -29,7 +30,7 @@ export const surgeryData = {
         title: "Лапароскопические операции",
         description: "Проводим малотравматичные хирургические операции с высокой точностью, минимальными рисками и коротким восстановительным периодом, используя современные технологии и щадящие методы",
         imageSrc: "/images/laparoscopic.png",
-        iconPath: <ButterflyLogoIcon size={190} />,
+        iconPath: <DocumentPenIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
@@ -42,7 +43,7 @@ export const surgeryData = {
         title: "Хирургия",
         description: "Проводим широкий спектр хирургических вмешательств с применением передовых методик, минимальными рисками и комфортным восстановлением, обеспечивая безопасность и высокую точность операций",
         imageSrc: "/images/surgery.png",
-        iconPath: <AngelIcon size={190} />,
+        iconPath: <NeuralNetworkIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
@@ -55,7 +56,7 @@ export const surgeryData = {
         title: "Урология",
         description: "Оказываем полный спектр урологических услуг, включая диагностику, лечение и малоинвазивные операции. Используем современные методики для эффективного решения деликатных проблем и быстрого восстановления",
         imageSrc: "/images/urology.png",
-        iconPath: <AngelIcon size={190} />,
+        iconPath: <ButterflyLogoIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
@@ -68,7 +69,7 @@ export const surgeryData = {
         title: "Травматология и ортопедия",
         description: "Диагностируем и лечим травмы, заболевания суставов и опорно-двигательного аппарата. Проводим консервативное и оперативное лечение, включая малоинвазивные операции для быстрого восстановления подвижности",
         imageSrc: "/images/traumatology.png",
-        iconPath: <AngelIcon size={190} />,
+        iconPath: <CandleIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
@@ -82,7 +83,7 @@ export const surgeryData = {
         title: "Детская урология",
         description: "Оказываем специализированную помощь при заболеваниях мочеполовой системы у детей. Проводим диагностику, лечение и малоинвазивные операции, учитывая возрастные особенности и комфорт маленьких пациентов",
         imageSrc: "/images/pediatric.png",
-        iconPath: <AngelIcon size={190} />,
+        iconPath: <ButterflyLogoIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
@@ -95,7 +96,7 @@ export const surgeryData = {
         title: "ЛОР",
         description: "Выполняем современные ЛОР-операции с высокой точностью и минимальной травматичностью. Лечим заболевания носа, горла и ушей, помогая восстановить дыхание, слух и общее самочувствие",
         imageSrc: "/images/lor.png",
-        iconPath: <EyeIcon size={190} />,
+        iconPath: <NoseIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
@@ -108,7 +109,7 @@ export const surgeryData = {
         title: "Традиционные операции",
         description: "Проводим классические хирургические вмешательства с использованием современных методов обезболивания и ускоренной реабилитации. Обеспечиваем безопасность, точность и внимательный послеоперационный уход",
         imageSrc: "/images/traditional.png",
-        iconPath: <MedicalIcon size={190} />,
+        iconPath: <StethoscopeIcon size={190} />,
         features: [
           "Современное оборудование",
           "Опытные хирурги",
