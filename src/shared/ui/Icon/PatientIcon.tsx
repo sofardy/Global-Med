@@ -1,19 +1,27 @@
-export default function PatientIcon({
+import React from 'react';
+
+interface PatientIconProps {
+  size?: number;
+  color?: string;
+  accentColor?: string;
+  className?: string;
+}
+
+export default function PacifierIcon({
+  size = 118,
   color = '#094A54',
   accentColor = '#00C78B',
-  size = 118,
-  style = {},
-  ...props
+  className = '',
 }) {
+
   return (
-    <svg
-      width={size}
-      height={Math.round(112 * (size / 118))}
-      viewBox="0 0 118 112"
-      fill="none"
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 118 112" 
+      fill="none" 
       xmlns="http://www.w3.org/2000/svg"
-      style={style}
-      {...props}
+      className={className}
     >
       <path d="M47.5823 75.6361C49.5914 71.6178 56.7741 66.369 69.4316 77.5196" stroke={color} strokeWidth="2.26027" strokeLinecap="round"/>
       <path d="M31.0068 39.1785C33.7694 40.0575 40.726 40.3086 46.452 34.2812" stroke={color} strokeWidth="2.26027" strokeLinecap="round"/>
@@ -43,4 +51,4 @@ export default function PatientIcon({
       <path d="M6.44567 49.631C6.4558 49.5419 6.58526 49.5419 6.59539 49.631L6.72374 50.7598C6.72947 50.8101 6.78222 50.8406 6.82866 50.8204L7.87041 50.3671C7.95265 50.3314 8.01738 50.4435 7.94527 50.4968L7.03188 51.1724C6.99116 51.2025 6.99116 51.2634 7.03188 51.2935L7.94527 51.9691C8.01738 52.0224 7.95265 52.1345 7.87041 52.0987L6.82866 51.6455C6.78222 51.6253 6.72947 51.6557 6.72374 51.7061L6.59539 52.8349C6.58526 52.924 6.4558 52.924 6.44567 52.8349L6.31731 51.7061C6.31159 51.6557 6.25884 51.6253 6.21239 51.6455L5.17064 52.0987C5.08841 52.1345 5.02368 52.0224 5.09578 51.9691L6.00918 51.2935C6.0499 51.2634 6.0499 51.2025 6.00918 51.1724L5.09578 50.4968C5.02368 50.4435 5.08841 50.3314 5.17064 50.3671L6.21239 50.8204C6.25884 50.8406 6.31159 50.8101 6.31731 50.7598L6.44567 49.631Z" fill={accentColor}/>
     </svg>
   );
-}
+};

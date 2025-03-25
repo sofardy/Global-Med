@@ -1,0 +1,21 @@
+export default function LabIcon({
+  color = '#094A54',
+  size = 24,
+  style = {},
+  ...props
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={style}
+      {...props}
+    >
+      <path d="M18.5 15H5.5" stroke={color} strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M16 3.99905H8M9 4.49905V10.259C9.00024 10.7366 8.82962 11.1984 8.519 11.561L3.48 17.437C3.16974 17.7999 2.99949 18.2617 3 18.739V18.999C3 19.5295 3.21071 20.0382 3.58579 20.4133C3.96086 20.7883 4.46957 20.999 5 20.999H19C19.5304 20.999 20.0391 20.7883 20.4142 20.4133C20.7893 20.0382 21 19.5295 21 18.999V18.739C21 18.2614 20.829 17.7996 20.518 17.437L15.482 11.561C15.171 11.1985 15 10.7367 15 10.259V4.49905M12 9.00905L12.01 8.99805M11 2.00905L11.01 1.99805" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}

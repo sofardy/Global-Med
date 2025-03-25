@@ -1,0 +1,39 @@
+
+
+export default function NotificationIcon({
+  color = '#094A54',
+  size = 30,
+  style = {},
+  className = '',
+  hasNotification = true,
+  ...props
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 30 30"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={style}
+      className={className}
+      {...props}
+    >
+      <path 
+        d="M22.5695 12C23.0814 19.1376 26.25 21.25 26.25 21.25H3.75C3.75 21.25 7.5 18.75 7.5 10C7.5 8.01088 8.29018 6.10322 9.6967 4.6967C11.1032 3.29018 13.0109 2.5 15 2.5C15.9296 2.5 16.8414 2.67258 17.6926 3" 
+        stroke={color} 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M17.1625 26.25C16.9427 26.6288 16.6273 26.9433 16.2478 27.1619C15.8683 27.3805 15.438 27.4956 15 27.4956C14.562 27.4956 14.1317 27.3805 13.7522 27.1619C13.3727 26.9433 13.0573 26.6288 12.8375 26.25" 
+        stroke={color} 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      {hasNotification && <circle cx="21" cy="7" r="3" fill="#ED0C0C" />}
+    </svg>
+  );
+}

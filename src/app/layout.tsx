@@ -1,15 +1,13 @@
+// src/app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '../shared/components/ThemeProvider';
 import { LanguageProvider } from '../shared/components/LanguageProvider';
-import { TopBar } from '../shared/layout/TopBar/TopBar';
 import { routes } from '../shared/config/routes';
 import { FloatingComponents } from '../shared/components/FloatingComponents';
-import { Footer } from '../shared/layout/Footer/Footer';
-import Breadcrumbs from '../shared/components/Breadcrumbs';
-import { ThemeToggle } from '../shared/components/ThemeToggle';
-import { PageTransition } from '../shared/components/PageTransition'; // Import the PageTransition component
+import { PageTransition } from '../shared/components/PageTransition';
+import ClientLayout from '../shared/layout/ClientLayout/ClientLayout';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -28,22 +26,10 @@ export default function RootLayout({
       <body className={`${inter.className} bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text`}>
         <ThemeProvider>
           <LanguageProvider>
-            {/* Add PageTransition component for smooth transitions */}
             <PageTransition />
-            
-            <div className="mx-auto max-w-8xl p-4">
-              <header id="page-header">
-                <TopBar routes={routes} />
-              </header>
-              <Breadcrumbs />
-              <main className="min-h-screen">
-                {children}
-              </main>
-              
-              {/* <ThemeToggle /> */}
-              <Footer />
-            </div>
-            
+            <ClientLayout routes={routes}>
+              {children}
+            </ClientLayout>
             <FloatingComponents />
           </LanguageProvider>
         </ThemeProvider>

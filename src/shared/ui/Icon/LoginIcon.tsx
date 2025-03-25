@@ -1,0 +1,22 @@
+export default function LoginIcon({
+  color = '#00C78B',
+  size = 60,
+  style = {},
+  ...props
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 60 60"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={style}
+      {...props}
+    >
+      <path d="M37.5 7.5H47.5C48.8261 7.5 50.0979 8.02678 51.0355 8.96447C51.9732 9.90215 52.5 11.1739 52.5 12.5V47.5C52.5 48.8261 51.9732 50.0979 51.0355 51.0355C50.0979 51.9732 48.8261 52.5 47.5 52.5H37.5" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M25 42.5L37.5 30L25 17.5" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M37.5 30H7.5" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}

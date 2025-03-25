@@ -359,87 +359,127 @@ useEffect(() => {
           {/* Правая часть шапки для десктопа */}
           <div className="hidden tablet:flex items-center">
             {/* Кнопка связаться с нами */}
-            <div className="relative" ref={contactMenuRef}>
-              <button
-                onClick={() => setIsContactMenuOpen(!isContactMenuOpen)}
-                className={`flex items-center justify-center gap-2 xl:gap-4 mr-2 xl:mr-6 ${theme === 'light' ? 'bg-light-accent' : 'bg-light-accent'} text-white h-[60px] lg:w-[200px] xl:w-[250px] px-4 py-2 rounded-2xl`}
-              >
-                <span className="flex items-center justify-center w-8 h-8 rounded-full">
-                  <Clock24Icon size={30} />
-                </span>
-                <span className="hidden lg:inline-block text-base xl:text-lg">
-                  {t('header.contactUs')}
-                </span>
-              </button>
-            
-              {/* Выпадающее меню для связи */}
-              {isContactMenuOpen && (
-                <div className={`absolute right-6 mt-7 w-[250px] rounded-2xl shadow-lg z-10 ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}>
-                  <a
-                    href={`tel:${CONTACT_INFO.phone.replace(/[\s()-]/g, '')}`}
-                    className={`flex items-center px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
-                  >
-                    <div className="w-8 h-8 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white">
-                      <PhoneIcon size={16} />
-                    </div>
-                    {CONTACT_INFO.phone}
-                  </a>
-                  <a
-                    href={`https://wa.me/${CONTACT_INFO.whatsapp.replace(/[\s()-]/g, '')}`}
-                    className={`flex items-center px-4 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
-                  >
-                    <div className="w-8 h-8 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white">
-                      <WhatsappIcon size={16} />
-                    </div>
-                    {CONTACT_INFO.whatsapp}
-                  </a>
-                </div>
-              )}
-            </div>
+          <div className="relative" ref={contactMenuRef}>
+  <button
+    onClick={() => setIsContactMenuOpen(!isContactMenuOpen)}
+    className={`
+      flex items-center justify-center gap-2 xl:gap-4 mr-2 xl:mr-6 
+      bg-light-accent hover:bg-light-accent/90
+      text-white h-[60px] lg:w-[200px] xl:w-[250px] px-4 py-2 rounded-2xl
+      transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md
+    `}
+  >
+    <span className="flex items-center justify-center w-8 h-8 rounded-full">
+      <Clock24Icon size={30} />
+    </span>
+    <span className="hidden lg:inline-block text-base xl:text-lg">
+      {t('header.contactUs')}
+    </span>
+  </button>
+
+  {/* Выпадающее меню для связи */}
+  {isContactMenuOpen && (
+    <div className={`
+      absolute right-6 mt-7 w-[250px] rounded-2xl shadow-lg z-10 
+      ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}
+      animate-fadeIn
+    `}>
+      <a
+        href={`tel:${CONTACT_INFO.phone.replace(/[\s()-]/g, '')}`}
+        className={`
+          flex items-center px-4 py-3 
+          ${theme === 'light' ? 'text-light-text hover:bg-light-bg' : 'text-dark-text hover:bg-dark-bg'} 
+          transition-colors duration-200 rounded-t-2xl
+        `}
+      >
+        <div className="w-8 h-8 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white">
+          <PhoneIcon size={16} />
+        </div>
+        {CONTACT_INFO.phone}
+      </a>
+      <a
+        href={`https://wa.me/${CONTACT_INFO.whatsapp.replace(/[\s()-]/g, '')}`}
+        className={`
+          flex items-center px-4 py-3 
+          ${theme === 'light' ? 'text-light-text hover:bg-light-bg' : 'text-dark-text hover:bg-dark-bg'} 
+          transition-colors duration-200 rounded-b-2xl
+        `}
+      >
+        <div className="w-8 h-8 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white">
+          <WhatsappIcon size={16} />
+        </div>
+        {CONTACT_INFO.whatsapp}
+      </a>
+    </div>
+  )}
+</div>
           
             {/* Выбор языка */}
-     <div ref={langMenuRef} className="relative" onClick={handleMenuClick}>
-              <button
-                className={`flex items-center gap-2 mr-4 justify-center border h-[60px] w-[75px] rounded-2xl
-                ${theme === 'light'
-                    ? 'border-light-accent'
-                    : 'border-dark-accent'
-                  } transition-colors duration-300`}
-                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-              >
-                <span className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}>{currentLocale.toUpperCase()}</span>
-                <ArrowDownIcon className="ml-1" color={theme === 'light' ? '#094A54' : 'white'} />
-              </button>
-            
-              {/* Выпадающее меню языков */}
-              {isLangMenuOpen && (
-                <div className={`absolute right-2 mt-7 w-[84px] rounded-2xl shadow-lg z-10
-                ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}`}>
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      className={`flex items-center w-full px-4 py-3 text-left
-                      ${theme === 'light'
-                          ? 'text-light-text'
-                          : 'text-dark-text'
-                        } ${currentLocale === lang.code ? 'font-normal' : 'font-normal'}`}
-                      onClick={() => handleLanguageChange(lang.code as 'ru' | 'uz')}
-                    >
-                      <div className="h-6 mr-2 flex items-center">
-                        {lang.code === 'uz' && <span className="text-sm"><img src="/icon/icon-uzbekistan.svg" className='w-[20px] h-[14px]' alt="uz" /></span>}
-                        {lang.code === 'ru' && <span className="text-sm"><img src="/icon/icon-russia.svg" className='w-[20px] h-[14px]' alt="ru" /></span>}
-                      </div>
-                      {lang.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+   <div ref={langMenuRef} className="relative" onClick={handleMenuClick}>
+  <button
+    className={`
+      flex items-center gap-2 mr-4 justify-center h-[60px] w-[75px] rounded-2xl
+      ${theme === 'light' 
+        ? 'border border-light-accent hover:bg-light-accent/10 text-light-text' 
+        : 'border border-dark-accent hover:bg-dark-accent/10 text-dark-text'
+      } 
+      transition-all duration-300 transform hover:scale-[1.02]
+    `}
+    onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+  >
+    <span>{currentLocale.toUpperCase()}</span>
+    <ArrowDownIcon 
+      className={`ml-1 transition-transform duration-300 ${isLangMenuOpen ? "transform rotate-180" : ""}`} 
+      color={theme === 'light' ? '#094A54' : 'white'} 
+    />
+  </button>
+
+  {/* Выпадающее меню языков */}
+  {isLangMenuOpen && (
+    <div className={`
+      absolute right-2 mt-7 w-[84px] rounded-2xl shadow-lg z-10
+      ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'}
+      animate-fadeIn
+    `}>
+      {languages.map((lang) => (
+        <button
+          key={lang.code}
+          className={`
+            flex items-center w-full px-4 py-3 text-left
+            ${theme === 'light'
+              ? 'text-light-text hover:bg-light-bg' 
+              : 'text-dark-text hover:bg-dark-bg'
+            } 
+            ${currentLocale === lang.code ? 'font-medium' : 'font-normal'}
+            ${lang.code === languages[0].code ? 'rounded-t-2xl' : ''}
+            ${lang.code === languages[languages.length-1].code ? 'rounded-b-2xl' : ''}
+            transition-colors duration-200
+          `}
+          onClick={() => handleLanguageChange(lang.code as 'ru' | 'uz')}
+        >
+          <div className="h-6 mr-2 flex items-center">
+            {lang.code === 'uz' && <span className="text-sm"><img src="/icon/icon-uzbekistan.svg" className='w-[20px] h-[14px]' alt="uz" /></span>}
+            {lang.code === 'ru' && <span className="text-sm"><img src="/icon/icon-russia.svg" className='w-[20px] h-[14px]' alt="ru" /></span>}
+          </div>
+          {lang.label}
+        </button>
+      ))}
+    </div>
+  )}
+</div>
           
-            {/* Иконка пользователя */}
-            <button className={`h-[60px] w-[60px] rounded-2xl ${theme === 'light' ? 'bg-light-accent' : 'bg-light-accent'} text-white flex items-center justify-center`}>
-              <UserIcon size={30} />
-            </button>
+           <Link 
+  href="/account/login" 
+  className={`
+    h-[60px] w-[60px] rounded-2xl 
+    bg-light-accent hover:bg-light-accent/90
+    text-white flex items-center justify-center
+    transition-all duration-300 transform hover:scale-[1.05] hover:shadow-md
+  `}
+              
+>
+  <UserIcon size={30} />
+</Link>
           </div>
         
           {/* Мобильное меню иконка */}
