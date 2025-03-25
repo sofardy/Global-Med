@@ -658,7 +658,27 @@ useEffect(() => {
                   ))}
                 </div>
               </div>
-            
+            <div
+    className={`mb-8 ${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
+    style={{ animationDelay: '500ms' }}
+  >
+    <h3 className={`${theme === 'light' ? 'text-light-text' : 'text-dark-text'} text-sm uppercase font-medium mb-4`}>
+      Личный кабинет
+    </h3>
+    <div className="space-y-3">
+      <Link
+        href="/account/login"
+        className={`flex items-center p-4 rounded-2xl bg-light-accent/5 transform transition-all duration-300 hover:scale-[1.02]
+        ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      >
+        <div className="w-12 h-12 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white shadow-lg shadow-light-accent/20">
+          <UserIcon size={18} />
+        </div>
+        <span className="text-lg">Вход в кабинет</span>
+      </Link>
+    </div>
+  </div>
               {/* Контакты */}
               <div
                 className={`${isMobileMenuOpen ? 'animate-slideIn' : ''}`}
