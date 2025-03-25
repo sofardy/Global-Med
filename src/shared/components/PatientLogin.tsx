@@ -3,7 +3,54 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useThemeStore } from '@/src/store/theme';
+import { useTranslation } from '@/src/hooks/useTranslation';
 import { LoginIcon } from '@/src/shared/ui/Icon';
+import { useLanguageStore } from '@/src/store/language';
+
+// Translations
+const translations = {
+  ru: {
+    title: 'Вход в личный кабинет пациента',
+    phoneLabel: 'Укажите номер телефона',
+    sendSmsButton: 'Отправить SMS-код',
+    privacyText: 'Нажимая кнопку «Отправить SMS-код», вы подтверждаете своё согласие на',
+    privacyLink: 'обработку персональных данных',
+    smsVerificationText: 'Введите 4 цифры из входящего SMS',
+    confirmCodeButton: 'Подтвердить код',
+    changeNumberButton: 'Изменить номер',
+    personalDataTitle: 'Личные данные',
+    personalDataDesc: 'Чтобы получить доступ к услугам клиники, укажите основную информацию',
+    firstName: 'Имя',
+    lastName: 'Фамилия',
+    gender: 'Пол',
+    male: 'Мужской',
+    female: 'Женский',
+    birthDate: 'Дата рождения',
+    continueButton: 'Продолжить',
+    phoneError: 'Введите полный номер телефона'
+  },
+  uz: {
+    title: 'Bemor shaxsiy kabinetiga kirish',
+    phoneLabel: 'Telefon raqamingizni kiriting',
+    sendSmsButton: 'SMS-kodni yuborish',
+    privacyText: '«SMS-kodni yuborish» tugmasini bosish orqali siz',
+    privacyLink: 'shaxsiy ma\'lumotlarni qayta ishlashga rozilik',
+    smsVerificationText: 'Kelgan SMS-dan 4 ta raqamni kiriting',
+    confirmCodeButton: 'Kodni tasdiqlash',
+    changeNumberButton: 'Raqamni o\'zgartirish',
+    personalDataTitle: 'Shaxsiy ma\'lumotlar',
+    personalDataDesc: 'Klinika xizmatlaridan foydalanish uchun asosiy ma\'lumotlarni kiriting',
+    firstName: 'Ism',
+    lastName: 'Familiya',
+    gender: 'Jins',
+    male: 'Erkak',
+    female: 'Ayol',
+    birthDate: 'Tug\'ilgan sana',
+    continueButton: 'Davom etish',
+    phoneError: 'To\'liq telefon raqamini kiriting'
+  }
+};
 
 // Login step management
 enum LoginStep {
@@ -14,6 +61,9 @@ enum LoginStep {
 
 export default function PatientLogin() {
  const router = useRouter();
+  const { theme } = useThemeStore();
+   const { currentLocale } = useLanguageStore();
+ const { t } = useTranslation(translations);
  const [loginStep, setLoginStep] = useState<LoginStep>(LoginStep.PHONE_INPUT);
  const [phoneNumber, setPhoneNumber] = useState<string>('+998');
  const [verificationCode, setVerificationCode] = useState<string[]>(['', '', '', '']);
@@ -27,6 +77,7 @@ export default function PatientLogin() {
  
  const genderDropdownRef = useRef<HTMLDivElement>(null);
  const dateInputRef = useRef<HTMLInputElement>(null);
+ const dateWrapperRef = useRef<HTMLDivElement>(null);
  
  // Refs for verification code inputs
  const inputRefs = [
@@ -129,10 +180,11 @@ export default function PatientLogin() {
    setIsGenderDropdownOpen(false);
  };
 
- // Open date picker
+ // Open date picker for both mobile and desktop
  const openDatePicker = () => {
    if (dateInputRef.current) {
-     dateInputRef.current.showPicker();
+     // Use click() instead of showPicker() for better cross-browser compatibility
+     dateInputRef.current.click();
    }
  };
 
@@ -141,7 +193,7 @@ export default function PatientLogin() {
    // Validate phone number - must be full format: +998 (XX) XXX-XX-XX
    // which means it should be at least 19 characters long
    if (phoneNumber.length < 19) {
-     alert('Пожалуйста, введите полный номер телефона');
+     alert(t('phoneError'));
      return;
    }
    
@@ -189,14 +241,18 @@ export default function PatientLogin() {
 
  // Display gender selection
  const displayGender = personalData.gender 
-   ? (personalData.gender === 'male' ? 'Мужской' : 'Женский') 
-   : 'Пол';
+   ? (personalData.gender === 'male' ? t('male') : t('female')) 
+   : t('gender');
    
  // Format date for display
  const formatDisplayDate = (dateString: string) => {
    if (!dateString) return '';
    const date = new Date(dateString);
-   return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+   return date.toLocaleDateString(
+     // Use the proper locale based on language
+     currentLocale === 'uz' ? 'uz-UZ' : 'ru-RU', 
+     { day: '2-digit', month: '2-digit', year: 'numeric' }
+   );
  };
 
  return (
@@ -209,13 +265,13 @@ export default function PatientLogin() {
              <LoginIcon color="#00C78B" size={48} className="sm:w-[60px] sm:h-[60px]" />
            </div>
            
-           <h1 className="text-[20px] sm:text-[24px] font-medium text-center text-[#094A54] dark:text-dark-text mb-4 sm:mb-5">
-             Вход в личный кабинет пациента
+           <h1 className="text-[20px] sm:text-[24px] font-medium text-center text-light-text dark:text-dark-text mb-4 sm:mb-5">
+             {t('title')}
            </h1>
            
            <div className="mb-6 sm:mb-8">
-             <p className="text-[14px] text-[#094A54] dark:text-dark-text mb-2 sm:mb-3">
-               Укажите номер телефона
+             <p className="text-[14px] text-light-text dark:text-dark-text mb-2 sm:mb-3">
+               {t('phoneLabel')}
              </p>
              <input
                type="tel"
@@ -223,24 +279,24 @@ export default function PatientLogin() {
                value={phoneNumber}
                onChange={handlePhoneChange}
                placeholder="+998 (__) ___-__-__"
-               className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-[#094A54] dark:text-dark-text text-base sm:text-lg"
+               className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg"
              />
              {phoneNumber.length > 4 && phoneNumber.length < 19 && (
-               <p className="text-red-500 text-xs mt-1">Введите полный номер телефона</p>
+               <p className="text-red-500 text-xs mt-1">{t('phoneError')}</p>
              )}
            </div>
            
            <button
              onClick={handleSendSMS}
              disabled={phoneNumber.length < 19}
-             className="w-full py-4 sm:py-5 rounded-2xl bg-[#00C78B] text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed text-[16px] sm:text-[18px]"
+             className="w-full py-4 sm:py-5 rounded-2xl bg-light-accent text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed text-[16px] sm:text-[18px]"
            >
-             Отправить SMS-код
+             {t('sendSmsButton')}
            </button>
            
-           <p className="text-xs text-[#094A54]/70 dark:text-dark-text/70 mt-3 sm:mt-4 text-center">
-             Нажимая кнопку «Отправить SMS-код»,<br />
-             вы подтверждаете своё согласие на <Link href="/privacy" className="text-[#00C78B]">обработку персональных данных</Link>
+           <p className="text-xs text-light-text/70 dark:text-dark-text/70 mt-3 sm:mt-4 text-center">
+             {t('privacyText')}<br />
+             <Link href="/privacy" className="text-light-accent">{t('privacyLink')}</Link>
            </p>
          </div>
        )}
@@ -252,12 +308,12 @@ export default function PatientLogin() {
              <LoginIcon color="#00C78B" size={48} className="sm:w-[60px] sm:h-[60px]" />
            </div>
            
-           <h1 className="text-[20px] sm:text-[24px] font-medium text-center text-[#094A54] dark:text-dark-text mb-4 sm:mb-5">
-             Вход в личный кабинет пациента
+           <h1 className="text-[20px] sm:text-[24px] font-medium text-center text-light-text dark:text-dark-text mb-4 sm:mb-5">
+             {t('title')}
            </h1>
            
-           <p className="text-[14px] text-[#094A54] dark:text-dark-text text-center mb-4 sm:mb-6">
-             Введите 4 цифры из входящего SMS
+           <p className="text-[14px] text-light-text dark:text-dark-text text-center mb-4 sm:mb-6">
+             {t('smsVerificationText')}
            </p>
            
            <div className="flex justify-between gap-2 sm:gap-3 mb-6 sm:mb-8">
@@ -271,7 +327,7 @@ export default function PatientLogin() {
                  onChange={(e) => handleCodeChange(index, e.target.value)}
                  onKeyDown={(e) => handleKeyDown(index, e)}
                  maxLength={1}
-                 className="w-16 h-16 sm:w-24 sm:h-24 text-center text-2xl sm:text-3xl bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-[#094A54] dark:text-dark-text"
+                 className="w-16 h-16 sm:w-24 sm:h-24 text-center text-2xl sm:text-3xl bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text"
                />
              ))}
            </div>
@@ -279,16 +335,16 @@ export default function PatientLogin() {
            <button
              onClick={handleVerifyCode}
              disabled={!isCodeComplete}
-             className="w-full py-4 sm:py-5 rounded-2xl bg-[#00C78B] text-white font-medium mb-4 sm:mb-5 disabled:opacity-50 disabled:cursor-not-allowed text-[16px] sm:text-[18px]"
+             className="w-full py-4 sm:py-5 rounded-2xl bg-light-accent text-white font-medium mb-4 sm:mb-5 disabled:opacity-50 disabled:cursor-not-allowed text-[16px] sm:text-[18px]"
            >
-             Подтвердить код
+             {t('confirmCodeButton')}
            </button>
            
            <button
-             onClick={handleChangeNumber}
-             className="w-full text-center text-[#00C78B] text-[16px] sm:text-[18px]"
+            onClick={handleChangeNumber}
+             className="w-full text-center text-light-accent text-[16px] sm:text-[18px]"
            >
-             Изменить номер
+             {t('changeNumberButton')}
            </button>
          </div>
        )}
@@ -296,12 +352,12 @@ export default function PatientLogin() {
        {/* Personal Data Step */}
        {loginStep === LoginStep.PERSONAL_DATA && (
          <div>
-           <h1 className="text-[20px] sm:text-[24px] font-medium text-center text-[#094A54] dark:text-dark-text mb-2 sm:mb-3">
-             Личные данные
+           <h1 className="text-[20px] sm:text-[24px] font-medium text-center text-light-text dark:text-dark-text mb-2 sm:mb-3">
+             {t('personalDataTitle')}
            </h1>
            
-           <p className="text-[14px] text-[#094A54]/70 dark:text-dark-text/70 text-center mb-6 sm:mb-8">
-             Чтобы получить доступ к услугам клиники, укажите основную информацию
+           <p className="text-[14px] text-light-text/70 dark:text-dark-text/70 text-center mb-6 sm:mb-8">
+             {t('personalDataDesc')}
            </p>
            
            <div className="space-y-4 sm:space-y-5 mb-6 sm:mb-8">
@@ -310,8 +366,8 @@ export default function PatientLogin() {
                name="firstName"
                value={personalData.firstName}
                onChange={handlePersonalDataChange}
-               placeholder="Имя"
-               className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-[#094A54] dark:text-dark-text text-base sm:text-lg"
+               placeholder={t('firstName')}
+               className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg"
              />
              
              <input
@@ -319,17 +375,17 @@ export default function PatientLogin() {
                name="lastName"
                value={personalData.lastName}
                onChange={handlePersonalDataChange}
-               placeholder="Фамилия"
-               className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-[#094A54] dark:text-dark-text text-base sm:text-lg"
+               placeholder={t('lastName')}
+               className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg"
              />
              
              {/* Custom Gender Dropdown */}
              <div className="relative" ref={genderDropdownRef}>
                <div 
-                 className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-[#094A54] dark:text-dark-text text-base sm:text-lg flex justify-between items-center cursor-pointer"
+                 className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg flex justify-between items-center cursor-pointer"
                  onClick={() => setIsGenderDropdownOpen(!isGenderDropdownOpen)}
                >
-                 <span className={personalData.gender ? 'text-[#094A54] dark:text-dark-text' : 'text-[#094A54]/60 dark:text-dark-text/60'}>
+                 <span className={personalData.gender ? 'text-light-text dark:text-dark-text' : 'text-light-text/60 dark:text-dark-text/60'}>
                    {displayGender}
                  </span>
                  <svg 
@@ -339,43 +395,43 @@ export default function PatientLogin() {
                    fill="none"
                    className={`transition-transform ${isGenderDropdownOpen ? 'rotate-180' : ''}`}
                  >
-                  <path d="M6 9L12 15L18 9" stroke="#094A54" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                  </svg>
                </div>
                
                {isGenderDropdownOpen && (
                  <div className="absolute z-10 mt-1 w-full bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl shadow-lg overflow-hidden">
                    <div 
-                     className="p-4 sm:p-5 hover:bg-[#00C78B]/10 cursor-pointer"
+                     className="p-4 sm:p-5 hover:bg-light-accent/10 cursor-pointer text-light-text dark:text-dark-text"
                      onClick={() => handleGenderSelect('male')}
                    >
-                     Мужской
+                     {t('male')}
                    </div>
                    <div 
-                     className="p-4 sm:p-5 hover:bg-[#00C78B]/10 cursor-pointer"
+                     className="p-4 sm:p-5 hover:bg-light-accent/10 cursor-pointer text-light-text dark:text-dark-text"
                      onClick={() => handleGenderSelect('female')}
                    >
-                     Женский
+                     {t('female')}
                    </div>
                  </div>
                )}
              </div>
              
-             {/* Custom Date Input */}
-             <div className="relative">
+             {/* Date Input - Improved for Mobile */}
+             <div className="relative" ref={dateWrapperRef}>
                <div 
-                 className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-[#094A54] dark:text-dark-text text-base sm:text-lg flex justify-between items-center cursor-pointer"
+                 className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg flex justify-between items-center cursor-pointer"
                  onClick={openDatePicker}
                >
-                 <span className={personalData.birthDate ? 'text-[#094A54] dark:text-dark-text' : 'text-[#094A54]/60 dark:text-dark-text/60'}>
-                   {personalData.birthDate ? formatDisplayDate(personalData.birthDate) : 'Дата рождения'}
+                 <span className={personalData.birthDate ? 'text-light-text dark:text-dark-text' : 'text-light-text/60 dark:text-dark-text/60'}>
+                   {personalData.birthDate ? formatDisplayDate(personalData.birthDate) : t('birthDate')}
                  </span>
                  <svg 
                    width="24" 
                    height="24" 
                    viewBox="0 0 24 24" 
                    fill="none"
-                   stroke="#094A54"
+                   stroke="currentColor"
                    strokeWidth="2"
                    strokeLinecap="round"
                    strokeLinejoin="round"
@@ -392,7 +448,7 @@ export default function PatientLogin() {
                  name="birthDate"
                  value={personalData.birthDate}
                  onChange={handlePersonalDataChange}
-                 className="absolute opacity-0 -z-10 pointer-events-none"
+                 className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
                  max={new Date().toISOString().split('T')[0]} // Prevent future dates
                />
              </div>
@@ -401,9 +457,9 @@ export default function PatientLogin() {
            <button
              onClick={handleSubmitPersonalData}
              disabled={!isPersonalDataValid}
-             className="w-full py-4 sm:py-5 rounded-2xl bg-[#00C78B] text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed text-[16px] sm:text-[18px]"
+             className="w-full py-4 sm:py-5 rounded-2xl bg-light-accent text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed text-[16px] sm:text-[18px]"
            >
-             Продолжить
+             {t('continueButton')}
            </button>
          </div>
        )}
