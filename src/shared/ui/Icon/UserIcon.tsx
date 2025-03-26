@@ -1,5 +1,5 @@
 export default function UserIcon({
-  color = 'white',
+  color = '#094A54',
   size = 30,
   style = {},
   ...props

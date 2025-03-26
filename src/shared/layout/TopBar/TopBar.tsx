@@ -478,7 +478,7 @@ useEffect(() => {
   `}
               
 >
-  <UserIcon size={30} />
+  <UserIcon size={30} color={'#ffffff'} />
 </Link>
           </div>
         
@@ -673,7 +673,7 @@ useEffect(() => {
         onClick={() => setIsMobileMenuOpen(false)}
       >
         <div className="w-12 h-12 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white shadow-lg shadow-light-accent/20">
-          <UserIcon size={18} />
+          <UserIcon size={18} color={'#ffffff'} />
         </div>
         <span className="text-lg">Вход в кабинет</span>
       </Link>

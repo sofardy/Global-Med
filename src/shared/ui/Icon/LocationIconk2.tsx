@@ -1,7 +1,7 @@
 
 
 export default function LocationIconk2({
-  color = 'white',
+  color = '#094A54',
   size = 24,
   style = {},
   className = '',
