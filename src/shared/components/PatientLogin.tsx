@@ -4,90 +4,95 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useThemeStore } from '@/src/store/theme';
+import { useLanguageStore } from '@/src/store/language';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { LoginIcon } from '@/src/shared/ui/Icon';
-import { useLanguageStore } from '@/src/store/language';
+import DatePicker from 'react-date-picker';
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
 
-// Translations
+// Переводы
 const translations = {
-  ru: {
-    title: 'Вход в личный кабинет пациента',
-    phoneLabel: 'Укажите номер телефона',
-    sendSmsButton: 'Отправить SMS-код',
-    privacyText: 'Нажимая кнопку «Отправить SMS-код», вы подтверждаете своё согласие на',
-    privacyLink: 'обработку персональных данных',
-    smsVerificationText: 'Введите 4 цифры из входящего SMS',
-    confirmCodeButton: 'Подтвердить код',
-    changeNumberButton: 'Изменить номер',
-    personalDataTitle: 'Личные данные',
-    personalDataDesc: 'Чтобы получить доступ к услугам клиники, укажите основную информацию',
-    firstName: 'Имя',
-    lastName: 'Фамилия',
-    gender: 'Пол',
-    male: 'Мужской',
-    female: 'Женский',
-    birthDate: 'Дата рождения',
-    continueButton: 'Продолжить',
-    phoneError: 'Введите полный номер телефона'
-  },
-  uz: {
-    title: 'Bemor shaxsiy kabinetiga kirish',
-    phoneLabel: 'Telefon raqamingizni kiriting',
-    sendSmsButton: 'SMS-kodni yuborish',
-    privacyText: '«SMS-kodni yuborish» tugmasini bosish orqali siz',
-    privacyLink: 'shaxsiy ma\'lumotlarni qayta ishlashga rozilik',
-    smsVerificationText: 'Kelgan SMS-dan 4 ta raqamni kiriting',
-    confirmCodeButton: 'Kodni tasdiqlash',
-    changeNumberButton: 'Raqamni o\'zgartirish',
-    personalDataTitle: 'Shaxsiy ma\'lumotlar',
-    personalDataDesc: 'Klinika xizmatlaridan foydalanish uchun asosiy ma\'lumotlarni kiriting',
-    firstName: 'Ism',
-    lastName: 'Familiya',
-    gender: 'Jins',
-    male: 'Erkak',
-    female: 'Ayol',
-    birthDate: 'Tug\'ilgan sana',
-    continueButton: 'Davom etish',
-    phoneError: 'To\'liq telefon raqamini kiriting'
-  }
+ ru: {
+   title: 'Вход в личный кабинет пациента',
+   phoneLabel: 'Укажите номер телефона',
+   sendSmsButton: 'Отправить SMS-код',
+   privacyText: 'Нажимая кнопку «Отправить SMS-код», вы подтверждаете своё согласие на',
+   privacyLink: 'обработку персональных данных',
+   smsVerificationText: 'Введите 4 цифры из входящего SMS',
+   confirmCodeButton: 'Подтвердить код',
+   changeNumberButton: 'Изменить номер',
+   personalDataTitle: 'Личные данные',
+   personalDataDesc: 'Чтобы получить доступ к услугам клиники, укажите основную информацию',
+   firstName: 'Имя',
+   lastName: 'Фамилия',
+   gender: 'Пол',
+   male: 'Мужской',
+   female: 'Женский',
+   birthDate: 'Дата рождения',
+   continueButton: 'Продолжить',
+   phoneError: 'Введите полный номер телефона'
+ },
+ uz: {
+   title: 'Bemor shaxsiy kabinetiga kirish',
+   phoneLabel: 'Telefon raqamingizni kiriting',
+   sendSmsButton: 'SMS-kodni yuborish',
+   privacyText: '«SMS-kodni yuborish» tugmasini bosish orqali siz',
+   privacyLink: 'shaxsiy ma\'lumotlarni qayta ishlashga rozilik',
+   smsVerificationText: 'Kelgan SMS-dan 4 ta raqamni kiriting',
+   confirmCodeButton: 'Kodni tasdiqlash',
+   changeNumberButton: 'Raqamni o\'zgartirish',
+   personalDataTitle: 'Shaxsiy ma\'lumotlar',
+   personalDataDesc: 'Klinika xizmatlaridan foydalanish uchun asosiy ma\'lumotlarni kiriting',
+   firstName: 'Ism',
+   lastName: 'Familiya',
+   gender: 'Jins',
+   male: 'Erkak',
+   female: 'Ayol',
+   birthDate: 'Tug\'ilgan sana',
+   continueButton: 'Davom etish',
+   phoneError: 'To\'liq telefon raqamini kiriting'
+ }
 };
 
-// Login step management
+// Шаги авторизации
 enum LoginStep {
  PHONE_INPUT,
  VERIFICATION_CODE,
  PERSONAL_DATA
 }
 
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
 export default function PatientLogin() {
  const router = useRouter();
-  const { theme } = useThemeStore();
-   const { currentLocale } = useLanguageStore();
+ const { theme } = useThemeStore();
+ const { currentLocale } = useLanguageStore();
  const { t } = useTranslation(translations);
+ 
+ // Основные состояния
  const [loginStep, setLoginStep] = useState<LoginStep>(LoginStep.PHONE_INPUT);
  const [phoneNumber, setPhoneNumber] = useState<string>('+998');
  const [verificationCode, setVerificationCode] = useState<string[]>(['', '', '', '']);
- const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState<boolean>(false);
  const [personalData, setPersonalData] = useState({
    firstName: '',
    lastName: '',
-   gender: '',
-   birthDate: ''
+   gender: ''
  });
+ const [birthDate, setBirthDate] = useState<Value>(null);
+ const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
  
- const genderDropdownRef = useRef<HTMLDivElement>(null);
- const dateInputRef = useRef<HTMLInputElement>(null);
- const dateWrapperRef = useRef<HTMLDivElement>(null);
- 
- // Refs for verification code inputs
+ // Ссылки на элементы
  const inputRefs = [
    useRef<HTMLInputElement>(null),
    useRef<HTMLInputElement>(null),
    useRef<HTMLInputElement>(null),
    useRef<HTMLInputElement>(null)
  ];
-
- // Close gender dropdown when clicking outside
+ const genderDropdownRef = useRef<HTMLDivElement>(null);
+ 
+ // Закрытие выпадающего списка при клике вне него
  useEffect(() => {
    function handleClickOutside(event: MouseEvent) {
      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target as Node)) {
@@ -101,18 +106,15 @@ export default function PatientLogin() {
    };
  }, []);
 
- // Handle phone number input with formatting
+ // Форматирование телефона
  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   // Keep the +998 prefix and allow only numbers
    let value = e.target.value;
    if (!value.startsWith('+998')) {
      value = '+998';
    }
    
-   // Remove non-digit characters except the plus sign
    const cleaned = value.replace(/[^\d+]/g, '');
    
-   // Format the phone number: +998 (__) ___-__-__
    let formatted = cleaned;
    if (cleaned.length > 4) {
      const remainingDigits = cleaned.substring(4);
@@ -134,9 +136,8 @@ export default function PatientLogin() {
    setPhoneNumber(formatted);
  };
 
- // Handle verification code input
+ // Обработка проверочного кода
  const handleCodeChange = (index: number, value: string) => {
-   // Allow only a single digit
    if (value.length > 1) {
      value = value.substring(value.length - 1);
    }
@@ -149,20 +150,18 @@ export default function PatientLogin() {
    newCode[index] = value;
    setVerificationCode(newCode);
    
-   // Auto-focus next input when digit is entered
    if (value && index < 3) {
      inputRefs[index + 1].current?.focus();
    }
  };
 
- // Handle backspace in verification code input
  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
    if (e.key === 'Backspace' && !verificationCode[index] && index > 0) {
      inputRefs[index - 1].current?.focus();
    }
  };
 
- // Update personal data inputs
+ // Обработка персональных данных
  const handlePersonalDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
    const { name, value } = e.target;
    setPersonalData({
@@ -171,7 +170,6 @@ export default function PatientLogin() {
    });
  };
 
- // Set gender
  const handleGenderSelect = (gender: string) => {
    setPersonalData({
      ...personalData,
@@ -180,85 +178,62 @@ export default function PatientLogin() {
    setIsGenderDropdownOpen(false);
  };
 
- // Open date picker for both mobile and desktop
- const openDatePicker = () => {
-   if (dateInputRef.current) {
-     // Use click() instead of showPicker() for better cross-browser compatibility
-     dateInputRef.current.click();
-   }
- };
-
- // Send SMS verification code
+ // Отправка SMS
  const handleSendSMS = () => {
-   // Validate phone number - must be full format: +998 (XX) XXX-XX-XX
-   // which means it should be at least 19 characters long
    if (phoneNumber.length < 19) {
      alert(t('phoneError'));
      return;
    }
    
-   // In a real app, this would call an API to send the SMS
-   console.log('Sending SMS to', phoneNumber);
+   console.log('Отправка SMS на', phoneNumber);
    setLoginStep(LoginStep.VERIFICATION_CODE);
  };
 
- // Verify SMS code
+ // Проверка кода
  const handleVerifyCode = () => {
-   // In a real app, this would call an API to verify the code
    const code = verificationCode.join('');
-   console.log('Verifying code', code);
-   
-   // If user has no account yet, go to personal data
+   console.log('Проверка кода', code);
    setLoginStep(LoginStep.PERSONAL_DATA);
-   
-   // If user already exists, would redirect to account page
-   // router.push('/account');
  };
 
- // Submit personal data
+ // Отправка личных данных
  const handleSubmitPersonalData = () => {
-   // In a real app, this would call an API to create the account
-   console.log('Submitting personal data', personalData);
-   
-   // Redirect to account page
+   const formattedData = {
+     ...personalData,
+     birthDate: birthDate instanceof Date ? birthDate.toISOString().split('T')[0] : null
+   };
+   console.log('Отправка личных данных', formattedData);
    router.push('/account');
  };
 
- // Check if verification code is complete
- const isCodeComplete = verificationCode.every(digit => digit !== '');
-
- // Check if personal data form is valid
- const isPersonalDataValid = personalData.firstName && 
-                             personalData.lastName && 
-                             personalData.gender && 
-                             personalData.birthDate;
-
- // Handle "Change number" button
+ // Изменение номера телефона
  const handleChangeNumber = () => {
    setLoginStep(LoginStep.PHONE_INPUT);
    setVerificationCode(['', '', '', '']);
  };
 
- // Display gender selection
+ // Проверки данных
+ const isCodeComplete = verificationCode.every(digit => digit !== '');
+ const isPersonalDataValid = personalData.firstName && 
+                            personalData.lastName && 
+                            personalData.gender && 
+                            birthDate !== null;
+
+ // Отображение гендера
  const displayGender = personalData.gender 
    ? (personalData.gender === 'male' ? t('male') : t('female')) 
    : t('gender');
-   
- // Format date for display
- const formatDisplayDate = (dateString: string) => {
-   if (!dateString) return '';
-   const date = new Date(dateString);
-   return date.toLocaleDateString(
-     // Use the proper locale based on language
-     currentLocale === 'uz' ? 'uz-UZ' : 'ru-RU', 
-     { day: '2-digit', month: '2-digit', year: 'numeric' }
-   );
+
+ // Функция для стилизации календаря по теме
+ const getDatePickerClassName = () => {
+   const baseClass = "react-date-picker";
+   return theme === 'dark' ? `${baseClass} dark-theme` : baseClass;
  };
 
  return (
    <div className="flex justify-center mt-20 min-h-screen px-4 sm:px-6 py-10">
      <div className="w-full max-w-md sm:max-w-xl">
-       {/* Phone Input Step */}
+       {/* Шаг ввода телефона */}
        {loginStep === LoginStep.PHONE_INPUT && (
          <div>
            <div className="flex justify-center mb-4 sm:mb-6">
@@ -301,7 +276,7 @@ export default function PatientLogin() {
          </div>
        )}
        
-       {/* Verification Code Step */}
+       {/* Шаг ввода проверочного кода */}
        {loginStep === LoginStep.VERIFICATION_CODE && (
          <div>
            <div className="flex justify-center mb-4 sm:mb-6">
@@ -341,7 +316,7 @@ export default function PatientLogin() {
            </button>
            
            <button
-            onClick={handleChangeNumber}
+             onClick={handleChangeNumber}
              className="w-full text-center text-light-accent text-[16px] sm:text-[18px]"
            >
              {t('changeNumberButton')}
@@ -349,7 +324,7 @@ export default function PatientLogin() {
          </div>
        )}
        
-       {/* Personal Data Step */}
+       {/* Шаг ввода личных данных */}
        {loginStep === LoginStep.PERSONAL_DATA && (
          <div>
            <h1 className="text-[20px] sm:text-[24px] font-medium text-center text-light-text dark:text-dark-text mb-2 sm:mb-3">
@@ -367,7 +342,7 @@ export default function PatientLogin() {
                value={personalData.firstName}
                onChange={handlePersonalDataChange}
                placeholder={t('firstName')}
-               className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg"
+              className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg"
              />
              
              <input
@@ -379,7 +354,7 @@ export default function PatientLogin() {
                className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg"
              />
              
-             {/* Custom Gender Dropdown */}
+             {/* Выпадающий список для выбора пола */}
              <div className="relative" ref={genderDropdownRef}>
                <div 
                  className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg flex justify-between items-center cursor-pointer"
@@ -417,41 +392,86 @@ export default function PatientLogin() {
                )}
              </div>
              
-             {/* Date Input - Improved for Mobile */}
-             <div className="relative" ref={dateWrapperRef}>
-               <div 
-                 className="w-full p-4 sm:p-5 bg-white dark:bg-dark-block border border-[#E5E7EB] dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-light-accent text-light-text dark:text-dark-text text-base sm:text-lg flex justify-between items-center cursor-pointer"
-                 onClick={openDatePicker}
-               >
-                 <span className={personalData.birthDate ? 'text-light-text dark:text-dark-text' : 'text-light-text/60 dark:text-dark-text/60'}>
-                   {personalData.birthDate ? formatDisplayDate(personalData.birthDate) : t('birthDate')}
-                 </span>
-                 <svg 
-                   width="24" 
-                   height="24" 
-                   viewBox="0 0 24 24" 
-                   fill="none"
-                   stroke="currentColor"
-                   strokeWidth="2"
-                   strokeLinecap="round"
-                   strokeLinejoin="round"
-                 >
-                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                   <line x1="16" y1="2" x2="16" y2="6" />
-                   <line x1="8" y1="2" x2="8" y2="6" />
-                   <line x1="3" y1="10" x2="21" y2="10" />
-                 </svg>
-               </div>
-               <input
-                 ref={dateInputRef}
-                 type="date"
-                 name="birthDate"
-                 value={personalData.birthDate}
-                 onChange={handlePersonalDataChange}
-                 className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
-                 max={new Date().toISOString().split('T')[0]} // Prevent future dates
+             {/* Компонент DatePicker для выбора даты */}
+             <div className="datepicker-container">
+               <DatePicker
+                 onChange={setBirthDate}
+                 value={birthDate}
+                 className={getDatePickerClassName()}
+                 clearIcon={null}
+                 format="dd.MM.yyyy"
+                 dayPlaceholder="дд"
+                 monthPlaceholder="мм"
+                 yearPlaceholder="гггг"
+                 maxDate={new Date()}
+                 calendarClassName={`${theme === 'dark' ? 'dark-calendar' : ''}`}
+                 formatDay={(locale, date) => date.getDate().toString().padStart(2, '0')}
                />
              </div>
+             
+             {/* Стили для DatePicker */}
+             <style jsx global>{`
+               .react-date-picker {
+                 width: 100%;
+               }
+               .react-date-picker__wrapper {
+                 padding: 1rem 1.25rem;
+                 background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
+                 border: 1px solid ${theme === 'dark' ? '#4B5563' : '#E5E7EB'};
+                 border-radius: 1rem;
+                 color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+               }
+               .react-date-picker__inputGroup__input {
+                 color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+                 background: transparent;
+               }
+               .react-date-picker__inputGroup__input::placeholder {
+                 color: ${theme === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(9,74,84,0.6)'};
+               }
+               .react-date-picker__button {
+                 color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+               }
+               .react-date-picker__button:enabled:hover .react-date-picker__button__icon,
+               .react-date-picker__button:enabled:focus .react-date-picker__button__icon {
+                 stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+               }
+               .react-date-picker__button svg {
+                 stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+               }
+               
+               /* Календарь */
+               .react-calendar {
+                 background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
+                 border: 1px solid ${theme === 'dark' ? '#4B5563' : '#E5E7EB'};
+                 border-radius: 1rem;
+                 color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+               }
+               .react-calendar__tile {
+                 color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+               }
+               .react-calendar__navigation button {
+                 color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+               }
+               .react-calendar__tile--active {
+                 background: var(--light-accent);
+                 color: white;
+               }
+               .react-calendar__tile--active:enabled:hover,
+               .react-calendar__tile--active:enabled:focus {
+                 background: var(--light-accent);
+               }
+               .react-calendar__tile:enabled:hover,
+               .react-calendar__tile:enabled:focus {
+                 background-color: ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(9,74,84,0.1)'};
+               }
+               .react-calendar__month-view__days__day--weekend {
+                 color: ${theme === 'dark' ? '#FF9999' : '#D00000'};
+               }
+               .react-calendar__month-view__days__day--neighboringMonth {
+                 color: ${theme === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(9,74,84,0.3)'};
+               }
+             `}</style>
            </div>
            
            <button

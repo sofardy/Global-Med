@@ -21,10 +21,10 @@ export default function AccountHeader() {
   
   return (
     <header className="w-full">
-      <div className={`max-w-[1560px] rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} mx-auto h-[70px] sm:h-[90px] px-4 sm:px-[40px] py-[14px] flex justify-between items-center`}>
+      <div className={`max-w-[1560px] rounded-2xl ${theme === 'light' ? 'bg-light-block' : 'bg-dark-block'} px-8 py-6 flex justify-between items-center`}>
         <Link href="/account" className="flex items-center gap-1 sm:gap-2">
-          <LogoIcon size={30} className="sm:w-[40px] sm:h-[40px]" />
-          <LogoTextIcon size={70} className="hidden xs:block sm:w-[90px]" color={theme === 'light' ? '#094A54' : 'white'} />
+              <LogoIcon size={40} />
+              <LogoTextIcon size={90} color={theme === 'light' ? '#094A54' : 'white'} />
         </Link>
         
         <Link 

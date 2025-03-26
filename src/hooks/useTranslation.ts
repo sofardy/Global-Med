@@ -57,5 +57,5 @@ export function useTranslation<T extends LocaleMessages>(localization: T) {
         return (typeof result === 'string' ? result : key) as unknown as R;
     };
 
-    return { t, messages };
+    return { t, messages, currentLocale };
 }
