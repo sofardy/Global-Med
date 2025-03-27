@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Modal from '@/src/shared/components/Modal/Modal';
 import { ArrowDownIcon } from '@/src/shared/ui/Icon';
+import { ContactInfo } from '@/src/shared/components/ContactInfo';
 
 // Интерфейсы
 interface DropdownPosition {
@@ -240,13 +241,13 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
   const cardBg = theme === 'light' ? 'bg-white' : 'bg-dark-block';
   const textColor = theme === 'light' ? 'text-light-text' : 'text-white';
   const mutedTextColor = theme === 'light' ? 'text-light-text/70' : 'text-white/70';
-  const borderColor = theme === 'light' ? 'border-[#094A5480]' : 'border-[#094A5480]';
+  const borderColor = theme === 'light' ? 'border-[#094A5480]' : 'border-gray-700';
   
   return (
     <div className={`${cardBg} rounded-2xl overflow-hidden mb-8`}>
-      <div className="flex">
-        <div className="w-64 p-10">
-          <div className="w-full h-60 relative">
+      <div className="flex flex-col md:flex-row">
+        <div className="w-full md:w-64 p-6 md:p-10 flex justify-center md:block">
+          <div className="w-48 md:w-full h-48 md:h-60 relative">
             <Image 
               src={doctor.photoUrl} 
               alt={doctor.name} 
@@ -256,12 +257,12 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
           </div>
         </div>
         
-        <div className="flex-1 p-6">
+        <div className="flex-1 px-6 py-10">
           <span className="text-light-accent text-sm mb-1 block">{doctor.specialty}</span>
-          <h3 className={`text-2xl font-medium ${textColor} mb-4`}>{doctor.name}</h3>
+          <h3 className={`text-xl md:text-2xl font-medium ${textColor} mb-4`}>{doctor.name}</h3>
           
-          <div className="flex text-[#094A5480] items-center gap-x-1 mb-4">
-            <span className={`${mutedTextColor}`}>Стаж {doctor.experience} год</span>
+          <div className="flex flex-wrap text-[#094A5480] items-center gap-x-1 mb-4">
+            <span className={`${mutedTextColor}`}>{t('experience')} {doctor.experience} {t('years')}</span>
             <span className={`${mutedTextColor} mx-2`}>•</span>
             <span className={`${mutedTextColor}`}>{doctor.qualification}</span>
             {doctor.degree && (
@@ -272,43 +273,43 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
             )}
           </div>
           
-          <div className="mb-4 flex gap-2 item-center">
-            <div className={`${mutedTextColor} font-bold mb-1`}>Языки:</div>
+          <div className="mb-4 flex flex-wrap gap-2 items-center">
+            <div className={`${mutedTextColor} font-bold`}>{t('languages')}:</div>
             <div className={textColor}>{doctor.languages.join(', ')}</div>
           </div>
           
-          <div className='flex gap-2 item-center'>
-            <div className={`${mutedTextColor} font-bold mb-1`}>Стоимость приема:</div>
+          <div className='flex flex-wrap gap-2 items-center'>
+            <div className={`${mutedTextColor} font-bold`}>{t('cost')}:</div>
             <div className={textColor}>{doctor.cost}</div>
           </div>
         </div>
       </div>
       
-           <div className="px-10">
-        <div className={`border-t ${borderColor} border-t-1`}></div>
+      <div className="px-6 md:px-10">
+        <div className={`border-t ${borderColor}`}></div>
       </div>
 
-      <div className={`px-10 py-8 flex items-center`}>
-        <div className="flex justify-between items-center w-full">
-        <div>
+      <div className={`px-6 md:px-10 py-6 md:py-8`}>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <div>
             <Link href={`tel:+998712005550`}>
-              <div className={`${mutedTextColor} text-[16px] font-bold`}>Телефон для записи</div>
+              <div className={`${mutedTextColor} text-[16px] font-bold`}>{t('phone')}</div>
               <div className={`${textColor} text-[16px]`}>+998 (71) 200-55-50</div>
             </Link>
           </div>
           
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <Link
               href={`/clinic/doctors/${doctor.id}`}
-              className="px-6 py-3 border rounded-xl text-light-text dark:text-white border-light-text dark:border-white hover:bg-light-bg dark:hover:bg-dark-bg transition-colors"
+              className="px-6 py-3 text-center border rounded-xl text-light-text dark:text-white border-light-text dark:border-white hover:bg-light-bg dark:hover:bg-dark-bg transition-colors"
             >
-              Подробнее о враче
+              {t('detailsButton')}
             </Link>
             <Link
-              href="/appointment"
-              className="px-6 py-3 bg-light-accent text-white rounded-xl hover:bg-[#5ab696] transition-colors"
+              href="/account/appointment"
+              className="px-6 py-3 text-center bg-light-accent text-white rounded-xl hover:bg-[#5ab696] transition-colors"
             >
-              Записаться на прием
+              {t('appointmentButton')}
             </Link>
           </div>
         </div>
@@ -317,18 +318,55 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
   );
 };
 
-const SearchSection = () => {
+const SearchSection: React.FC = () => {
+  const { theme } = useThemeStore();
+  const { t } = useTranslation(translations);
   const [nameQuery, setNameQuery] = useState('');
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
-  const specialtyButtonRef = useRef(null);
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   
-  const handleSearch = () => {
-    // Функция поиска
-    console.log('Поиск:', { nameQuery });
+  const specialtyButtonRef = useRef<HTMLButtonElement>(null);
+  const specialties = t('specialties', { returnObjects: true }) as string[];
+  
+  useEffect(() => {
+    setIsMounted(true);
+    const checkMobile = (): void => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
+  const handleSelectSpecialty = (specialty: string): void => {
+    setSelectedSpecialty(specialty);
+    setIsSpecialtyOpen(false);
+    setIsModalOpen(false);
   };
   
+  const handleSpecialtyButtonClick = (): void => {
+    if (isMobile) {
+      setIsModalOpen(true);
+    } else {
+      setIsSpecialtyOpen(prev => !prev);
+    }
+  };
+  
+  const handleSearch = () => {
+    console.log('Поиск:', { nameQuery, selectedSpecialty });
+  };
+  
+  const displaySpecialty = selectedSpecialty || t('specialtySearch');
+  
   return (
-    <div className="rounded-2xl overflow-hidden bg-light-accent text-white h-[190px] relative">
+    <div className="rounded-2xl overflow-hidden bg-light-accent text-white relative">
       {/* Фоновый паттерн */}
       <div 
         className="absolute -top-[130px] -left-[250px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block" 
@@ -341,22 +379,22 @@ const SearchSection = () => {
         }}
       ></div>
 
-      <div className="container mx-auto px-10 py-10 h-full flex flex-col justify-between relative z-10">
-        <h1 className="text-3xl font-medium">Поиск врача</h1>
+      <div className="container px-6 md:px-10 py-8 md:py-10 relative z-10">
+        <h1 className="text-2xl md:text-3xl font-medium mb-6 md:mb-0">{t('title')}</h1>
         
-        <div className="flex w-full flex-row gap-4 justify-between items-center">
+        <div className="flex flex-col md:flex-row gap-4 mt-6 md:mt-10">
           {/* Поиск по имени */}
-          <div className="min-w-[400px]">
+          <div className="w-full md:w-auto md:flex-1">
             <div className="relative">
               <input
                 type="text"
                 value={nameQuery}
                 onChange={(e) => setNameQuery(e.target.value)}
-                placeholder="Введите ФИО"
-                className="w-full bg-white/20 border border-white/90 rounded-2xl h-[54px] px-6 text-white placeholder-white/60 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
+                placeholder={t('nameSearch')}
+                className="w-full bg-white/20 border border-white/90 rounded-2xl h-12 md:h-[54px] px-4 md:px-6 text-white placeholder-white/60 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
               />
               <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
-                <svg className="w-5 h-5 text-white/60" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 md:w-5 md:h-5 text-white/60" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -364,14 +402,17 @@ const SearchSection = () => {
           </div>
           
           {/* Поиск по специальности */}
-          <div className="min-w-[400px]">
+          <div className="w-full md:w-auto md:flex-1">
             <div className="relative">
               <button
                 ref={specialtyButtonRef}
-                onClick={() => setIsSpecialtyOpen(!isSpecialtyOpen)}
-                className="w-full bg-white/20 border border-white/90 rounded-2xl h-[54px] px-6 text-left text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all flex justify-between items-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSpecialtyButtonClick();
+                }}
+                className="w-full bg-white/20 border border-white/90 rounded-2xl h-12 md:h-[54px] px-4 md:px-6 text-left text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all flex justify-between items-center"
               >
-                <span>Все специализации</span>
+                <span>{displaySpecialty}</span>
                 <ArrowDownIcon color="white" />
               </button>
             </div>
@@ -380,179 +421,92 @@ const SearchSection = () => {
           {/* Кнопка поиска */}
           <button
             onClick={handleSearch}
-            className="w-[200px] h-[54px] rounded-2xl bg-white text-light-accent px-6 font-medium hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+            className="w-full md:w-[200px] h-12 md:h-[54px] rounded-2xl bg-white text-light-accent px-6 font-medium hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
           >
-            Найти врача
+            {t('findButton')}
           </button>
         </div>
       </div>
 
-      {/* Адаптивные стили */}
-      <style jsx>{`
-        @media (max-width: 1280px) {
-          .min-w-\\[400px\\] {
-            min-width: 300px;
-          }
-        }
-        
-        @media (max-width: 1024px) {
-          .container {
-            padding-left: 16px;
-            padding-right: 16px;
-          }
-          
-          .flex-row {
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 16px;
-          }
-          
-          .min-w-\\[400px\\] {
-            min-width: 100%;
-            width: 100%;
-          }
-          
-          .w-\\[200px\\] {
-            width: 100%;
-          }
-          
-          .h-\\[190px\\] {
-            height: auto;
-            padding-bottom: 16px;
-          }
-        }
-      `}</style>
+      {/* Выпадающие списки */}
+      {isMounted && !isMobile && (
+        <SpecialtiesDropdown
+          isOpen={isSpecialtyOpen}
+          onClose={() => setIsSpecialtyOpen(false)}
+          specialties={specialties}
+          onSelect={handleSelectSpecialty}
+          placeholder={t('specialtySearch')}
+          buttonRef={specialtyButtonRef}
+        />
+      )}
+
+      {isMounted && isMobile && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title={t('modalTitle')}
+          position="bottom"
+          size="full"
+          theme="brand"
+          showCloseButton={true}
+          showCloseIcon={true}
+          contentClassName="bg-white dark:bg-dark-block"
+        >
+          <div className="py-2">
+            <button
+              onClick={() => handleSelectSpecialty('')}
+              className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 dark:hover:bg-light-accent/10 rounded-lg transition-colors font-medium"
+            >
+              {t('specialtySearch')}
+            </button>
+            
+            <div className="border-t my-1 border-gray-100 dark:border-gray-700"></div>
+            
+            {specialties.map((specialty, index) => (
+              <button
+                key={index}
+                onClick={() => handleSelectSpecialty(specialty)}
+                className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 hover:text-light-accent dark:hover:text-light-accent rounded-lg transition-colors flex items-center group"
+              >
+                <span className="w-5 text-light-accent opacity-0 group-hover:opacity-100 transition-opacity">•</span>
+                <span>{specialty}</span>
+              </button>
+            ))}
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
 
-
 // Основной компонент страницы врачей
 export default function DoctorsPage() {
-    const { theme } = useThemeStore();
-    const { t } = useTranslation(translations);
-  
-    const [nameQuery, setNameQuery] = useState<string>('');
-    const [isSpecialtyOpen, setIsSpecialtyOpen] = useState<boolean>(false);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
-    const [isMobile, setIsMobile] = useState<boolean>(false);
-    const [isMounted, setIsMounted] = useState<boolean>(false);
-  
-    const specialtyButtonRef = useRef<HTMLButtonElement>(null);
-  
-    useEffect(() => {
-        setIsMounted(true);
-        const checkMobile = (): void => {
-            setIsMobile(window.innerWidth < 768);
-        };
-    
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-    
-        return () => {
-            window.removeEventListener('resize', checkMobile);
-        };
-    }, []);
-  
-    const handleSearch = (): void => {
-        console.log('Searching for:', { nameQuery, selectedSpecialty });
-    };
-  
-    const specialties = t('specialties', { returnObjects: true }) as string[];
-    const displaySpecialty = selectedSpecialty || t('specialtySearch');
-  
-    const handleSelectSpecialty = (specialty: string): void => {
-        setSelectedSpecialty(specialty);
-        setIsSpecialtyOpen(false);
-        setIsModalOpen(false);
-    };
-  
-    const handleSpecialtyButtonClick = (): void => {
-        if (isMobile) {
-            setIsModalOpen(true);
-        } else {
-            setIsSpecialtyOpen(!isSpecialtyOpen);
+  return (
+    <main>
+      {/* Блок поиска */}
+      <SearchSection />
+      
+      {/* Список врачей */}
+      <div className="py-8">
+        {doctorsData.map(doctor => (
+          <DoctorCard key={doctor.id} doctor={doctor} />
+        ))}
+      </div>
+      
+      {/* Контактная информация */}
+      <ContactInfo />
+      
+      {/* Стили анимации */}
+      <style jsx global>{`
+        @keyframes dropdown {
+          from { opacity: 0; transform: translateY(-5px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-    };
-  
-    // Получаем стили зависящие от темы
-    const searchBgColor = 'bg-light-accent';
-    const searchTextColor = 'text-white';
-    const searchPlaceholderColor = 'placeholder-white/60';
-    const inputBgColor = 'bg-white/20';
-    const buttonIconColor = theme === 'light' ? '#094A54' : 'white';
-  
-    return (
-        <main>
-            {/* Блок поиска */}
-<SearchSection/>
-            {/* Список врачей */}
-            <div className="py-8">
-                {doctorsData.map(doctor => (
-                    <DoctorCard key={doctor.id} doctor={doctor} />
-                ))}
-            </div>
-    
-            {/* Выпадающие списки */}
-            {isMounted && !isMobile && (
-                <SpecialtiesDropdown
-                    isOpen={isSpecialtyOpen}
-                    onClose={() => setIsSpecialtyOpen(false)}
-                    specialties={specialties}
-                    onSelect={handleSelectSpecialty}
-                    placeholder={t('specialtySearch')}
-                    buttonRef={specialtyButtonRef}
-                />
-            )}
-    
-            {isMounted && isMobile && (
-                <Modal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    title={t('modalTitle')}
-                    position="bottom"
-                    size="full"
-                    theme="brand"
-                    showCloseButton={true}
-                    showCloseIcon={true}
-                    contentClassName="bg-white dark:bg-dark-block"
-                >
-                    <div className="py-2">
-                        <button
-                            onClick={() => handleSelectSpecialty('')}
-                            className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 dark:hover:bg-light-accent/10 rounded-lg transition-colors font-medium"
-                        >
-                            {t('specialtySearch')}
-                        </button>
-          
-                        <div className="border-t my-1 border-gray-100 dark:border-gray-700"></div>
-          
-                        {specialties.map((specialty, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleSelectSpecialty(specialty)}
-                                className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 hover:text-light-accent dark:hover:text-light-accent rounded-lg transition-colors flex items-center group"
-                            >
-                                <span className="w-5 text-light-accent opacity-0 group-hover:opacity-100 transition-opacity">•</span>
-                                <span>{specialty}</span>
-                            </button>
-                        ))}
-                    </div>
-                </Modal>
-            )}
-    
-            {/* Стили анимации */}
-            <style jsx global>{`
-      @keyframes dropdown {
-        from { opacity: 0; transform: translateY(-5px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-dropdown { 
-        animation: dropdown 0.2s ease-out forwards;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-      }
-    `}</style>
-        </main>
-    );
+        .animate-dropdown { 
+          animation: dropdown 0.2s ease-out forwards;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+      `}</style>
+    </main>
+  );
 }

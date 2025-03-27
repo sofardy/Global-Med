@@ -203,7 +203,7 @@ export default function PatientLogin() {
      birthDate: birthDate instanceof Date ? birthDate.toISOString().split('T')[0] : null
    };
    console.log('Отправка личных данных', formattedData);
-   router.push('/account');
+   router.push('/account/appointments');
  };
 
  // Изменение номера телефона

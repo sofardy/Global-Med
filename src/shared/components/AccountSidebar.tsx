@@ -2,11 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useThemeStore } from '@/src/store/theme';
 import { useLanguageStore } from '@/src/store/language';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { CalendarIcon, GlobeIcon, LabIcon, LocationIconk2, LogoutIcon, PulseIcon, UserIcon } from '../ui/Icon';
+import Modal from './Modal/Modal';
 
 const translations = {
  ru: {
@@ -17,7 +18,11 @@ const translations = {
    backToMainSite: 'Перейти на основной сайт',
    changeLanguage: 'Сменить язык',
    logout: 'Выйти из личного кабинета',
-   personalAccount: 'Личный кабинет'
+   personalAccount: 'Личный кабинет',
+   logoutConfirmation: 'Подтверждение выхода',
+   logoutConfirmationMessage: 'Вы действительно хотите выйти из личного кабинета?',
+   cancel: 'Отмена',
+   exit: 'Выйти'
  },
  uz: {
    myAppointments: 'Mening yozuvlarim',
@@ -27,18 +32,24 @@ const translations = {
    backToMainSite: 'Asosiy saytga o\'tish',
    changeLanguage: 'Tilni o\'zgartirish',
    logout: 'Shaxsiy kabinetdan chiqish',
-   personalAccount: 'Shaxsiy kabinet'
+   personalAccount: 'Shaxsiy kabinet',
+   logoutConfirmation: 'Chiqishni tasdiqlash',
+   logoutConfirmationMessage: 'Siz rostdan ham shaxsiy kabinetdan chiqmoqchimisiz?',
+   cancel: 'Bekor qilish',
+   exit: 'Chiqish'
  }
 };
 
 export default function AccountSidebar() {
  const pathname = usePathname();
+ const router = useRouter();
  const { theme } = useThemeStore();
  const { currentLocale, setLocale } = useLanguageStore();
  const { t } = useTranslation(translations);
  
  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+ const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
  const sidebarRef = useRef<HTMLDivElement>(null);
  const languageRef = useRef<HTMLDivElement>(null);
 
@@ -67,33 +78,39 @@ export default function AccountSidebar() {
  }, []);
 
  const renderIcon = (iconName: string, isActive: boolean) => {
-   const iconColor = isActive ? "#00c78b" : theme === 'light' ? "#094A54" : "#ffffff";
+   const iconColor = isActive 
+     ? "#00c78b" 
+     : theme === 'light' ? "#094A54" : "#ffffff";
    
    const icons = {
      calendar: (
-    <CalendarIcon />
+       <CalendarIcon size={20} color={iconColor} />
      ),
      lab: (
-       <LabIcon />
+       <LabIcon size={20} color={iconColor} />
      ),
      user: (
-     <UserIcon />
+       <UserIcon size={20} color={iconColor} />
      ),
      heartPulse: (
-      <PulseIcon />
+       <PulseIcon size={20} color={iconColor} />
      ),
      web: (
-     <LocationIconk2 />
+       <LocationIconk2 size={20} color={iconColor} />
      ),
      globe: (
-     <GlobeIcon />
+       <GlobeIcon size={20} color={iconColor} />
      ),
      logout: (
-     <LogoutIcon />
+       <LogoutIcon size={20} color={iconColor === "#ffffff" ? "#FF3B30" : "#FF3B30"} />
      )
    };
 
    return icons[iconName as keyof typeof icons] || null;
+ };
+
+ const handleLogout = () => {
+   router.push('/account');
  };
 
  const renderSidebarContent = () => (
@@ -235,7 +252,7 @@ export default function AccountSidebar() {
        </div>
 
        <button 
-         onClick={() => console.log('Logout')}
+         onClick={() => setIsLogoutModalOpen(true)}
          className="
            flex items-center w-full 
            py-3 px-4 
@@ -293,19 +310,49 @@ export default function AccountSidebar() {
      </div>
 
      {/* Десктопное меню */}
-   <aside 
-        className={`
-          hidden lg:block 
-          w-[375px]
-          bg-white dark:bg-dark-block 
-          rounded-2xl shadow-sm 
-          p-6 
-          h-fit 
-          ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
-        `}
-      >
-        {renderSidebarContent()}
-      </aside>
-    </>
-  );
+     <aside 
+       className={`
+         hidden lg:block 
+         w-[375px]
+         bg-white dark:bg-dark-block 
+         rounded-2xl shadow-sm 
+         p-6 
+         h-fit 
+         ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
+       `}
+     >
+       {renderSidebarContent()}
+     </aside>
+
+     {/* Модальное окно подтверждения выхода */}
+     <Modal
+       isOpen={isLogoutModalOpen}
+       onClose={() => setIsLogoutModalOpen(false)}
+       title={t('logoutConfirmation')}
+       position="center"
+       size="sm"
+       theme="danger"
+       showCloseButton={false}
+     >
+       <p className="mb-6">{t('logoutConfirmationMessage')}</p>
+       <div className="flex justify-end space-x-4">
+         <button 
+           onClick={() => setIsLogoutModalOpen(false)}
+           className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700"
+         >
+           {t('cancel')}
+         </button>
+         <button 
+           onClick={() => {
+             setIsLogoutModalOpen(false);
+             handleLogout();
+           }}
+           className="px-4 py-2 rounded-xl bg-red-500 text-white"
+         >
+           {t('exit')}
+         </button>
+       </div>
+     </Modal>
+   </>
+ );
 }

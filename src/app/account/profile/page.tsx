@@ -338,195 +338,222 @@ export default function Profile(): JSX.Element {
       z-index: 999 !important;
     }
   `;
-
-    return (
-        <div className={`p-4 sm:p-6 md:p-10 rounded-2xl ${theme === 'light' ? 'bg-[#ffffff]' : 'bg-[#0c5c68]'} ${styles.textColor}`}>
-            <form onSubmit={handleSubmit}>
-                <h1 className="text-2xl font-medium mb-6 md:mb-8">{t('patientPersonalData')}</h1>
-      
-                {/* Personal Information */}
-                <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[71%] grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-10 mb-10 md:mb-20">
-                    <div className="md:pr-4">
-                        <label className="block mb-2">{t('firstName')}</label>
-                        <input
-                            type="text"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                            className={`w-full max-w-full md:max-w-[290px] h-[57px] p-4 border ${styles.inputBorderColor} ${styles.inputBgColor} rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B]`}
-                        />
-                        {errors.firstName && <p className={`mt-1 text-sm ${styles.errorColor}`}>{errors.firstName}</p>}
-                    </div>
+ return (
+    <div className={`p-4 sm:p-6 md:p-10 rounded-2xl ${theme === 'light' ? 'bg-[#ffffff]' : 'bg-[#0c5c68]'} ${styles.textColor}`}>
+      <form onSubmit={handleSubmit}>
+        <h1 className="text-xl sm:text-2xl font-medium mb-6 md:mb-8">{t('patientPersonalData')}</h1>
         
-                    <div className="md:pr-4">
-                        <label className="block mb-2">{t('lastName')}</label>
-                        <input
-                            type="text"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleInputChange}
-                            className={`w-full max-w-full md:max-w-[290px] h-[57px] p-4 border ${styles.inputBorderColor} ${styles.inputBgColor} rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B]`}
-                        />
-                        {errors.lastName && <p className={`mt-1 text-sm ${styles.errorColor}`}>{errors.lastName}</p>}
+        {/* Personal Information */}
+        <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[71%] grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-10 mb-10 md:mb-20">
+          <div className="md:pr-4">
+            <label className="block mb-2 text-sm sm:text-base">{t('firstName')}</label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className={`w-full max-w-full md:max-w-[290px] h-12 sm:h-[57px] p-3 sm:p-4 border ${styles.inputBorderColor} ${styles.inputBgColor} rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-sm sm:text-base`}
+            />
+            {errors.firstName && <p className={`mt-1 text-xs sm:text-sm ${styles.errorColor}`}>{errors.firstName}</p>}
+          </div>
+          
+          <div className="md:pr-4">
+            <label className="block mb-2 text-sm sm:text-base">{t('lastName')}</label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              className={`w-full max-w-full md:max-w-[290px] h-12 sm:h-[57px] p-3 sm:p-4 border ${styles.inputBorderColor} ${styles.inputBgColor} rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-sm sm:text-base`}
+            />
+            {errors.lastName && <p className={`mt-1 text-xs sm:text-sm ${styles.errorColor}`}>{errors.lastName}</p>}
+          </div>
+          
+          <div className="md:pr-4" ref={datePickerRef}>
+            <label className="block mb-2 text-sm sm:text-base">{t('birthDate')}</label>
+            <DatePicker
+              onChange={handleDateChange}
+              value={formData.birthDate}
+              className={theme === 'dark' ? 'react-date-picker dark-theme' : 'react-date-picker'}
+              clearIcon={null}
+              format="dd.MM.yyyy"
+              dayPlaceholder="дд"
+              monthPlaceholder="мм"
+              yearPlaceholder="гггг"
+              maxDate={new Date()}
+            />
+            {errors.birthDate && <p className={`mt-1 text-xs sm:text-sm ${styles.errorColor}`}>{errors.birthDate}</p>}
+          </div>
+          
+          <div className="md:pr-4" ref={genderDropdownRef}>
+            <label className="block mb-2 text-sm sm:text-base">{t('gender')}</label>
+            <div className="relative md:max-w-[290px] h-12 sm:h-[57px]">
+              <button
+                type="button"
+                className={`w-full p-3 sm:p-4 border h-full ${styles.inputBorderColor} ${styles.inputBgColor} rounded-xl sm:rounded-2xl text-left flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-sm sm:text-base`}
+                onClick={() => setIsGenderDropdownOpen(!isGenderDropdownOpen)}
+              >
+                {formData.gender}
+                <ArrowDownIcon size={20} color={theme === 'light' ? '#094A54' : '#FFFFFF'} />
+              </button>
+              
+              {isGenderDropdownOpen && (
+                <div className={`absolute z-10 mt-1 w-full ${styles.dropdownBgColor} rounded-xl sm:rounded-2xl shadow-lg`}>
+                  {genderOptions.map((gender) => (
+                    <div
+                      key={gender}
+                      className={`p-3 ${styles.dropdownHoverColor} cursor-pointer text-sm sm:text-base`}
+                      onClick={() => handleGenderSelect(gender)}
+                    >
+                      {gender}
                     </div>
-        
-                    <div className="md:pr-4">
-                        <label className="block mb-2">{t('birthDate')}</label>
-                        <div className="datepicker-container">
-                            <DatePicker
-                                onChange={handleDateChange}
-                                value={formData.birthDate}
-                                className={theme === 'dark' ? 'react-date-picker dark-theme' : 'react-date-picker'}
-                                clearIcon={null}
-                                format="dd.MM.yyyy"
-                                dayPlaceholder="дд"
-                                monthPlaceholder="мм"
-                                yearPlaceholder="гггг"
-                                maxDate={new Date()}
-                            />
-                        </div>
-                        {errors.birthDate && <p className={`mt-1 text-sm ${styles.errorColor}`}>{errors.birthDate}</p>}
-                    </div>
-       
-                    <div className="md:pr-4" ref={genderDropdownRef}>
-                        <label className="block mb-2">{t('gender')}</label>
-                        <div className="relative md:max-w-[290px] h-[57px]">
-                            <button
-                                type="button"
-                                className={`w-full p-4 border h-[57px] ${styles.inputBorderColor} ${styles.inputBgColor} rounded-2xl text-left flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-[#00C78B]`}
-                                onClick={() => setIsGenderDropdownOpen(!isGenderDropdownOpen)}
-                            >
-                                {formData.gender}
-                                <ArrowDownIcon size={20} color={theme === 'light' ? '#094A54' : '#FFFFFF'} />
-                            </button>
-           
-                            {isGenderDropdownOpen && (
-                                <div className={`absolute z-10 mt-1 w-full ${styles.dropdownBgColor} rounded-2xl shadow-lg`}>
-                                    {genderOptions.map((gender) => (
-                                        <div
-                                            key={gender}
-                                            className={`p-3  ${styles.dropdownHoverColor} cursor-pointer `}
-                                            onClick={() => handleGenderSelect(gender)}
-                                        >
-                                            {gender}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                  ))}
                 </div>
-     
-                {/* Account Information */}
-                <h2 className="text-xl font-medium mb-4 md:mb-6">{t('accountData')}</h2>
-     
-                <div className="mb-10 md:mb-20 w-full md:w-[90%] lg:w-[80%] xl:w-[70%]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="md:col-span-1">
-                            <label className="block mb-2">{t('phoneNumber')}</label>
-                            <div className="mb-2 max-w-full md:max-w-[290px] h-[57px]">
-                                <input
-                                    type="text"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    className={`w-full p-4 border ${styles.inputBorderColor} ${styles.inputBgColor} rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B]`}
-                                    disabled={!isEditingPhone}
-                                />
-                                {errors.phone && <p className={`mt-1 text-sm ${styles.errorColor}`}>{errors.phone}</p>}
-                            </div>
-                            <button
-                                type="button"
-                                className={`${styles.linkColor} ${styles.linkHoverColor} transition-colors`}
-                                onClick={togglePhoneEdit}
-                            >
-                                {isEditingPhone ? t('cancel') : t('changeNumber')}
-                            </button>
-                        </div>
-         
-                        <div className="md:col-span-1 flex items-start mt-4 md:mt-8">
-                            <div className="flex-shrink-0 mr-2 mt-1">
-                                <AlertCircleIcon size={20} color={theme === 'light' ? '#094A54' : '#FFFFFF'} />
-                            </div>
-                            <p className={`text-[14px] max-w-[320px] ${styles.textColorMuted}`}>
-                                {t('phoneChangeInfo')}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-     
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    className={`w-full ] ${styles.buttonBgColor} ${styles.buttonHoverBgColor} text-white py-3 md:py-4 rounded-2xl transition-colors`}
-                >
-                    {t('saveChanges')}
-                </button>
-      
-                {/* Глобальные стили для календаря */}
-                <style jsx global>{`
-        .react-date-picker {
-          width: 290px;
-        }
-        .react-date-picker__wrapper {
-          padding: 1rem 1.25rem;
-          background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
-          border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
-          border-radius: 1rem;
-          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-        }
-        .react-date-picker__inputGroup__input {
-          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-          background: transparent;
-        }
-        .react-date-picker__inputGroup__input::placeholder {
-          color: ${theme === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(9,74,84,0.6)'};
-        }
-        .react-date-picker__button {
-          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-        }
-        .react-date-picker__button:enabled:hover .react-date-picker__button__icon,
-        .react-date-picker__button:enabled:focus .react-date-picker__button__icon {
-          stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-        }
-        .react-date-picker__button svg {
-          stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-        }
-        
-        /* Календарь */
-        .react-calendar {
-          background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
-          border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
-          border-radius: 1rem;
-          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .react-calendar__tile {
-          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-        }
-        .react-calendar__navigation button {
-          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-        }
-        .react-calendar__tile--active {
-          background: var(--light-accent);
-          color: white;
-        }
-        .react-calendar__tile--active:enabled:hover,
-        .react-calendar__tile--active:enabled:focus {
-          background: var(--light-accent);
-        }
-        .react-calendar__tile:enabled:hover,
-        .react-calendar__tile:enabled:focus {
-          background-color: ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(9,74,84,0.1)'};
-        }
-        .react-calendar__month-view__days__day--weekend {
-          color: ${theme === 'dark' ? '#FF9999' : '#D00000'};
-        }
-        .react-calendar__month-view__days__day--neighboringMonth {
-          color: ${theme === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(9,74,84,0.3)'};
-        }
-      `}</style>
-            </form>
+              )}
+            </div>
+          </div>
         </div>
-    );
+        
+        {/* Account Information */}
+        <h2 className="text-lg sm:text-xl font-medium mb-4 md:mb-6">{t('accountData')}</h2>
+        
+        <div className="mb-10 md:mb-20 w-full md:w-[90%] lg:w-[80%] xl:w-[70%]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-1">
+              <label className="block mb-2 text-sm sm:text-base">{t('phoneNumber')}</label>
+              <div className="mb-2 max-w-full md:max-w-[290px] h-12 sm:h-[57px]">
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className={`w-full p-3 sm:p-4 border h-full ${styles.inputBorderColor} ${styles.inputBgColor} rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-sm sm:text-base`}
+                  disabled={!isEditingPhone}
+                />
+                {errors.phone && <p className={`mt-1 text-xs sm:text-sm ${styles.errorColor}`}>{errors.phone}</p>}
+              </div>
+              <button
+                type="button"
+                className={`${styles.linkColor} ${styles.linkHoverColor} transition-colors text-sm sm:text-base`}
+                onClick={togglePhoneEdit}
+              >
+                {isEditingPhone ? t('cancel') : t('changeNumber')}
+              </button>
+            </div>
+            
+            <div className="md:col-span-1 flex items-start mt-2 md:mt-8">
+              <div className="flex-shrink-0 mr-2 mt-1">
+                <AlertCircleIcon size={18} color={theme === 'light' ? '#094A54' : '#FFFFFF'} />
+              </div>
+              <p className={`text-xs sm:text-sm ${styles.textColorMuted}`}>
+                {t('phoneChangeInfo')}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className={`w-full ${styles.buttonBgColor} ${styles.buttonHoverBgColor} text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-colors text-sm sm:text-base font-medium`}
+        >
+          {t('saveChanges')}
+        </button>
+        
+        {/* Глобальные стили для календаря */}
+        <style jsx global>{`
+          .react-date-picker {
+            width: 290px;
+          }
+          @media (max-width: 1300px) {
+            .react-date-picker {
+              width: 100%;
+              max-width: 100%;
+            }
+          }
+          .react-date-picker__wrapper {
+            padding: 1rem 1.25rem;
+            background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
+            border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
+            border-radius: 1rem;
+            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          }
+          @media (max-width: 768px) {
+            .react-date-picker__wrapper {
+              padding: 0.75rem 1rem;
+              border-radius: 0.75rem;
+            }
+          }
+          .react-date-picker__inputGroup__input {
+            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+            background: transparent;
+          }
+          @media (max-width: 768px) {
+            .react-date-picker__inputGroup__input {
+              font-size: 14px;
+            }
+          }
+          .react-date-picker__inputGroup__input::placeholder {
+            color: ${theme === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(9,74,84,0.6)'};
+          }
+          .react-date-picker__button {
+            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          }
+          .react-date-picker__button:enabled:hover .react-date-picker__button__icon,
+          .react-date-picker__button:enabled:focus .react-date-picker__button__icon {
+            stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          }
+          .react-date-picker__button svg {
+            stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          }
+          
+          /* Календарь */
+          .react-calendar {
+            background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
+            border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
+            border-radius: 1rem;
+            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          }
+          @media (max-width: 768px) {
+            .react-calendar {
+              width: 280px !important;
+              font-size: 0.875rem;
+            }
+            .react-calendar__tile {
+              padding: 0.5rem;
+              height: 2.5rem;
+            }
+            .react-calendar__navigation button {
+              font-size: 0.875rem;
+            }
+          }
+          .react-calendar__tile {
+            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          }
+          .react-calendar__navigation button {
+            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          }
+          .react-calendar__tile--active {
+            background: var(--light-accent);
+            color: white;
+          }
+          .react-calendar__tile--active:enabled:hover,
+          .react-calendar__tile--active:enabled:focus {
+            background: var(--light-accent);
+          }
+          .react-calendar__tile:enabled:hover,
+          .react-calendar__tile:enabled:focus {
+            background-color: ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(9,74,84,0.1)'};
+          }
+          .react-calendar__month-view__days__day--weekend {
+            color: ${theme === 'dark' ? '#FF9999' : '#D00000'};
+          }
+          .react-calendar__month-view__days__day--neighboringMonth {
+            color: ${theme === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(9,74,84,0.3)'};
+          }
+        `}</style>
+      </form>
+    </div>
+  );
 }
