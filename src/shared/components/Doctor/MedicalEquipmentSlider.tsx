@@ -111,17 +111,19 @@ export const MedicalEquipmentSlider = () => {
   ];
 
   return (
-    <div className="py-16">
+    <div className="pt-16">
       <UniversalSlider
         slides={slides}
         title={titleComponent}
         description={descriptionComponent}
-        slidesPerView={1}
+       slidesPerView={1}
+        slidesPerMobileView={1}
         spaceBetween={20}
         showNavigation={true}
         navigationPrevLabel={t('prevSlide')}
         navigationNextLabel={t('nextSlide')}
         showPagination={false}
+        loop={true} 
         className="medical-equipment-slider"
       />
     </div>

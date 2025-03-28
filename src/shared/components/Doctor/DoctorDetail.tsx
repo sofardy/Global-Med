@@ -7,6 +7,7 @@ import { AnimatedButton, AnimatedButtonWrapper } from '../../ui/Button/AnimatedB
 import CertificatesSlider from './CertificateCard';
 import AppointmentScheduler from './AppointmentScheduler';
 import { ContactInfo } from '../ContactInfo';
+import { useRouter } from 'next/navigation';
 
 // Define types for the doctor data
 export interface Education {
@@ -147,11 +148,13 @@ interface DoctorDetailProps {
 // Основной компонент деталей врача, включающий секцию сертификатов
 export default function DoctorDetail({ doctor }: DoctorDetailProps): React.ReactElement {
   const { t } = useTranslation<LocaleMessages>(translations);
+  const router = useRouter();
   
   // Функция для перехода на страницу записи
   const handleAppointment = (): void => {
-    // Перенаправление на страницу записи с ID доктора
-    window.location.href = `/appointment?doctor=${doctor.id || ''}`;
+    // Перенаправление на страницу записи без привязки к конкретному ID доктора
+    // Используем имя и специализацию для идентификации
+    router.push('/appointment');
   };
   
   return (
@@ -252,47 +255,49 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
       </div>
       
       {/* Образование */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-        {/* Основное образование */}
-        <div className="bg-white dark:bg-dark-block rounded-[24px] p-12 shadow-sm">
-          <h2 className="text-[24px] font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-            {t('basicEducation')}
-          </h2>
-          
-          <div className="space-y-6">
-            {doctor.basicEducation && doctor.basicEducation.map((edu, index) => (
-              <div key={index} className="pb-4 last:pb-0">
-                <div className="font-medium text-[18px] text-[#23464e] dark:text-white mb-1">
-                  {edu.years}
-                </div>
-                <div className="text-[#23464e] text-[18px] dark:text-white opacity-80">
-                  {edu.institution}
-                </div>
-              </div>
-            ))}
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+  {/* Обертка с flex-col и h-full для обоих блоков */}
+  {/* Основное образование */}
+  <div className="bg-white dark:bg-dark-block rounded-[24px] p-12 shadow-sm flex flex-col h-full">
+    <h2 className="text-[24px] font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+      {t('basicEducation')}
+    </h2>
+    
+    {/* flex-grow-1 позволяет содержимому занимать всё доступное пространство */}
+    <div className="space-y-6 flex-grow">
+      {doctor.basicEducation && doctor.basicEducation.map((edu, index) => (
+        <div key={index} className="pb-4 last:pb-0">
+          <div className="font-medium text-[18px] text-[#23464e] dark:text-white mb-1">
+            {edu.years}
+          </div>
+          <div className="text-[#23464e] text-[18px] dark:text-white opacity-80">
+            {edu.institution}
           </div>
         </div>
-        
-        {/* Дополнительное образование */}
-        <div className="bg-white dark:bg-dark-block rounded-[24px] p-12 shadow-sm">
-          <h2 className="text-[24px] font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-            {t('additionalEducation')}
-          </h2>
-          
-          <div className="space-y-6">
-            {doctor.additionalEducation && doctor.additionalEducation.map((edu, index) => (
-              <div key={index} className="pb-4 last:pb-0">
-                <div className="font-medium text-[18px] text-[#23464e] dark:text-white mb-1">
-                  {edu.course}
-                </div>
-                <div className="text-[#23464e] text-[18px] dark:text-white opacity-80">
-                  {edu.institution}
-                </div>
-              </div>
-            ))}
+      ))}
+    </div>
+  </div>
+  
+  {/* Дополнительное образование */}
+  <div className="bg-white dark:bg-dark-block rounded-[24px] p-12 shadow-sm flex flex-col h-full">
+    <h2 className="text-[24px] font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+      {t('additionalEducation')}
+    </h2>
+    
+    <div className="space-y-6 flex-grow">
+      {doctor.additionalEducation && doctor.additionalEducation.map((edu, index) => (
+        <div key={index} className="pb-4 last:pb-0">
+          <div className="font-medium text-[18px] text-[#23464e] dark:text-white mb-1">
+            {edu.course}
+          </div>
+          <div className="text-[#23464e] text-[18px] dark:text-white opacity-80">
+            {edu.institution}
           </div>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
       
       {/* Секция сертификатов - используем реальные данные врача или тестовые */}
       <CertificatesSlider 

@@ -422,17 +422,6 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
         .swiper-button-next-custom:hover svg {
           color: white !important;
         }
-        
-        /* Специальные переопределения для конкретных слайдеров */
-        .certificates-slider .swiper-button-next-custom,
-        .certificates-slider .swiper-button-prev-custom,
-        .reviews-slider .swiper-button-next-custom,
-        .reviews-slider .swiper-button-prev-custom,
-        .analysis-slider .swiper-button-next-custom,
-        .analysis-slider .swiper-button-prev-custom {
-          background-color: transparent !important;
-        }
-        
         @media (max-width: ${mobileBreakpoint}px) {
           .universal-slider {
             overflow-x: hidden !important;

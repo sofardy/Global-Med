@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { UniversalSlider } from '@/src/shared/components/UniversalSlider';
 import { useThemeStore } from '@/src/store/theme';
@@ -53,8 +53,6 @@ export const CertificatesSlider: React.FC<CertificatesSliderProps> = ({
   className = '',
 }) => {
   const { theme } = useThemeStore();
-  const prevButtonRef = useRef(null);
-  const nextButtonRef = useRef(null);
   
   // Состояние для модального окна с увеличенным изображением
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
@@ -62,18 +60,6 @@ export const CertificatesSlider: React.FC<CertificatesSliderProps> = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
-  
-  // Разделение заголовка на строки
-  const titleParts = title.split(' и ');
-  const titleLines = titleParts.length > 1 
-    ? [titleParts[0], 'и ' + titleParts[1]] 
-    : [title];
-  
-  // Разделение описания на две строки
-  const descriptionWords = description.split(' ');
-  const halfLength = Math.ceil(descriptionWords.length / 2);
-  const descriptionLine1 = descriptionWords.slice(0, halfLength).join(' ');
-  const descriptionLine2 = descriptionWords.slice(halfLength).join(' ');
   
   // Обработчик открытия увеличенного изображения
   const handleImageClick = (index: number) => {
@@ -175,7 +161,7 @@ export const CertificatesSlider: React.FC<CertificatesSliderProps> = ({
     setPosition({ x: 0, y: 0 });
   };
   
-  // Создаем компонент карточки
+  // Создаем компонент карточки для слайдов
   const CertificateCard = ({ imageUrl, title, expiryDate, index }: Certificate & { index: number }) => (
     <div className={`flex flex-col h-full rounded-2xl overflow-hidden ${theme === 'light' ? 'bg-white' : 'bg-dark-block'} p-6`}>
       <div 
@@ -222,89 +208,57 @@ export const CertificatesSlider: React.FC<CertificatesSliderProps> = ({
       />
     </div>
   ));
+  
+  // Компоненты заголовка и описания для передачи в UniversalSlider
+  const titleComponent = (
+    <h2 className="text-3xl md:text-5xl font-medium text-[#173F46] dark:text-white mb-4">
+      {title.split(' и ').map((part, index, arr) => (
+        <span key={index} className="block">
+          {index === 1 && arr.length > 1 ? 'и ' + part : part}
+        </span>
+      ))}
+    </h2>
+  );
+  
+  const descriptionComponent = (
+    <p className="text-base md:text-lg text-[#173F46] dark:text-white mb-6">
+      {description}
+    </p>
+  );
 
   return (
     <div className={`mb-[150px] mt-[150px] ${className}`}>
-      <div>
-        <div className="flex flex-col md:flex-row mb-12">
-          <div className="md:w-1/2 mb-4 md:mb-0 pr-4">
-            <h2 className="text-3xl md:text-5xl font-medium text-[#173F46] dark:text-white">
-              {titleLines.map((line, index) => (
-                <span key={index} className="block">{line}</span>
-              ))}
-            </h2>
-          </div>
-          <div className="md:w-1/2 pl-4">
-            <p className="text-base md:text-lg text-[#173F46] dark:text-white mb-6">
-              <span className="block">{descriptionLine1}</span>
-              <span className="block">{descriptionLine2}</span>
-            </p>
-            
-            <div className="flex items-center gap-2">
-              <button
-                ref={prevButtonRef}
-                className="w-12 h-12 rounded-lg border border-gray-300 flex items-center justify-center swiper-button-prev-custom"
-                aria-label="Предыдущий сертификат"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              
-              <button
-                ref={nextButtonRef}
-                className="w-12 h-12 rounded-lg bg-light-accent text-white flex items-center justify-center swiper-button-next-custom"
-                aria-label="Следующий сертификат"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="certificates-slider-wrapper">
-          <UniversalSlider
-            slides={slides}
-            slidesPerView={4}
-            slidesPerMobileView={1}
-            spaceBetween={24}
-            showNavigation={false}
-            showPagination={false}
-            className="certificates-slider"
-            onInit={(swiper) => {
-              if (prevButtonRef.current && typeof swiper.params.navigation !== 'boolean') {
-                swiper.params.navigation.prevEl = prevButtonRef.current;
-              }
-              if (nextButtonRef.current && typeof swiper.params.navigation !== 'boolean') {
-                swiper.params.navigation.nextEl = nextButtonRef.current;
-              }
-              swiper.navigation.init();
-              swiper.navigation.update();
-            }}
-            breakpoints={{
-              640: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              768: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 24,
-              },
-            }}
-          />
-        </div>
-      </div>
+      <UniversalSlider
+        slides={slides}
+        title={titleComponent}
+        description={descriptionComponent}
+        slidesPerView={4}
+        slidesPerMobileView={1}
+        spaceBetween={24}
+        showNavigation={true}
+        showPagination={false}
+        loop={true}
+        className="certificates-slider"
+        breakpoints={{
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          768: {
+            slidesPerView: 3,
+            spaceBetween: 20,
+          },
+          1024: {
+            slidesPerView: 4,
+            spaceBetween: 24,
+          },
+        }}
+      />
       
       {/* Полноэкранный просмотр изображения с контролами */}
       {activeImageIndex !== null && certificates[activeImageIndex] && (
         <div 
-          className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center"
           onClick={handleCloseZoom}
         >
           {/* Верхняя панель */}

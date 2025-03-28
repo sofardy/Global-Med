@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { UniversalSlider } from '@/src/shared/components/UniversalSlider';
 import { useTranslation } from '@/src/hooks/useTranslation';
@@ -21,7 +21,7 @@ const translations = {
       },
       {
         id: 'admin2',
-        name: 'Андреев Виктор Сергеевич',
+        name: 'Андреев Сергеевич Сергеевич',
         position: 'Главный врач',
       },
       {
@@ -31,29 +31,14 @@ const translations = {
       },
       {
         id: 'admin4',
-        name: 'Андреев Виктор Сергеевич',
+        name: 'Андреев Сергеевич Сергеевич',
         position: 'Главный врач',
       },
       {
         id: 'admin5',
-        name: 'Петров Иван Николаевич',
-        position: 'Заместитель главного врача',
+        name: 'Андреев Сергеевич Сергеевич',
+        position: 'Главный врач',
       },
-      {
-        id: 'admin6',
-        name: 'Сидорова Анна Михайловна',
-        position: 'Главная медсестра',
-      },
-      {
-        id: 'admin7',
-        name: 'Козлов Сергей Дмитриевич',
-        position: 'Руководитель отдела',
-      },
-      {
-        id: 'admin8',
-        name: 'Новикова Елена Павловна',
-        position: 'Администратор',
-      }
     ]
   },
   uz: {
@@ -94,8 +79,6 @@ const translations = {
 export const AdministrationSlider = () => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
-  const prevButtonRef = useRef(null);
-  const nextButtonRef = useRef(null);
   
   // Получаем локализованные данные
   const administration = t('administration', { returnObjects: true }) as any[];
@@ -118,6 +101,23 @@ export const AdministrationSlider = () => {
     words.slice(wordsPerLine, wordsPerLine * 2).join(' '),
     words.slice(wordsPerLine * 2).join(' ')
   ];
+  
+  // Создаем компоненты заголовка и описания
+  const titleComponent = (
+    <h2 className="text-3xl md:text-5xl font-medium text-[#173F46] dark:text-white">
+      {titleLines.map((line, index) => (
+        <span key={index} className="block">{line}</span>
+      ))}
+    </h2>
+  );
+  
+  const descriptionComponent = (
+    <p className="text-base md:text-lg text-[#173F46] dark:text-white">
+      {descriptionLines.map((line, index) => (
+        <span key={index} className="block">{line}</span>
+      ))}
+    </p>
+  );
   
   // Создаем компонент карточки и слайды
   const AdminCard = ({ name, position }: { name: string; position: string }) => (
@@ -145,68 +145,20 @@ export const AdministrationSlider = () => {
 
   return (
     <div className='mb-[150px] mt-[150px]'>
-      <div>
-        <div className="flex flex-col md:flex-row mb-12">
-          <div className="md:w-1/2 mb-4 md:mb-0 pr-4">
-            <h2 className="text-3xl md:text-5xl font-medium text-[#173F46] dark:text-white">
-              {titleLines.map((line, index) => (
-                <span key={index} className="block">{line}</span>
-              ))}
-            </h2>
-          </div>
-          <div className="md:w-1/2 pl-4">
-            <p className="text-base md:text-lg text-[#173F46] dark:text-white mb-6">
-              {descriptionLines.map((line, index) => (
-                <span key={index} className="block">{line}</span>
-              ))}
-            </p>
-            
-            <div className="flex items-center gap-2">
-              <button
-                ref={prevButtonRef}
-                className="w-12 h-12 rounded-lg border border-gray-300 flex items-center justify-center swiper-button-prev-custom"
-                aria-label={t('prevSlide')}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              
-              <button
-                ref={nextButtonRef}
-                className="w-12 h-12 rounded-lg bg-light-accent text-white flex items-center justify-center swiper-button-next-custom"
-                aria-label={t('nextSlide')}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="administration-slider-wrapper">
-          <UniversalSlider
-            slides={slides}
-            slidesPerView={4}
-            slidesPerMobileView={1}
-            spaceBetween={20}
-            showNavigation={false}
-            showPagination={false}
-            className="administration-slider"
-            onInit={(swiper) => {
-              if (prevButtonRef.current && typeof swiper.params.navigation !== 'boolean') {
-                swiper.params.navigation.prevEl = prevButtonRef.current;
-              }
-              if (nextButtonRef.current && typeof swiper.params.navigation !== 'boolean') {
-                swiper.params.navigation.nextEl = nextButtonRef.current;
-              }
-              swiper.navigation.init();
-              swiper.navigation.update();
-            }}
-          />
-        </div>
-      </div>
+      <UniversalSlider
+        slides={slides}
+        title={titleComponent}
+        description={descriptionComponent}
+        slidesPerView={4}
+        slidesPerMobileView={1}
+        spaceBetween={20}
+        showNavigation={true}
+        navigationPrevLabel={t('prevSlide')}
+        navigationNextLabel={t('nextSlide')}
+        showPagination={false}
+        className="administration-slider"
+        loop={true} 
+      />
     </div>
   );
 };

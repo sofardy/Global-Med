@@ -133,20 +133,22 @@ export const SurgerySlider: React.FC<SurgerySliderProps> = ({
 
   // Использование универсального слайдера
   return (
-    <UniversalSlider
-      slides={slides}
-      title={titleComponent}
-      description={descriptionComponent}
-      slidesPerView={1}
-      slidesPerMobileView={1}
-      mobileBreakpoint={992}
-      spaceBetween={24}
-      showNavigation={true}
-      navigationPrevLabel={t('prevSlide')}
-      navigationNextLabel={t('nextSlide')}
-      showPagination={false}
-      className={`${className} surgery-slider mt-20`}
-      slideClassName="h-full"
-    />
+ <UniversalSlider
+  slides={slides}
+  title={titleComponent}
+  description={descriptionComponent}
+  slidesPerView={1}
+  slidesPerMobileView={1}
+  mobileBreakpoint={992}
+  spaceBetween={24}
+  showNavigation={true}
+  navigationPrevLabel={t('prevSlide')}
+  navigationNextLabel={t('nextSlide')}
+  showPagination={false}
+  speed={400} // Уменьшите скорость для более предсказуемого перехода
+  loop={true}
+  className={`${className} surgery-slider mt-20`}
+  slideClassName="h-full"
+/>
   );
 };

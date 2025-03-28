@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useThemeStore } from '@/src/store/theme';
+import { useInView } from 'react-intersection-observer';
 
 interface InfoCardProps {
   title: string;
@@ -10,6 +11,7 @@ interface InfoCardProps {
   hasDot?: boolean;
   className?: string;
   isWide?: boolean;
+  isNumeric?: boolean;
 }
 
 interface UniversalHeroSectionProps {
@@ -22,25 +24,96 @@ interface UniversalHeroSectionProps {
   secondaryCards: {
     title: string;
     description: string;
+    isNumeric?: boolean;
   }[];
   className?: string;
 }
 
+interface AnimatedCounterProps {
+  end: string;
+  duration?: number;
+  className?: string;
+}
+
+// Компонент анимированного счётчика
+const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ 
+  end, 
+  duration = 4000, 
+  className = '' 
+}) => {
+  const [count, setCount] = useState<number>(0);
+  const countRef = useRef<number>(0);
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+  
+  useEffect(() => {
+    if (!inView) return;
+    
+    // Проверяем, числовое ли значение
+    const numericEnd: number = parseInt(end.replace(/\D/g, ''));
+    if (isNaN(numericEnd)) return;
+    
+    let startTime: number | null = null;
+    let animationFrame: number;
+    
+    const animate = (timestamp: number): void => {
+      if (!startTime) startTime = timestamp;
+      const progress: number = timestamp - startTime;
+      
+      // Вычисляем текущее значение счётчика с учётом интерполяции
+      // Используем easeOutQuad для более естественной анимации
+      const easeOutQuad = (t: number): number => t * (2 - t);
+      const percentage: number = Math.min(easeOutQuad(progress / duration), 1);
+      countRef.current = Math.floor(percentage * numericEnd);
+      
+      // Обновляем состояние для рендеринга
+      setCount(countRef.current);
+      
+      // Продолжаем анимацию если не достигли конца
+      if (progress < duration) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setCount(numericEnd);
+      }
+    };
+    
+    animationFrame = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [inView, end, duration]);
+  
+  // Получаем формат числа (с единицами измерения, если они есть)
+  const formatResult = (): string => {
+    const numericValue: number = parseInt(end.replace(/\D/g, ''));
+    const suffix: string = end.replace(/[0-9]/g, '');
+    return `${count}${suffix}`;
+  };
+  
+  return <span ref={ref} className={className}>{formatResult()}</span>;
+};
+
 // Компонент информационной карточки
-function InfoCard({ 
+const InfoCard: React.FC<InfoCardProps> = ({ 
   title, 
   description, 
   hasDot = false,
   isWide = false,
+  isNumeric = false,
   className = '' 
-}: InfoCardProps) {
+}) => {
   const { theme } = useThemeStore();
-  const [isHovered, setIsHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   
   // Определение мобильного устройства
   useEffect(() => {
-    const checkMobile = () => {
+    const checkMobile = (): void => {
       setIsMobile(window.innerWidth < 768);
     };
     
@@ -85,7 +158,14 @@ function InfoCard({
             ? 'text-white'
             : theme === 'light' ? 'text-light-text' : 'text-dark-text'
         }`}>
-          {title}
+          {isNumeric ? (
+            <AnimatedCounter 
+              end={title} 
+              className="inline-block"
+            />
+          ) : (
+            title
+          )}
         </h3>
         <p className={`text-xs sm:text-sm md:text-base lg:text-lg mt-1 sm:mt-2 md:mt-3 transition-colors line-clamp-3 sm:line-clamp-4 md:line-clamp-none ${
           isHovered 
@@ -97,16 +177,16 @@ function InfoCard({
       </div>
     </div>
   );
-}
+};
 
 // Основной компонент
-function UniversalHeroSection({
+const UniversalHeroSection: React.FC<UniversalHeroSectionProps> = ({
   imageUrl,
   imageAlt,
   mainCard,
   secondaryCards,
   className = ''
-}: UniversalHeroSectionProps) {
+}) => {
   return (
     <div className={`w-full ${className}`}>
       {/* Полноширинное изображение */}
@@ -140,6 +220,7 @@ function UniversalHeroSection({
               title={card.title}
               description={card.description}
               hasDot={true}
+              isNumeric={card.isNumeric || /^\d+/.test(card.title)}
               className="col-span-1"
             />
           ))}
@@ -147,6 +228,6 @@ function UniversalHeroSection({
       </div>
     </div>
   );
-}
+};
 
 export default UniversalHeroSection;

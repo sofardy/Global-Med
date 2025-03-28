@@ -43,6 +43,12 @@ const translations = {
         specialization: 'Кардиолог',
         image: '/images/doctor-4.png',
       },
+      {
+        id: 'ishbekova2',
+        name: 'Зулайхо Ишбекова',
+        specialization: 'Кардиолог',
+        image: '/images/doctor-4.png',
+      },
     ]
   },
   uz: {
@@ -154,19 +160,20 @@ export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
   ));
   
   return (
-    <UniversalSlider
-      slides={slides}
-      title={titleComponent}
-      description={descriptionComponent}
-      slidesPerView={4}
-      slidesPerMobileView={1}
-      spaceBetween={20}
-      showNavigation={true}
-      navigationPrevLabel={t('prevSlide')}
-      navigationNextLabel={t('nextSlide')}
-      showPagination={false}
-      className={`${className} doctors-slider`}
-      wrapperClassName="mt-20"
-    />
+  <UniversalSlider
+    slides={slides}
+    title={titleComponent}
+    description={descriptionComponent}
+    slidesPerView={4}
+    slidesPerMobileView={1}
+    spaceBetween={20}
+    showNavigation={true}
+    navigationPrevLabel={t('prevSlide')}
+    navigationNextLabel={t('nextSlide')}
+    showPagination={false}
+    loop={true}
+    className={`${className} doctors-slider`}
+    wrapperClassName="mt-20"
+  />
   );
 };

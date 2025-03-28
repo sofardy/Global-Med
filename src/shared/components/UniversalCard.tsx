@@ -213,8 +213,8 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     : (titleSize || 'text-xl sm:text-2xl md:text-[24px] leading-tight sm:leading-normal md:leading-[1.2]');
 
   const descriptionSizeClass = isMobile 
-    ? 'text-sm sm:text-base md:text-[18px] leading-tight sm:leading-normal md:leading-[1.4]'
-    : (descriptionSize || 'text-base sm:text-lg md:text-[18px] leading-tight sm:leading-normal md:leading-[1.4]');
+    ? 'text-sm sm:text-base md:text-[18px]  leading-tight sm:leading-normal md:leading-[1.4]'
+    : (descriptionSize || 'text-base sm:text-lg md:text-[16px] leading-tight sm:leading-normal md:leading-[1.4]');
 
   // Класс для стиля списка
   const getListStyleClass = () => {
@@ -462,7 +462,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   } else if (variant === 'analysis-card') {
     return (
       <div 
-        className={`${cardClasses} flex flex-col min-h-[320px]`}
+        className={`${cardClasses} flex flex-col`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
@@ -471,12 +471,12 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       >
         <div className="flex flex-col justify-between h-full">
           {/* Заголовок вверху */}
-          <h3 className={`${titleSizeClass} font-medium ${titleColor}`}>
+          <h3 className={`${titleSizeClass}  font-medium ${titleColor}`}>
             {title}
           </h3>
           
           {/* Иконка по центру */}
-          <div className="flex items-center justify-center flex-grow">
+          <div className="flex items-center justify-center mb-10 mt-10 flex-grow">
             {processedIcon}
           </div>
           
@@ -580,19 +580,19 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       
       {/* Заголовок */}
       <div className="flex flex-col flex-grow leading-normal">
-        <h3 className={`${titleSizeClass} w-[70%] font-medium mb-2 ${titleColor} leading-tight`} style={styles.title}>
+        <h3 className={`${titleSizeClass} w-[70%] h-[60px] font-medium mb-2 ${titleColor} leading-tight`} style={styles.title}>
           {title}
         </h3>
         
         {/* Специфичная структура для каждого варианта */}
         {variant === 'analysis' ? (
           // Для анализов: заголовок → иконка → подзаголовок → описание
-          <>
+          <div className='flex flex-col justify-between  h-full'>
             <IconBlock />
             <SubtitleBlock />
             <DescriptionBlock />
             <AdditionalInfoBlock />
-          </>
+          </div>
         ) : variant === 'service' ? (
           // Для услуг: заголовок → описание → доп.инфо (количество услуг) → иконка
           <>

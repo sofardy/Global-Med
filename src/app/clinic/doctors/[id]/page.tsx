@@ -30,49 +30,56 @@ interface DoctorsDataStore {
  [key: string]: Doctor;
 }
 
-// Временное моковое хранилище
-const doctorsData: DoctorsDataStore = {
- '1': {
-   id: '1',
-   name: 'Мирбабаева Саодат Аманбаевна',
-   specialization: 'Акушер-гинеколог, врач ультразвуковой диагностики',
-   qualification: 'кандидат медицинских наук',
-   category: 'высшая',
-   languages: 'узбекский, русский',
-   experience: '21 год',
-   appointmentCost: 'от 125 000 сум',
-   photoUrl: '/images/doctor-img.png',
-   basicEducation: [
-     {
-       years: '1993-1999',
-       institution: 'Ошский Государственный университет'
-     },
-     {
-       years: '1999-2001',
-       institution: 'Казанская государственная медицинская академия'
-     },
-     {
-       years: '2002-2004',
-       institution: 'Федеральное государственное бюджетное образовательное учреждение высшего образования «Башкирский государственный медицинский университет» Министерства здравоохранения Российской Федерации'
-     }
-   ],
-   additionalEducation: [
-     {
-       course: 'Курс «Актуальные вопросы перинатальной медицины»',
-       institution: 'ФГАОУВО «Российский университет дружбы народов», г. Санкт-Петербург'
-     },
-     {
-       course: 'Курс «Лапароскопия в акушерстве и гинекологии»',
-       institution: 'ФГБОУВО «Первый Санкт-Петербургский медицинский университет имени академика И.П. Павлова»'
-     },
-     {
-       course: 'Курс «Пренатальный скрининг первого триместра»',
-       institution: 'ЧОУ ДПО «Северо-Западная Высшая медицинская школа»'
-     }
-   ]
- },
- // Здесь могут быть другие доктора
+// Временное моковое хранилище с одним доктором
+const defaultDoctor = {
+  id: '1',
+  name: 'Мирбабаева Саодат Аманбаевна',
+  specialization: 'Акушер-гинеколог, врач ультразвуковой диагностики',
+  qualification: 'кандидат медицинских наук',
+  category: 'высшая',
+  languages: 'узбекский, русский',
+  experience: '21 год',
+  appointmentCost: 'от 125 000 сум',
+  photoUrl: '/images/doctor-img.png',
+  basicEducation: [
+    {
+      years: '1993-1999',
+      institution: 'Ошский Государственный университет'
+    },
+    {
+      years: '1999-2001',
+      institution: 'Казанская государственная медицинская академия'
+    },
+    {
+      years: '2002-2004',
+      institution: 'Федеральное государственное бюджетное образовательное учреждение высшего образования «Башкирский государственный медицинский университет» Министерства здравоохранения Российской Федерации'
+    }
+  ],
+  additionalEducation: [
+    {
+      course: 'Курс «Актуальные вопросы перинатальной медицины»',
+      institution: 'ФГАОУВО «Российский университет дружбы народов», г. Санкт-Петербург'
+    },
+    {
+      course: 'Курс «Лапароскопия в акушерстве и гинекологии»',
+      institution: 'ФГБОУВО «Первый Санкт-Петербургский медицинский университет имени академика И.П. Павлова»'
+    },
+    {
+      course: 'Курс «Пренатальный скрининг первого триместра»',
+      institution: 'ЧОУ ДПО «Северо-Западная Высшая медицинская школа»'
+    }
+  ]
 };
+
+// Заполняем хранилище одним доктором для разных ID
+const doctorsData: DoctorsDataStore = {};
+// Добавляем доктора для ID от 1 до 10
+for (let i = 1; i <= 10; i++) {
+  doctorsData[i.toString()] = {
+    ...defaultDoctor,
+    id: i.toString()
+  };
+}
 
 export default function DoctorDetailPage(): JSX.Element {
  const params = useParams();
@@ -96,24 +103,31 @@ export default function DoctorDetailPage(): JSX.Element {
            throw new Error('Некорректный идентификатор доктора');
          }
          
-         const data = doctorsData[doctorId];
-         
-         if (!data) {
-           throw new Error('Доктор не найден');
+         // Проверяем, есть ли доктор с указанным ID
+         if (doctorsData[doctorId]) {
+           setDoctor(doctorsData[doctorId]);
+         } else {
+           // Если нет, возвращаем дефолтного доктора
+           console.log(`Доктор с ID ${doctorId} не найден, возвращаем дефолтного доктора`);
+           setDoctor(defaultDoctor);
          }
          
-         setDoctor(data);
          setLoading(false);
        }, 500);
      } catch (err) {
-       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
-       setError(errorMessage);
+       console.error('Ошибка при загрузке доктора:', err);
+       // В случае ошибки всё равно показываем дефолтного доктора
+       setDoctor(defaultDoctor);
        setLoading(false);
      }
    };
 
    if (id) {
      fetchDoctor();
+   } else {
+     // Если ID не указан, показываем дефолтного доктора
+     setDoctor(defaultDoctor);
+     setLoading(false);
    }
  }, [id]);
 
@@ -128,19 +142,9 @@ export default function DoctorDetailPage(): JSX.Element {
    );
  }
 
- if (error || !doctor) {
-   return (
-     <div className="container mx-auto py-10 flex items-center justify-center min-h-[60vh]">
-       <div className="text-center">
-         <h2 className="text-2xl font-medium text-light-text dark:text-dark-text mb-4">
-           {error || 'Доктор не найден'}
-         </h2>
-         <p className="text-light-text/70 dark:text-dark-text/70">
-           Возможно, указан неверный идентификатор или доктор был удален
-         </p>
-       </div>
-     </div>
-   );
+ // Если возникла ошибка или доктор не найден, показываем дефолтного доктора
+ if (!doctor) {
+   return <DoctorDetail doctor={defaultDoctor} />;
  }
 
  return <DoctorDetail doctor={doctor} />;
