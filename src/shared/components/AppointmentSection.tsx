@@ -82,7 +82,7 @@ export const AppointmentSection: React.FC<AppointmentSectionProps> = ({
 
   return (
     <>
-      <div className={`w-full flex flex-col md:flex-row gap-5 mt-6 sm:mt-8 md:mt-40 mb-6 sm:mb-8 md:mb-40 overflow-hidden ${className}`}>
+      <div className={`w-full flex flex-col md:flex-row gap-5 mt-6 sm:mt-8 md:mt-40 mb-6 sm:mb-8 md:mb-40 ${className}`}>
         {/* Левая колонка - информация (25%) */}
         <div className={`p-6 md:p-8 rounded-2xl ${theme === 'dark' ? 'bg-dark-block' : 'bg-light-block'} md:w-1/4`}>
           <div>

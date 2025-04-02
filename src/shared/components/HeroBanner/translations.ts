@@ -57,7 +57,8 @@ export const heroTranslations = {
             purposeOptions: {
                 consultation: 'Консультация врача',
                 analysis: 'Сдача анализов',
-                checkup: 'Прохождение чек-апа'
+                checkup: 'Прохождение чек-апа',
+                legalPersons:'Юр. лицам',
             },
             nameError: 'Пожалуйста, введите имя',
             phoneError: 'Пожалуйста, введите корректный номер телефона',
@@ -121,7 +122,8 @@ export const heroTranslations = {
             purposeOptions: {
                 consultation: 'Shifokor maslahati',
                 analysis: 'Tahlil topshirish',
-                checkup: 'Tekshiruvdan o\'tish'
+                checkup: 'Tekshiruvdan o\'tish',
+                legalPersons:'Yuridik shaxslar',
             },
             nameError: 'Iltimos, ismingizni kiriting',
             phoneError: 'Iltimos, to\'g\'ri telefon raqamini kiriting',

@@ -32,7 +32,7 @@ export default function ClientLayout({ children, routes }: ClientLayoutProps) {
         {children}
       </main>
       
-      {!hideHeaderFooter && <ThemeToggle />}
+      {/* {!hideHeaderFooter && <ThemeToggle />} */}
       {!hideHeaderFooter && <Footer />}
     </div>
   );

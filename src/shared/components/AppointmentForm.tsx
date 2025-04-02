@@ -224,7 +224,7 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
             
             {/* Выпадающий список */}
             {isPurposeOpen && (
-              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700 py-1 max-h-52 overflow-auto">
+              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700 py-1 max-h-[200px] overflow-auto">
                 {Object.entries(t('modal.purposeOptions', { returnObjects: true })).map(([key, value]) => (
                   <div
                     key={key}
