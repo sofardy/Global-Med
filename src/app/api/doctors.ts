@@ -12,8 +12,8 @@ export interface Doctor {
     specialization_uuid: string;
     experience_years: string;
     qualification: string;
-    category: string;
-    languages: string;
+    category: any;
+    languages: any;
     price_from: string;
     education: any;
     certificates: any;
@@ -80,6 +80,14 @@ export const getDoctors = async (
     // Определяем язык из аргумента или получаем из хранилища
     const currentLanguage = language || getCurrentLanguage();
 
+    // Логирование запроса
+    console.log('API Request:', {
+        url: `${API_URL}/doctors`,
+        method: 'GET',
+        params: Object.fromEntries(params),
+        headers: { 'X-Language': currentLanguage }
+    });
+
     try {
         const response = await axios.get(`${API_URL}/doctors`, {
             params,
@@ -87,18 +95,26 @@ export const getDoctors = async (
                 'X-Language': currentLanguage
             }
         });
+
+        // Логирование успешного ответа
+        console.log('API Response:', {
+            status: response.status,
+            data: response.data,
+            url: `${API_URL}/doctors`
+        });
+
         return response.data;
     } catch (error) {
-        console.error('Error fetching doctors:', error);
+        // Логирование ошибки
+        console.error('API Error:', {
+            url: `${API_URL}/doctors`,
+            params: Object.fromEntries(params),
+            error
+        });
         throw error;
     }
 };
 
-/**
- * Получает информацию о докторе по его UUID
- * @param uuid Уникальный идентификатор доктора
- * @param language Язык ответа (ru | uz), по умолчанию берется из хранилища
- */
 export const getDoctorById = async (
     uuid: string,
     language?: string
@@ -106,15 +122,34 @@ export const getDoctorById = async (
     // Определяем язык из аргумента или получаем из хранилища
     const currentLanguage = language || getCurrentLanguage();
 
+    // Логирование запроса
+    console.log('API Request:', {
+        url: `${API_URL}/doctors/${uuid}`,
+        method: 'GET',
+        headers: { 'X-Language': currentLanguage }
+    });
+
     try {
         const response = await axios.get(`${API_URL}/doctors/${uuid}`, {
             headers: {
                 'X-Language': currentLanguage
             }
         });
+
+        // Логирование успешного ответа
+        console.log('API Response:', {
+            status: response.status,
+            data: response.data,
+            url: `${API_URL}/doctors/${uuid}`
+        });
+
         return response.data.data;
     } catch (error) {
-        console.error(`Error fetching doctor with ID ${uuid}:`, error);
+        // Логирование ошибки
+        console.error('API Error:', {
+            url: `${API_URL}/doctors/${uuid}`,
+            error
+        });
         throw error;
     }
 };

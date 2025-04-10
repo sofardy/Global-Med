@@ -7,7 +7,7 @@ import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import AppointmentConfirmation from '@/src/shared/components/AppointmentConfirmation';
 import DoctorCard from './components/DoctorCard';
-import { getDoctors, Doctor as ApiDoctor, Doctor } from '../../api/doctors';
+import { getDoctors, Doctor as ApiDoctor } from '../../api/doctors';
 import { useLanguageStore } from '@/src/store/language';
 
 // Интерфейс для мапирования специальностей на их UUID
@@ -202,7 +202,7 @@ export default function DynamicAppointmentBooking() {
   };
 
   // Функция для форматирования данных с проверкой на корректность
-function formatDoctorData(apiDoctor: ApiDoctor): Doctor {
+function formatDoctorData(apiDoctor: ApiDoctor) {
   return {
     id: apiDoctor.uuid,
     name: apiDoctor.full_name || 'Н/Д',
@@ -505,22 +505,29 @@ function formatPrice(price: string | null): string {
               </div>
             ) : (
               <div className="space-y-6">
-                {doctors.map(doctor => (
-                  <DoctorCard
-                    key={doctor.uuid}
-                    doctor={{
-                      id: doctor.uuid,
-                      name: doctor.full_name,
-                      specialty: doctor.specialization,
-                      experience: doctor.experience_years,
-                      photoUrl: doctor.image_url,
-                      // Примерные времена для записи - в реальном приложении 
-                      // их нужно получать через отдельный API-запрос
-                      availableTimes: ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00']
-                    }}
-                    onBookAppointment={handleDoctorBooking}
-                  />
-                ))}
+              {doctors.map(doctor => {
+                const formattedDoctor = formatDoctorData(doctor);
+  
+  return (
+    <DoctorCard
+      key={doctor.uuid}
+      doctor={{
+        id: formattedDoctor.id,
+        name: formattedDoctor.name,
+        specialty: formattedDoctor.specialization,
+        experience: formattedDoctor.experience,
+        qualification: formattedDoctor.qualification,
+        category: formattedDoctor.category,
+        languages: formattedDoctor.languages,
+        price: formattedDoctor.price,
+        photoUrl: formattedDoctor.photoUrl,
+        // Временные слоты для записи
+        availableTimes: ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00']
+      }}
+      onBookAppointment={handleDoctorBooking}
+    />
+  );
+})}
               </div>
             )}
           </div>

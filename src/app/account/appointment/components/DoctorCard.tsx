@@ -32,7 +32,10 @@ interface Doctor {
   specialty: string;
   experience: string;
   qualification: string;
-  degree: string;
+  degree?: string; // Если это поле используется в компоненте
+  category?: string; // Добавляем поле category
+  languages?: string[]; // Добавляем поле languages как массив строк
+  price?: string; // Добавляем поле price
   photoUrl: string;
   availableTimes: string[];
 }
