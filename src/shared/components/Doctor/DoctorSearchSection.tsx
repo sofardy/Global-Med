@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import Modal from '@/src/shared/components/Modal/Modal';
+import { useDoctorsStore } from '@/src/store/doctors';
 
 interface DropdownPosition {
  top: number;
@@ -20,6 +21,11 @@ interface SpecialtiesDropdownProps {
  buttonRef: React.RefObject<HTMLButtonElement>;
 }
 
+// Интерфейс для мапирования специальностей на их UUID
+interface SpecialtyMapping {
+  [key: string]: string;
+}
+
 const translations = {
  ru: {
    title: 'Найдите специалиста',
@@ -29,6 +35,8 @@ const translations = {
    selectPlaceholder: 'Все специализации',
    findButton: 'Найти врача',
    modalTitle: 'Выберите специализацию',
+   loading: 'Загрузка...',
+   noResults: 'Врачи не найдены',
    specialties: [
      'Терапевт', 'Кардиолог', 'Невролог', 'Офтальмолог', 'Эндокринолог',
      'Гастроэнтеролог', 'Гинеколог', 'Отоларинголог (ЛОР)', 'Дерматолог',
@@ -43,12 +51,31 @@ const translations = {
    selectPlaceholder: 'Barcha ixtisosliklar',
    findButton: 'Shifokorni topish',
    modalTitle: 'Ixtisoslikni tanlang',
+   loading: 'Yuklanmoqda...',
+   noResults: 'Shifokorlar topilmadi',
    specialties: [
      'Terapevt', 'Kardiolog', 'Nevrolog', 'Oftalmolog', 'Endokrinolog',
      'Gastroenterolog', 'Ginekolog', 'Otorinolaringolog (LOR)', 'Dermatolog',
      'Ortoped', 'Urolog', 'Pediatr'
    ]
  }
+};
+
+// Пример маппинга названий специальностей на их UUID
+// Это должно быть заменено на реальные данные или запрос к API
+const specialtyUUIDMapping: SpecialtyMapping = {
+  'Терапевт': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
+  'Кардиолог': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
+  'Невролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
+  'Офтальмолог': '959384f4-0fba-3f50-a91b-f69575e60890',
+  'Эндокринолог': '346ca30e-64a0-3ad6-8d8f-ed2f749b6d9f',
+  'Гастроэнтеролог': '642cdbee-be48-3536-998c-3f7bebc40629',
+  'Гинеколог': '959384f4-0fba-3f50-a91b-f69575e60890',
+  'Отоларинголог (ЛОР)': '959384f4-0fba-3f50-a91b-f69575e60890',
+  'Дерматолог': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
+  'Ортопед': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
+  'Уролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
+  'Педиатр': '959384f4-0fba-3f50-a91b-f69575e60890'
 };
 
 // Компонент выпадающего списка с порталом только для десктопной версии
@@ -151,6 +178,7 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
 const DoctorSearchSection: React.FC = () => {
  const { t } = useTranslation(translations);
  
+ // Состояния UI
  const [nameQuery, setNameQuery] = useState<string>('');
  const [isSpecialtyOpen, setIsSpecialtyOpen] = useState<boolean>(false);
  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -158,8 +186,13 @@ const DoctorSearchSection: React.FC = () => {
  const [isMobile, setIsMobile] = useState<boolean>(false);
  const [isMounted, setIsMounted] = useState<boolean>(false);
  
+ // Референс для кнопки выбора специальности
  const specialtyButtonRef = useRef<HTMLButtonElement>(null);
  
+ // Доступ к стору докторов
+ const { setFilters, fetchDoctors } = useDoctorsStore();
+ 
+ // Эффект для определения мобильного устройства и инициализации
  useEffect(() => {
    setIsMounted(true);
    const checkMobile = (): void => {
@@ -169,24 +202,58 @@ const DoctorSearchSection: React.FC = () => {
    checkMobile();
    window.addEventListener('resize', checkMobile);
    
+   // Первоначальная загрузка докторов
+   fetchDoctors();
+   
    return () => {
      window.removeEventListener('resize', checkMobile);
    };
- }, []);
+ }, [fetchDoctors]);
  
- const handleSearch = (): void => {
-   console.log('Searching for:', { nameQuery, selectedSpecialty });
+ // Функция для получения UUID специальности по её названию
+ const getSpecialtyUUID = (specialtyName: string): string | undefined => {
+   return specialtyUUIDMapping[specialtyName];
  };
  
+ // Обработчик поиска
+ const handleSearch = (): void => {
+   // Подготовка фильтров
+   const filters: any = {};
+   
+   if (nameQuery.trim()) {
+     filters.full_name = nameQuery.trim();
+   }
+   
+   if (selectedSpecialty) {
+     const specialtyUUID = getSpecialtyUUID(selectedSpecialty);
+     if (specialtyUUID) {
+       filters.specialization_uuid = specialtyUUID;
+     }
+   }
+   
+   // Устанавливаем фильтры и запрашиваем данные
+   setFilters(filters);
+   fetchDoctors();
+   
+   // Можно добавить прокрутку к результатам поиска
+   const resultsSection = document.getElementById('doctors-results');
+   if (resultsSection) {
+     resultsSection.scrollIntoView({ behavior: 'smooth' });
+   }
+ };
+ 
+ // Получаем список специальностей из переводов
  const specialties = t('specialties', { returnObjects: true }) as string[];
  const displaySpecialty = selectedSpecialty || t('selectPlaceholder');
  
+ // Обработчик выбора специальности
  const handleSelectSpecialty = (specialty: string): void => {
    setSelectedSpecialty(specialty);
    setIsSpecialtyOpen(false);
    setIsModalOpen(false);
  };
  
+ // Обработчик клика по кнопке выбора специальности
  const handleSpecialtyButtonClick = (): void => {
    if (isMobile) {
      setIsModalOpen(true);
@@ -275,6 +342,9 @@ const DoctorSearchSection: React.FC = () => {
          </div>
        </div>
      </div>
+     
+     {/* Anchor для прокрутки к результатам */}
+     <div id="doctors-results"></div>
      
      {isMounted && !isMobile && (
        <SpecialtiesDropdown

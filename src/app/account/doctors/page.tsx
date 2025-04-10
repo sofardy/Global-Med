@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Modal from '@/src/shared/components/Modal/Modal';
 import { ArrowDownIcon } from '@/src/shared/ui/Icon';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
+import { getDoctors, Doctor as ApiDoctor } from '../../api/doctors';
 
 // Интерфейсы
 interface DropdownPosition {
@@ -38,6 +39,11 @@ interface Doctor {
   photoUrl: string;
 }
 
+// Интерфейс для мапирования специальностей на их UUID
+interface SpecialtyMapping {
+  [key: string]: string;
+}
+
 // Переводы
 const translations = {
   ru: {
@@ -54,6 +60,10 @@ const translations = {
     appointmentButton: 'Записаться на прием',
     years: 'год',
     modalTitle: 'Выберите специализацию',
+    loading: 'Загрузка...',
+    error: 'Ошибка при загрузке данных',
+    noResults: 'Врачи не найдены',
+    tryAgain: 'Попробовать снова',
     specialties: [
       'Терапевт', 'Кардиолог', 'Невролог', 'Офтальмолог', 'Эндокринолог',
       'Гастроэнтеролог', 'Гинеколог', 'Отоларинголог (ЛОР)', 'Дерматолог',
@@ -74,6 +84,10 @@ const translations = {
     appointmentButton: 'Qabulga yozilish',
     years: 'yil',
     modalTitle: 'Ixtisoslikni tanlang',
+    loading: 'Yuklanmoqda...',
+    error: 'Ma\'lumotlarni yuklashda xatolik yuz berdi',
+    noResults: 'Shifokorlar topilmadi',
+    tryAgain: 'Qayta urinib ko\'ring',
     specialties: [
       'Terapevt', 'Kardiolog', 'Nevrolog', 'Oftalmolog', 'Endokrinolog',
       'Gastroenterolog', 'Ginekolog', 'Otorinolaringolog (LOR)', 'Dermatolog',
@@ -82,53 +96,23 @@ const translations = {
   }
 };
 
-// Моковые данные врачей
-const doctorsData: Doctor[] = [
-  {
-    id: '1',
-    name: 'Мирбабаева Саодат Аманбаевна',
-    specialty: 'Акушер-гинеколог, врач ультразвуковой диагностики',
-    experience: '21',
-    qualification: 'Высшая категория',
-    degree: 'Кандидат медицинских наук',
-    languages: ['узбекский', 'русский'],
-    cost: 'от 125 000 сум',
-    photoUrl: '/images/doctor-img.png'
-  },
-  {
-    id: '2',
-    name: 'Мирбабаева Саодат Аманбаевна',
-    specialty: 'Акушер-гинеколог, врач ультразвуковой диагностики',
-    experience: '21',
-    qualification: 'Высшая категория',
-    degree: 'Кандидат медицинских наук',
-    languages: ['узбекский', 'русский'],
-    cost: 'от 125 000 сум',
-    photoUrl: '/images/doctor-img.png'
-  },
-  {
-    id: '3',
-    name: 'Мирбабаева Саодат Аманбаевна',
-    specialty: 'Акушер-гинеколог, врач ультразвуковой диагностики',
-    experience: '21',
-    qualification: 'Высшая категория',
-    degree: 'Кандидат медицинских наук',
-    languages: ['узбекский', 'русский'],
-    cost: 'от 125 000 сум',
-    photoUrl: '/images/doctor-img.png'
-  },
-  {
-    id: '4',
-    name: 'Мирбабаева Саодат Аманбаевна',
-    specialty: 'Акушер-гинеколог, врач ультразвуковой диагностики',
-    experience: '21',
-    qualification: 'Высшая категория',
-    degree: 'Кандидат медицинских наук',
-    languages: ['узбекский', 'русский'],
-    cost: 'от 125 000 сум',
-    photoUrl: '/images/doctor-img.png'
-  },
-];
+// Пример маппинга названий специальностей на их UUID
+// Это должно быть заменено на реальные данные или запрос к API
+const specialtyUUIDMapping: SpecialtyMapping = {
+  'Терапевт': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
+  'Кардиолог': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
+  'Невролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
+  'Офтальмолог': '959384f4-0fba-3f50-a91b-f69575e60890',
+  'Эндокринолог': '346ca30e-64a0-3ad6-8d8f-ed2f749b6d9f',
+  'Гастроэнтеролог': '642cdbee-be48-3536-998c-3f7bebc40629',
+  'Гинеколог': '959384f4-0fba-3f50-a91b-f69575e60890',
+  'Отоларинголог (ЛОР)': '959384f4-0fba-3f50-a91b-f69575e60890',
+  'Дерматолог': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
+  'Ортопед': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
+  'Уролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
+  'Педиатр': '959384f4-0fba-3f50-a91b-f69575e60890',
+  'Акушер-гинеколог': '3e643044-4290-34fc-9a91-8eae6d2dce7f'
+};
 
 // Компонент выпадающего списка с порталом
 const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({ 
@@ -318,7 +302,9 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
   );
 };
 
-const SearchSection: React.FC = () => {
+const SearchSection: React.FC<{
+  onSearch: (name: string, specialtyUuid?: string) => void;
+}> = ({ onSearch }) => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
   const [nameQuery, setNameQuery] = useState('');
@@ -360,7 +346,8 @@ const SearchSection: React.FC = () => {
   };
   
   const handleSearch = () => {
-    console.log('Поиск:', { nameQuery, selectedSpecialty });
+    const specialtyUuid = selectedSpecialty ? specialtyUUIDMapping[selectedSpecialty] : undefined;
+    onSearch(nameQuery, specialtyUuid);
   };
   
   const displaySpecialty = selectedSpecialty || t('specialtySearch');
@@ -479,18 +466,132 @@ const SearchSection: React.FC = () => {
   );
 };
 
+// Функция для преобразования данных API в формат для компонента DoctorCard
+const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor): Doctor => {
+  // Извлекаем языки из строки, разделенной запятыми (если есть)
+  const languagesArray = apiDoctor.languages ? apiDoctor.languages.split(',').map((lang: string) => lang.trim()) : ['русский', 'узбекский'];
+  
+  return {
+    id: apiDoctor.uuid,
+    name: apiDoctor.full_name,
+    specialty: apiDoctor.specialization,
+    experience: apiDoctor.experience_years.replace(/\D/g, ''),  // Оставляем только цифры
+    qualification: apiDoctor.category || 'Высшая категория',
+    degree: apiDoctor.qualification || '',
+    languages: languagesArray,
+    cost: `от ${apiDoctor.price_from} сум`,
+    photoUrl: apiDoctor.image_url
+  };
+};
+
 // Основной компонент страницы врачей
 export default function DoctorsPage() {
+  const { t } = useTranslation(translations);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  
+  // Функция для загрузки докторов из API
+  const fetchDoctors = async (name?: string, specialtyUuid?: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const filters: any = {};
+      if (name) filters.full_name = name;
+      if (specialtyUuid) filters.specialization_uuid = specialtyUuid;
+      
+      const response = await getDoctors(filters, currentPage);
+      
+      const convertedDoctors = response.data.map(convertApiDoctorToUiDoctor);
+      setDoctors(convertedDoctors);
+      setTotalPages(response.meta.last_page);
+      setCurrentPage(response.meta.current_page);
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+      setError(t('error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Загрузка докторов при первом рендере
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+  
+  // Обработчик поиска
+  const handleSearch = (name: string, specialtyUuid?: string) => {
+    setCurrentPage(1);
+    fetchDoctors(name, specialtyUuid);
+  };
+  
   return (
     <main>
       {/* Блок поиска */}
-      <SearchSection />
+      <SearchSection onSearch={handleSearch} />
       
       {/* Список врачей */}
-      <div className="py-8">
-        {doctorsData.map(doctor => (
-          <DoctorCard key={doctor.id} doctor={doctor} />
-        ))}
+      <div className="py-8 container">
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent"></div>
+            <span className="ml-3 text-light-text dark:text-dark-text">{t('loading')}</span>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-6 py-4 rounded-lg mb-4">
+              <p>{error}</p>
+            </div>
+            <button 
+              onClick={() => fetchDoctors()}
+              className="px-4 py-2 bg-light-accent text-white rounded-lg"
+            >
+              {t('tryAgain')}
+            </button>
+          </div>
+        ) : doctors.length === 0 ? (
+          <div className="flex justify-center py-20">
+            <div className="text-light-text/70 dark:text-dark-text/70 text-center">
+              <svg className="w-16 h-16 mx-auto mb-4 text-light-accent/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-xl">{t('noResults')}</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {doctors.map(doctor => (
+              <DoctorCard key={doctor.id} doctor={doctor} />
+            ))}
+            
+            {/* Пагинация */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <div className="flex space-x-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => {
+                        setCurrentPage(page);
+                        fetchDoctors();
+                      }}
+                      className={`px-4 py-2 rounded-lg ${
+                        page === currentPage 
+                          ? 'bg-light-accent text-white' 
+                          : 'border border-light-text/30 dark:border-white/30 hover:bg-light-text/5 dark:hover:bg-white/10'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
       
       {/* Контактная информация */}

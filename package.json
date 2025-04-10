@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.1.1",
     "@internationalized/date": "^3.7.0",
     "autoprefixer": "^10.4.16",
+    "axios": "^1.8.4",
     "framer-motion": "^10.16.4",
     "heroicons": "^2.0.18",
     "i18next": "^23.7.11",
