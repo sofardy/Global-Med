@@ -621,19 +621,19 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       </div>
       
       {/* Кнопка внизу карточки */}
-      {showButton && (variant === 'service' || buttonText) && (
-        <button 
-          className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
-            w-full h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
-            ${isHovered 
-              ? 'bg-white text-light-accent' 
-              : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
-            }`}
-          style={styles.button}
-        >
-          {buttonText}
-        </button>
-      )}
+   {(variant === 'service' || (showButton && buttonText)) && (
+  <button 
+    className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
+      w-full h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
+      ${isHovered 
+        ? 'bg-white text-light-accent' 
+        : 'bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text'
+      }`}
+    style={styles.button}
+  >
+    {buttonText}
+  </button>
+)}
 
       {/* CSS для маркеров списка */}
       <style jsx global>{`
