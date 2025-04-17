@@ -8,39 +8,29 @@ import { CalculatorIcon, ChecklistMedicalIcon, MedicalTrackerIcon, TabletIcon } 
 import Modal from '../Modal/Modal';
 import { useThemeStore } from '@/src/store/theme';
 
-// Интерфейс для данных симптома
-interface SymptomData {
-  uuid?: string;
-  slug?: string;
-  name?: string;
-  description?: string;
-  checkup?: {
+// Интерфейс для данных, полученных от API
+interface CheckupData {
+  data: {
+    uuid: string;
+    slug: string;
     title: string;
     description: string;
-  };
-  analyses?: Array<{
-    uuid?: string;
-    name: string;
-    description?: string;
-  }>;
-  services?: Array<{
-    uuid?: string;
-    name: string;
-    description?: string;
-    duration?: string;
-    price?: number;
-  }>;
-  specialist?: {
-    title: string;
-    description: string;
-  };
-  // Другие поля, которые могут присутствовать в ответе API
-  [key: string]: any;
-}
-
-// Интерфейс для API ответа
-interface ApiResponse {
-  data: SymptomData;
+    mini_description: string;
+    card_description: string;
+    duration: string;
+    price: number;
+    icon: string;
+    medical_tests: Array<{
+      uuid: string;
+      name: string;
+      mini_description: string;
+    }>;
+    symptoms: Array<{
+      uuid: string;
+      slug: string;
+      name: string;
+    }>;
+  }
 }
 
 interface CardData {
@@ -126,31 +116,7 @@ const translations = {
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Функция для получения компонента иконки на основе строкового идентификатора из API
-const getIconByPath = (iconPath: string, size: number = 80): React.ReactNode => {
-  if (!iconPath) return <TabletIcon size={size} />; // Если путь не указан, используем иконку по умолчанию
-  
-  // Извлекаем имя иконки из пути (например, "pre-surgery" из "checkups/icons/pre-surgery.jpg")
-  const iconName = iconPath.split('/').pop()?.split('.')[0];
-  
-  // В зависимости от имени иконки возвращаем соответствующий компонент
-  switch (iconName) {
-    case 'pre-surgery':
-      return <TabletIcon size={size} />;
-    case 'analysis':
-      return <CalculatorIcon size={size} />;
-    case 'services':
-      return <ChecklistMedicalIcon size={size} />;
-    case 'specialist':
-      return <MedicalTrackerIcon size={size} />;
-    default:
-      // Если не удалось определить иконку по пути, можно вернуть изображение
-      // или использовать иконку по умолчанию в зависимости от типа карточки
-      return <Image src={iconPath} alt="Icon" width={size} height={size} />;
-  }
-};
-
-// Функция для получения иконки по типу карточки (используется как запасной вариант)
+// Функция для получения иконки в зависимости от типа карточки
 const getIconForCardType = (type: string, size: number = 80): React.ReactNode => {
   switch (type) {
     case 'checkup':
@@ -181,7 +147,7 @@ export const SymptomSelector: React.FC = () => {
   const [animationInProgress, setAnimationInProgress] = useState(false);
 
   // Состояние для данных из API
-  const [apiData, setApiData] = useState<ApiResponse | null>(null);
+  const [checkupData, setCheckupData] = useState<CheckupData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -202,270 +168,91 @@ export const SymptomSelector: React.FC = () => {
   }, []);
 
   // Эффект для загрузки данных из API при выборе симптома
-interface SymptomItem {
-  uuid: string;
-  slug: string;
-  name: string;
-}
-
-interface SymptomsListResponse {
-  data: SymptomItem[];
-  links: {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  };
-  meta: {
-    current_page: number;
-    from: number;
-    last_page: number;
-    // другие поля метаданных
-  };
-}
-
-// В компоненте добавляем новое состояние для хранения списка симптомов
-const [symptomsList, setSymptomsList] = useState<SymptomItem[]>([]);
-const [isLoadingSymptomsList, setIsLoadingSymptomsList] = useState(false);
-
-// Эффект для загрузки списка симптомов при монтировании компонента
-useEffect(() => {
-  const fetchSymptomsList = async () => {
-    try {
-      setIsLoadingSymptomsList(true);
-      const response = await fetch('https://globalmed-main-b3lh3x.laravel.cloud/api/symptoms');
+  useEffect(() => {
+    const fetchCheckupData = async () => {
+      if (selectedSymptoms.length === 0) return;
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      try {
+        setLoading(true);
+        const slug = selectedSymptoms[0].toLowerCase().replace(/\s+/g, '-');
+        const response = await fetch(`https://globalmed-main-b3lh3x.laravel.cloud/api/symptoms/${slug}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setCheckupData(data);
+      } catch (err) {
+        console.error('Error fetching checkup data:', err);
+        setError(err instanceof Error ? err : new Error('Ошибка при загрузке данных'));
+      } finally {
+        setLoading(false);
       }
-      
-      const data: SymptomsListResponse = await response.json();
-      setSymptomsList(data.data);
-    } catch (err) {
-      console.error('Error fetching symptoms list:', err);
-    } finally {
-      setIsLoadingSymptomsList(false);
-    }
-  };
+    };
 
-  fetchSymptomsList();
-}, []);
-
-// Модифицируем функцию для получения данных о конкретном симптоме
-useEffect(() => {
-  const fetchSymptomData = async () => {
-    if (selectedSymptoms.length === 0) return;
-    
-    try {
-      setLoading(true);
-      // Находим выбранный симптом в списке симптомов
-      const selectedSymptomName = selectedSymptoms[0];
-      const symptomItem = symptomsList.find(item => item.name === selectedSymptomName);
-      
-      if (!symptomItem) {
-        throw new Error(`Симптом "${selectedSymptomName}" не найден в списке`);
-      }
-      
-      // Используем правильный слаг из API
-      const response = await fetch(`https://globalmed-main-b3lh3x.laravel.cloud/api/symptoms/${symptomItem.slug}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      setApiData(data);
-    } catch (err) {
-      console.error('Error fetching symptom data:', err);
-      setError(err instanceof Error ? err : new Error('Ошибка при загрузке данных'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Запрашиваем данные только если список симптомов уже загружен
-  if (symptomsList.length > 0) {
-    fetchSymptomData();
-  }
-}, [selectedSymptoms, symptomsList]);
+    fetchCheckupData();
+  }, [selectedSymptoms]);
 
   // Список доступных симптомов
   const symptoms = t('symptoms', { returnObjects: true }) as string[];
   
-  // Генерация карточек на основе данных из API
-  const generateCards = (): CardData[] => {
-    if (selectedSymptoms.length === 0) {
-      return [];
+  // Получаем карточки на основе данных из API
+  const generateCardsFromApiData = (): CardData[] => {
+    // Если данные из API отсутствуют или загружаются, возвращаем шаблонные карточки
+    if (!checkupData || loading) {
+      const cardTypes = ['checkup', 'analysis', 'services', 'specialist'];
+      return cardTypes.map(type => ({
+        id: type,
+        title: t(`cardTitles.${type}`) as string,
+        subtitle: selectedSymptoms[0] || '',
+        description: loading ? t('loading') as string : '',
+        iconPath: getIconForCardType(type)
+      }));
     }
 
-    const selectedSymptom = selectedSymptoms[0];
+    const { data } = checkupData;
     
-    // Если данные из API загружаются, показываем карточки с состоянием загрузки
-    if (loading) {
-      return [
-        {
-          id: 'checkup',
-          title: t('cardTitles.checkup') as string,
-          subtitle: selectedSymptom,
-          description: t('loading') as string,
-          iconPath: getIconForCardType('checkup')
-        },
-        {
-          id: 'analysis',
-          title: t('cardTitles.analysis') as string,
-          subtitle: selectedSymptom,
-          description: t('loading') as string,
-          iconPath: getIconForCardType('analysis')
-        },
-        {
-          id: 'services',
-          title: t('cardTitles.services') as string,
-          subtitle: selectedSymptom,
-          description: t('loading') as string,
-          iconPath: getIconForCardType('services')
-        },
-        {
-          id: 'specialist',
-          title: t('cardTitles.specialist') as string,
-          subtitle: selectedSymptom,
-          description: t('loading') as string,
-          iconPath: getIconForCardType('specialist')
-        }
-      ];
-    }
-    
-    // Если произошла ошибка, показываем сообщение об ошибке
-    if (error) {
-      return [
-        {
-          id: 'error',
-          title: 'Ошибка',
-          subtitle: selectedSymptom,
-          description: error.message,
-          iconPath: getIconForCardType('checkup')
-        }
-      ];
-    }
-    
-    // Если данные из API есть, формируем карточки на их основе
-    if (apiData && apiData.data) {
-      const { data } = apiData;
-      
-      // Массив для карточек
-      const cardsResult: CardData[] = [];
-      
-      // Карточка чек-апа
-      if (data.checkup) {
-        cardsResult.push({
-          id: 'checkup',
-          title: t('cardTitles.checkup') as string,
-          subtitle: selectedSymptom,
-          description: data.checkup.description,
-          iconPath: getIconForCardType('checkup')
-        });
+    // Создаем карточки на основе данных API
+    return [
+      {
+        id: 'checkup',
+        title: t('cardTitles.checkup') as string,
+        subtitle: selectedSymptoms[0],
+        description: data.card_description || data.description,
+        iconPath: getIconForCardType('checkup')
+      },
+      {
+        id: 'analysis',
+        title: t('cardTitles.analysis') as string,
+        subtitle: selectedSymptoms[0],
+        description: data.medical_tests.map(test => test.name),
+        iconPath: getIconForCardType('analysis')
+      },
+      {
+        id: 'services',
+        title: t('cardTitles.services') as string,
+        subtitle: selectedSymptoms[0],
+        description: [
+          `Длительность: ${data.duration}`,
+          `Стоимость: ${data.price} руб.`
+        ],
+        iconPath: getIconForCardType('services')
+      },
+      {
+        id: 'specialist',
+        title: t('cardTitles.specialist') as string,
+        subtitle: selectedSymptoms[0],
+        description: data.mini_description,
+        iconPath: getIconForCardType('specialist')
       }
-      
-      // Карточка анализов
-      if (data.analyses && data.analyses.length > 0) {
-        cardsResult.push({
-          id: 'analysis',
-          title: t('cardTitles.analysis') as string,
-          subtitle: selectedSymptom,
-          description: data.analyses.map(analysis => analysis.name),
-          iconPath: getIconForCardType('analysis')
-        });
-      }
-      
-      // Карточка услуг
-      if (data.services && data.services.length > 0) {
-        const serviceDescriptions = data.services.map(service => {
-          const price = service.price ? `${service.price} руб.` : '';
-          const duration = service.duration ? `(${service.duration})` : '';
-          return `${service.name} ${duration} ${price}`.trim();
-        });
-        
-        cardsResult.push({
-          id: 'services',
-          title: t('cardTitles.services') as string,
-          subtitle: selectedSymptom,
-          description: serviceDescriptions,
-          iconPath: getIconForCardType('services')
-        });
-      }
-      
-      // Карточка специалиста
-      if (data.specialist) {
-        cardsResult.push({
-          id: 'specialist',
-          title: t('cardTitles.specialist') as string,
-          subtitle: selectedSymptom,
-          description: `${data.specialist.title} — ${data.specialist.description}`,
-          iconPath: getIconForCardType('specialist')
-        });
-      }
-      
-      // Если данные API не соответствуют ожидаемой структуре,
-      // мы можем попытаться извлечь информацию из других полей
-      
-      // Например, если API возвращает структуру, как в примере с checkups
-      if (cardsResult.length === 0 && data.medical_tests) {
-        // Добавляем карточку анализов
-        cardsResult.push({
-          id: 'analysis',
-          title: t('cardTitles.analysis') as string,
-          subtitle: selectedSymptom,
-          description: data.medical_tests.map((test: any) => test.name),
-          iconPath: getIconForCardType('analysis')
-        });
-        
-        // Добавляем карточку чек-апа
-        if (data.title) {
-          cardsResult.push({
-            id: 'checkup',
-            title: t('cardTitles.checkup') as string,
-            subtitle: selectedSymptom,
-            description: data.card_description || data.description || data.title,
-            iconPath: data.icon ? getIconByPath(data.icon) : getIconForCardType('checkup')
-          });
-        }
-        
-        // Добавляем карточку услуг
-        if (data.duration || data.price) {
-          const serviceInfo = [];
-          if (data.duration) serviceInfo.push(`Длительность: ${data.duration}`);
-          if (data.price) serviceInfo.push(`Стоимость: ${data.price} руб.`);
-          
-          cardsResult.push({
-            id: 'services',
-            title: t('cardTitles.services') as string,
-            subtitle: selectedSymptom,
-            description: serviceInfo,
-            iconPath: getIconForCardType('services')
-          });
-        }
-        
-        // Добавляем карточку специалиста
-        if (data.mini_description) {
-          cardsResult.push({
-            id: 'specialist',
-            title: t('cardTitles.specialist') as string,
-            subtitle: selectedSymptom,
-            description: data.mini_description,
-            iconPath: getIconForCardType('specialist')
-          });
-        }
-      }
-      
-      return cardsResult;
-    }
-    
-    // Если данных нет, возвращаем пустой массив
-    return [];
+    ];
   };
 
   // Получаем карточки для текущего языка и настраиваем цвет иконок согласно теме
   const cards = React.useMemo(() => {
-    const cardsData = generateCards();
+    // Получаем карточки из API или используем текущие карточки
+    const cardsData = generateCardsFromApiData();
     
     // Определяем цвет иконок в зависимости от темы
     const iconColor = theme === 'light' ? '#094a54' : '#ffffff';
@@ -486,7 +273,7 @@ useEffect(() => {
         iconPath: iconWithThemeColor
       };
     });
-  }, [theme, selectedSymptoms, apiData, loading, error]); // Пересчитываем при изменении темы, выбранных симптомов, данных API или состояния загрузки
+  }, [t, theme, checkupData, loading, selectedSymptoms]); // Пересчитываем при изменении языка, темы или данных API
   
   const firstRowSymptoms = symptoms.slice(0, 7);
   const secondRowSymptoms = symptoms.slice(7);
@@ -723,7 +510,7 @@ useEffect(() => {
                 subtitle={card.subtitle}
                 description={card.description}
                 icon={card.iconPath}
-                showButton={false} // Явно отключаем кнопку
+                showButton={false} // Явно указываем, что кнопка не нужна
                 link={`/${card.id}/${card.subtitle.toLowerCase().replace(/\s+/g, '-')}`}
                 listStyle="disc"
                 className="mx-auto w-full max-w-full md:max-w-[375px]"
@@ -783,7 +570,7 @@ useEffect(() => {
                `}
                 disabled={tempSelectedSymptoms.length >= 3 && !tempSelectedSymptoms.includes(symptom)}
               >
-              <span>{symptom}</span>
+                <span>{symptom}</span>
                 {tempSelectedSymptoms.includes(symptom) && (
                   <span className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-light-accent text-white text-xs">
                     ✓
