@@ -6,8 +6,32 @@ import { useTranslation } from '@/src/hooks/useTranslation';
 import { useThemeStore } from '@/src/store/theme';
 import Link from 'next/link';
 import { applyColorToIcon, getIconColorByTheme } from '../../utils/iconUtils';
-import { medicalServicesMockData } from '../../mocks/medicalServicesMockData';
 import { ArrowDownIcon } from '../../ui/Icon';
+import axios from 'axios';
+import { 
+  LightbulbIcon, 
+  EyeIcon, 
+  ButterflyIcon, 
+  MedicalIcon,
+  AngelIcon,
+  BlobShape,
+  ButterflyWingsIcon,
+  DocumentPenIcon,
+  MedicalMicroscopeIcon,
+  ThyroidIcon,
+} from '../../ui/Icon';
+
+// Интерфейс для данных сервиса
+interface Service {
+  uuid: string;
+  slug: string;
+  name: string;
+  card_description?: string;
+  mini_description?: string;
+  description?: string;
+  services_list: Array<{ name: string; value: string }>;
+  icon: string | null;
+}
 
 // Переводы для компонента
 const translations = {
@@ -17,7 +41,9 @@ const translations = {
     viewAllServices: 'Все виды услуг',
     moreButton: 'Подробнее',
     showMore: 'Показать ещё',
-    showLess: 'Свернуть'
+    showLess: 'Свернуть',
+    loading: 'Загрузка услуг...',
+    error: 'Ошибка при загрузке данных'
   },
   uz: {
     title: `Bitta klinikada to'liq tibbiy xizmatlar spektri`,
@@ -25,8 +51,28 @@ const translations = {
     viewAllServices: 'Barcha xizmatlar',
     moreButton: 'Batafsil',
     showMore: 'Ko\'proq ko\'rsatish',
-    showLess: 'Kamroq ko\'rsatish'
+    showLess: 'Kamroq ko\'rsatish',
+    loading: 'Xizmatlar yuklanmoqda...',
+    error: 'Ma\'lumotlarni yuklashda xatolik yuz berdi'
   }
+};
+
+// Функция для маппинга иконки по слагу (вынесена за пределы компонента)
+const getServiceIcon = (slug: string) => {
+  const iconMap: Record<string, React.ReactNode> = {
+    'lor-247': <LightbulbIcon size={80} />,
+    'oftalmologiia': <EyeIcon size={80} />,
+    'pediatriia': <ButterflyIcon size={80} />,
+    'ginekologiia': <AngelIcon size={80} />,
+    'nevrologiia': <BlobShape size={80} />,
+    'onkologiia': <ButterflyWingsIcon size={80} />,
+    'xirurgiia': <DocumentPenIcon size={80} />,
+    'uzi': <MedicalMicroscopeIcon size={80} />,
+    'endokrinologiia': <ThyroidIcon size={80} />,
+    'travmatologiia': <AngelIcon size={80} />
+  };
+
+  return iconMap[slug] || <MedicalIcon size={80} />;
 };
 
 export const MedicalServices = () => {
@@ -34,7 +80,41 @@ export const MedicalServices = () => {
   const { theme } = useThemeStore();
   const [isMobile, setIsMobile] = useState(false);
   const [showAllItems, setShowAllItems] = useState(false);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isDataFetched, setIsDataFetched] = useState(false); // Флаг для контроля запросов
 
+  // Получение данных с API
+  useEffect(() => {
+    // Добавляем проверку, чтобы избежать повторных запросов
+    if (isDataFetched) return;
+
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('https://globalmed-main-b3lh3x.laravel.cloud/api/services');
+        
+        if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          setServices(response.data.data);
+          setError(null);
+        } else {
+          throw new Error('Неверный формат данных');
+        }
+      } catch (err) {
+        console.error('Ошибка при загрузке списка услуг:', err);
+        setError(t('error'));
+      } finally {
+        setLoading(false);
+        setIsDataFetched(true); // Помечаем, что данные были загружены
+      }
+    };
+
+    fetchServices();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Пустой массив зависимостей, чтобы useEffect выполнился только один раз
+
+  // Проверка размера экрана
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -45,7 +125,7 @@ export const MedicalServices = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  const services = medicalServicesMockData.services;
+  // Фильтрация услуг для мобильного отображения
   const displayedServices = isMobile && !showAllItems 
     ? services.slice(0, 4) 
     : services;
@@ -94,39 +174,56 @@ export const MedicalServices = () => {
             
           {/* Правая колонка */}
           <div className="col-span-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-4">
-              {Array.isArray(displayedServices) && displayedServices.map((service, index) => (
-                <div key={service.id + index} className="h-full">
-                  <UniversalCard
-                    variant="service"
-                    title={service.title}
-                    description={service.description}
-                    additionalInfo={service.servicesCount}
-                    icon={applyColorToIcon(service.iconPath, getIconColorByTheme(theme))}
-                    link={`/services/${service.id}`}
-                    buttonText={t('moreButton')}
-                    className="h-full"
-                    iconPosition="center"
-                  />
-                </div>
-              ))}
-            </div>
-            
-            {/* Кнопка "Показать еще" только на мобильных устройствах */}
-            {isMobile && services.length > 4 && (
-              <div className="flex justify-center mt-8">
-                <button 
-                  onClick={() => setShowAllItems(!showAllItems)}
-                  className="flex items-center gap-2 px-6 py-4 text-light-text dark:text-dark-text border border-light-text dark:border-dark-text rounded-2xl transition-all hover:bg-light-accent hover:text-white hover:border-light-accent"
-                >
-                  <span className="text-[16px]">{showAllItems ? t('showLess') : t('showMore')}</span>
-                  <ArrowDownIcon 
-                    color={theme === 'light' ? '#094A54' : 'white'} 
-                    size={12} 
-                    className={showAllItems ? "transform rotate-180" : ""}
-                  />
-                </button>
+            {loading ? (
+              <div className="flex justify-center items-center h-96">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent"></div>
+                <span className="ml-3 text-light-text dark:text-dark-text">{t('loading')}</span>
               </div>
+            ) : error ? (
+              <div className="p-6 bg-red-100 text-red-700 rounded-lg">
+                <p>{error}</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-4">
+                  {displayedServices.length > 0 ? displayedServices.map((service) => (
+                    <div key={service.uuid} className="h-full">
+                      <UniversalCard
+                        variant="service"
+                        title={service.name}
+                        description={service.card_description || service.mini_description || service.description || ''}
+                        additionalInfo={`${service.services_list?.length || 0} услуг`}
+                        icon={applyColorToIcon(getServiceIcon(service.slug), getIconColorByTheme(theme))}
+                        link={`/services/${service.slug}`}
+                        buttonText={t('moreButton')}
+                        className="h-full"
+                        iconPosition="center"
+                      />
+                    </div>
+                  )) : (
+                    <div className="col-span-full text-center p-4">
+                      <p>Услуги не найдены</p>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Кнопка "Показать еще" только на мобильных устройствах */}
+                {isMobile && services.length > 4 && (
+                  <div className="flex justify-center mt-8">
+                    <button 
+                      onClick={() => setShowAllItems(!showAllItems)}
+                      className="flex items-center gap-2 px-6 py-4 text-light-text dark:text-dark-text border border-light-text dark:border-dark-text rounded-2xl transition-all hover:bg-light-accent hover:text-white hover:border-light-accent"
+                    >
+                      <span className="text-[16px]">{showAllItems ? t('showLess') : t('showMore')}</span>
+                      <ArrowDownIcon 
+                        color={theme === 'light' ? '#094A54' : 'white'} 
+                        size={12} 
+                        className={showAllItems ? "transform rotate-180" : ""}
+                      />
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
