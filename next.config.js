@@ -5,6 +5,9 @@ const nextConfig = {
   images: {
     domains: ['i.imgur.com', 'imgur.com', 'globalmed-main-b3lh3x.laravel.cloud'],
     formats: ['image/avif', 'image/webp']
+  },
+  env: {
+    API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   }
 }
 

@@ -7,6 +7,26 @@ import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { BenefitsCheckUps } from '@/src/shared/components/BenefitScheckUps';
 import { AnimatedButton, AnimatedButtonWrapper } from '@/src/shared/ui/Button/AnimatedButton';
+import axios from 'axios';
+
+interface MedicalTest {
+  uuid: string;
+  name: string;
+  mini_description: string;
+}
+
+interface CheckupItem {
+  uuid: string;
+  slug: string;
+  title: string;
+  description: string;
+  mini_description: string;
+  card_description: string;
+  duration: string;
+  price: number;
+  icon: string;
+  medical_tests: MedicalTest[];
+}
 
 interface FAQItem {
   title: string;
@@ -14,18 +34,53 @@ interface FAQItem {
 }
 
 interface OpenItemsState {
-  [key: number]: boolean;
+  [key: number | string]: boolean;
 }
 
-const CheckupDetail = () => {
+const CheckupDetail = ({ params }: { params: { id: string } }) => {
   const { t } = useTranslation(checkupDetailTranslations);
   
   // Состояние для аккордеона FAQ
   const [openItems, setOpenItems] = useState<OpenItemsState>({});
   
+  // Состояние для API данных
+  const [checkup, setCheckup] = useState<CheckupItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
   // Состояние определения мобильного устройства
-  const [, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const faqItems = t('faqItems', { returnObjects: true }) as FAQItem[];
+  
+  // Загрузка данных из API
+  useEffect(() => {
+    const fetchCheckupDetail = async () => {
+      try {
+        setLoading(true);
+        console.log('Запрашиваем данные для id:', params.id);
+        
+        const response = await axios.get(`https://globalmed-main-b3lh3x.laravel.cloud/api/checkups/${params.id}`);
+        console.log('Получен ответ:', response.data);
+        
+        // API возвращает объект с полем data, содержащим данные о чек-апе
+        if (response.data && response.data.data) {
+          setCheckup(response.data.data);
+          setError(null);
+        } else {
+          throw new Error('Неверный формат данных в ответе API');
+        }
+      } catch (err) {
+        console.error('Ошибка при загрузке данных о чек-апе:', err);
+        setError(err instanceof Error ? err : new Error('Ошибка при загрузке данных'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.id) {
+      fetchCheckupDetail();
+    }
+  }, [params.id]);
   
   // Определяем размер экрана при загрузке и изменении размера окна
   useEffect(() => {
@@ -53,12 +108,45 @@ const CheckupDetail = () => {
   };
 
   // Функция для управления аккордеоном
-  const toggleItem = (index: number): void => {
+  const toggleItem = (index: number | string): void => {
     setOpenItems((prev: OpenItemsState) => ({
       ...prev,
       [index]: !prev[index]
     }));
   };
+
+  // Форматирование цены с пробелами
+  const formatPrice = (price: number) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
+  // Показываем состояние загрузки
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-xl text-light-text dark:text-dark-text">Загрузка информации...</div>
+      </div>
+    );
+  }
+
+  // Показываем ошибку
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center h-64 p-4">
+        <div className="text-xl text-red-500 mb-4">Произошла ошибка при загрузке данных</div>
+        <div className="text-sm">Сообщение: {error.message}</div>
+      </div>
+    );
+  }
+
+  // Проверяем наличие данных
+  if (!checkup) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-xl text-light-text dark:text-dark-text">Чек-ап не найден</div>
+      </div>
+    );
+  }
 
   return (
     <main className="overflow-hidden">
@@ -78,10 +166,10 @@ const CheckupDetail = () => {
         {/* Контентная часть баннера - с расположением и стилями максимально похожими на макет */}
         <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12 text-white flex flex-col md:min-h-[490px]">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium mb-3 md:mb-4 lg:mb-6">{t('title')}</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium mb-3 md:mb-4 lg:mb-6">{checkup.title}</h1>
             
             {/* Описание с ограниченной шириной, чтобы соответствовать макету */}
-            <p className="text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed">{t('description')}</p>
+            <p className="text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed">{checkup.description}</p>
             
             {/* Блоки с информацией о времени и цене */}
             <div className="flex flex-col sm:flex-row gap-3 mt-5 sm:mt-6 md:mt-8">
@@ -89,26 +177,21 @@ const CheckupDetail = () => {
                 <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-base sm:text-lg md:text-xl font-medium">{t('duration')}</span>
+                <span className="text-base sm:text-lg md:text-xl font-medium">{checkup.duration}</span>
               </div>
               
               <div className="bg-white/20 rounded-lg sm:rounded-xl p-3 sm:p-4 flex items-center">
                 <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-base sm:text-lg md:text-xl font-medium">{t('price')}</span>
+                <span className="text-base sm:text-lg md:text-xl font-medium">{formatPrice(checkup.price)} руб.</span>
               </div>
             </div>
             
             {/* Блоки с информацией о типах исследований */}
             <div className="flex flex-col sm:flex-row gap-3 mt-6 sm:mt-8 md:mt-10 overflow-x-auto sm:overflow-visible">
               <div className="bg-white/20 min-w-[180px] w-full sm:w-[180px] rounded-lg sm:rounded-xl p-3 sm:p-4 flex flex-col justify-center">
-                <span className="text-2xl sm:text-3xl font-bold mb-1">4</span>
-                <span className="text-xs sm:text-sm">{t('instrumentalExams')}</span>
-              </div>
-              
-              <div className="bg-white/20 min-w-[180px] w-full sm:w-[180px] rounded-lg sm:rounded-xl p-3 sm:p-4 flex flex-col justify-center">
-                <span className="text-2xl sm:text-3xl font-bold mb-1">6</span>
+                <span className="text-2xl sm:text-3xl font-bold mb-1">{checkup.medical_tests.length}</span>
                 <span className="text-xs sm:text-sm">{t('labTests')}</span>
               </div>
               
@@ -134,60 +217,122 @@ const CheckupDetail = () => {
       </div>
 
       {/* Секция программы диагностики и FAQ */}
-<div className="flex flex-col md:flex-row gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
-  {/* Левый блок - описание программы - изменено с md:w-2/5 на md:w-1/2 */}
-  <div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-white dark:bg-dark-block relative overflow-hidden md:self-start md:h-[500px] lg:h-[600px] xl:h-[700px]">
-    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[56px] font-medium mb-3 sm:mb-4 text-[#173F46] dark:text-white leading-tight md:leading-[1.1] lg:leading-[1]">{t('programTitle')}</h2>
-    
-    {/* DNA background pattern */}
-    <div 
-      className="absolute -right-[150px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block" 
-      style={{
-        backgroundImage: 'url(/images/doctor-pattern.png)',
-        backgroundSize: 'contain',
-        transform: 'rotate(15deg)',
-        backgroundPosition: 'right bottom',
-        backgroundRepeat: 'no-repeat',
-      }}
-    ></div>
-    
-    <div className="relative z-10">
-      <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed mb-6">{t('programDescription')}</p>
-    </div>
-  </div>
-  
-  {/* Правый блок - FAQ селекты - изменено с md:w-3/5 на md:w-1/2 */}
-  <div className="w-full md:w-1/2 flex flex-col gap-2">
-   {faqItems.map((item: FAQItem, index: number) => (
-      <div key={index} className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
-        <button 
-          onClick={() => toggleItem(index)}
-          className="w-full flex items-center justify-between p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 text-left focus:outline-none bg-white dark:bg-dark-block"
-        >
-          <span className="font-medium text-sm sm:text-base md:text-lg">
-            {item.title}
-          </span>
-          <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl ${openItems[index] ? 'bg-light-accent text-white' : 'border border-gray-300 dark:border-gray-600'}`}>
-            <svg 
-              className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${openItems[index] ? 'transform rotate-180' : ''}`} 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-            </svg>
+      <div className="flex flex-col md:flex-row gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
+        {/* Левый блок - описание программы */}
+        <div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-white dark:bg-dark-block relative overflow-hidden md:self-start md:h-[500px] lg:h-[600px] xl:h-[700px]">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[56px] font-medium mb-3 sm:mb-4 text-[#173F46] dark:text-white leading-tight md:leading-[1.1] lg:leading-[1]">{t('programTitle')}</h2>
+          
+          {/* DNA background pattern */}
+          <div 
+            className="absolute -right-[150px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block" 
+            style={{
+              backgroundImage: 'url(/images/doctor-pattern.png)',
+              backgroundSize: 'contain',
+              transform: 'rotate(15deg)',
+              backgroundPosition: 'right bottom',
+              backgroundRepeat: 'no-repeat',
+            }}
+          ></div>
+          
+          <div className="relative z-10">
+            <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed mb-6">{checkup.mini_description}</p>
+            
+            {/* Дополнительные сведения о программе */}
+            <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed">
+              {checkup.card_description}
+            </p>
           </div>
-        </button>
+        </div>
         
-        {openItems[index] && (
-          <div className="p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 bg-white dark:bg-dark-block text-[#173F46]/80 dark:text-white/80">
-            <p className="text-sm sm:text-base max-w-full sm:max-w-[90%] md:max-w-[80%]">{item.content}</p>
+        {/* Правый блок - FAQ селекты */}
+        <div className="w-full md:w-1/2 flex flex-col gap-2">
+          {/* Специальный FAQ пункт для исследований */}
+          <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
+            <button 
+              onClick={() => toggleItem('tests')}
+              className="w-full flex items-center justify-between p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 text-left focus:outline-none bg-white dark:bg-dark-block"
+            >
+              <span className="font-medium text-sm sm:text-base md:text-lg">
+                Какие исследования включены?
+              </span>
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl ${openItems['tests'] ? 'bg-light-accent text-white' : 'border border-gray-300 dark:border-gray-600'}`}>
+                <svg 
+                  className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${openItems['tests'] ? 'transform rotate-180' : ''}`} 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+            
+            {openItems['tests'] && (
+              <div className="p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 bg-white dark:bg-dark-block">
+                <ul className="space-y-4">
+                  {checkup.medical_tests.map((test) => (
+                    <li key={test.uuid} className="border-b border-gray-100 dark:border-gray-700 pb-3 last:border-0 last:pb-0">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-start">
+                          <span className="inline-block w-2 h-2 rounded-full bg-light-accent mt-1.5 mr-2"></span>
+                          <span className="text-sm font-medium text-[#173F46] dark:text-white">{test.name}</span>
+                        </div>
+                        {test.mini_description && (
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleItem(`test-${test.uuid}`);
+                            }}
+                            className="ml-2 text-xs text-light-accent hover:text-light-accent/80 transition-colors"
+                          >
+                            {openItems[`test-${test.uuid}`] ? 'Свернуть' : 'Подробнее'}
+                          </button>
+                        )}
+                      </div>
+                      {openItems[`test-${test.uuid}`] && test.mini_description && (
+                        <div className="ml-4 text-sm text-[#173F46]/80 dark:text-white/80 bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                          {test.mini_description}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-        )}
+          
+          {/* Стандартные FAQ пункты */}
+          {faqItems.map((item: FAQItem, index: number) => (
+            <div key={index} className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
+              <button 
+                onClick={() => toggleItem(index)}
+                className="w-full flex items-center justify-between p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 text-left focus:outline-none bg-white dark:bg-dark-block"
+              >
+                <span className="font-medium text-sm sm:text-base md:text-lg">
+                  {item.title}
+                </span>
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl ${openItems[index] ? 'bg-light-accent text-white' : 'border border-gray-300 dark:border-gray-600'}`}>
+                  <svg 
+                    className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${openItems[index] ? 'transform rotate-180' : ''}`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
+              
+              {openItems[index] && (
+                <div className="p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 bg-white dark:bg-dark-block text-[#173F46]/80 dark:text-white/80">
+                  <p className="text-sm sm:text-base max-w-full sm:max-w-[90%] md:max-w-[80%]">{item.content}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
+      
       <BenefitsCheckUps />
       
       {/* Секция записи на приём */}
