@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import UniversalHeroSection from '@/src/shared/components/UniversalHeroSection';
-import { checkupHeroData } from '@/src/shared/mocks/checkupHeroData';
+import { checkupHeroData, checkupItemsData } from '@/src/shared/mocks/checkupHeroData';
 import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
@@ -53,9 +53,13 @@ export default function Checkups() {
     fetchCheckups();
   }, []);
 
-  // Форматирование цены
-  const formatPrice = (price: number) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  // Функция для получения иконки из мока по slug
+  const getIconBySlug = (slug: string) => {
+    // Ищем соответствующий элемент в моковых данных
+    const mockItem = checkupItemsData.find(item => item.id === slug);
+    
+    // Если нашли элемент, возвращаем его иконку, иначе возвращаем дефолтную
+    return mockItem ? mockItem.iconPath : "/icons/medical-check.svg";
   };
 
   return (
@@ -87,8 +91,8 @@ export default function Checkups() {
               variant="surgery"
               title={item.title}
               description={item.card_description || item.description}
-              // Используем стандартную иконку, так как API не возвращает иконки в нужном формате
-              icon="/icons/medical-check.svg"
+              // Используем иконку из мока на основе slug
+              icon={getIconBySlug(item.slug)}
               link={`/checkups/${item.slug}`}
               buttonText="Подробнее"
               showButton={true}

@@ -7,24 +7,28 @@ import DoctorBenefits from '@/src/shared/components/DoctorBenefits';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { AnimatedButton } from '@/src/shared/ui/Button/AnimatedButton';
+import axios from 'axios';
 
 // Типизация для данных
 interface ServicePrice {
   name: string;
-  price: string;
+  value: string;
 }
 
-interface ServiceDetailData {
-  title: string;
+interface ServiceData {
+  uuid: string;
+  slug: string;
+  name: string;
   description: string;
-  bannerBg: string;
-  introduction: string;
-  symptoms: string[];
-  services: ServicePrice[];
+  mini_description: string;
+  card_description: string;
+  symptoms_list: string[];
+  services_list: ServicePrice[];
+  icon: string | null;
 }
 
-interface ServiceDetailsCollection {
-  [key: string]: ServiceDetailData;
+interface ServiceResponse {
+  data: ServiceData;
 }
 
 export interface ServiceDetailProps {
@@ -43,7 +47,9 @@ const translations = {
     showMore: 'Показать все',
     showLess: 'Свернуть',
     showMoreServices: 'Все услуги и цены',
-    showLessServices: 'Свернуть прайс-лист'
+    showLessServices: 'Свернуть прайс-лист',
+    loading: 'Загрузка данных...',
+    error: 'Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.'
   },
   uz: {
     appointmentButton: 'Qabulga yozilish',
@@ -53,46 +59,9 @@ const translations = {
     showMore: 'Ko\'proq ko\'rsatish',
     showLess: 'Yig\'ish',
     showMoreServices: 'Barcha xizmatlar va narxlar',
-    showLessServices: 'Narxlar ro\'yxatini yig\'ish'
-  }
-};
-
-// Моковые данные
-const serviceDetails: ServiceDetailsCollection = {
-  ophthalmology: {
-    title: 'Офтальмология',
-    description: 'Комплексная диагностика и лечение заболеваний глаз, включая подбор очков и линз. Мы используем передовое оборудование, чтобы точно выявить любые проблемы и подобрать наилучшие решения для эффективной коррекции зрения. Наши специалисты обеспечат вам максимальный комфорт и результат.',
-    bannerBg: 'bg-light-accent',
-    introduction: 'Оказываем широкий спектр офтальмологических услуг, включая консультации, диагностику, лечение и профилактику заболеваний. Наши специалисты помогут вам на всех этапах — от раннего выявления проблемы до полного восстановления здоровья.',
-    symptoms: [
-      'Размытое или ухудшившееся зрение',
-      'Частые головные боли, особенно после чтения или работы за компьютером',
-      'Частые покраснения или воспаления глаз',
-      'Боль в глазах или ощущение инородного тела',
-      'Снижение способности различать цвета',
-      'Ощущение «тумана» перед глазами',
-      'Светобоязнь и слезотечение',
-      'Появление пятен или мушек в поле зрения',
-      'Нарушения ночного зрения',
-      'Необычные выделения из глаз'
-    ],
-    services: [
-      { name: 'Консультация', price: '250 000 сум' },
-      { name: 'Повторная консультация', price: '50 000 сум' },
-      { name: 'Консультация для детей до 18 лет', price: '80 000 сум' },
-      { name: 'Повторная консультация для детей до 18 лет', price: '40 000 сум' },
-      { name: 'Консультация для детей до 5 лет', price: '200 000 сум' },
-      { name: 'Повторная консультация для детей до 5 лет', price: '50 000 сум' },
-      { name: 'Стационарная консультация', price: '125 000 сум' },
-      { name: 'Лечение офтальмолога 1 день', price: '20 000 сум' },
-      { name: 'Лечение офтальмолога 2 дня', price: '60 000 сум' },
-      { name: 'Лечение офтальмолога 3 дня', price: '90 000 сум' },
-      { name: 'Парабульбарная инъекция 1 день', price: '85 000 сум' },
-      { name: 'Удаление инородного тела из глаза', price: '110 000 сум' },
-      { name: 'Зондирование слезного канале', price: '415 000 сум' },
-      { name: 'Промывание слёзных путей', price: '65 000 сум' },
-      { name: 'Расширение зрачков', price: '35 000 сум' }
-    ]
+    showLessServices: 'Narxlar ro\'yxatini yig\'ish',
+    loading: 'Ma\'lumotlarni yuklash...',
+    error: 'Ma\'lumotlarni yuklashda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko\'ring.'
   }
 };
 
@@ -105,8 +74,33 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
   const [expandedSymptoms, setExpandedSymptoms] = useState(false);
   const [expandedServices, setExpandedServices] = useState(false);
   
+  // Состояние для хранения данных услуги
+  const [serviceData, setServiceData] = useState<ServiceData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
   // Состояние определения мобильного устройства
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Загрузка данных услуги
+  useEffect(() => {
+    const fetchServiceData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<ServiceResponse>(`https://globalmed-main-b3lh3x.laravel.cloud/api/services/${id}`);
+        console.log(response);
+        setServiceData(response.data.data);
+        setError(null);
+      } catch (err) {
+        console.error(`Ошибка при загрузке данных услуги ${id}:`, err);
+        setError(err instanceof Error ? err : new Error('Ошибка при загрузке данных'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServiceData();
+  }, [id]);
   
   // Определяем размер экрана при загрузке и изменении размера окна
   useEffect(() => {
@@ -122,13 +116,8 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
     };
   }, []);
   
-  // Получаем данные по ID услуги или используем офтальмологию по умолчанию
-  const serviceData = serviceDetails[id] || serviceDetails.ophthalmology;
-  
   // Функция для открытия формы записи
   const handleAppointment = () => {
-    console.log('Открытие формы записи');
-    
     // Скроллинг к форме записи
     const appointmentSection = document.getElementById('appointment-section');
     if (appointmentSection) {
@@ -142,20 +131,36 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
   // Количество видимых услуг на мобильных устройствах
   const visibleServicesCount = 5;
   
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <p className="text-xl text-light-text dark:text-dark-text">{t('loading')}</p>
+      </div>
+    );
+  }
+
+  if (error || !serviceData) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <p className="text-xl text-red-500">{t('error')}</p>
+      </div>
+    );
+  }
+  
   // Отображаемые симптомы в зависимости от состояния
   const displayedSymptoms = isMobile && !expandedSymptoms 
-    ? serviceData.symptoms.slice(0, visibleSymptomsCount) 
-    : serviceData.symptoms;
+    ? serviceData.symptoms_list.slice(0, visibleSymptomsCount) 
+    : serviceData.symptoms_list;
   
   // Отображаемые услуги в зависимости от состояния
   const displayedServices = isMobile && !expandedServices 
-    ? serviceData.services.slice(0, visibleServicesCount) 
-    : serviceData.services;
+    ? serviceData.services_list.slice(0, visibleServicesCount) 
+    : serviceData.services_list;
   
   return (
     <main>
       {/* Верхний баннер - улучшенная адаптивность */}
-      <div className={`w-full rounded-2xl overflow-hidden mb-8 md:mb-16 relative ${serviceData.bannerBg}`}>
+      <div className={`w-full rounded-2xl overflow-hidden mb-8 md:mb-16 relative bg-light-accent`}>
         {/* Фоновый паттерн */}
         <div 
           className="absolute inset-0 z-0 opacity-10" 
@@ -180,7 +185,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
         
         {/* Контентная часть баннера - улучшенные отступы для мобильных */}
         <div className="relative z-10 p-6 sm:p-8 md:p-12 text-white">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium mb-4 md:mb-6">{serviceData.title}</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium mb-4 md:mb-6">{serviceData.name}</h1>
           <p className="text-base sm:text-lg max-w-2xl">{serviceData.description}</p>
           
           {/* Анимированная кнопка с компонентом AnimatedButton */}
@@ -200,57 +205,57 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
       {/* Блок "Оказываемые услуги" - вертикальная стековая компоновка на мобильных */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-16">
         {/* Левый блок - информация и симптомы */}
-       <div className={`rounded-2xl p-6 sm:p-8 ${theme === 'light' ? 'bg-white' : 'bg-dark-block'} relative overflow-hidden h-auto md:h-[700px]`}>
-  {/* Фоновый паттерн для левого блока */}
-  <div 
-    className="absolute -right-[150px] -bottom-[150px] w-[300px] h-[300px] pointer-events-none z-0 opacity-5" 
-    style={{
-      backgroundImage: 'url(/images/eye-pattern.png)',
-      backgroundSize: 'contain',
-      backgroundPosition: 'right bottom',
-      backgroundRepeat: 'no-repeat',
-    }}
-  />
-  
-  <div className="relative z-10">
-    <h2 className="text-2xl sm:text-3xl md:text-[40px] lg:text-[56px] font-medium mb-4 md:mb-6 text-light-text dark:text-dark-text">{t('serviceTitle')}</h2>
-    <p className="text-sm sm:text-base text-light-text/80 dark:text-dark-text/80 mb-6 md:mb-8">
-      {serviceData.introduction}
-    </p>
-    
-    <h3 className="text-lg sm:text-xl font-medium mb-3 md:mb-4 text-light-text dark:text-dark-text">
-      {t('symptomsTitle')}
-    </h3>
-    
-    {/* Список симптомов с возможностью скрытия */}
-    <ul className="list-none space-y-2 sm:space-y-3 text-sm sm:text-base">
-      {displayedSymptoms.map((symptom, index) => (
-        <li key={index} className="flex items-start">
-          <span className="text-light-accent mr-2 flex-shrink-0">•</span>
-          <span className="text-light-text dark:text-dark-text">{symptom}</span>
-        </li>
-      ))}
-    </ul>
-    
-    {/* Кнопка показать больше/меньше для симптомов */}
-    {isMobile && serviceData.symptoms.length > visibleSymptomsCount && (
-      <button 
-        onClick={() => setExpandedSymptoms(!expandedSymptoms)}
-        className="mt-4 text-light-accent hover:text-light-accent/80 transition-colors text-sm flex items-center"
-      >
-        <span>{expandedSymptoms ? t('showLess') : t('showMore')}</span>
-        <svg 
-          className={`ml-1 w-4 h-4 transform transition-transform ${expandedSymptoms ? 'rotate-180' : 'rotate-0'}`} 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-    )}
-  </div>
-</div>
+        <div className={`rounded-2xl p-6 sm:p-8 ${theme === 'light' ? 'bg-white' : 'bg-dark-block'} relative overflow-hidden h-auto md:h-[700px]`}>
+          {/* Фоновый паттерн для левого блока */}
+          <div 
+            className="absolute -right-[150px] -bottom-[150px] w-[300px] h-[300px] pointer-events-none z-0 opacity-5" 
+            style={{
+              backgroundImage: 'url(/images/eye-pattern.png)',
+              backgroundSize: 'contain',
+              backgroundPosition: 'right bottom',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          
+          <div className="relative z-10">
+            <h2 className="text-2xl sm:text-3xl md:text-[40px] lg:text-[56px] font-medium mb-4 md:mb-6 text-light-text dark:text-dark-text">{t('serviceTitle')}</h2>
+            <p className="text-sm sm:text-base text-light-text/80 dark:text-dark-text/80 mb-6 md:mb-8">
+              {serviceData.mini_description}
+            </p>
+            
+            <h3 className="text-lg sm:text-xl font-medium mb-3 md:mb-4 text-light-text dark:text-dark-text">
+              {t('symptomsTitle')}
+            </h3>
+            
+            {/* Список симптомов с возможностью скрытия */}
+            <ul className="list-none space-y-2 sm:space-y-3 text-sm sm:text-base">
+              {displayedSymptoms.map((symptom, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-light-accent mr-2 flex-shrink-0">•</span>
+                  <span className="text-light-text dark:text-dark-text">{symptom}</span>
+                </li>
+              ))}
+            </ul>
+            
+            {/* Кнопка показать больше/меньше для симптомов */}
+            {isMobile && serviceData.symptoms_list.length > visibleSymptomsCount && (
+              <button 
+                onClick={() => setExpandedSymptoms(!expandedSymptoms)}
+                className="mt-4 text-light-accent hover:text-light-accent/80 transition-colors text-sm flex items-center"
+              >
+                <span>{expandedSymptoms ? t('showLess') : t('showMore')}</span>
+                <svg 
+                  className={`ml-1 w-4 h-4 transform transition-transform ${expandedSymptoms ? 'rotate-180' : 'rotate-0'}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
         
         {/* Правый блок - цены на услуги */}
         <div className={`rounded-2xl px-4 sm:px-8 py-4 ${theme === 'light' ? 'bg-white' : 'bg-dark-block'} relative overflow-hidden h-full`}>
@@ -273,17 +278,17 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
                   key={index}
                   className={`py-3 sm:py-4 flex justify-between items-center ${
                     (isMobile && !expandedServices && index === displayedServices.length - 1) || 
-                    (!isMobile && index === serviceData.services.length - 1) ? '' : 'border-b border-gray-200 dark:border-gray-700'
+                    (!isMobile && index === serviceData.services_list.length - 1) ? '' : 'border-b border-gray-200 dark:border-gray-700'
                   }`}
                 >
                   <span className="text-sm sm:text-base text-light-text dark:text-dark-text pr-4">{service.name}</span>
-                  <span className="font-medium text-sm sm:text-base text-light-text dark:text-dark-text whitespace-nowrap">{service.price}</span>
+                  <span className="font-medium text-sm sm:text-base text-light-text dark:text-dark-text whitespace-nowrap">{service.value}</span>
                 </div>
               ))}
             </div>
             
             {/* Кнопка показать больше/меньше для услуг */}
-            {isMobile && serviceData.services.length > visibleServicesCount && (
+            {isMobile && serviceData.services_list.length > visibleServicesCount && (
               <button 
                 onClick={() => setExpandedServices(!expandedServices)}
                 className="mt-4 text-light-accent hover:text-light-accent/80 transition-colors text-sm flex items-center"

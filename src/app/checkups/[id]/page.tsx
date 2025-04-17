@@ -50,7 +50,6 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
   
   // Состояние определения мобильного устройства
   const [isMobile, setIsMobile] = useState(false);
-  const faqItems = t('faqItems', { returnObjects: true }) as FAQItem[];
   
   // Загрузка данных из API
   useEffect(() => {
@@ -235,85 +234,29 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
           ></div>
           
           <div className="relative z-10">
-            <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed mb-6">{checkup.mini_description}</p>
+            {/* <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed mb-6">{checkup.mini_description}</p> */}
             
-            {/* Дополнительные сведения о программе */}
             <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed">
               {checkup.card_description}
             </p>
           </div>
         </div>
         
-        {/* Правый блок - FAQ селекты */}
+        {/* Правый блок - FAQ секция с медицинскими тестами */}
         <div className="w-full md:w-1/2 flex flex-col gap-2">
-          {/* Специальный FAQ пункт для исследований */}
-          <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
-            <button 
-              onClick={() => toggleItem('tests')}
-              className="w-full flex items-center justify-between p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 text-left focus:outline-none bg-white dark:bg-dark-block"
-            >
-              <span className="font-medium text-sm sm:text-base md:text-lg">
-                Какие исследования включены?
-              </span>
-              <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl ${openItems['tests'] ? 'bg-light-accent text-white' : 'border border-gray-300 dark:border-gray-600'}`}>
-                <svg 
-                  className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${openItems['tests'] ? 'transform rotate-180' : ''}`} 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-            </button>
-            
-            {openItems['tests'] && (
-              <div className="p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 bg-white dark:bg-dark-block">
-                <ul className="space-y-4">
-                  {checkup.medical_tests.map((test) => (
-                    <li key={test.uuid} className="border-b border-gray-100 dark:border-gray-700 pb-3 last:border-0 last:pb-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-start">
-                          <span className="inline-block w-2 h-2 rounded-full bg-light-accent mt-1.5 mr-2"></span>
-                          <span className="text-sm font-medium text-[#173F46] dark:text-white">{test.name}</span>
-                        </div>
-                        {test.mini_description && (
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleItem(`test-${test.uuid}`);
-                            }}
-                            className="ml-2 text-xs text-light-accent hover:text-light-accent/80 transition-colors"
-                          >
-                            {openItems[`test-${test.uuid}`] ? 'Свернуть' : 'Подробнее'}
-                          </button>
-                        )}
-                      </div>
-                      {openItems[`test-${test.uuid}`] && test.mini_description && (
-                        <div className="ml-4 text-sm text-[#173F46]/80 dark:text-white/80 bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
-                          {test.mini_description}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          
-          {/* Стандартные FAQ пункты */}
-          {faqItems.map((item: FAQItem, index: number) => (
-            <div key={index} className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
+          {/* Используем medical_tests из API для отображения вместо статичных FAQ */}
+          {checkup.medical_tests.map((test, index) => (
+            <div key={test.uuid} className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
               <button 
-                onClick={() => toggleItem(index)}
+                onClick={() => toggleItem(`medical-test-${test.uuid}`)}
                 className="w-full flex items-center justify-between p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 text-left focus:outline-none bg-white dark:bg-dark-block"
               >
                 <span className="font-medium text-sm sm:text-base md:text-lg">
-                  {item.title}
+                  {test.name}
                 </span>
-                <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl ${openItems[index] ? 'bg-light-accent text-white' : 'border border-gray-300 dark:border-gray-600'}`}>
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl ${openItems[`medical-test-${test.uuid}`] ? 'bg-light-accent text-white' : 'border border-gray-300 dark:border-gray-600'}`}>
                   <svg 
-                    className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${openItems[index] ? 'transform rotate-180' : ''}`} 
+                    className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${openItems[`medical-test-${test.uuid}`] ? 'transform rotate-180' : ''}`} 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"
@@ -323,9 +266,11 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
                 </div>
               </button>
               
-              {openItems[index] && (
+              {openItems[`medical-test-${test.uuid}`] && (
                 <div className="p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 bg-white dark:bg-dark-block text-[#173F46]/80 dark:text-white/80">
-                  <p className="text-sm sm:text-base max-w-full sm:max-w-[90%] md:max-w-[80%]">{item.content}</p>
+                  <p className="text-sm sm:text-base max-w-full sm:max-w-[90%] md:max-w-[80%]">
+                    {test.mini_description || "Подробная информация об исследовании отсутствует."}
+                  </p>
                 </div>
               )}
             </div>
