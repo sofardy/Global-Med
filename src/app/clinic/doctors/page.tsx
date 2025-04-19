@@ -110,16 +110,17 @@ export default function Doctors() {
         ) : (
           <>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {doctors.slice(0, visibleDoctors).map(doctor => (
-                <DoctorCard
-                  key={doctor.uuid}
-                  id={doctor.uuid}
-                  name={doctor.full_name}
-                  specialization={doctor.specialization}
-                  experience={formatExperience(doctor.experience_years)}
-                  photoUrl={doctor.image_url}
-                />
-              ))}
+           {doctors.slice(0, visibleDoctors).map(doctor => (
+  <DoctorCard
+    key={doctor.uuid}
+    id={doctor.uuid}
+    slug={doctor.slug} // Добавляем slug
+    name={doctor.full_name}
+    specialization={doctor.specialization}
+    experience={formatExperience(doctor.experience_years)}
+    photoUrl={doctor.image_url}
+  />
+))}
             </div>
             
             {(visibleDoctors < doctors.length || currentPage < totalPages) && (

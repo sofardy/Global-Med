@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UniversalCard } from '../UniversalCard';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import Image from 'next/image';
@@ -8,9 +8,9 @@ import { CalculatorIcon, ChecklistMedicalIcon, MedicalTrackerIcon, TabletIcon } 
 import Modal from '../Modal/Modal';
 import { useThemeStore } from '@/src/store/theme';
 
-// Интерфейс для данных, полученных от API
-interface CheckupData {
-  data: {
+// Интерфейс для данных, полученных от API через endpoint /api/checkups
+interface CheckupsApiResponse {
+  data: Array<{
     uuid: string;
     slug: string;
     title: string;
@@ -25,12 +25,17 @@ interface CheckupData {
       name: string;
       mini_description: string;
     }>;
-    symptoms: Array<{
+    specialists: Array<{
       uuid: string;
-      slug: string;
       name: string;
+      description: string;
     }>;
-  }
+    additional_services: Array<{
+      uuid: string;
+      name: string;
+      description: string;
+    }>;
+  }>;
 }
 
 interface CardData {
@@ -40,6 +45,22 @@ interface CardData {
   description: string | string[];
   iconPath: React.ReactNode;
 }
+
+// Соответствие между названиями симптомов и их slug для API
+const symptomSlugs: Record<string, string> = {
+  'Аллергия': 'allergiia',
+  'Боль в суставах': 'bol-v-sustavakh',
+  'Простуда': 'prostuda',
+  'Боль в горле': 'bol-v-gorle',
+  'Женское здоровье': 'zhenskoe-zdorove',
+  'Нарушение зрения': 'narushenie-zreniia',
+  'Боль в сердце': 'bol-v-serdtse',
+  'Головная боль': 'golovnaia-bol',
+  'Расстройство пищеварения': 'rasstroistvo-pishchevareniia',
+  'Повышенная утомляемость': 'povyshennaia-utomliaemost',
+  'Мужское здоровье': 'muzhskoe-zdorove',
+  'Отечность': 'otechnost'
+};
 
 const translations = {
   ru: {
@@ -56,6 +77,7 @@ const translations = {
     confirmSelection: 'Подтвердить выбор',
     loading: 'Загрузка...',
     error: 'Произошла ошибка при загрузке данных',
+    noResults: 'По выбранным симптомам не найдено рекомендаций',
     symptoms: [
       'Аллергия',
       'Боль в суставах',
@@ -91,6 +113,7 @@ const translations = {
     confirmSelection: 'Tanlovni tasdiqlash',
     loading: 'Yuklanmoqda...',
     error: 'Ma\'lumotlarni yuklashda xatolik yuz berdi',
+    noResults: 'Tanlangan simptomlar bo\'yicha tavsiyalar topilmadi',
     symptoms: [
       'Allergiya',
       'Bo\'g\'imlarda og\'riq',
@@ -147,9 +170,10 @@ export const SymptomSelector: React.FC = () => {
   const [animationInProgress, setAnimationInProgress] = useState(false);
 
   // Состояние для данных из API
-  const [checkupData, setCheckupData] = useState<CheckupData | null>(null);
+  const [checkupData, setCheckupData] = useState<CheckupsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [cache, setCache] = useState<Record<string, CheckupsApiResponse>>({});
 
   // Effect для отслеживания ширины окна
   useEffect(() => {
@@ -167,83 +191,122 @@ export const SymptomSelector: React.FC = () => {
     }
   }, []);
 
-  // Эффект для загрузки данных из API при выборе симптома
-  useEffect(() => {
-    const fetchCheckupData = async () => {
-      if (selectedSymptoms.length === 0) return;
-      
-      try {
-        setLoading(true);
-        const slug = selectedSymptoms[0].toLowerCase().replace(/\s+/g, '-');
-        const response = await fetch(`https://globalmed-main-b3lh3x.laravel.cloud/api/symptoms/${slug}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        setCheckupData(data);
-      } catch (err) {
-        console.error('Error fetching checkup data:', err);
-        setError(err instanceof Error ? err : new Error('Ошибка при загрузке данных'));
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Функция для получения slug симптома
+  const getSymptomSlug = (symptom: string): string => {
+    return symptomSlugs[symptom] || symptom.toLowerCase().replace(/\s+/g, '-').replace(/ё/g, 'e');
+  };
 
-    fetchCheckupData();
-  }, [selectedSymptoms]);
+  // Функция для получения данных из API с учётом всех выбранных симптомов
+  const fetchCheckupData = useCallback(async () => {
+    if (selectedSymptoms.length === 0) return;
+    
+    // Создаем ключ для кэша на основе отсортированных симптомов
+    const cacheKey = [...selectedSymptoms].sort().join('|');
+    
+    // Если данные уже есть в кэше, используем их
+    if (cache[cacheKey]) {
+      setCheckupData(cache[cacheKey]);
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      // Формируем параметры запроса для всех выбранных симптомов
+      const symptomsParams = selectedSymptoms
+        .map(symptom => `filter[symptoms][]=${getSymptomSlug(symptom)}`)
+        .join('&');
+      
+      const response = await fetch(`https://globalmed-main-b3lh3x.laravel.cloud/api/checkups?${symptomsParams}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setCheckupData(data);
+      
+      // Добавляем результат в кэш
+      setCache(prev => ({
+        ...prev,
+        [cacheKey]: data
+      }));
+    } catch (err) {
+      console.error('Error fetching checkup data:', err);
+      setError(err instanceof Error ? err : new Error(t('error') as string));
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedSymptoms, cache, t]);
+
+  // Эффект для загрузки данных из API при выборе симптома с дебаунсом
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (selectedSymptoms.length > 0) {
+        fetchCheckupData();
+      }
+    }, 300); // 300ms задержка для предотвращения частых запросов
+    
+    return () => clearTimeout(debounceTimer);
+  }, [selectedSymptoms, fetchCheckupData]);
 
   // Список доступных симптомов
   const symptoms = t('symptoms', { returnObjects: true }) as string[];
   
   // Получаем карточки на основе данных из API
   const generateCardsFromApiData = (): CardData[] => {
-    // Если данные из API отсутствуют или загружаются, возвращаем шаблонные карточки
-    if (!checkupData || loading) {
+    // Если данные из API отсутствуют, загружаются или пустые
+    if (!checkupData || loading || (checkupData.data && checkupData.data.length === 0)) {
       const cardTypes = ['checkup', 'analysis', 'services', 'specialist'];
       return cardTypes.map(type => ({
         id: type,
         title: t(`cardTitles.${type}`) as string,
-        subtitle: selectedSymptoms[0] || '',
-        description: loading ? t('loading') as string : '',
+        subtitle: selectedSymptoms.join(', '),
+        description: loading ? 
+          t('loading') as string : 
+          (!checkupData || checkupData.data.length === 0) ? 
+            t('noResults') as string : 
+            '',
         iconPath: getIconForCardType(type)
       }));
     }
 
-    const { data } = checkupData;
+    // Берем первый чек-ап из результатов (можно расширить логику для выбора оптимального)
+    const checkup = checkupData.data[0];
     
     // Создаем карточки на основе данных API
     return [
       {
         id: 'checkup',
         title: t('cardTitles.checkup') as string,
-        subtitle: selectedSymptoms[0],
-        description: data.card_description || data.description,
+        subtitle: selectedSymptoms.join(', '),
+        description: checkup.card_description || checkup.description,
         iconPath: getIconForCardType('checkup')
       },
       {
         id: 'analysis',
         title: t('cardTitles.analysis') as string,
-        subtitle: selectedSymptoms[0],
-        description: data.medical_tests.map(test => test.name),
+        subtitle: selectedSymptoms.join(', '),
+        description: checkup.medical_tests.map(test => test.name),
         iconPath: getIconForCardType('analysis')
       },
       {
         id: 'services',
         title: t('cardTitles.services') as string,
-        subtitle: selectedSymptoms[0],
+        subtitle: selectedSymptoms.join(', '),
         description: [
-          `Длительность: ${data.duration}`,
-          `Стоимость: ${data.price} руб.`
+          `Длительность: ${checkup.duration}`,
+          `Стоимость: ${checkup.price} руб.`
         ],
         iconPath: getIconForCardType('services')
       },
       {
         id: 'specialist',
         title: t('cardTitles.specialist') as string,
-        subtitle: selectedSymptoms[0],
-        description: data.mini_description,
+        subtitle: selectedSymptoms.join(', '),
+        description: checkup.specialists && checkup.specialists.length > 0 
+          ? checkup.specialists.map(spec => spec.name).join(', ') 
+          : checkup.mini_description,
         iconPath: getIconForCardType('specialist')
       }
     ];
@@ -511,7 +574,7 @@ export const SymptomSelector: React.FC = () => {
                 description={card.description}
                 icon={card.iconPath}
                 showButton={false} // Явно указываем, что кнопка не нужна
-                link={`/${card.id}/${card.subtitle.toLowerCase().replace(/\s+/g, '-')}`}
+                link={`/${card.id}/${selectedSymptoms.map(s => getSymptomSlug(s)).join('-')}`}
                 listStyle="disc"
                 className="mx-auto w-full max-w-full md:max-w-[375px]"
               />

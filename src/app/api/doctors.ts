@@ -1,4 +1,3 @@
-// src/api/doctors.ts
 import axios from 'axios';
 import { useLanguageStore } from '@/src/store/language';
 
@@ -17,6 +16,7 @@ export interface Doctor {
     price_from: string;
     education: any;
     certificates: any;
+    slug: string;
 }
 
 export interface DoctorsResponse {
