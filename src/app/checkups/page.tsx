@@ -39,7 +39,7 @@ export default function Checkups() {
     const fetchCheckups = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('https://globalmed-main-b3lh3x.laravel.cloud/api/checkups');
+        const response = await axios.get('https://globalmed.kelyanmedia.com/api/checkups');
         setCheckupItems(response.data.data);
         setError(null);
       } catch (err) {

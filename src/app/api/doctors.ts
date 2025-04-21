@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useLanguageStore } from '@/src/store/language';
 
-const API_URL = 'https://globalmed-main-b3lh3x.laravel.cloud/api';
+const API_URL = 'https://globalmed.kelyanmedia.com/api';
 
 export interface Doctor {
     uuid: string;

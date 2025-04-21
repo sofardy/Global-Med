@@ -63,7 +63,7 @@ export default function DoctorDetailPage(): JSX.Element {
         }
         
         // Получаем данные напрямую из API, используя UUID/id
-        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://globalmed-main-b3lh3x.laravel.cloud/api';
+        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://globalmed.kelyanmedia.com/api';
         const response = await fetch(`${apiUrl}/doctors/${doctorId}`);
         
         if (!response.ok) {

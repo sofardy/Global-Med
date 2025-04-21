@@ -93,7 +93,7 @@ export const MedicalServices = () => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('https://globalmed-main-b3lh3x.laravel.cloud/api/services');
+        const response = await axios.get('https://globalmed.kelyanmedia.com/api/services');
         
         if (response.data && response.data.data && Array.isArray(response.data.data)) {
           setServices(response.data.data);

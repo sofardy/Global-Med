@@ -87,7 +87,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
     const fetchServiceData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ServiceResponse>(`https://globalmed-main-b3lh3x.laravel.cloud/api/services/${id}`);
+        const response = await axios.get<ServiceResponse>(`https://globalmed.kelyanmedia.com/api/services/${id}`);
         console.log(response);
         setServiceData(response.data.data);
         setError(null);

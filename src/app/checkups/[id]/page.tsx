@@ -58,7 +58,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         setLoading(true);
         console.log('Запрашиваем данные для id:', params.id);
         
-        const response = await axios.get(`https://globalmed-main-b3lh3x.laravel.cloud/api/checkups/${params.id}`);
+        const response = await axios.get(`https://globalmed.kelyanmedia.com/api/checkups/${params.id}`);
         console.log('Получен ответ:', response.data);
         
         // API возвращает объект с полем data, содержащим данные о чек-апе

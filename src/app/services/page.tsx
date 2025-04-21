@@ -91,10 +91,8 @@ export default function ServicesPage() {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ServicesResponse>('https://globalmed-main-b3lh3x.laravel.cloud/api/services');
-        console.log('====================================');
+        const response = await axios.get<ServicesResponse>('https://globalmed.kelyanmedia.com/api/services');
         console.log(response);
-        console.log('====================================');
         setServices(response.data.data);
         setError(null);
       } catch (err) {

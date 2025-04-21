@@ -25,15 +25,10 @@ interface CheckupsApiResponse {
       name: string;
       mini_description: string;
     }>;
-    specialists: Array<{
+    symptoms: Array<{
       uuid: string;
+      slug: string;
       name: string;
-      description: string;
-    }>;
-    additional_services: Array<{
-      uuid: string;
-      name: string;
-      description: string;
     }>;
   }>;
 }
@@ -44,6 +39,8 @@ interface CardData {
   subtitle: string; 
   description: string | string[];
   iconPath: React.ReactNode;
+  showButton?: boolean;
+  buttonText?: string;
 }
 
 // Соответствие между названиями симптомов и их slug для API
@@ -78,6 +75,11 @@ const translations = {
     loading: 'Загрузка...',
     error: 'Произошла ошибка при загрузке данных',
     noResults: 'По выбранным симптомам не найдено рекомендаций',
+    relatedSymptoms: 'Связанные симптомы:',
+    recommendedSpecialist: 'Рекомендуем консультацию специалиста по выбранным симптомам',
+    seeMore: 'Подробнее',
+    andMore: 'и еще',
+    moreTests: 'анализов',
     symptoms: [
       'Аллергия',
       'Боль в суставах',
@@ -114,6 +116,11 @@ const translations = {
     loading: 'Yuklanmoqda...',
     error: 'Ma\'lumotlarni yuklashda xatolik yuz berdi',
     noResults: 'Tanlangan simptomlar bo\'yicha tavsiyalar topilmadi',
+    relatedSymptoms: 'Bog\'liq simptomlar:',
+    recommendedSpecialist: 'Tanlangan simptomlar bo\'yicha mutaxassis maslahatini tavsiya qilamiz',
+    seeMore: 'Batafsil',
+    andMore: 'va yana',
+    moreTests: 'tahlillar',
     symptoms: [
       'Allergiya',
       'Bo\'g\'imlarda og\'riq',
@@ -271,43 +278,93 @@ export const SymptomSelector: React.FC = () => {
       }));
     }
 
-    // Берем первый чек-ап из результатов (можно расширить логику для выбора оптимального)
-    const checkup = checkupData.data[0];
+    // Собираем все связанные симптомы из полученных чек-апов
+    const relatedSymptoms = new Set<string>();
+    checkupData.data.forEach(checkup => {
+      checkup.symptoms.forEach(symptom => {
+        // Добавляем только те симптомы, которые не были выбраны пользователем
+        if (!selectedSymptoms.includes(symptom.name)) {
+          relatedSymptoms.add(symptom.name);
+        }
+      });
+    });
     
-    // Создаем карточки на основе данных API
+    // Соберем все уникальные тесты из всех чек-апов
+    const allTests = new Set<string>();
+    checkupData.data.forEach(checkup => {
+      checkup.medical_tests.forEach(test => {
+        allTests.add(test.name);
+      });
+    });
+    
+    // Обрезаем списки и добавляем информацию о дополнительных элементах
+    const maxCheckups = 2;
+    const maxTests = 5;
+    const maxSymptoms = 2;
+    
+    const checkupTitles = checkupData.data.map(c => c.title);
+    const testNames = Array.from(allTests);
+    const relatedSymptomsList = Array.from(relatedSymptoms);
+    
+    // Ограничиваем список чек-апов
+    const limitedCheckups = checkupTitles.length > maxCheckups ? 
+      [...checkupTitles.slice(0, maxCheckups), `...${t('andMore')} ${checkupTitles.length - maxCheckups}`] : 
+      checkupTitles;
+    
+    // Ограничиваем список анализов
+    const limitedTests = testNames.length > maxTests ? 
+      [...testNames.slice(0, maxTests), `...${t('andMore')} ${testNames.length - maxTests} ${t('moreTests')}`] : 
+      testNames;
+    
+    // Ограничиваем список связанных симптомов
+    const limitedSymptoms = relatedSymptomsList.length > maxSymptoms ? 
+      [`${t('relatedSymptoms')} ${relatedSymptomsList.slice(0, maxSymptoms).join(', ')}...`] : 
+      relatedSymptomsList.length > 0 ? [`${t('relatedSymptoms')} ${relatedSymptomsList.join(', ')}`] : [];
+    
+    // Ограничиваем список сервисов (чек-апов с ценой и длительностью)
+    const serviceInfo = checkupData.data.slice(0, 2).map(c => 
+      `${c.title}: ${c.duration} мин, ${c.price} руб.`
+    );
+    
     return [
       {
         id: 'checkup',
         title: t('cardTitles.checkup') as string,
         subtitle: selectedSymptoms.join(', '),
-        description: checkup.card_description || checkup.description,
-        iconPath: getIconForCardType('checkup')
+        description: limitedCheckups,
+        iconPath: getIconForCardType('checkup'),
+        showButton: false,
+        buttonText: t('seeMore') as string
       },
       {
         id: 'analysis',
         title: t('cardTitles.analysis') as string,
         subtitle: selectedSymptoms.join(', '),
-        description: checkup.medical_tests.map(test => test.name),
-        iconPath: getIconForCardType('analysis')
+        description: limitedTests,
+        iconPath: getIconForCardType('analysis'),
+        showButton: false,
+        buttonText: t('seeMore') as string
       },
       {
         id: 'services',
         title: t('cardTitles.services') as string,
         subtitle: selectedSymptoms.join(', '),
         description: [
-          `Длительность: ${checkup.duration}`,
-          `Стоимость: ${checkup.price} руб.`
+          ...limitedSymptoms,
+          ...serviceInfo
         ],
-        iconPath: getIconForCardType('services')
+        iconPath: getIconForCardType('services'),
+        showButton: false,
+        buttonText: t('seeMore') as string
       },
       {
         id: 'specialist',
         title: t('cardTitles.specialist') as string,
         subtitle: selectedSymptoms.join(', '),
-        description: checkup.specialists && checkup.specialists.length > 0 
-          ? checkup.specialists.map(spec => spec.name).join(', ') 
-          : checkup.mini_description,
-        iconPath: getIconForCardType('specialist')
+        description: limitedSymptoms.length > 0 ? limitedSymptoms[0] : t('recommendedSpecialist') as string,
+        iconPath: getIconForCardType('specialist'),
+        showButton: false,
+        buttonText: t('seeMore') as string
       }
     ];
   };
@@ -573,7 +630,8 @@ export const SymptomSelector: React.FC = () => {
                 subtitle={card.subtitle}
                 description={card.description}
                 icon={card.iconPath}
-                showButton={false} // Явно указываем, что кнопка не нужна
+                showButton={card.showButton}
+                buttonText={card.buttonText || t('seeMore') as string}
                 link={`/${card.id}/${selectedSymptoms.map(s => getSymptomSlug(s)).join('-')}`}
                 listStyle="disc"
                 className="mx-auto w-full max-w-full md:max-w-[375px]"
@@ -609,94 +667,94 @@ export const SymptomSelector: React.FC = () => {
         footer={
           <div className="flex flex-col w-full">
             <button
-              onClick={confirmSelection}
-              className="w-full py-3 text-white bg-light-accent hover:bg-light-accent/90 rounded-xl font-medium"
-              disabled={tempSelectedSymptoms.length === 0}
-            >
-              {t('confirmSelection')}
-            </button>
-          </div>
+           onClick={confirmSelection}
+             className="w-full py-3 text-white bg-light-accent hover:bg-light-accent/90 rounded-xl font-medium"
+             disabled={tempSelectedSymptoms.length === 0}
+           >
+             {t('confirmSelection')}
+           </button>
+         </div>
+       }
+     >
+       <div className="flex flex-col p-2">
+         {/* Список симптомов в модальном окне */}
+         <div className="mb-4">
+           {symptoms.map((symptom, index) => (
+             <button
+               key={index}
+               onClick={() => toggleTempSymptom(symptom)}
+               className={`
+                w-full py-3 px-4 mb-2 rounded-xl flex justify-between items-center text-left text-base transition-all
+                ${tempSelectedSymptoms.includes(symptom)
+                   ? 'bg-light-accent/10 text-light-accent font-medium border border-light-accent'
+                   : 'bg-transparent text-light-text border border-white'}
+              `}
+               disabled={tempSelectedSymptoms.length >= 3 && !tempSelectedSymptoms.includes(symptom)}
+             >
+               <span>{symptom}</span>
+               {tempSelectedSymptoms.includes(symptom) && (
+                 <span className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-light-accent text-white text-xs">
+                   ✓
+                 </span>
+               )}
+             </button>
+           ))}
+         </div>
+        
+         {/* Индикатор выбранных симптомов */}
+         <div className="pt-2 pb-4 text-center text-sm text-light-text">
+           Выбрано {tempSelectedSymptoms.length} из 3 симптомов
+         </div>
+       </div>
+     </Modal>
+
+     {/* Добавляем CSS анимации */}
+     <style jsx global>{`
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-      >
-        <div className="flex flex-col p-2">
-          {/* Список симптомов в модальном окне */}
-          <div className="mb-4">
-            {symptoms.map((symptom, index) => (
-              <button
-                key={index}
-                onClick={() => toggleTempSymptom(symptom)}
-                className={`
-                 w-full py-3 px-4 mb-2 rounded-xl flex justify-between items-center text-left text-base transition-all
-                 ${tempSelectedSymptoms.includes(symptom)
-                    ? 'bg-light-accent/10 text-light-accent font-medium border border-light-accent'
-                    : 'bg-transparent text-light-text border border-white'}
-               `}
-                disabled={tempSelectedSymptoms.length >= 3 && !tempSelectedSymptoms.includes(symptom)}
-              >
-                <span>{symptom}</span>
-                {tempSelectedSymptoms.includes(symptom) && (
-                  <span className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-light-accent text-white text-xs">
-                    ✓
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-         
-          {/* Индикатор выбранных симптомов */}
-          <div className="pt-2 pb-4 text-center text-sm text-light-text">
-            Выбрано {tempSelectedSymptoms.length} из 3 симптомов
-          </div>
-        </div>
-      </Modal>
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      
+      .animate-fadeIn {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      
+      .animate-slideIn {
+        animation: slideIn 0.5s ease-out forwards;
+      }
 
-      {/* Добавляем CSS анимации */}
-      <style jsx global>{`
-       @keyframes fadeIn {
-         from {
-           opacity: 0;
-           transform: translateY(20px);
-         }
-         to {
-           opacity: 1;
-           transform: translateY(0);
-         }
-       }
-       
-       @keyframes slideIn {
-         from {
-           opacity: 0;
-           transform: translateY(40px);
-         }
-         to {
-           opacity: 1;
-           transform: translateY(0);
-         }
-       }
-       
-       @keyframes fadeInScale {
-         from {
-           opacity: 0;
-           transform: scale(0.9) translateY(20px);
-         }
-         to {
-           opacity: 1;
-           transform: scale(1) translateY(0);
-         }
-       }
-       
-       .animate-fadeIn {
-         animation: fadeIn 0.4s ease-out forwards;
-       }
-       
-       .animate-slideIn {
-         animation: slideIn 0.5s ease-out forwards;
-       }
-
-       .animate-fadeInScale {
-         animation: fadeInScale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-       }
-     `}</style>
-    </div>
-  );
+      .animate-fadeInScale {
+        animation: fadeInScale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+    `}</style>
+   </div>
+ );
 };
