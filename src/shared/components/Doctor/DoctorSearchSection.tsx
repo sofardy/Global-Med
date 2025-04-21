@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import Modal from '@/src/shared/components/Modal/Modal';
 import { useDoctorsStore } from '@/src/store/doctors';
+import axios from 'axios';
+import { API_BASE_URL } from '@/src/config/constants';
 
 interface DropdownPosition {
  top: number;
@@ -12,18 +14,19 @@ interface DropdownPosition {
  width: number;
 }
 
+interface Specialization {
+ uuid: string;
+ name: string;
+ slug: string;
+}
+
 interface SpecialtiesDropdownProps {
  isOpen: boolean;
  onClose: () => void;
- specialties: string[];
- onSelect: (specialty: string) => void;
+ specialties: Specialization[];
+ onSelect: (specialty: Specialization | null) => void;
  placeholder: string;
  buttonRef: React.RefObject<HTMLButtonElement>;
-}
-
-// Интерфейс для мапирования специальностей на их UUID
-interface SpecialtyMapping {
-  [key: string]: string;
 }
 
 const translations = {
@@ -37,11 +40,7 @@ const translations = {
    modalTitle: 'Выберите специализацию',
    loading: 'Загрузка...',
    noResults: 'Врачи не найдены',
-   specialties: [
-     'Терапевт', 'Кардиолог', 'Невролог', 'Офтальмолог', 'Эндокринолог',
-     'Гастроэнтеролог', 'Гинеколог', 'Отоларинголог (ЛОР)', 'Дерматолог',
-     'Ортопед', 'Уролог', 'Педиатр'
-   ]
+   loadingSpecialties: 'Загрузка специализаций...'
  },
  uz: {
    title: 'Mutaxassis toping',
@@ -53,29 +52,8 @@ const translations = {
    modalTitle: 'Ixtisoslikni tanlang',
    loading: 'Yuklanmoqda...',
    noResults: 'Shifokorlar topilmadi',
-   specialties: [
-     'Terapevt', 'Kardiolog', 'Nevrolog', 'Oftalmolog', 'Endokrinolog',
-     'Gastroenterolog', 'Ginekolog', 'Otorinolaringolog (LOR)', 'Dermatolog',
-     'Ortoped', 'Urolog', 'Pediatr'
-   ]
+   loadingSpecialties: 'Ixtisosliklar yuklanmoqda...'
  }
-};
-
-// Пример маппинга названий специальностей на их UUID
-// Это должно быть заменено на реальные данные или запрос к API
-const specialtyUUIDMapping: SpecialtyMapping = {
-  'Терапевт': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
-  'Кардиолог': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
-  'Невролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
-  'Офтальмолог': '959384f4-0fba-3f50-a91b-f69575e60890',
-  'Эндокринолог': '346ca30e-64a0-3ad6-8d8f-ed2f749b6d9f',
-  'Гастроэнтеролог': '642cdbee-be48-3536-998c-3f7bebc40629',
-  'Гинеколог': '959384f4-0fba-3f50-a91b-f69575e60890',
-  'Отоларинголог (ЛОР)': '959384f4-0fba-3f50-a91b-f69575e60890',
-  'Дерматолог': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
-  'Ортопед': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
-  'Уролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
-  'Педиатр': '959384f4-0fba-3f50-a91b-f69575e60890'
 };
 
 // Компонент выпадающего списка с порталом только для десктопной версии
@@ -151,7 +129,7 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
    >
      <div className="py-2">
        <button
-         onClick={() => onSelect('')}
+         onClick={() => onSelect(null)}
          className="w-full text-left px-4 py-2.5 text-gray-800 hover:bg-light-accent/10 transition-colors font-medium"
        >
          {placeholder}
@@ -159,14 +137,14 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
        
        <div className="border-t my-1 border-gray-100"></div>
        
-       {specialties.map((specialty, index) => (
+       {specialties.map((specialty) => (
          <button
-           key={index}
+           key={specialty.uuid}
            onClick={() => onSelect(specialty)}
            className="w-full text-left px-4 py-2.5 text-gray-700 hover:bg-light-accent/10 hover:text-light-accent transition-colors flex items-center group"
          >
            <span className="w-5 text-light-accent opacity-0 group-hover:opacity-100 transition-opacity">•</span>
-           <span>{specialty}</span>
+           <span>{specialty.name}</span>
          </button>
        ))}
      </div>
@@ -178,21 +156,39 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
 const DoctorSearchSection: React.FC = () => {
  const { t } = useTranslation(translations);
  
- // Состояния UI
  const [nameQuery, setNameQuery] = useState<string>('');
  const [isSpecialtyOpen, setIsSpecialtyOpen] = useState<boolean>(false);
  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
- const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
+ const [selectedSpecialty, setSelectedSpecialty] = useState<Specialization | null>(null);
  const [isMobile, setIsMobile] = useState<boolean>(false);
  const [isMounted, setIsMounted] = useState<boolean>(false);
+ const [specializations, setSpecializations] = useState<Specialization[]>([]);
+ const [loadingSpecialties, setLoadingSpecialties] = useState<boolean>(false);
+ const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
  
- // Референс для кнопки выбора специальности
  const specialtyButtonRef = useRef<HTMLButtonElement>(null);
  
- // Доступ к стору докторов
- const { setFilters, fetchDoctors } = useDoctorsStore();
+ const { setFilters, fetchDoctors, doctors } = useDoctorsStore();
  
- // Эффект для определения мобильного устройства и инициализации
+ // Загрузка специализаций
+ useEffect(() => {
+   const fetchSpecializations = async () => {
+     setLoadingSpecialties(true);
+     try {
+       const response = await axios.get(`${API_BASE_URL}/specializations`);
+       console.log('Loaded specializations:', response.data.data);
+       setSpecializations(response.data.data);
+     } catch (error) {
+       console.error('Error fetching specializations:', error);
+     } finally {
+       setLoadingSpecialties(false);
+     }
+   };
+   
+   fetchSpecializations();
+ }, []);
+ 
+ // Инициализация и определение устройства
  useEffect(() => {
    setIsMounted(true);
    const checkMobile = (): void => {
@@ -210,50 +206,70 @@ const DoctorSearchSection: React.FC = () => {
    };
  }, [fetchDoctors]);
  
- // Функция для получения UUID специальности по её названию
- const getSpecialtyUUID = (specialtyName: string): string | undefined => {
-   return specialtyUUIDMapping[specialtyName];
- };
- 
- // Обработчик поиска
- const handleSearch = (): void => {
-   // Подготовка фильтров
-   const filters: any = {};
-   
-   if (nameQuery.trim()) {
-     filters.full_name = nameQuery.trim();
-   }
-   
-   if (selectedSpecialty) {
-     const specialtyUUID = getSpecialtyUUID(selectedSpecialty);
-     if (specialtyUUID) {
-       filters.specialization_uuid = specialtyUUID;
-     }
-   }
-   
-   // Устанавливаем фильтры и запрашиваем данные
-   setFilters(filters);
-   fetchDoctors();
-   
-   // Можно добавить прокрутку к результатам поиска
-   const resultsSection = document.getElementById('doctors-results');
-   if (resultsSection) {
-     resultsSection.scrollIntoView({ behavior: 'smooth' });
-   }
- };
- 
- // Получаем список специальностей из переводов
- const specialties = t('specialties', { returnObjects: true }) as string[];
- const displaySpecialty = selectedSpecialty || t('selectPlaceholder');
- 
- // Обработчик выбора специальности
- const handleSelectSpecialty = (specialty: string): void => {
+ // Обработчик выбора специализации 
+ const handleSelectSpecialty = (specialty: Specialization | null): void => {
+   console.log('Selected specialty:', specialty);
    setSelectedSpecialty(specialty);
    setIsSpecialtyOpen(false);
    setIsModalOpen(false);
+   
+   // Применяем фильтр по специализации
+   if (specialty) {
+     console.log(`Filtering by specialty UUID: ${specialty.uuid}`);
+     setFilters({ specialization_uuid: specialty.uuid });
+   } else {
+     console.log('Clearing specialty filter');
+     setFilters({});
+   }
+   
+   // Выполняем поиск
+   fetchDoctors().then(() => {
+     console.log('Doctors after specialty filter:', doctors);
+     
+     // Прокручиваем к результатам
+     const resultsSection = document.getElementById('doctors-results');
+     if (resultsSection) {
+       resultsSection.scrollIntoView({ behavior: 'smooth' });
+     }
+   });
  };
  
- // Обработчик клика по кнопке выбора специальности
+ // Обработчик поиска
+ const handleSearch = async (): Promise<void> => {
+   setLoadingSearch(true);
+   
+   try {
+     const filters: Record<string, any> = {};
+     
+     if (nameQuery.trim()) {
+       filters.full_name = nameQuery.trim();
+       console.log(`Filtering by name: ${nameQuery.trim()}`);
+     }
+     
+     if (selectedSpecialty) {
+       filters.specialization_uuid = selectedSpecialty.uuid;
+       console.log(`Filtering by specialty UUID: ${selectedSpecialty.uuid}`);
+     }
+     
+     console.log('Applied filters:', filters);
+     setFilters(filters);
+     
+     await fetchDoctors();
+     console.log('Doctors after search:', doctors);
+     
+     const resultsSection = document.getElementById('doctors-results');
+     if (resultsSection) {
+       resultsSection.scrollIntoView({ behavior: 'smooth' });
+     }
+   } catch (error) {
+     console.error('Search error:', error);
+   } finally {
+     setLoadingSearch(false);
+   }
+ };
+ 
+ const displaySpecialty = selectedSpecialty ? selectedSpecialty.name : t('selectPlaceholder');
+ 
  const handleSpecialtyButtonClick = (): void => {
    if (isMobile) {
      setIsModalOpen(true);
@@ -316,17 +332,25 @@ const DoctorSearchSection: React.FC = () => {
                  ref={specialtyButtonRef}
                  onClick={handleSpecialtyButtonClick}
                  className="w-full bg-white/20 rounded-2xl p-4 pr-10 text-left text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+                 disabled={loadingSpecialties}
                >
-                 {displaySpecialty}
+                 {loadingSpecialties ? t('loadingSpecialties') : displaySpecialty}
                </button>
                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                 <svg 
-                   className={`w-5 h-5 text-white transition-transform duration-300 ${isSpecialtyOpen ? 'rotate-180' : ''}`} 
-                   fill="currentColor" 
-                   viewBox="0 0 20 20"
-                 >
-                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                 </svg>
+                 {loadingSpecialties ? (
+                   <svg className="w-5 h-5 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                   </svg>
+                 ) : (
+                   <svg 
+                     className={`w-5 h-5 text-white transition-transform duration-300 ${isSpecialtyOpen ? 'rotate-180' : ''}`} 
+                     fill="currentColor" 
+                     viewBox="0 0 20 20"
+                   >
+                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                   </svg>
+                 )}
                </div>
              </div>
            </div>
@@ -334,23 +358,31 @@ const DoctorSearchSection: React.FC = () => {
            <div className="w-full md:w-1/5 flex items-end">
              <button
                onClick={handleSearch}
-               className="w-full mt-auto rounded-2xl bg-white text-light-accent p-4 font-medium hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+               disabled={loadingSearch}
+               className="w-full mt-auto rounded-2xl bg-white text-light-accent p-4 font-medium hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-wait disabled:hover:scale-100"
              >
-               {t('findButton')}
+               {loadingSearch ? (
+                 <span className="flex items-center justify-center">
+                   <svg className="w-5 h-5 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                   </svg>
+                   {t('loading')}
+                 </span>
+               ) : t('findButton')}
              </button>
            </div>
          </div>
        </div>
      </div>
      
-     {/* Anchor для прокрутки к результатам */}
      <div id="doctors-results"></div>
      
      {isMounted && !isMobile && (
        <SpecialtiesDropdown
          isOpen={isSpecialtyOpen}
          onClose={() => setIsSpecialtyOpen(false)}
-         specialties={specialties}
+         specialties={specializations}
          onSelect={handleSelectSpecialty}
          placeholder={t('selectPlaceholder')}
          buttonRef={specialtyButtonRef}
@@ -371,7 +403,7 @@ const DoctorSearchSection: React.FC = () => {
        >
          <div className="py-2">
            <button
-             onClick={() => handleSelectSpecialty('')}
+             onClick={() => handleSelectSpecialty(null)}
              className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 dark:hover:bg-light-accent/10 rounded-lg transition-colors font-medium"
            >
              {t('selectPlaceholder')}
@@ -379,16 +411,22 @@ const DoctorSearchSection: React.FC = () => {
            
            <div className="border-t my-1 border-gray-100 dark:border-gray-700"></div>
            
-           {specialties.map((specialty, index) => (
-             <button
-               key={index}
-               onClick={() => handleSelectSpecialty(specialty)}
-               className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 hover:text-light-accent dark:hover:text-light-accent rounded-lg transition-colors flex items-center group"
-             >
-               <span className="w-5 text-light-accent opacity-0 group-hover:opacity-100 transition-opacity">•</span>
-               <span>{specialty}</span>
-             </button>
-           ))}
+           {loadingSpecialties ? (
+             <div className="text-center py-4">
+               {t('loadingSpecialties')}
+             </div>
+           ) : (
+             specializations.map((specialty) => (
+               <button
+                 key={specialty.uuid}
+                 onClick={() => handleSelectSpecialty(specialty)}
+                 className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 hover:text-light-accent dark:hover:text-light-accent rounded-lg transition-colors flex items-center group"
+               >
+                 <span className="w-5 text-light-accent opacity-0 group-hover:opacity-100 transition-opacity">•</span>
+                 <span>{specialty.name}</span>
+               </button>
+             ))
+           )}
          </div>
        </Modal>
      )}

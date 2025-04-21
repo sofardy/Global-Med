@@ -29,14 +29,18 @@ const translations = {
 
 export default function Doctors() {
   const { t } = useTranslation(translations);
-  const { doctors, loading, error, fetchDoctors, setPage, currentPage, totalPages } = useDoctorsStore();
+  const { doctors, loading, error, fetchDoctors, setPage, currentPage, totalPages, filters } = useDoctorsStore();
   const [visibleDoctors, setVisibleDoctors] = useState(8);
   const [isRotating, setIsRotating] = useState(false);
   
-  // Загрузка докторов при первом рендере
-  useEffect(() => {
-    fetchDoctors();
-  }, [fetchDoctors]);
+useEffect(() => {
+  console.log('Current filters:', filters);
+  fetchDoctors().then(() => {
+    console.log('Fetched doctors:', doctors);
+  });
+  
+  setVisibleDoctors(8);
+}, [JSON.stringify(filters)]);
   
   const handleShowMore = () => {
     setIsRotating(true);
@@ -72,11 +76,14 @@ export default function Doctors() {
     return `${years} лет`;
   };
   
+  // Видимые доктора с учетом фильтров
+  const visibleFilteredDoctors = doctors.slice(0, visibleDoctors);
+  
   return (
     <main>
       <DoctorSearchSection />
       
-      <div className=" py-8">
+      <div className="py-8">
         <h2 className="text-2xl md:text-3xl font-medium mb-8 text-light-text dark:text-dark-text">
           {t('ourSpecialists')}
         </h2>
@@ -110,27 +117,28 @@ export default function Doctors() {
         ) : (
           <>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-           {doctors.slice(0, visibleDoctors).map(doctor => (
-  <DoctorCard
-    key={doctor.uuid}
-    id={doctor.uuid}
-    slug={doctor.slug} // Добавляем slug
-    name={doctor.full_name}
-    specialization={doctor.specialization}
-    experience={formatExperience(doctor.experience_years)}
-    photoUrl={doctor.image_url}
-  />
-))}
+              {visibleFilteredDoctors.map(doctor => (
+                <DoctorCard
+                  key={doctor.uuid}
+                  id={doctor.uuid}
+                  slug={doctor.slug}
+                  name={doctor.full_name}
+                  specialization={doctor.specialization}
+                  experience={formatExperience(doctor.experience_years)}
+                  photoUrl={doctor.image_url}
+                />
+              ))}
             </div>
             
             {(visibleDoctors < doctors.length || currentPage < totalPages) && (
               <div className="flex justify-center mt-10">
                 <button
                   onClick={handleShowMore}
-                  className="flex items-center justify-center w-full md:w-auto mx-auto px-8 py-4 border border-light-text dark:border-white text-light-text dark:text-white rounded-2xl hover:bg-light-text/5 dark:hover:bg-white/10 transition-colors"
+                  disabled={loading}
+                  className="flex items-center justify-center w-full md:w-auto mx-auto px-8 py-4 border border-light-text dark:border-white text-light-text dark:text-white rounded-2xl hover:bg-light-text/5 dark:hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg 
-                    className={`w-5 h-5 mr-2 ${isRotating ? 'animate-spin' : ''}`} 
+                    className={`w-5 h-5 mr-2 ${isRotating || loading ? 'animate-spin' : ''}`} 
                     viewBox="0 0 24 24" 
                     fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
