@@ -253,7 +253,7 @@ useEffect(() => {
  // Форматирование даты и времени для API
  const formatDateTimeForApi = (date: string, time: string): string => {
    // Преобразуем YYYY-MM-DD и HH:MM в ISO формат
-   return `${date}T${time}:00.000Z`;
+  return `${date} ${time}:00`; 
  };
 
  // Функция для загрузки докторов при выборе специальности
