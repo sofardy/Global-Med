@@ -9,7 +9,6 @@ export default function AccountLogin() {
     <div className="min-h-screen flex flex-col bg-light-bg dark:bg-dark-bg">
     {/* <LoginHeader /> */}
           <main className="flex-1">
-              
       </main>
     </div>
   );

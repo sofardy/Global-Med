@@ -1,13 +1,15 @@
 'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
-import { CalendarIcon } from '@heroicons/react/24/outline';
-import { ArrowDownIcon } from '@/src/shared/ui/Icon';
-import { Value } from 'react-calendar/dist/cjs/shared/types';
+import { useLanguageStore } from '@/src/store/language';
+import axios from 'axios';
+import { API_BASE_URL } from '@/src/config/constants';
+import { useRouter } from 'next/navigation';
 
 // Alert Circle Icon component
 const AlertCircleIcon = ({ size = 20, color = 'currentColor' }) => (
@@ -42,7 +44,7 @@ const AlertCircleIcon = ({ size = 20, color = 'currentColor' }) => (
   </svg>
 );
 
-// Translations with validation messages
+// Переводы с валидационными сообщениями
 const translations = {
   ru: {
     patientPersonalData: 'Личные данные пациента',
@@ -64,7 +66,9 @@ const translations = {
       required: 'Это поле обязательно',
       invalidName: 'Имя должно содержать только буквы',
       invalidPhone: 'Неверный формат номера телефона'
-    }
+    },
+    successMessage: 'Изменения успешно сохранены',
+    errorMessage: 'Ошибка при сохранении данных'
   },
   uz: {
     patientPersonalData: 'Bemor shaxsiy ma\'lumotlari',
@@ -86,7 +90,9 @@ const translations = {
       required: 'Bu maydon talab qilinadi',
       invalidName: 'Ism faqat harflardan iborat bo\'lishi kerak',
       invalidPhone: 'Telefon raqami formati noto\'g\'ri'
-    }
+    },
+    successMessage: 'O\'zgarishlar muvaffaqiyatli saqlandi',
+    errorMessage: 'Ma\'lumotlarni saqlashda xatolik yuz berdi'
   }
 };
 
@@ -106,244 +112,337 @@ interface FormErrors {
 }
 
 export default function Profile(): JSX.Element {
-    const { theme } = useThemeStore();
-    const { t, currentLocale } = useTranslation(translations);
+  const { theme } = useThemeStore();
+  const { t, currentLocale } = useTranslation(translations);
+  const { currentLocale: appLocale } = useLanguageStore();
+  const router = useRouter();
   
-    // Refs for click outside handling
-    const genderDropdownRef = useRef<HTMLDivElement>(null);
-    const datePickerRef = useRef<HTMLDivElement>(null);
+  // Refs для click outside handling
+  const genderDropdownRef = useRef<HTMLDivElement>(null);
+  const datePickerRef = useRef<HTMLDivElement>(null);
   
-    // State for form fields
- const [formData, setFormData] = useState<FormData>({
-  firstName: 'Людмила',
-  lastName: 'Иванова',
-  birthDate: new Date('2000-05-19'),
-  gender: t('genders.female'), // Используем t() напрямую
-  phone: '+998 (90) 123-12-12'
-});
+  // Состояния формы
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    birthDate: null,
+    gender: '',
+    phone: ''
+  });
   
-    // State for form validation
-    const [errors, setErrors] = useState<FormErrors>({});
+  // Состояния для UI
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState<boolean>(false);
+  const [isEditingPhone, setIsEditingPhone] = useState<boolean>(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   
-    // State for dropdown, phone editing, and calendar
-    const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState<boolean>(false);
-    const [isEditingPhone, setIsEditingPhone] = useState<boolean>(false);
-    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
-  
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target as Node)) {
-                setIsGenderDropdownOpen(false);
-            }
-            if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node) && isCalendarOpen) {
-                setIsCalendarOpen(false);
-            }
-        }
-    
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isCalendarOpen]);
-  
-    // Validate name fields (letters only)
-    const validateName = (name: string): boolean => {
-        return /^[A-Za-zА-Яа-яЁёҚқҒғҲҳЎўӮӯЧчШшЪъ\s-]+$/.test(name);
-    };
-  
-    // Validate phone number
-    const validatePhone = (phone: string): boolean => {
-        return /^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(phone);
-    };
-  
-    // Format phone number
-    const formatPhone = (input: string): string => {
-        // Remove non-digit characters
-        const digits = input.replace(/\D/g, '');
-    
-        // Ensure Uzbekistan country code
-        let formatted = '';
-        if (digits.length > 0) {
-            const digitsWithCode = digits.startsWith('998') ? digits : `998${digits}`;
-            const limitedDigits = digitsWithCode.substring(0, 12);
+  // Загрузка данных пользователя
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setIsLoading(true);
       
-            formatted = '+998 ';
-            if (limitedDigits.length > 3) {
-                formatted += `(${limitedDigits.substring(3, 5)}) `;
-            }
-            if (limitedDigits.length > 5) {
-                formatted += `${limitedDigits.substring(5, 8)}-`;
-            }
-            if (limitedDigits.length > 8) {
-                formatted += `${limitedDigits.substring(8, 10)}-`;
-            }
-            if (limitedDigits.length > 10) {
-                formatted += limitedDigits.substring(10, 12);
-            }
+      try {
+        const token = localStorage.getItem('authToken');
+        const tokenType = localStorage.getItem('tokenType');
+        
+        if (!token || !tokenType) {
+          router.push('/account/login');
+          return;
         }
-    
-        return formatted;
+        
+        const response = await axios.get(`${API_BASE_URL}/user`, {
+          headers: {
+            'Authorization': `${tokenType} ${token}`,
+            'X-Language': appLocale
+          }
+        });
+        
+        const userData = response.data;
+        
+        setFormData({
+          firstName: userData.first_name || '',
+          lastName: userData.last_name || '',
+          birthDate: userData.birthday ? new Date(userData.birthday) : null,
+          gender: userData.gender || '',
+          phone: userData.phone || ''
+        });
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+        // Обработка ошибки загрузки данных
+      } finally {
+        setIsLoading(false);
+      }
     };
-  
-    // Handle input change
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const { name, value } = e.target;
     
-        if (name === 'phone') {
-            const formattedPhone = formatPhone(value);
-            setFormData({ ...formData, [name]: formattedPhone });
-        } else {
-            setFormData({ ...formData, [name]: value });
-        }
-    
-        // Clear error for this field
-        if (errors[name as keyof FormErrors]) {
-            setErrors({ ...errors, [name]: undefined });
-        }
-    };
+    fetchUserData();
+  }, [router, appLocale]);
   
-    // Handle date change
-   const handleDateChange = (value: Value, event?: React.MouseEvent<HTMLButtonElement>): void => {
-  // Поскольку Value может быть Date | Date[] | null, проверяем что это Date или null
-  // и устанавливаем это значение в состояние
-  if (value === null || value instanceof Date) {
-    setFormData({ ...formData, birthDate: value });
-  } else if (Array.isArray(value) && value.length > 0 && value[0] instanceof Date) {
-    // Если вдруг пришел массив дат, берем первую
-    setFormData({ ...formData, birthDate: value[0] });
-  }
-};
-
-  
-    // Handle gender selection
-    const handleGenderSelect = (gender: string): void => {
-        setFormData({ ...formData, gender });
+  // Обработка клика вне выпадающего списка
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (genderDropdownRef.current && !genderDropdownRef.current.contains(event.target as Node)) {
         setIsGenderDropdownOpen(false);
+      }
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node) && isCalendarOpen) {
+        setIsCalendarOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, [isCalendarOpen]);
   
-    // Toggle phone editing
-    const togglePhoneEdit = (): void => {
-        setIsEditingPhone(!isEditingPhone);
-    
-        // Clear phone error when toggling
-        if (errors.phone) {
-            setErrors({ ...errors, phone: undefined });
-        }
-    };
+  // Валидация имени (только буквы)
+  const validateName = (name: string): boolean => {
+    return /^[A-Za-zА-Яа-яЁёҚқҒғҲҳЎўӮӯЧчШшЪъ\s-]+$/.test(name);
+  };
   
-    // Validate form
-    const validateForm = (): boolean => {
-        const newErrors: FormErrors = {};
-    
-        // Validate first name
-        if (!formData.firstName.trim()) {
-            newErrors.firstName = t('validation.required');
-        } else if (!validateName(formData.firstName)) {
-            newErrors.firstName = t('validation.invalidName');
-        }
-    
-        // Validate last name
-        if (!formData.lastName.trim()) {
-            newErrors.lastName = t('validation.required');
-        } else if (!validateName(formData.lastName)) {
-            newErrors.lastName = t('validation.invalidName');
-        }
-    
-        // Validate birth date
-        if (!formData.birthDate) {
-            newErrors.birthDate = t('validation.required');
-        }
-    
-        // Validate phone if being edited
-        if (isEditingPhone) {
-            if (!formData.phone.trim()) {
-                newErrors.phone = t('validation.required');
-            } else if (!validatePhone(formData.phone)) {
-                newErrors.phone = t('validation.invalidPhone');
-            }
-        }
-    
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+  // Валидация номера телефона
+  const validatePhone = (phone: string): boolean => {
+    return /^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(phone);
+  };
   
-    // Handle form submission
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-        e.preventDefault();
+  // Форматирование номера телефона
+  const formatPhone = (input: string): string => {
+    // Удаляем все нецифровые символы
+    const digits = input.replace(/\D/g, '');
     
-        if (validateForm()) {
-            console.log('Form submitted:', formData);
-            setIsEditingPhone(false);
-            alert(currentLocale === 'ru' ? 'Изменения сохранены' : 'O\'zgarishlar saqlandi');
+    // Обеспечиваем код страны Узбекистана
+    let formatted = '';
+    if (digits.length > 0) {
+      const digitsWithCode = digits.startsWith('998') ? digits : `998${digits}`;
+      const limitedDigits = digitsWithCode.substring(0, 12);
+      
+      formatted = '+998 ';
+      if (limitedDigits.length > 3) {
+        formatted += `(${limitedDigits.substring(3, 5)}) `;
+      }
+      if (limitedDigits.length > 5) {
+        formatted += `${limitedDigits.substring(5, 8)}-`;
+      }
+      if (limitedDigits.length > 8) {
+        formatted += `${limitedDigits.substring(8, 10)}-`;
+      }
+      if (limitedDigits.length > 10) {
+        formatted += limitedDigits.substring(10, 12);
+      }
+    }
+    
+    return formatted;
+  };
+  
+  // Обработка изменения input полей
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    
+    if (name === 'phone') {
+      const formattedPhone = formatPhone(value);
+      setFormData({ ...formData, [name]: formattedPhone });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+    
+    // Очищаем ошибку для этого поля
+    if (errors[name as keyof FormErrors]) {
+      setErrors({ ...errors, [name]: undefined });
+    }
+    
+    // Скрываем алерт при изменении данных
+    if (alertMessage) {
+      setAlertMessage(null);
+    }
+  };
+  
+  // Обработка изменения даты
+  const handleDateChange = (value: any): void => {
+    // Обрабатываем различные форматы даты
+    if (value === null || value instanceof Date) {
+      setFormData({ ...formData, birthDate: value });
+    } else if (Array.isArray(value) && value.length > 0 && value[0] instanceof Date) {
+      setFormData({ ...formData, birthDate: value[0] });
+    }
+    
+    // Скрываем алерт при изменении данных
+    if (alertMessage) {
+      setAlertMessage(null);
+    }
+  };
+  
+  // Обработка выбора пола
+  const handleGenderSelect = (gender: string): void => {
+    setFormData({ ...formData, gender });
+    setIsGenderDropdownOpen(false);
+    
+    // Скрываем алерт при изменении данных
+    if (alertMessage) {
+      setAlertMessage(null);
+    }
+  };
+  
+  // Переключение режима редактирования телефона
+  const togglePhoneEdit = (): void => {
+    setIsEditingPhone(!isEditingPhone);
+    
+    // Очищаем ошибку телефона при переключении
+    if (errors.phone) {
+      setErrors({ ...errors, phone: undefined });
+    }
+  };
+  
+  // Валидация формы
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    // Валидация имени
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = t('validation.required');
+    } else if (!validateName(formData.firstName)) {
+      newErrors.firstName = t('validation.invalidName');
+    }
+    
+    // Валидация фамилии
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = t('validation.required');
+    } else if (!validateName(formData.lastName)) {
+      newErrors.lastName = t('validation.invalidName');
+    }
+    
+    // Валидация даты рождения
+    if (!formData.birthDate) {
+      newErrors.birthDate = t('validation.required');
+    }
+    
+    // Валидация телефона, если режим редактирования активен
+    if (isEditingPhone) {
+      if (!formData.phone.trim()) {
+        newErrors.phone = t('validation.required');
+      } else if (!validatePhone(formData.phone)) {
+        newErrors.phone = t('validation.invalidPhone');
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  // Отправка формы
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSaving(true);
+    setAlertMessage(null);
+    
+    try {
+      const token = localStorage.getItem('authToken');
+      const tokenType = localStorage.getItem('tokenType');
+      
+      if (!token || !tokenType) {
+        router.push('/account/login');
+        return;
+      }
+      
+      // Форматируем данные для API
+      const apiData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        gender: formData.gender,
+        birthday: formData.birthDate instanceof Date ? formData.birthDate.toISOString().split('T')[0] : null
+      };
+      
+      // Добавляем телефон, если он редактируется
+      if (isEditingPhone) {
+        // Предполагается, что для изменения телефона может потребоваться отдельный API-запрос
+        // или специальная логика верификации
+      }
+      
+      // Обновляем данные пользователя
+      await axios.put(`${API_BASE_URL}/user`, apiData, {
+        headers: {
+          'Authorization': `${tokenType} ${token}`,
+          'X-Language': appLocale,
+          'Content-Type': 'application/json'
         }
+      });
+      
+      setIsEditingPhone(false);
+      setAlertMessage({
+        type: 'success',
+        text: t('successMessage')
+      });
+    } catch (err) {
+      console.error('Error updating user profile:', err);
+      setAlertMessage({
+        type: 'error',
+        text: t('errorMessage')
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  
+  // Получаем стили в зависимости от темы
+  const getThemeStyles = () => {
+    return {
+      textColor: theme === 'light' ? 'text-[#094A54]' : 'text-white',
+      textColorMuted: theme === 'light' ? 'text-[#094A54]/80' : 'text-white/80',
+      bgColor: theme === 'light' ? 'bg-white' : 'bg-[#094A54]',
+      inputBgColor: theme === 'light' ? 'bg-white' : 'bg-[#073a42]',
+      inputBorderColor: theme === 'light' ? 'border-gray-300' : 'border-[#0c5c68]',
+      dropdownBgColor: theme === 'light' ? 'bg-white' : 'bg-[#073a42]',
+      dropdownHoverColor: theme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-[#0c5c68]',
+      linkColor: 'text-[#00C78B]',
+      linkHoverColor: 'hover:text-[#00a87a]',
+      buttonBgColor: 'bg-light-accent',
+      buttonHoverBgColor: 'hover:bg-[#5ab696]',
+      errorColor: 'text-red-500',
+      successColor: 'text-green-500'
     };
-
-
-    // Get theme-specific styles
-    const getThemeStyles = () => {
-        return {
-            textColor: theme === 'light' ? 'text-[#094A54]' : 'text-white',
-            textColorMuted: theme === 'light' ? 'text-[#094A54]/80' : 'text-white/80',
-            bgColor: theme === 'light' ? 'bg-white' : 'bg-[#094A54]',
-            inputBgColor: theme === 'light' ? 'bg-white' : 'bg-[#073a42]',
-            inputBorderColor: theme === 'light' ? 'border-gray-300' : 'border-[#0c5c68]',
-            dropdownBgColor: theme === 'light' ? 'bg-white' : 'bg-[#073a42]',
-            dropdownHoverColor: theme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-[#0c5c68]',
-            linkColor: 'text-[#00C78B]',
-            linkHoverColor: 'hover:text-[#00a87a]',
-            buttonBgColor: 'bg-light-accent',
-            buttonHoverBgColor: 'hover:bg-[#5ab696]',
-            errorColor: 'text-red-500'
-        };
-    };
-
-    const styles = getThemeStyles();
- const genderOptions = [
-  t('genders.female'),
-  t('genders.male')
-];
-
-    // Custom styles for DatePicker
-    const datePickerCustomStyles = `
-    .react-date-picker__wrapper {
-      border: none !important;
-      padding: 0 !important;
-    }
-    .react-date-picker__inputGroup {
-      padding-left: 0.5rem;
-    }
-    .react-date-picker__clear-button {
-      display: none;
-    }
-    .react-calendar {
-      border-radius: 0.5rem;
-      border: 1px solid ${theme === 'light' ? '#e5e7eb' : '#0c5c68'};
-      background-color: ${theme === 'light' ? 'white' : '#073a42'};
-      color: ${theme === 'light' ? '#094A54' : 'white'};
-      z-index: 50;
-      position: absolute;
-      top: 100%;
-      left: 0;
-    }
-    .react-calendar__tile--active {
-      background-color: #00C78B;
-    }
-    .react-calendar__tile--now {
-      background-color: ${theme === 'light' ? '#f0f0f0' : '#0c5c68'};
-    }
-    .react-date-picker {
-      width: 100%;
-    }
-    .react-date-picker__calendar {
-      z-index: 999 !important;
-    }
-  `;
- return (
+  };
+  
+  const styles = getThemeStyles();
+  
+  // Определение отображаемого пола
+  const displayGender = formData.gender 
+    ? (formData.gender === 'male' ? t('genders.male') : t('genders.female')) 
+    : t('gender');
+  
+  // Функция для стилизации DatePicker
+  const getDatePickerClassName = () => {
+    const baseClass = "react-date-picker";
+    return theme === 'dark' ? `${baseClass} dark-theme` : baseClass;
+  };
+  
+  // Если данные еще загружаются
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent"></div>
+      </div>
+    );
+  }
+  
+  return (
     <div className={`p-4 sm:p-6 md:p-10 rounded-2xl ${theme === 'light' ? 'bg-[#ffffff]' : 'bg-[#0c5c68]'} ${styles.textColor}`}>
       <form onSubmit={handleSubmit}>
+        {/* Сообщение об успехе или ошибке */}
+        {alertMessage && (
+          <div 
+            className={`mb-6 p-4 rounded-xl ${alertMessage.type === 'success' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300'}`}
+          >
+            {alertMessage.text}
+          </div>
+        )}
+        
         <h1 className="text-xl sm:text-2xl font-medium mb-6 md:mb-8">{t('patientPersonalData')}</h1>
         
-        {/* Personal Information */}
+        {/* Персональная информация */}
         <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[71%] grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-10 mb-10 md:mb-20">
           <div className="md:pr-4">
             <label className="block mb-2 text-sm sm:text-base">{t('firstName')}</label>
@@ -374,7 +473,7 @@ export default function Profile(): JSX.Element {
             <DatePicker
               onChange={handleDateChange}
               value={formData.birthDate}
-              className={theme === 'dark' ? 'react-date-picker dark-theme' : 'react-date-picker'}
+              className={getDatePickerClassName()}
               clearIcon={null}
               format="dd.MM.yyyy"
               dayPlaceholder="дд"
@@ -393,28 +492,33 @@ export default function Profile(): JSX.Element {
                 className={`w-full p-3 sm:p-4 border h-full ${styles.inputBorderColor} ${styles.inputBgColor} rounded-xl sm:rounded-2xl text-left flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-[#00C78B] text-sm sm:text-base`}
                 onClick={() => setIsGenderDropdownOpen(!isGenderDropdownOpen)}
               >
-                {formData.gender}
-                <ArrowDownIcon size={20} color={theme === 'light' ? '#094A54' : '#FFFFFF'} />
+                {displayGender}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className={`transition-transform ${isGenderDropdownOpen ? 'rotate-180' : ''}`}>
+                  <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </button>
               
               {isGenderDropdownOpen && (
                 <div className={`absolute z-10 mt-1 w-full ${styles.dropdownBgColor} rounded-xl sm:rounded-2xl shadow-lg`}>
-                  {genderOptions.map((gender) => (
-                    <div
-                      key={gender}
-                      className={`p-3 ${styles.dropdownHoverColor} cursor-pointer text-sm sm:text-base`}
-                      onClick={() => handleGenderSelect(gender)}
-                    >
-                      {gender}
-                    </div>
-                  ))}
+                  <div
+                    className={`p-3 ${styles.dropdownHoverColor} cursor-pointer text-sm sm:text-base`}
+                    onClick={() => handleGenderSelect('female')}
+                  >
+                    {t('genders.female')}
+                  </div>
+                  <div
+                    className={`p-3 ${styles.dropdownHoverColor} cursor-pointer text-sm sm:text-base`}
+                    onClick={() => handleGenderSelect('male')}
+                  >
+                    {t('genders.male')}
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
         
-        {/* Account Information */}
+        {/* Информация об аккаунте */}
         <h2 className="text-lg sm:text-xl font-medium mb-4 md:mb-6">{t('accountData')}</h2>
         
         <div className="mb-10 md:mb-20 w-full md:w-[90%] lg:w-[80%] xl:w-[70%]">
@@ -452,108 +556,115 @@ export default function Profile(): JSX.Element {
           </div>
         </div>
         
-        {/* Submit Button */}
+        {/* Кнопка отправки */}
         <button
           type="submit"
-          className={`w-full ${styles.buttonBgColor} ${styles.buttonHoverBgColor} text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-colors text-sm sm:text-base font-medium`}
+          disabled={isSaving}
+          className={`w-full ${styles.buttonBgColor} ${styles.buttonHoverBgColor} text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-colors text-sm sm:text-base font-medium flex items-center justify-center`}
         >
+          {isSaving ? (
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : null}
           {t('saveChanges')}
         </button>
-        
-        {/* Глобальные стили для календаря */}
-        <style jsx global>{`
+      </form>
+      
+      {/* Глобальные стили для календаря */}
+      <style jsx global>{`
+        .react-date-picker {
+          width: 290px;
+        }
+        @media (max-width: 1300px) {
           .react-date-picker {
-            width: 290px;
+            width: 100%;
+            max-width: 100%;
           }
-          @media (max-width: 1300px) {
-            .react-date-picker {
-              width: 100%;
-              max-width: 100%;
-            }
-          }
+        }
+        .react-date-picker__wrapper {
+          padding: 1rem 1.25rem;
+          background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
+          border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
+          border-radius: 1rem;
+          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+        }
+        @media (max-width: 768px) {
           .react-date-picker__wrapper {
-            padding: 1rem 1.25rem;
-            background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
-            border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
-            border-radius: 1rem;
-            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
           }
-          @media (max-width: 768px) {
-            .react-date-picker__wrapper {
-              padding: 0.75rem 1rem;
-              border-radius: 0.75rem;
-            }
-          }
+        }
+        .react-date-picker__inputGroup__input {
+          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          background: transparent;
+        }
+        @media (max-width: 768px) {
           .react-date-picker__inputGroup__input {
-            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-            background: transparent;
+            font-size: 14px;
           }
-          @media (max-width: 768px) {
-            .react-date-picker__inputGroup__input {
-              font-size: 14px;
-            }
-          }
-          .react-date-picker__inputGroup__input::placeholder {
-            color: ${theme === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(9,74,84,0.6)'};
-          }
-          .react-date-picker__button {
-            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-          }
-          .react-date-picker__button:enabled:hover .react-date-picker__button__icon,
-          .react-date-picker__button:enabled:focus .react-date-picker__button__icon {
-            stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-          }
-          .react-date-picker__button svg {
-            stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-          }
-          
-          /* Календарь */
+        }
+        .react-date-picker__inputGroup__input::placeholder {
+          color: ${theme === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(9,74,84,0.6)'};
+        }
+        .react-date-picker__button {
+          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+        }
+        .react-date-picker__button:enabled:hover .react-date-picker__button__icon,
+        .react-date-picker__button:enabled:focus .react-date-picker__button__icon {
+          stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+        }
+        .react-date-picker__button svg {
+          stroke: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+        }
+        
+        /* Календарь */
+        .react-calendar {
+          background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
+          border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
+          border-radius: 1rem;
+          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        @media (max-width: 768px) {
           .react-calendar {
-            background-color: ${theme === 'dark' ? 'var(--dark-block)' : 'white'};
-            border: 1px solid ${theme === 'dark' ? '#0c5c68' : '#E5E7EB'};
-            border-radius: 1rem;
-            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-          }
-          @media (max-width: 768px) {
-            .react-calendar {
-              width: 280px !important;
-              font-size: 0.875rem;
-            }
-            .react-calendar__tile {
-              padding: 0.5rem;
-              height: 2.5rem;
-            }
-            .react-calendar__navigation button {
-              font-size: 0.875rem;
-            }
+            width: 280px !important;
+            font-size: 0.875rem;
           }
           .react-calendar__tile {
-            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+            padding: 0.5rem;
+            height: 2.5rem;
           }
           .react-calendar__navigation button {
-            color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+            font-size: 0.875rem;
           }
-          .react-calendar__tile--active {
-            background: var(--light-accent);
-            color: white;
-          }
-          .react-calendar__tile--active:enabled:hover,
-          .react-calendar__tile--active:enabled:focus {
-            background: var(--light-accent);
-          }
-          .react-calendar__tile:enabled:hover,
-          .react-calendar__tile:enabled:focus {
-            background-color: ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(9,74,84,0.1)'};
-          }
-          .react-calendar__month-view__days__day--weekend {
-            color: ${theme === 'dark' ? '#FF9999' : '#D00000'};
-          }
-          .react-calendar__month-view__days__day--neighboringMonth {
-            color: ${theme === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(9,74,84,0.3)'};
-          }
-        `}</style>
-      </form>
+        }
+        .react-calendar__tile {
+          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+        }
+        .react-calendar__navigation button {
+          color: ${theme === 'dark' ? 'white' : 'var(--light-text)'};
+        }
+        .react-calendar__tile--active {
+          background: var(--light-accent);
+          color: white;
+        }
+        .react-calendar__tile--active:enabled:hover,
+        .react-calendar__tile--active:enabled:focus {
+          background: var(--light-accent);
+        }
+        .react-calendar__tile:enabled:hover,
+        .react-calendar__tile:enabled:focus {
+          background-color: ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(9,74,84,0.1)'};
+        }
+        .react-calendar__month-view__days__day--weekend {
+          color: ${theme === 'dark' ? '#FF9999' : '#D00000'};
+        }
+        .react-calendar__month-view__days__day--neighboringMonth {
+          color: ${theme === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(9,74,84,0.3)'};
+        }
+      `}</style>
     </div>
   );
 }
