@@ -188,12 +188,12 @@ const CareerForm = () => {
             </div>
             
             <div className="mt-auto">
-              <Link href="/clinic/about" className="inline-flex items-center gap-2 py-3 px-6 border border-white rounded-xl text-white hover:bg-white/10 transition-colors">
+              <div  className="inline-flex items-center gap-2 py-3 px-6 border border-white rounded-xl text-white hover:bg-white/10 transition-colors">
                 {t('aboutButton')}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 5L16 12L9 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </Link>
+              </div>
             </div>
           </div>
         </div>

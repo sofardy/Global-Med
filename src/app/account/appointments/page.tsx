@@ -14,14 +14,15 @@ interface Appointment {
   status: string;
   service_type: string;
   service_name: string;
-  service_detail: string[];
+  service_detail: string;
 }
 
 // Переводы статусов
 const statusTranslations = {
   "Предстоящая запись": "upcoming",
   "Отменено": "cancelled",
-  "Завершено": "completed"
+  "Завершено": "completed",
+  "Прием завершен": "completed"
 };
 
 // Translations
@@ -35,10 +36,11 @@ const translations = {
     cancelledAppointment: 'Отменено',
     confirmed: 'Запись подтверждена',
     confirmedShort: 'Подтверждена',
-    service: 'Услуга:',
+    doctor: 'Врач:',
     errorLoading: 'Ошибка при загрузке записей',
     tryAgain: 'Попробовать снова',
-    unauthorized: 'Необходима авторизация'
+    unauthorized: 'Необходима авторизация',
+    recordNumber: 'Запись №'
   },
   uz: {
     emptyState: 'Hozircha yozuvlaringiz yo\'q ...',
@@ -49,10 +51,11 @@ const translations = {
     cancelledAppointment: 'Bekor qilindi',
     confirmed: 'Qabul tasdiqlangan',
     confirmedShort: 'Tasdiqlangan',
-    service: 'Xizmat:',
+    doctor: 'Shifokor:',
     errorLoading: 'Yozuvlarni yuklashda xatolik yuz berdi',
     tryAgain: 'Qayta urinib ko\'ring',
-    unauthorized: 'Avtorizatsiya talab qilinadi'
+    unauthorized: 'Avtorizatsiya talab qilinadi',
+    recordNumber: 'Zapisi №'
   }
 };
 
@@ -63,10 +66,18 @@ const AppointmentHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   
   // Получение записей через API
-  const fetchAppointments = async () => {
-    setLoading(true);
+  const fetchAppointments = async (pageNum = 1, shouldReset = false) => {
+    if (pageNum === 1) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+    
     setError(null);
     
     try {
@@ -85,6 +96,10 @@ const AppointmentHistory = () => {
         headers: {
           'Authorization': `${tokenType} ${token}`,
           'X-Language': currentLocale
+        },
+        params: {
+          page: pageNum,
+          per_page: 10
         }
       });
       
@@ -92,8 +107,25 @@ const AppointmentHistory = () => {
       console.log('API Response:', response.data);
       
       // Проверяем наличие данных в ответе
-      const appointmentsData = Array.isArray(response.data) ? response.data : [];
-      setAppointments(appointmentsData);
+      const newData = Array.isArray(response.data) 
+        ? response.data 
+        : (response.data?.data || []);
+      
+      // Проверяем, есть ли еще страницы (если API поддерживает пагинацию)
+      const pagination = response.data?.meta || response.data?.pagination;
+      if (pagination) {
+        setHasMore(pagination.current_page < pagination.last_page);
+      } else {
+        setHasMore(false);
+      }
+      
+      if (shouldReset || pageNum === 1) {
+        setAppointments(newData);
+        setPage(1);
+      } else {
+        setAppointments(prev => [...prev, ...newData]);
+        setPage(pageNum);
+      }
       
     } catch (err: any) {
       console.error('Error fetching appointments:', err);
@@ -110,14 +142,25 @@ const AppointmentHistory = () => {
         setError(t('errorLoading'));
       }
     } finally {
-      setLoading(false);
+      if (pageNum === 1) {
+        setLoading(false);
+      } else {
+        setLoadingMore(false);
+      }
     }
   };
   
   // Загрузка данных при монтировании компонента
   useEffect(() => {
-    fetchAppointments();
+    fetchAppointments(1, true);
   }, [currentLocale]);
+  
+  // Обработчик "Загрузить еще"
+  const handleLoadMore = () => {
+    if (!loadingMore && hasMore) {
+      fetchAppointments(page + 1);
+    }
+  };
   
   // Компонент пустого состояния
   const EmptyState = () => (
@@ -153,16 +196,6 @@ const AppointmentHistory = () => {
     }
   };
   
-  // Разделение даты и времени из формата API
-  const extractTimeFromDate = (dateString: string) => {
-    // Формат ожидается: "20.04.2025 17:15"
-    const parts = dateString.split(' ');
-    if (parts.length === 2) {
-      return { date: parts[0], time: parts[1] };
-    }
-    return { date: dateString, time: '' };
-  };
-  
   // Если ошибка загрузки
   if (error) {
     return (
@@ -171,7 +204,7 @@ const AppointmentHistory = () => {
           <p>{error}</p>
         </div>
         <button 
-          onClick={() => fetchAppointments()}
+          onClick={() => fetchAppointments(1, true)}
           className="px-4 py-2 bg-light-accent text-white rounded-lg"
         >
           {t('tryAgain')}
@@ -198,22 +231,19 @@ const AppointmentHistory = () => {
         <div>
           {appointments.map((appointment, index) => {
             const statusDetails = getStatusDetails(appointment.status);
-            const { date, time } = extractTimeFromDate(appointment.date);
-            const isConfirmed = appointment.status === "Предстоящая запись";
+            const isConfirmed = true; // Все записи считаем подтвержденными, как на скриншоте
             
             return (
               <div 
                 key={index} 
-                className="bg-white dark:bg-dark-block rounded-2xl mb-4 px-4 sm:px-6 md:px-10 py-4 sm:py-6 border-b border-gray-100 dark:border-gray-700 shadow-sm"
+                className="bg-white dark:bg-dark-block rounded-2xl mb-4 px-4 sm:px-6 md:px-10 py-4 sm:py-6 shadow-sm"
               >
                 {/* Desktop layout */}
                 <div className="hidden sm:grid sm:grid-cols-3">
-                  {/* Left column: date, time and status icon */}
+                  {/* Left column: date and status */}
                   <div className="col-span-1">
-                    <div className="flex items-center">
-                      <span className="text-lg font-medium text-light-text dark:text-dark-text">
-                        {date}, {time}
-                      </span>
+                    <div className="text-lg font-medium text-light-text dark:text-dark-text">
+                      {appointment.date}
                     </div>
                     
                     <div className="mt-1 flex items-center">
@@ -224,22 +254,29 @@ const AppointmentHistory = () => {
                     </div>
                   </div>
                   
-                  {/* Middle column: service type and name */}
-                  <div className="col-span-1">
-                    <div className="text-light-text dark:text-dark-text font-medium">
-                      {appointment.service_type}
-                    </div>
-                    <div className="text-[#094A5480] dark:text-dark-text/80 text-sm mt-2">
-                      {t('service')} {appointment.service_name}
-                    </div>
-                  </div>
+<div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+  {Array.isArray(appointment.service_detail) ? (
+    <div className="text-light-text dark:text-dark-text font-medium">
+      {appointment.service_detail.map((detail, idx) => (
+        <div key={idx} className={idx !== 0 ? "mt-1" : ""}>
+          {detail}
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div className="text-light-text dark:text-dark-text font-medium">
+      {appointment.service_detail}
+    </div>
+  )}
+  <div className="text-light-text/80 dark:text-dark-text/80 text-[14px] mt-1">
+    {t('doctor')} {appointment.service_name}
+  </div>
+</div>
                   
                   {/* Right column: record number and confirmation status */}
                   <div className="col-span-1 text-right">
                     <div className="text-light-text dark:text-dark-text">
-                      {typeof appointment.number === 'number' 
-                        ? `Запись №${appointment.number}` 
-                        : `Запись №${appointment.number}`}
+                      {t('recordNumber')}{appointment.number}
                     </div>
                     {isConfirmed && (
                       <div className="text-[#10B981] text-sm mt-1">{t('confirmed')}</div>
@@ -252,7 +289,7 @@ const AppointmentHistory = () => {
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <div className="text-base font-medium text-light-text dark:text-dark-text">
-                        {date}, {time}
+                        {appointment.date}
                       </div>
                       <div className="mt-1 flex items-center">
                         <div className="mr-2">
@@ -263,9 +300,7 @@ const AppointmentHistory = () => {
                     </div>
                     <div className="text-right">
                       <div className="text-light-text dark:text-dark-text text-sm">
-                        {typeof appointment.number === 'number' 
-                          ? `Запись №${appointment.number}` 
-                          : `Запись №${appointment.number}`}
+                        {t('recordNumber')}{appointment.number}
                       </div>
                       {isConfirmed && (
                         <div className="text-[#10B981] text-xs">{t('confirmedShort')}</div>
@@ -275,16 +310,26 @@ const AppointmentHistory = () => {
                   
                   <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
                     <div className="text-light-text dark:text-dark-text font-medium">
-                      {appointment.service_type}
+                      {appointment.service_detail}
                     </div>
                     <div className="text-light-text/80 dark:text-dark-text/80 text-xs mt-1">
-                      {t('service')} {appointment.service_name}
+                      {t('doctor')} {appointment.service_name}
                     </div>
                   </div>
                 </div>
               </div>
             );
           })}
+          
+          {hasMore && (
+            <button 
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+              className="w-full bg-[#00C78B] dark:bg-light-accent text-white py-3 sm:py-4 rounded-xl hover:bg-[#00b57d] dark:hover:opacity-90 transition-colors duration-300 mt-4 text-sm sm:text-base font-medium"
+            >
+              {loadingMore ? t('loading') : t('loadMore')}
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -347,8 +347,8 @@ useEffect(() => {
                             {hoveredRoute === route.path && (
                               <div>
                                 <Link
-                                  href={`${route.path}/about-us`}
-                                  className={`block px-8 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'} ${pathname === `${route.path}/about-us` ? 'bg-light-accent/10' : ''}`}
+                                  href={`${route.path}`}
+                                  className={`block px-8 py-3 ${theme === 'light' ? 'text-light-text' : 'text-dark-text'} ${pathname === `${route.path}` ? 'bg-light-accent/10' : ''}`}
                                   onClick={() => setIsMoreMenuOpen(false)}
                                 >
                                   {t('header.menuItems.ourServices')}
@@ -606,10 +606,10 @@ useEffect(() => {
                         `}
                         >
                           <Link
-                            href={`${route.path}/about-us`}
+                            href={`${route.path}`}
                             className={`
                             relative block p-5 mb-2 rounded-2xl overflow-hidden
-                            ${pathname === `${route.path}/about-us`
+                            ${pathname === `${route.path}`
                                 ? 'before:absolute before:inset-0 before:bg-light-accent/10 before:rounded-2xl'
                                 : ''}
                             ${theme === 'light' ? 'text-light-text' : 'text-dark-text'}
@@ -617,7 +617,7 @@ useEffect(() => {
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
                             <span className="relative z-10">{t('header.menuItems.aboutClinic') || 'О нас'}</span>
-                            {pathname === `${route.path}/about-us` && (
+                            {pathname === `${route.path}` && (
                               <span className="absolute left-0 top-0 h-full w-1 bg-light-accent"></span>
                             )}
                           </Link>

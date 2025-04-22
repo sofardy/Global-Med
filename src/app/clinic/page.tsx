@@ -1,62 +1,51 @@
+// src/app/clinic/page.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Image from 'next/image';
 import { useThemeStore } from '../../store/theme';
 import { useTranslation } from '../../hooks/useTranslation';
 import MedicalEquipmentSlider from '@/src/shared/components/Doctor/MedicalEquipmentSlider';
 import AdministrationSlider from '@/src/shared/components/Doctor/AdministrationSlider';
 import CareerForm from '@/src/shared/components/CareerForm';
-import DoctorCertificates, { CertificatesSlider } from '@/src/shared/components/Doctor/CertificateCard';
+import { CertificatesSlider } from '@/src/shared/components/Doctor/CertificateCard';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { HeartIconk2, MedicalCrossIcon } from '@/src/shared/ui/Icon';
+import { API_BASE_URL } from '@/src/config/constants';
 
-const certificatesData = [
-  {
-    id: 'cert1',
-    imageUrl: '/images/certificate.png',
-    title: 'Лицензия на медицинскую деятельность',
-    expiryDate: '19 мая 2027'
-  },
-  {
-    id: 'cert2',
-    imageUrl: '/images/certificate.png',
-    title: 'Лицензия на медицинскую деятельность',
-    expiryDate: '19 мая 2027'
-  },
-  {
-    id: 'cert3',
-    imageUrl: '/images/certificate.png',
-    title: 'Лицензия на медицинскую деятельность',
-    expiryDate: '19 мая 2027'
-  },
-  {
-    id: 'cert4',
-    imageUrl: '/images/certificate.png',
-    title: 'Лицензия на медицинскую деятельность',
-    expiryDate: '19 мая 2027'
-  },
-  {
-    id: 'cert4',
-    imageUrl: '/images/certificate.png',
-    title: 'Лицензия на медицинскую деятельность',
-    expiryDate: '19 мая 2027'
-  },
-  {
-    id: 'cert4',
-    imageUrl: '/images/certificate.png',
-    title: 'Лицензия на медицинскую деятельность',
-    expiryDate: '19 мая 2027'
-  },
-  {
-    id: 'cert4',
-    imageUrl: '/images/certificate.png',
-    title: 'Лицензия на медицинскую деятельность',
-    expiryDate: '19 мая 2027'
-  },
-];
+// Типы для данных из API
+interface ApiResponse {
+  data: {
+    title: string;
+    slug: string;
+    content: {
+      administration: {
+        data: {
+          key: string;
+          items: Array<{
+            image: string;
+            title: string;
+            subtitle: string;
+          }>;
+        };
+        type: string;
+      };
+      certificates: {
+        data: {
+          key: string;
+          items: Array<{
+            image: string;
+            title: string;
+            subtitle: string;
+          }>;
+        };
+        type: string;
+      };
+    };
+  };
+}
 
-// Переводы
 const translations = {
   ru: {
     title: 'Мы применяем лучшее в медицине, чтобы вы были здоровы',
@@ -78,7 +67,9 @@ const translations = {
       responsibilityDescription: 'Мы гарантируем безопасность, точность исследований и строгое соблюдение медицинских стандартов',
       expertise: 'Экспертность',
       expertiseDescription: 'Врачи нашей клиники обладают многолетним опытом, регулярно повышают квалификацию и используют современные методы диагностики и лечения'
-    }
+    },
+    loading: 'Загрузка данных...',
+    error: 'Произошла ошибка при загрузке данных'
   },
   uz: {
     title: 'Biz sog\'lig\'ingiz uchun tibbiyotda eng yaxshisini qo\'llaymiz',
@@ -100,13 +91,41 @@ const translations = {
       responsibilityDescription: 'Biz xavfsizlik, tekshiruvlar aniqligi va tibbiy standartlarga qat\'iy rioya qilishni kafolatlaymiz',
       expertise: 'Ekspertlik',
       expertiseDescription: 'Klinikamiz shifokorlari ko\'p yillik tajribaga ega, muntazam malakalarini oshiradilar va diagnostika va davolashning zamonaviy usullaridan foydalanadilar'
-    }
+    },
+    loading: 'Ma\'lumotlar yuklanmoqda...',
+    error: 'Ma\'lumotlarni yuklashda xatolik yuz berdi'
   }
 };
 
 export default function Clinic() {
   const { theme } = useThemeStore();
-  const { t } = useTranslation(translations);
+  const { t, currentLocale } = useTranslation(translations);
+  const [pageData, setPageData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchClinicData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<ApiResponse>(`${API_BASE_URL}/pages/clinic`, {
+          headers: {
+            'X-Language': currentLocale
+          }
+        });
+        console.log('API response:', response.data);
+        setPageData(response.data);
+        setError(null);
+      } catch (err) {
+        console.error('Ошибка при загрузке данных о клинике:', err);
+        setError('Не удалось загрузить информацию о клинике');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClinicData();
+  }, [currentLocale]);
 
   // Компонент карточки для ценностей
   const ValueCard = ({ 
@@ -139,18 +158,11 @@ export default function Clinic() {
             <h3 className="text-2xl font-medium">{title}</h3>
             <span className="text-3xl font-light">{number}</span>
           </div>
-          <p className="text-base opacity-80 mt-auto" >{description}</p>
+          <p className="text-base opacity-80 mt-auto">{description}</p>
         </div>
       </div>
     );
   };
-
-  interface IconProps {
-  color?: string;
-  size?: number;
-  [key: string]: any; // Allow any additional props
-}
-
 
   // Компонент карточки с функцией
   const FeatureCard = ({ 
@@ -166,10 +178,11 @@ export default function Clinic() {
   }) => {
     const [hover, setHover] = useState(greenOnLoad);
     const coloredIcon = React.isValidElement(icon) 
-  ? React.cloneElement(icon as React.ReactElement<IconProps>, {
-      color: hover ? 'white' : (theme === 'light' ? '#094A54' : 'white'),
-    })
-  : icon;
+      ? React.cloneElement(icon as React.ReactElement<any>, {
+          color: hover ? 'white' : (theme === 'light' ? '#094A54' : 'white'),
+        })
+      : icon;
+      
     return (
       <div 
         className={`p-8 rounded-2xl transition-all duration-300 h-full min-h-[450px] ${
@@ -192,6 +205,39 @@ export default function Clinic() {
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="container py-20 flex justify-center items-center">
+        <div className="text-xl animate-pulse">{t('loading')}</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container py-20 flex justify-center items-center">
+        <div className="text-xl text-red-500">{t('error')}: {error}</div>
+      </div>
+    );
+  }
+
+  // Преобразуем данные администраторов в нужный формат
+  const administrators = pageData?.data?.content?.administration?.data?.items?.map((admin, index) => ({
+    id: index + 1,
+    full_name: admin.title,
+    position: admin.subtitle,
+    image: admin.image,
+    description: ''
+  })) || [];
+
+  // Преобразуем сертификаты в формат, ожидаемый компонентом CertificatesSlider
+  const formattedCertificates = pageData?.data?.content?.certificates?.data?.items?.map((cert, index) => ({
+    id: `cert-${index + 1}`,
+    imageUrl: cert.image,
+    title: cert.title,
+    expiryDate: cert.subtitle
+  })) || [];
 
   return (
     <main>
@@ -262,15 +308,23 @@ export default function Clinic() {
           />
         </div>
       </div>
+
+      {/* Компоненты с данными администраторов и оборудования */}
       <MedicalEquipmentSlider />
-      <AdministrationSlider/>
+      
+      {/* Передаем данные администраторов в компонент */}
+      <AdministrationSlider administrators={administrators} />
+      
       <CareerForm />
-       <CertificatesSlider 
-        certificates={certificatesData}
+      
+      {/* Используем форматированные сертификаты */}
+      <CertificatesSlider 
+        certificates={formattedCertificates}
         title="Доверие и качество"
         description="Все наши медицинские услуги лицензированы и соответствуют строгим стандартам"
       />
-       <ContactInfo />
+      
+      <ContactInfo />
     </main>
   );
 }

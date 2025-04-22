@@ -10,6 +10,8 @@ import Modal from '@/src/shared/components/Modal/Modal';
 import { ArrowDownIcon } from '@/src/shared/ui/Icon';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { getDoctors, Doctor as ApiDoctor } from '../../api/doctors';
+import axios from 'axios';
+import { API_BASE_URL } from '@/src/config/constants';
 
 // Интерфейсы
 interface DropdownPosition {
@@ -21,8 +23,8 @@ interface DropdownPosition {
 interface SpecialtiesDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  specialties: string[];
-  onSelect: (specialty: string) => void;
+  specialties: Specialization[];
+  onSelect: (specialty: Specialization | null) => void;
   placeholder: string;
   buttonRef: React.RefObject<HTMLButtonElement>;
 }
@@ -40,9 +42,16 @@ interface Doctor {
   slug: string;
 }
 
-// Интерфейс для мапирования специальностей на их UUID
-interface SpecialtyMapping {
-  [key: string]: string;
+// Интерфейс для фильтров
+interface DoctorFilters {
+  name: string;
+  specialtyUuid?: string;
+}
+
+// Интерфейс для специализации
+interface Specialization {
+  uuid: string;
+  name: string;
 }
 
 // Переводы
@@ -62,14 +71,10 @@ const translations = {
     years: 'год',
     modalTitle: 'Выберите специализацию',
     loading: 'Загрузка...',
+    loadingSpecializations: 'Загрузка специализаций...',
     error: 'Ошибка при загрузке данных',
     noResults: 'Врачи не найдены',
     tryAgain: 'Попробовать снова',
-    specialties: [
-      'Терапевт', 'Кардиолог', 'Невролог', 'Офтальмолог', 'Эндокринолог',
-      'Гастроэнтеролог', 'Гинеколог', 'Отоларинголог (ЛОР)', 'Дерматолог',
-      'Ортопед', 'Уролог', 'Педиатр', 'Акушер-гинеколог'
-    ]
   },
   uz: {
     title: 'Shifokor qidirish',
@@ -86,33 +91,11 @@ const translations = {
     years: 'yil',
     modalTitle: 'Ixtisoslikni tanlang',
     loading: 'Yuklanmoqda...',
+    loadingSpecializations: 'Ixtisosliklar yuklanmoqda...',
     error: 'Ma\'lumotlarni yuklashda xatolik yuz berdi',
     noResults: 'Shifokorlar topilmadi',
     tryAgain: 'Qayta urinib ko\'ring',
-    specialties: [
-      'Terapevt', 'Kardiolog', 'Nevrolog', 'Oftalmolog', 'Endokrinolog',
-      'Gastroenterolog', 'Ginekolog', 'Otorinolaringolog (LOR)', 'Dermatolog',
-      'Ortoped', 'Urolog', 'Pediatr', 'Akusher-ginekolog'
-    ]
   }
-};
-
-// Пример маппинга названий специальностей на их UUID
-// Это должно быть заменено на реальные данные или запрос к API
-const specialtyUUIDMapping: SpecialtyMapping = {
-  'Терапевт': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
-  'Кардиолог': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
-  'Невролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
-  'Офтальмолог': '959384f4-0fba-3f50-a91b-f69575e60890',
-  'Эндокринолог': '346ca30e-64a0-3ad6-8d8f-ed2f749b6d9f',
-  'Гастроэнтеролог': '642cdbee-be48-3536-998c-3f7bebc40629',
-  'Гинеколог': '959384f4-0fba-3f50-a91b-f69575e60890',
-  'Отоларинголог (ЛОР)': '959384f4-0fba-3f50-a91b-f69575e60890',
-  'Дерматолог': '3e643044-4290-34fc-9a91-8eae6d2dce7f',
-  'Ортопед': '78d9c2f4-5ea2-30dd-8699-9fe5c0c87689',
-  'Уролог': '577d45f2-5210-3ff6-be2a-2e89cc80da81',
-  'Педиатр': '959384f4-0fba-3f50-a91b-f69575e60890',
-  'Акушер-гинеколог': '3e643044-4290-34fc-9a91-8eae6d2dce7f'
 };
 
 // Компонент выпадающего списка с порталом
@@ -194,7 +177,7 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
     >
       <div className="py-2">
         <button
-          onClick={() => onSelect('')}
+          onClick={() => onSelect(null)}
           className={`w-full text-left px-4 py-2.5 ${textColor} hover:bg-light-accent/10 transition-colors font-medium`}
         >
           {placeholder}
@@ -202,14 +185,14 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
         
         <div className={`border-t my-1 ${borderColor}`}></div>
         
-        {specialties.map((specialty, index) => (
+        {specialties.map((specialty) => (
           <button
-            key={index}
+            key={specialty.uuid}
             onClick={() => onSelect(specialty)}
             className={`w-full text-left px-4 py-2.5 ${textMutedColor} hover:bg-light-accent/10 hover:text-light-accent transition-colors flex items-center group`}
           >
             <span className="w-5 text-light-accent opacity-0 group-hover:opacity-100 transition-opacity">•</span>
-            <span>{specialty}</span>
+            <span>{specialty.name}</span>
           </button>
         ))}
       </div>
@@ -222,7 +205,6 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
 const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
-  console.log(doctor.slug);
   
   const cardBg = theme === 'light' ? 'bg-white' : 'bg-dark-block';
   const textColor = theme === 'light' ? 'text-light-text' : 'text-white';
@@ -306,18 +288,19 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
 
 const SearchSection: React.FC<{
   onSearch: (name: string, specialtyUuid?: string) => void;
-}> = ({ onSearch }) => {
+  specializations: Specialization[];
+  loadingSpecializations: boolean;
+}> = ({ onSearch, specializations, loadingSpecializations }) => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
   const [nameQuery, setNameQuery] = useState('');
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
+  const [selectedSpecialty, setSelectedSpecialty] = useState<Specialization | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
   
   const specialtyButtonRef = useRef<HTMLButtonElement>(null);
-  const specialties = t('specialties', { returnObjects: true }) as string[];
   
   useEffect(() => {
     setIsMounted(true);
@@ -333,7 +316,8 @@ const SearchSection: React.FC<{
     };
   }, []);
   
-  const handleSelectSpecialty = (specialty: string): void => {
+  const handleSelectSpecialty = (specialty: Specialization | null): void => {
+    console.log("Выбрана специальность:", specialty);
     setSelectedSpecialty(specialty);
     setIsSpecialtyOpen(false);
     setIsModalOpen(false);
@@ -348,11 +332,12 @@ const SearchSection: React.FC<{
   };
   
   const handleSearch = () => {
-    const specialtyUuid = selectedSpecialty ? specialtyUUIDMapping[selectedSpecialty] : undefined;
+    const specialtyUuid = selectedSpecialty ? selectedSpecialty.uuid : undefined;
+    console.log("Поиск по имени:", nameQuery, "и специальности UUID:", specialtyUuid);
     onSearch(nameQuery, specialtyUuid);
   };
   
-  const displaySpecialty = selectedSpecialty || t('specialtySearch');
+  const displaySpecialty = selectedSpecialty ? selectedSpecialty.name : t('specialtySearch');
   
   return (
     <div className="rounded-2xl overflow-hidden bg-light-accent text-white relative">
@@ -399,9 +384,12 @@ const SearchSection: React.FC<{
                   e.stopPropagation();
                   handleSpecialtyButtonClick();
                 }}
-                className="w-full bg-white/20 border border-white/90 rounded-2xl h-12 md:h-[54px] px-4 md:px-6 text-left text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all flex justify-between items-center"
+                disabled={loadingSpecializations}
+                className={`w-full bg-white/20 border border-white/90 rounded-2xl h-12 md:h-[54px] px-4 md:px-6 text-left text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all flex justify-between items-center ${loadingSpecializations ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
-                <span>{displaySpecialty}</span>
+                <span>
+                  {loadingSpecializations ? t('loadingSpecializations') : displaySpecialty}
+                </span>
                 <ArrowDownIcon color="white" />
               </button>
             </div>
@@ -418,18 +406,18 @@ const SearchSection: React.FC<{
       </div>
 
       {/* Выпадающие списки */}
-      {isMounted && !isMobile && (
+      {isMounted && !isMobile && !loadingSpecializations && (
         <SpecialtiesDropdown
           isOpen={isSpecialtyOpen}
           onClose={() => setIsSpecialtyOpen(false)}
-          specialties={specialties}
+          specialties={specializations}
           onSelect={handleSelectSpecialty}
           placeholder={t('specialtySearch')}
           buttonRef={specialtyButtonRef}
         />
       )}
 
-      {isMounted && isMobile && (
+      {isMounted && isMobile && !loadingSpecializations && (
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -443,7 +431,7 @@ const SearchSection: React.FC<{
         >
           <div className="py-2">
             <button
-              onClick={() => handleSelectSpecialty('')}
+              onClick={() => handleSelectSpecialty(null)}
               className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 dark:hover:bg-light-accent/10 rounded-lg transition-colors font-medium"
             >
               {t('specialtySearch')}
@@ -451,14 +439,14 @@ const SearchSection: React.FC<{
             
             <div className="border-t my-1 border-gray-100 dark:border-gray-700"></div>
             
-            {specialties.map((specialty, index) => (
+            {specializations.map((specialty) => (
               <button
-                key={index}
+                key={specialty.uuid}
                 onClick={() => handleSelectSpecialty(specialty)}
                 className="w-full text-left px-4 py-3 text-light-text dark:text-dark-text hover:bg-light-accent/10 hover:text-light-accent dark:hover:text-light-accent rounded-lg transition-colors flex items-center group"
               >
                 <span className="w-5 text-light-accent opacity-0 group-hover:opacity-100 transition-opacity">•</span>
-                <span>{specialty}</span>
+                <span>{specialty.name}</span>
               </button>
             ))}
           </div>
@@ -469,7 +457,11 @@ const SearchSection: React.FC<{
 };
 
 const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor): Doctor => {
-  const languagesArray = apiDoctor.languages ? apiDoctor.languages.split(',').map((lang: string) => lang.trim()) : ['русский', 'узбекский'];
+  const languagesArray = apiDoctor.languages ? 
+    (typeof apiDoctor.languages === 'string' ? 
+      apiDoctor.languages.split(',').map((lang: string) => lang.trim()) : 
+      ['русский', 'узбекский']) : 
+    ['русский', 'узбекский'];
   
   return {
     id: apiDoctor.uuid,
@@ -485,6 +477,18 @@ const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor): Doctor => {
   };
 };
 
+// Функция для получения списка специализаций
+const fetchSpecializations = async (): Promise<Specialization[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/specializations`);
+    console.log('Получены специализации:', response.data);
+    return response.data.data || [];
+  } catch (error) {
+    console.error('Ошибка при загрузке специализаций:', error);
+    return [];
+  }
+};
+
 // Основной компонент страницы врачей
 export default function DoctorsPage() {
   const { t } = useTranslation(translations);
@@ -493,46 +497,90 @@ export default function DoctorsPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [currentFilters, setCurrentFilters] = useState<DoctorFilters>({ name: '', specialtyUuid: undefined });
   
-  // Функция для загрузки докторов из API
-  const fetchDoctors = async (name?: string, specialtyUuid?: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const filters: any = {};
-      if (name) filters.full_name = name;
-      if (specialtyUuid) filters.specialization_uuid = specialtyUuid;
-      
-      const response = await getDoctors(filters, currentPage);
-      
-      const convertedDoctors = response.data.map(convertApiDoctorToUiDoctor);
-      setDoctors(convertedDoctors);
-      setTotalPages(response.meta.last_page);
-      setCurrentPage(response.meta.current_page);
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
-      setError(t('error'));
-    } finally {
-      setLoading(false);
+  // Состояние для специализаций
+  const [specializations, setSpecializations] = useState<Specialization[]>([]);
+  const [loadingSpecializations, setLoadingSpecializations] = useState<boolean>(true);
+  
+  // Получение списка специализаций при монтировании компонента
+  useEffect(() => {
+    const getSpecializations = async () => {
+      setLoadingSpecializations(true);
+      const data = await fetchSpecializations();
+      setSpecializations(data);
+      setLoadingSpecializations(false);
+    };
+    
+    getSpecializations();
+  }, []);
+  
+ const fetchDoctors = async (name?: string, specialtyUuid?: string, page?: number) => {
+  try {
+    setLoading(true);
+    setError(null);
+    
+    const filters: any = {};
+    if (name && name.trim() !== '') {
+      filters.full_name = name.trim();
     }
-  };
+    if (specialtyUuid) {
+      filters.specialization_uuid = specialtyUuid;
+    }
+    
+    // Используем переданную страницу или текущую из состояния
+    const pageToFetch = page !== undefined ? page : currentPage;
+    
+    console.log("Отправляем запрос с фильтрами:", filters, "Страница:", pageToFetch);
+    
+    const response = await getDoctors(filters, pageToFetch);
+    console.log("Получен ответ API:", response);
+    
+    const convertedDoctors = response.data.map(convertApiDoctorToUiDoctor);
+    setDoctors(convertedDoctors);
+    setTotalPages(response.meta.last_page);
+    setCurrentPage(response.meta.current_page);
+  } catch (error) {
+    console.error('Error fetching doctors:', error);
+    setError(t('error'));
+  } finally {
+    setLoading(false);
+  }
+};
   
   // Загрузка докторов при первом рендере
   useEffect(() => {
     fetchDoctors();
   }, []);
   
-  // Обработчик поиска
+  // Обработчик поиска с сохранением фильтров
   const handleSearch = (name: string, specialtyUuid?: string) => {
+    console.log("Выполняется поиск с параметрами:", { name, specialtyUuid });
+    // Сохраняем фильтры для пагинации
+    setCurrentFilters({ name, specialtyUuid });
+    // Сбрасываем страницу на первую при новом поиске
     setCurrentPage(1);
+    // Выполняем поиск
     fetchDoctors(name, specialtyUuid);
   };
+  
+  // Обработчик изменения страницы
+const handlePageChange = (page: number) => {
+  console.log("Переход на страницу:", page, "с фильтрами:", currentFilters);
+  
+  setCurrentPage(page);
+  
+  fetchDoctors(currentFilters.name, currentFilters.specialtyUuid, page);
+};
   
   return (
     <main>
       {/* Блок поиска */}
-      <SearchSection onSearch={handleSearch} />
+      <SearchSection 
+        onSearch={handleSearch} 
+        specializations={specializations}
+        loadingSpecializations={loadingSpecializations}
+      />
       
       {/* Список врачей */}
       <div className="py-4">
@@ -547,7 +595,7 @@ export default function DoctorsPage() {
               <p>{error}</p>
             </div>
             <button 
-              onClick={() => fetchDoctors()}
+              onClick={() => fetchDoctors(currentFilters.name, currentFilters.specialtyUuid)}
               className="px-4 py-2 bg-light-accent text-white rounded-lg"
             >
               {t('tryAgain')}
@@ -569,28 +617,25 @@ export default function DoctorsPage() {
             ))}
             
             {/* Пагинация */}
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-8">
-                <div className="flex space-x-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button
-                      key={page}
-                      onClick={() => {
-                        setCurrentPage(page);
-                        fetchDoctors();
-                      }}
-                      className={`px-4 py-2 rounded-lg ${
-                        page === currentPage 
-                          ? 'bg-light-accent text-white' 
-                          : 'border border-light-text/30 dark:border-white/30 hover:bg-light-text/5 dark:hover:bg-white/10'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+{totalPages > 1 && (
+  <div className="flex justify-center mt-8">
+    <div className="flex space-x-2">
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+        <button
+          key={pageNum}
+          onClick={() => handlePageChange(pageNum)}
+          className={`px-4 py-2 rounded-lg ${
+            pageNum === currentPage 
+              ? 'bg-light-accent text-white' 
+              : 'border border-light-text/30 dark:border-white/30 hover:bg-light-text/5 dark:hover:bg-white/10'
+          }`}
+        >
+          {pageNum}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
           </>
         )}
       </div>
