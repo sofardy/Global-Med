@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['i.imgur.com', 'imgur.com', 'globalmed-main-b3lh3x.laravel.cloud'],
+    domains: ['i.imgur.com', 'imgur.com', 'globalmed.kelyanmedia.com'],
     formats: ['image/avif', 'image/webp']
   },
   env: {
