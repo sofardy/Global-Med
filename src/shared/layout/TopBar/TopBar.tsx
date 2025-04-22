@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useThemeStore } from '../../../store/theme';
 import { useLanguageStore } from '../../../store/language';
 import { useTranslation } from '../../../hooks/useTranslation';
@@ -28,7 +28,7 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
   const { currentLocale, setLocale } = useLanguageStore();
   const { t } = useTranslation(translations);
   const pathname = usePathname();
-  
+    const router = useRouter();
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isContactMenuOpen, setIsContactMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -175,6 +175,20 @@ useEffect(() => {
     }
   };
   
+ const handleAuthClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Проверяем, есть ли токен авторизации
+    const token = localStorage.getItem('authToken');
+    
+    // Если токен есть, перенаправляем на профиль, иначе на страницу логина
+    if (token) {
+      router.push('/account/profile');
+    } else {
+      router.push('/account/login');
+    }
+  };
+
   // Обработка ухода с роута
   const handleRouteLeave = () => {
     // Не закрываем сразу, а устанавливаем таймер
@@ -468,18 +482,18 @@ useEffect(() => {
   )}
 </div>
           
-           <Link 
-  href="/account/login" 
-  className={`
-    h-[60px] w-[60px] rounded-2xl 
-    bg-light-accent hover:bg-light-accent/90
-    text-white flex items-center justify-center
-    transition-all duration-300 transform hover:scale-[1.05] hover:shadow-md
-  `}
-              
->
-  <UserIcon size={30} color={'#ffffff'} />
-</Link>
+        <Link 
+    href="#" 
+    onClick={handleAuthClick}
+    className={`
+      h-[60px] w-[60px] rounded-2xl 
+      bg-light-accent hover:bg-light-accent/90
+      text-white flex items-center justify-center
+      transition-all duration-300 transform hover:scale-[1.05] hover:shadow-md
+    `}
+  >
+    <UserIcon size={30} color={'#ffffff'} />
+  </Link>
           </div>
         
           {/* Мобильное меню иконка */}
