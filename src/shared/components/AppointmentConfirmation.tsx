@@ -44,6 +44,7 @@ interface AppointmentConfirmationProps {
   service: string;
   doctor?: string;
   cost: string | number;
+  number?: string;
 }
 
 export default function AppointmentConfirmation({
