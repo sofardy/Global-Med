@@ -123,6 +123,19 @@ useEffect(() => {
   };
 }, []);
   
+  const handleContactClick = () => {
+  // Закрываем контактное меню
+  setIsContactMenuOpen(false);
+  
+  // Находим элемент ContactInfo на странице
+  const contactInfoSection = document.getElementById('contact-info-section');
+  
+  // Если элемент найден, скроллим к нему
+  if (contactInfoSection) {
+    contactInfoSection.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+  
   useEffect(() => {
   const closeMenus = () => {
     // if (isLangMenuOpen) setIsLangMenuOpen(false);
@@ -375,7 +388,14 @@ useEffect(() => {
             {/* Кнопка связаться с нами */}
           <div className="relative" ref={contactMenuRef}>
   <button
-    onClick={() => setIsContactMenuOpen(!isContactMenuOpen)}
+   onClick={(e) => {
+  e.stopPropagation();
+  if (document.getElementById('contact-info-section')) {
+    handleContactClick();
+  } else {
+    setIsContactMenuOpen(!isContactMenuOpen);
+  }
+}}
     className={`
       flex items-center justify-center gap-2 xl:gap-4 mr-2 xl:mr-6 
       bg-light-accent hover:bg-light-accent/90

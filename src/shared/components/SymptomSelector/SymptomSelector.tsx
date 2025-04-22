@@ -224,7 +224,7 @@ export const SymptomSelector: React.FC = () => {
         .map(symptom => `filter[symptoms][]=${getSymptomSlug(symptom)}`)
         .join('&');
       
-      const response = await fetch(`https://globalmed-main-b3lh3x.laravel.cloud/api/checkups?${symptomsParams}`);
+      const response = await fetch(`https://globalmed.kelyanmedia.com/api/checkups?${symptomsParams}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

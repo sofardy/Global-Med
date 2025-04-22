@@ -144,7 +144,7 @@ export default function ContactForm(): JSX.Element {
 
   return (
     <>
-      <div className={`w-full flex flex-col md:flex-row gap-5 mt-20 overflow-hidden`}>
+      <div id="contact-info-section" className={`w-full flex flex-col md:flex-row gap-5 mt-20 overflow-hidden`}>
         {/* Левая колонка с информацией */}
         <div className={`p-6 md:p-8 rounded-2xl ${theme === 'dark' ? 'bg-dark-block' : 'bg-light-block'} md:w-1/4`}>
           <div>

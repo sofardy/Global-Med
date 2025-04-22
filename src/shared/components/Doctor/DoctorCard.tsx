@@ -29,7 +29,7 @@ const translations = {
 const DoctorCard: React.FC<DoctorCardProps> = ({
   name,
   id,
-  slug, // Принимаем slug
+  slug,
   specialization,
   experience,
   photoUrl

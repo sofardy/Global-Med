@@ -37,6 +37,7 @@ interface Doctor {
   languages: string[];
   cost: string;
   photoUrl: string;
+  slug: string;
 }
 
 // Интерфейс для мапирования специальностей на их UUID
@@ -221,6 +222,7 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
 const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
+  console.log(doctor.slug);
   
   const cardBg = theme === 'light' ? 'bg-white' : 'bg-dark-block';
   const textColor = theme === 'light' ? 'text-light-text' : 'text-white';
@@ -284,7 +286,7 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
           
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <Link
-              href={`/clinic/doctors/${doctor.id}`}
+              href={`/clinic/doctors/${doctor.slug}`}
               className="px-6 py-3 text-center border rounded-xl text-light-text dark:text-white border-light-text dark:border-white hover:bg-light-bg dark:hover:bg-dark-bg transition-colors"
             >
               {t('detailsButton')}
@@ -480,7 +482,8 @@ const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor): Doctor => {
     degree: apiDoctor.qualification || '',
     languages: languagesArray,
     cost: `от ${apiDoctor.price_from} сум`,
-    photoUrl: apiDoctor.image_url
+    photoUrl: apiDoctor.image_url,
+    slug: apiDoctor.slug
   };
 };
 
@@ -534,7 +537,7 @@ export default function DoctorsPage() {
       <SearchSection onSearch={handleSearch} />
       
       {/* Список врачей */}
-      <div className="py-8 container">
+      <div className="py-4">
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent"></div>

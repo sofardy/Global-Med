@@ -45,8 +45,6 @@ useEffect(() => {
   const handleShowMore = () => {
     setIsRotating(true);
     
-    // Если мы уже показываем все доктора с текущей страницы,
-    // и есть еще страницы, загружаем следующую страницу
     if (visibleDoctors >= doctors.length && currentPage < totalPages) {
       setPage(currentPage + 1);
       fetchDoctors().then(() => {
