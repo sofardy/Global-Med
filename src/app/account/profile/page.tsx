@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
@@ -120,16 +120,7 @@ export default function Profile(): JSX.Element {
   // Refs для click outside handling
   const genderDropdownRef = useRef<HTMLDivElement>(null);
   const datePickerRef = useRef<HTMLDivElement>(null);
-  
-  // Состояния формы
-  const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    birthDate: null,
-    gender: '',
-    phone: ''
-  });
-  
+
   // Состояния для UI
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -139,9 +130,75 @@ export default function Profile(): JSX.Element {
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   
-  // Загрузка данных пользователя
+  // Состояния формы - используем useRef для избежания перерендеров
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    birthDate: null,
+    gender: '',
+    phone: ''
+  });
+
+  // Функция для нормализации гендера
+  const normalizeGender = useCallback((serverGender: string): string => {
+    if (!serverGender) return '';
+    
+    // Приводим к нижнему регистру для унификации
+    const gender = serverGender.toLowerCase();
+    
+    // Проверяем различные варианты написания
+    if (['male', 'мужской', 'мужчина', 'm', 'м'].includes(gender)) {
+      return 'male';
+    }
+    
+    if (['female', 'женский', 'женщина', 'f', 'ж'].includes(gender)) {
+      return 'female';
+    }
+    
+    return ''; // Если не удалось определить
+  }, []);
+
+  // Функция для форматирования телефона при отображении
+  const formatPhoneForDisplay = useCallback((phone: string): string => {
+    // Если телефон уже отформатирован
+    if (phone.match(/^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/)) {
+      return phone;
+    }
+    
+    // Удаляем все нецифровые символы
+    const digits = phone.replace(/\D/g, '');
+    
+    // Если номер пустой, возвращаем пустую строку
+    if (!digits.length) return '';
+    
+    // Обеспечиваем код страны Узбекистана
+    const digitsWithCode = digits.startsWith('998') ? digits : `998${digits}`;
+    const limitedDigits = digitsWithCode.substring(0, 12);
+    
+    let formatted = '+998 ';
+    if (limitedDigits.length > 3) {
+      formatted += `(${limitedDigits.substring(3, 5)}) `;
+    }
+    if (limitedDigits.length > 5) {
+      formatted += `${limitedDigits.substring(5, 8)}-`;
+    }
+    if (limitedDigits.length > 8) {
+      formatted += `${limitedDigits.substring(8, 10)}-`;
+    }
+    if (limitedDigits.length > 10) {
+      formatted += limitedDigits.substring(10, 12);
+    }
+    
+    return formatted;
+  }, []);
+  
+  // Загрузка данных пользователя - выполняется только один раз при монтировании
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchUserData = async () => {
+      if (!isMounted) return;
+      
       setIsLoading(true);
       
       try {
@@ -160,25 +217,33 @@ export default function Profile(): JSX.Element {
           }
         });
         
+        if (!isMounted) return;
+        
         const userData = response.data;
         
         setFormData({
           firstName: userData.first_name || '',
           lastName: userData.last_name || '',
           birthDate: userData.birthday ? new Date(userData.birthday) : null,
-          gender: userData.gender || '',
-          phone: userData.phone || ''
+          gender: normalizeGender(userData.gender),
+          phone: formatPhoneForDisplay(userData.phone || '')
         });
       } catch (error) {
         console.error('Failed to load user data:', error);
         // Обработка ошибки загрузки данных
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
     
     fetchUserData();
-  }, [router, appLocale]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [router, appLocale, normalizeGender, formatPhoneForDisplay]);
   
   // Обработка клика вне выпадающего списка
   useEffect(() => {
@@ -198,17 +263,17 @@ export default function Profile(): JSX.Element {
   }, [isCalendarOpen]);
   
   // Валидация имени (только буквы)
-  const validateName = (name: string): boolean => {
+  const validateName = useCallback((name: string): boolean => {
     return /^[A-Za-zА-Яа-яЁёҚқҒғҲҳЎўӮӯЧчШшЪъ\s-]+$/.test(name);
-  };
+  }, []);
   
   // Валидация номера телефона
-  const validatePhone = (phone: string): boolean => {
+  const validatePhone = useCallback((phone: string): boolean => {
     return /^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(phone);
-  };
+  }, []);
   
-  // Форматирование номера телефона
-  const formatPhone = (input: string): string => {
+  // Форматирование номера телефона при вводе
+  const formatPhone = useCallback((input: string): string => {
     // Удаляем все нецифровые символы
     const digits = input.replace(/\D/g, '');
     
@@ -234,68 +299,74 @@ export default function Profile(): JSX.Element {
     }
     
     return formatted;
-  };
+  }, []);
   
   // Обработка изменения input полей
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     
     if (name === 'phone') {
       const formattedPhone = formatPhone(value);
-      setFormData({ ...formData, [name]: formattedPhone });
+      setFormData(prev => ({ ...prev, [name]: formattedPhone }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
     
     // Очищаем ошибку для этого поля
-    if (errors[name as keyof FormErrors]) {
-      setErrors({ ...errors, [name]: undefined });
-    }
+    setErrors(prev => {
+      if (prev[name as keyof FormErrors]) {
+        return { ...prev, [name]: undefined };
+      }
+      return prev;
+    });
     
     // Скрываем алерт при изменении данных
     if (alertMessage) {
       setAlertMessage(null);
     }
-  };
+  }, [alertMessage, formatPhone]);
   
   // Обработка изменения даты
-  const handleDateChange = (value: any): void => {
+  const handleDateChange = useCallback((value: any): void => {
     // Обрабатываем различные форматы даты
     if (value === null || value instanceof Date) {
-      setFormData({ ...formData, birthDate: value });
+      setFormData(prev => ({ ...prev, birthDate: value }));
     } else if (Array.isArray(value) && value.length > 0 && value[0] instanceof Date) {
-      setFormData({ ...formData, birthDate: value[0] });
+      setFormData(prev => ({ ...prev, birthDate: value[0] }));
     }
     
     // Скрываем алерт при изменении данных
     if (alertMessage) {
       setAlertMessage(null);
     }
-  };
+  }, [alertMessage]);
   
   // Обработка выбора пола
-  const handleGenderSelect = (gender: string): void => {
-    setFormData({ ...formData, gender });
+  const handleGenderSelect = useCallback((gender: string): void => {
+    setFormData(prev => ({ ...prev, gender }));
     setIsGenderDropdownOpen(false);
     
     // Скрываем алерт при изменении данных
     if (alertMessage) {
       setAlertMessage(null);
     }
-  };
+  }, [alertMessage]);
   
   // Переключение режима редактирования телефона
-  const togglePhoneEdit = (): void => {
-    setIsEditingPhone(!isEditingPhone);
+  const togglePhoneEdit = useCallback((): void => {
+    setIsEditingPhone(prev => !prev);
     
     // Очищаем ошибку телефона при переключении
-    if (errors.phone) {
-      setErrors({ ...errors, phone: undefined });
-    }
-  };
+    setErrors(prev => {
+      if (prev.phone) {
+        return { ...prev, phone: undefined };
+      }
+      return prev;
+    });
+  }, []);
   
   // Валидация формы
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
     
     // Валидация имени
@@ -328,10 +399,10 @@ export default function Profile(): JSX.Element {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData, isEditingPhone, t, validateName, validatePhone]);
   
   // Отправка формы
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -385,10 +456,10 @@ export default function Profile(): JSX.Element {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [validateForm, formData, isEditingPhone, router, appLocale, t]);
   
   // Получаем стили в зависимости от темы
-  const getThemeStyles = () => {
+  const getThemeStyles = useCallback(() => {
     return {
       textColor: theme === 'light' ? 'text-[#094A54]' : 'text-white',
       textColorMuted: theme === 'light' ? 'text-[#094A54]/80' : 'text-white/80',
@@ -404,7 +475,7 @@ export default function Profile(): JSX.Element {
       errorColor: 'text-red-500',
       successColor: 'text-green-500'
     };
-  };
+  }, [theme]);
   
   const styles = getThemeStyles();
   
@@ -414,10 +485,10 @@ export default function Profile(): JSX.Element {
     : t('gender');
   
   // Функция для стилизации DatePicker
-  const getDatePickerClassName = () => {
+  const getDatePickerClassName = useCallback(() => {
     const baseClass = "react-date-picker";
     return theme === 'dark' ? `${baseClass} dark-theme` : baseClass;
-  };
+  }, [theme]);
   
   // Если данные еще загружаются
   if (isLoading) {
@@ -573,7 +644,7 @@ export default function Profile(): JSX.Element {
       </form>
       
       {/* Глобальные стили для календаря */}
-      <style jsx global>{`
+    <style jsx global>{`
         .react-date-picker {
           width: 290px;
         }

@@ -280,71 +280,80 @@ export default function PatientLogin() {
   };
 
   // Проверка кода
-  const handleVerifyCode = async () => {
-    if (!isCodeComplete) return;
+const handleVerifyCode = async () => {
+  if (!isCodeComplete) return;
+  
+  setIsLoading(true);
+  setError(null);
+  
+  try {
+    const cleanPhone = getCleanPhoneNumber();
+    const code = verificationCode.join('');
     
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const cleanPhone = getCleanPhoneNumber();
-      const code = verificationCode.join('');
-      
-      const response = await axios.post(`${API_BASE_URL}/auth/otp/verify`, 
-        { 
-          phone: cleanPhone,
-          code: code 
-        }, 
-        {
-          headers: {
-            'X-Language': currentLocale,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      // Сохраняем токен аутентификации
-      const { access_token, token_type } = response.data;
-      localStorage.setItem('authToken', access_token);
-      localStorage.setItem('tokenType', token_type);
-      
-      // Проверяем, есть ли у пользователя профиль
-      const userInfoResponse = await axios.get(`${API_BASE_URL}/user`, {
+    const response = await axios.post(`${API_BASE_URL}/auth/otp/verify`, 
+      { 
+        phone: cleanPhone,
+        code: code 
+      }, 
+      {
         headers: {
-          'Authorization': `${token_type} ${access_token}`,
-          'X-Language': currentLocale
-        }
-      });
-      
-      const userInfo = userInfoResponse.data;
-      
-      // Если есть данные профиля, сразу перенаправляем в личный кабинет
-      if (userInfo.first_name && userInfo.last_name && userInfo.gender) {
-        router.push('/account/appointments');
-      } else {
-        // Иначе показываем форму заполнения личных данных
-        setLoginStep(LoginStep.PERSONAL_DATA);
-        
-        // Если какие-то данные уже есть, заполняем их
-        if (userInfo.first_name || userInfo.last_name || userInfo.gender || userInfo.birthday) {
-          setPersonalData({
-            firstName: userInfo.first_name || '',
-            lastName: userInfo.last_name || '',
-            gender: userInfo.gender || ''
-          });
-          
-          if (userInfo.birthday) {
-            setBirthDate(new Date(userInfo.birthday));
-          }
+          'X-Language': currentLocale,
+          'Content-Type': 'application/json'
         }
       }
-    } catch (err) {
-      console.error('Error verifying code:', err);
-      setError('Неверный код подтверждения.');
-    } finally {
-      setIsLoading(false);
+    );
+    
+    // Сохраняем токен аутентификации
+    const { access_token, token_type } = response.data;
+    localStorage.setItem('authToken', access_token);
+    localStorage.setItem('tokenType', token_type);
+    
+    // Проверяем, есть ли у пользователя профиль
+    const userInfoResponse = await axios.get(`${API_BASE_URL}/user`, {
+      headers: {
+        'Authorization': `${token_type} ${access_token}`,
+        'X-Language': currentLocale
+      }
+    });
+    
+    const userInfo = userInfoResponse.data;
+    
+    // Проверяем, заполнены ли основные поля профиля
+    const isProfileComplete = 
+      userInfo.first_name && 
+      userInfo.first_name.trim() !== '' && 
+      userInfo.last_name && 
+      userInfo.last_name.trim() !== '' && 
+      userInfo.gender && 
+      userInfo.gender.trim() !== '';
+    
+    if (isProfileComplete) {
+      // Если профиль заполнен, перенаправляем на страницу профиля
+      router.push('/account/profile');
+    } else {
+      // Иначе показываем форму заполнения личных данных
+      setLoginStep(LoginStep.PERSONAL_DATA);
+      
+      // Если какие-то данные уже есть, заполняем их
+      if (userInfo.first_name || userInfo.last_name || userInfo.gender || userInfo.birthday) {
+        setPersonalData({
+          firstName: userInfo.first_name || '',
+          lastName: userInfo.last_name || '',
+          gender: userInfo.gender || ''
+        });
+        
+        if (userInfo.birthday) {
+          setBirthDate(new Date(userInfo.birthday));
+        }
+      }
     }
-  };
+  } catch (err) {
+    console.error('Error verifying code:', err);
+    setError('Неверный код подтверждения.');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Отправка личных данных
   const handleSubmitPersonalData = async () => {
