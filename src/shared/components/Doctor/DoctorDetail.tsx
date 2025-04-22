@@ -8,6 +8,7 @@ import CertificatesSlider from './CertificateCard';
 import AppointmentScheduler from './AppointmentScheduler';
 import { ContactInfo } from '../ContactInfo';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 // Define types for the doctor data
 export interface Education {
@@ -241,7 +242,7 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
               )}
             </div>
             
-            <div className="mt-8">
+            <Link href="/account/appointment" className="mt-8">
               {/* Кнопка с темной обводкой */}
               <button 
                 onClick={handleAppointment}
@@ -249,7 +250,7 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
               >
                 {t('bookAppointment')}
               </button>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

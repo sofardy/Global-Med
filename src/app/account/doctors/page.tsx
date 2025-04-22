@@ -468,16 +468,14 @@ const SearchSection: React.FC<{
   );
 };
 
-// Функция для преобразования данных API в формат для компонента DoctorCard
 const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor): Doctor => {
-  // Извлекаем языки из строки, разделенной запятыми (если есть)
   const languagesArray = apiDoctor.languages ? apiDoctor.languages.split(',').map((lang: string) => lang.trim()) : ['русский', 'узбекский'];
   
   return {
     id: apiDoctor.uuid,
     name: apiDoctor.full_name,
     specialty: apiDoctor.specialization,
-    experience: apiDoctor.experience_years.replace(/\D/g, ''),  // Оставляем только цифры
+    experience: apiDoctor.experience_years.replace(/\D/g, ''),
     qualification: apiDoctor.category || 'Высшая категория',
     degree: apiDoctor.qualification || '',
     languages: languagesArray,

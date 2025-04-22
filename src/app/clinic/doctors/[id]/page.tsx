@@ -1,4 +1,3 @@
-// src/app/clinic/doctors/[id]/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -62,7 +61,6 @@ export default function DoctorDetailPage(): JSX.Element {
           throw new Error('Некорректный идентификатор доктора');
         }
         
-        // Получаем данные напрямую из API, используя UUID/id
         const apiUrl =  'https://globalmed.kelyanmedia.com/api';
         const response = await fetch(`${apiUrl}/doctors/${doctorId}`);
         
