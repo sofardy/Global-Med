@@ -1,6 +1,7 @@
+// src/shared/layout/Footer/Footer.tsx
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
@@ -8,6 +9,9 @@ import { translations } from './translations';
 import { CONTACT_INFO } from '@/src/shared/constants/contact';
 import { TelegramIcon, InstagramIcon, WhatsapppIcon, FacebookIcon } from '../../ui/Icon';
 import MuscleIcon from '../../ui/Icon/MuscleIcon';
+import axios from 'axios';
+import { API_BASE_URL } from '@/src/config/constants';
+import { useLanguageStore } from '@/src/store/language';
 
 // Types for translation items
 interface LinkItem {
@@ -142,23 +146,110 @@ interface SocialNetwork {
 export const Footer: React.FC = () => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
+  const { currentLocale } = useLanguageStore();
+  
+  // Состояния для хранения данных из API
+  const [serviceLinks, setServiceLinks] = useState<LinkItem[]>([]);
+  const [checkupLinks, setCheckupLinks] = useState<LinkItem[]>([]);
+  const [analysisLinks, setAnalysisLinks] = useState<LinkItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [dataFetched, setDataFetched] = useState<boolean>(false); // Флаг для отслеживания загрузки
   
   const bgColor = theme === 'dark' ? 'bg-dark-block' : 'bg-white';
   const textColorMuted = theme === 'dark' ? 'text-white/60' : 'text-light-text/60';
   
-  // Данные для социальных сетей
-  const socialNetworks: SocialNetwork[] = [
+  // Данные для социальных сетей - мемоизируем их
+  const socialNetworks = useMemo(() => [
     { id: 'telegram', url: 'https://t.me/globalmedcenter', icon: TelegramIcon, label: 'Telegram' },
     { id: 'instagram', url: 'https://instagram.com/globalmedcenter', icon: InstagramIcon, label: 'Instagram' },
     { id: 'whatsapp', url: 'https://wa.me/+998712005550', icon: WhatsapppIcon, label: 'WhatsApp' },
     { id: 'facebook', url: 'https://facebook.com/globalmedcenter', icon: FacebookIcon, label: 'Facebook' }
-  ];
+  ], []);
   
-  // Получаем типизированные массивы для каждой секции
-  const serviceLinks = t('serviceLinks', { returnObjects: true }) as LinkItem[];
-  const checkupLinks = t('checkupLinks', { returnObjects: true }) as LinkItem[];
-  const analysisLinks = t('analysisLinks', { returnObjects: true }) as LinkItem[];
-  const navigationLinks = t('navigationLinks', { returnObjects: true }) as LinkItem[];
+  // Получаем типизированные массивы для навигации из переводов
+  const navigationLinks = useMemo(() => 
+    t('navigationLinks', { returnObjects: true }) as LinkItem[], 
+    [t]
+  );
+  
+  // Мемоизируем запасные данные из переводов
+  const fallbackServiceLinks = useMemo(() => 
+    t('serviceLinks', { returnObjects: true }) as LinkItem[], 
+    [t]
+  );
+  
+  const fallbackCheckupLinks = useMemo(() => 
+    t('checkupLinks', { returnObjects: true }) as LinkItem[], 
+    [t]
+  );
+  
+  const fallbackAnalysisLinks = useMemo(() => 
+    t('analysisLinks', { returnObjects: true }) as LinkItem[], 
+    [t]
+  );
+  
+  // Функция для получения данных из API - оптимизирована с useCallback
+  const fetchData = useCallback(async () => {
+    if (dataFetched) return; // Предотвращаем повторные запросы
+    
+    setIsLoading(true);
+    
+    try {
+      // Используем Promise.all для параллельных запросов
+      const [servicesResponse, checkupsResponse, analysesResponse] = await Promise.all([
+        axios.get(`${API_BASE_URL}/services`, {
+          headers: { 'X-Language': currentLocale }
+        }),
+        axios.get(`${API_BASE_URL}/checkups`, {
+          headers: { 'X-Language': currentLocale }
+        }),
+        axios.get(`${API_BASE_URL}/medical-tests`, {
+          headers: { 'X-Language': currentLocale }
+        })
+      ]);
+      
+      // Форматирование данных услуг
+      const serviceItems = servicesResponse.data.data.slice(0, 11).map((service: any) => ({
+        title: service.name,
+        link: `/services/${service.slug}`
+      }));
+      
+      // Форматирование данных чек-апов
+      const checkupItems = checkupsResponse.data.data.slice(0, 4).map((checkup: any) => ({
+        title: checkup.title,
+        link: `/checkups/${checkup.slug}`
+      }));
+      
+      // Форматирование данных анализов
+      const analysisItems = analysesResponse.data.data.slice(0, 4).map((analysis: any) => ({
+        title: analysis.name,
+        link: `/analysis/${analysis.slug}`
+      }));
+      
+      setServiceLinks(serviceItems);
+      setCheckupLinks(checkupItems);
+      setAnalysisLinks(analysisItems);
+      setDataFetched(true); // Отмечаем, что данные загружены
+    } catch (error) {
+      console.error('Error fetching footer data:', error);
+      // В случае ошибки используем запасные данные из переводов
+      setServiceLinks(fallbackServiceLinks);
+      setCheckupLinks(fallbackCheckupLinks);
+      setAnalysisLinks(fallbackAnalysisLinks);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentLocale, dataFetched, fallbackServiceLinks, fallbackCheckupLinks, fallbackAnalysisLinks]);
+  
+  // Загружаем данные при монтировании
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  
+  // Если данные загружаются, используем запасные варианты
+  const displayServiceLinks = serviceLinks.length > 0 ? serviceLinks : fallbackServiceLinks;
+  const displayCheckupLinks = checkupLinks.length > 0 ? checkupLinks : fallbackCheckupLinks;
+  const displayAnalysisLinks = analysisLinks.length > 0 ? analysisLinks : fallbackAnalysisLinks;
   
   return (
     <footer className="mt-40">
@@ -169,7 +260,7 @@ export const Footer: React.FC = () => {
           <div>
             <SectionTitle>{t('sections.services')}</SectionTitle>
             <ul className="space-y-3">
-              {serviceLinks.map((item) => (
+              {displayServiceLinks.map((item) => (
                 <li key={item.link}>
                   <FooterLink href={item.link}>
                     {item.title}
@@ -188,7 +279,7 @@ export const Footer: React.FC = () => {
           <div>
             <SectionTitle>{t('sections.checkups')}</SectionTitle>
             <ul className="space-y-3">
-              {checkupLinks.map((item) => (
+              {displayCheckupLinks.map((item) => (
                 <li key={item.link}>
                   <FooterLink href={item.link}>
                     {item.title}
@@ -204,7 +295,7 @@ export const Footer: React.FC = () => {
             
             <SectionTitle className="mt-8">{t('sections.analyses')}</SectionTitle>
             <ul className="space-y-3">
-              {analysisLinks.map((item) => (
+              {displayAnalysisLinks.map((item) => (
                 <li key={item.link}>
                   <FooterLink href={item.link}>
                     {item.title}

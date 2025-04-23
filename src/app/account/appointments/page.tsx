@@ -15,6 +15,7 @@ interface Appointment {
   service_type: string;
   service_name: string;
   service_detail: string;
+  service_label: string;
 }
 
 // Переводы статусов
@@ -269,7 +270,7 @@ const AppointmentHistory = () => {
     </div>
   )}
   <div className="text-light-text/80 dark:text-dark-text/80 text-[14px] mt-1">
-    {t('doctor')} {appointment.service_name}
+    {appointment.service_label || t('doctor')}: {appointment.service_name}
   </div>
 </div>
                   

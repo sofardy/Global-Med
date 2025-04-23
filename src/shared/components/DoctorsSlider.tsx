@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UniversalSlider } from '../components/UniversalSlider';
 import { DoctorCard } from './DoctorCard';
 import { useTranslation } from '@/src/hooks/useTranslation';
+import { useDoctorsStore } from '@/src/store/doctors';
 
 // Translations
 const translations = {
@@ -12,44 +13,8 @@ const translations = {
     buttonText: 'Записаться на прием',
     prevSlide: 'Предыдущий слайд',
     nextSlide: 'Следующий слайд',
-    doctors: [
-      {
-        id: 'abdiganiev',
-        name: 'Саидазимхон Абдиганиев',
-        specialization: 'Аллерголог-иммунолог',
-        image: '/images/doctor-1.png',
-      },
-      {
-        id: 'valieva',
-        name: 'Наима Валиева',
-        specialization: 'Врач УЗИ',
-        image: '/images/doctor-2.png',
-      },
-      {
-        id: 'abdudjabborov',
-        name: 'Абдулхай Абдужабборов',
-        specialization: 'Педиатр',
-        image: '/images/doctor-3.png',
-      },
-      {
-        id: 'ishbekova',
-        name: 'Зулайхо Ишбекова',
-        specialization: 'Кардиолог',
-        image: '/images/doctor-4.png',
-      },
-      {
-        id: 'ishbekova2',
-        name: 'Зулайхо Ишбекова',
-        specialization: 'Кардиолог',
-        image: '/images/doctor-4.png',
-      },
-      {
-        id: 'ishbekova2',
-        name: 'Зулайхо Ишбекова',
-        specialization: 'Кардиолог',
-        image: '/images/doctor-4.png',
-      },
-    ]
+    loading: 'Загрузка врачей...',
+    error: 'Не удалось загрузить список врачей'
   },
   uz: {
     title: 'Tajribali shifokorlar jamoasi siz bilan birga',
@@ -57,38 +22,8 @@ const translations = {
     buttonText: 'Qabulga yozilish',
     prevSlide: 'Oldingi slayd',
     nextSlide: 'Keyingi slayd',
-    doctors: [
-      {
-        id: 'abdiganiev',
-        name: 'Saidazimxon Abdiganiyev',
-        specialization: 'Allergolog-immunolog',
-        image: '/images/doctor-1.png',
-      },
-      {
-        id: 'valieva',
-        name: 'Naima Valiyeva',
-        specialization: 'Ultratovush shifokori',
-        image: '/images/doctor-2.png',
-      },
-      {
-        id: 'abdudjabborov',
-        name: 'Abdulxay Abdudjabborov',
-        specialization: 'Pediatr',
-        image: '/images/doctor-3.png',
-      },
-      {
-        id: 'ishbekova',
-        name: 'Zulayxo Ishbekova',
-        specialization: 'Kardiolog',
-        image: '/images/doctor-4.png',
-      },
-      {
-        id: 'ishbekova2',
-        name: 'Zulayxo Ishbekova',
-        specialization: 'Kardiolog',
-        image: '/images/doctor-4.png',
-      },
-    ]
+    loading: 'Shifokorlar yuklanmoqda...',
+    error: 'Shifokorlar ro\'yxatini yuklab bo\'lmadi'
   }
 };
 
@@ -100,12 +35,14 @@ export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
   className = ''
 }) => {
   const { t } = useTranslation(translations);
+  const { doctors, loading, error, fetchDoctors } = useDoctorsStore();
   
-  // Get localized data
-  const doctors = t('doctors', { returnObjects: true }) as any[];
-  const buttonText = t('buttonText');
+  // Загрузка докторов при монтировании компонента
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
   
-  // Split text into lines for better presentation
+  // Разделение текста на строки для лучшей презентации
   const splitTextIntoLines = (text: string, lineCount: number) => {
     if (!text) return [];
     
@@ -124,11 +61,11 @@ export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
     return lines;
   };
   
-  // Format title and description into multiple lines
+  // Форматирование заголовка и описания на несколько строк
   const titleLines = splitTextIntoLines(t('title'), 2);
   const descriptionLines = splitTextIntoLines(t('description'), 3);
   
-  // Create title component with line breaks
+  // Создание компонента заголовка с разрывами строк
   const titleComponent = (
     <h2 className="text-3xl md:text-5xl font-medium text-light-text dark:text-dark-text leading-tight">
       {titleLines.map((line, index) => (
@@ -137,7 +74,7 @@ export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
     </h2>
   );
   
-  // Create description component with line breaks
+  // Создание компонента описания с разрывами строк
   const descriptionComponent = (
     <p className="text-base md:text-lg text-light-text dark:text-dark-text">
       {descriptionLines.map((line, index) => (
@@ -146,34 +83,61 @@ export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
     </p>
   );
   
-  // Create slides with doctor cards
+  // Обработка состояний загрузки и ошибки
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-80 w-full">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent"></div>
+        <span className="ml-3 text-light-text dark:text-dark-text">{t('loading')}</span>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="text-center p-10 text-red-500 w-full">
+        <p>{t('error')}</p>
+      </div>
+    );
+  }
+  
+  // Создание слайдов с карточками врачей из API
   const slides = doctors.map((doctor) => (
     <DoctorCard
-      key={doctor.id}
-      id={doctor.id}
-      name={doctor.name}
+      key={doctor.uuid}
+      id={doctor.uuid}
+      name={doctor.full_name}
       specialization={doctor.specialization}
-      image={doctor.image}
-      buttonText={buttonText}
+      image={doctor.image_url}
+      buttonText={t('buttonText')}
       className="h-full"
     />
   ));
   
+  // Если докторов нет
+  if (slides.length === 0) {
+    return (
+      <div className="text-center p-10 text-light-text dark:text-dark-text w-full">
+        <p>Нет доступных врачей</p>
+      </div>
+    );
+  }
+  
   return (
-  <UniversalSlider
-    slides={slides}
-    title={titleComponent}
-    description={descriptionComponent}
-    slidesPerView={4}
-    slidesPerMobileView={1}
-    spaceBetween={20}
-    showNavigation={true}
-    navigationPrevLabel={t('prevSlide')}
-    navigationNextLabel={t('nextSlide')}
-    showPagination={false}
-    loop={true}
-    className={`${className} doctors-slider`}
-    wrapperClassName="mt-20"
-  />
+    <UniversalSlider
+      slides={slides}
+      title={titleComponent}
+      description={descriptionComponent}
+      slidesPerView={4}
+      slidesPerMobileView={1}
+      spaceBetween={20}
+      showNavigation={true}
+      navigationPrevLabel={t('prevSlide')}
+      navigationNextLabel={t('nextSlide')}
+      showPagination={false}
+      loop={true}
+      className={`${className} doctors-slider`}
+      wrapperClassName="mt-20"
+    />
   );
 };

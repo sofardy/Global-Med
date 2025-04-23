@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import DoctorDetail from '@/src/shared/components/Doctor/DoctorDetail';
+import { useAuth } from '@/src/hooks/useAuth';
 
-// Типы для данных из API
 interface EducationDetail {
   title: string;
   subtitle: string;
@@ -43,10 +43,22 @@ interface DoctorDetailResponse {
 
 export default function DoctorDetailPage(): JSX.Element {
   const params = useParams();
-  const id = params?.id; // Получаем UUID из параметров
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const id = params?.id;
   const [doctor, setDoctor] = useState<DoctorDetailData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleAppointmentClick = (): void => {
+    console.log("Проверка авторизации:", isAuthenticated());
+    
+    if (isAuthenticated()) {
+      router.push(`/account/appointment?doctor_id=${doctor?.uuid}`);
+    } else {
+      router.push(`/account/login?redirect_to=/account/appointment?doctor_id=${doctor?.uuid}`);
+    }
+  };
 
   useEffect(() => {
     const fetchDoctorDetail = async (): Promise<void> => {
@@ -140,7 +152,10 @@ export default function DoctorDetailPage(): JSX.Element {
       imageUrl: cert.image,
       title: cert.name,
       expiryDate: cert.subname
-    }))
+    })),
+
+    // Добавляем обработчик для кнопки записи на прием
+    onAppointmentClick: handleAppointmentClick
   };
 
   return <DoctorDetail doctor={doctorData} />;

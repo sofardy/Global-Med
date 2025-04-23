@@ -29,35 +29,81 @@ const translations = {
 
 export default function Doctors() {
   const { t } = useTranslation(translations);
-  const { doctors, loading, error, fetchDoctors, setPage, currentPage, totalPages, filters } = useDoctorsStore();
-  const [visibleDoctors, setVisibleDoctors] = useState(8);
+  const { 
+    doctors, 
+    loading, 
+    error, 
+    fetchDoctors, 
+    setPage, 
+    currentPage, 
+    totalPages, 
+    filters,
+  } = useDoctorsStore();
+  
   const [isRotating, setIsRotating] = useState(false);
+  const [allDoctors, setAllDoctors] = useState<any[]>([]);
+  const [visibleCount, setVisibleCount] = useState(8);
   
-useEffect(() => {
-  console.log('Current filters:', filters);
-  fetchDoctors().then(() => {
-    console.log('Fetched doctors:', doctors);
-  });
+  // Сбрасываем отображение при изменении фильтров
+  useEffect(() => {
+    console.log('Current filters:', filters);
+    
+    // Сбрасываем состояние при изменении фильтров
+    setAllDoctors([]);
+    setVisibleCount(8);
+    
+    // Загружаем первую страницу
+    fetchDoctors().then(() => {
+      console.log('Fetched doctors:', doctors);
+    });
+  }, [JSON.stringify(filters)]);
   
-  setVisibleDoctors(8);
-}, [JSON.stringify(filters)]);
-  
-  const handleShowMore = () => {
+  // Обновляем локальный массив при получении новых данных
+  useEffect(() => {
+    if (doctors.length > 0) {
+      // Если это первая страница или сброс фильтров - заменяем данные
+      if (currentPage === 1) {
+        setAllDoctors(doctors);
+      } 
+      // Иначе добавляем новые данные к существующим
+      else {
+        setAllDoctors(prev => {
+          // Создаем Map для быстрого поиска дубликатов по id
+          const existingIds = new Map(prev.map(doc => [doc.uuid, true]));
+          // Добавляем только те записи, которых еще нет
+          const newDoctors = doctors.filter(doc => !existingIds.has(doc.uuid));
+          return [...prev, ...newDoctors];
+        });
+      }
+    }
+  }, [doctors, currentPage]);
+
+  // Обработчик "Показать еще"
+  const handleShowMore = async () => {
     setIsRotating(true);
     
-    if (visibleDoctors >= doctors.length && currentPage < totalPages) {
+    // Если показаны все доктора на текущей странице, но есть еще страницы
+    if (visibleCount >= allDoctors.length && currentPage < totalPages) {
+      // Загружаем следующую страницу
       setPage(currentPage + 1);
-      fetchDoctors().then(() => {
-        setVisibleDoctors(prev => prev + 8);
-        setIsRotating(false);
-      });
-    } else {
-      // Иначе просто показываем больше докторов с текущей страницы
-      setVisibleDoctors(prevCount => Math.min(prevCount + 8, doctors.length));
-      setTimeout(() => {
-        setIsRotating(false);
-      }, 1000);
+      
+      try {
+        await fetchDoctors();
+        // Количество видимых увеличиваем на стандартное число (8)
+        setVisibleCount(prev => prev + 8);
+      } catch (error) {
+        console.error('Error loading more doctors:', error);
+      }
+    } 
+    // Если просто нужно показать больше докторов с текущей страницы
+    else {
+      setVisibleCount(prev => Math.min(prev + 8, allDoctors.length));
     }
+    
+    // В любом случае отключаем анимацию через небольшую задержку
+    setTimeout(() => {
+      setIsRotating(false);
+    }, 500);
   };
   
   // Функция для форматирования опыта, чтобы сохранить тот же формат
@@ -74,8 +120,11 @@ useEffect(() => {
     return `${years} лет`;
   };
   
-  // Видимые доктора с учетом фильтров
-  const visibleFilteredDoctors = doctors.slice(0, visibleDoctors);
+  // Только видимые доктора из общего списка
+  const visibleDoctors = allDoctors.slice(0, visibleCount);
+  
+  // Определяем, нужно ли показывать кнопку "Показать еще"
+  const showMoreButton = visibleCount < allDoctors.length || currentPage < totalPages;
   
   return (
     <main>
@@ -86,12 +135,12 @@ useEffect(() => {
           {t('ourSpecialists')}
         </h2>
         
-        {loading && doctors.length === 0 ? (
+        {loading && allDoctors.length === 0 ? (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent"></div>
             <span className="ml-3 text-light-text dark:text-dark-text">{t('loading')}</span>
           </div>
-        ) : error ? (
+        ) : error && allDoctors.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-6 py-4 rounded-lg mb-4">
               <p>{t('error')}</p>
@@ -103,7 +152,7 @@ useEffect(() => {
               {t('tryAgain')}
             </button>
           </div>
-        ) : doctors.length === 0 ? (
+        ) : allDoctors.length === 0 ? (
           <div className="flex justify-center py-20">
             <div className="text-light-text/70 dark:text-dark-text/70 text-center">
               <svg className="w-16 h-16 mx-auto mb-4 text-light-accent/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +164,7 @@ useEffect(() => {
         ) : (
           <>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {visibleFilteredDoctors.map(doctor => (
+              {visibleDoctors.map(doctor => (
                 <DoctorCard
                   key={doctor.uuid}
                   id={doctor.uuid}
@@ -128,7 +177,7 @@ useEffect(() => {
               ))}
             </div>
             
-            {(visibleDoctors < doctors.length || currentPage < totalPages) && (
+            {showMoreButton && (
               <div className="flex justify-center mt-10">
                 <button
                   onClick={handleShowMore}

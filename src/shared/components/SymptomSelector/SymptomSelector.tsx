@@ -632,7 +632,7 @@ export const SymptomSelector: React.FC = () => {
                 icon={card.iconPath}
                 showButton={card.showButton}
                 buttonText={card.buttonText || t('seeMore') as string}
-                link={`/${card.id}/${selectedSymptoms.map(s => getSymptomSlug(s)).join('-')}`}
+                link={`/checkups`}
                 listStyle="disc"
                 className="mx-auto w-full max-w-full md:max-w-[375px]"
               />

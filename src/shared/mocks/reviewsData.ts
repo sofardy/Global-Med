@@ -39,6 +39,14 @@ export const reviewsData: Review[] = [
         service: 'Прием у врача',
         reviewSource: 'youtube',
         avatar: '/images/user-avatar-2.png'
+    },
+    {
+        name: 'Неизвестный пользователь',
+        date: 'Оставила отзыв 5 января 2025',
+        text: 'Клиника очень хорошая, оказывается многие врачи не давно приехали из России, специалисты более грамотные. ЛОР Врач Садиков Бобуржон Алишерович отличный ...',
+        service: 'Прием у врача',
+        reviewSource: 'youtube',
+        avatar: '/images/user-avatar-2.png'
     }
 ];
 

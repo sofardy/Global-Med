@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { UniversalSlider } from '../components/UniversalSlider';
 import { UniversalCard } from '../components/UniversalCard';
 import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
-import { MedicalTrackerIcon, ButterflyIcon, PregnancyIcon, ButterflyLogoSmallIcon } from '../ui/Icon';
+import { PregnancyIcon, ButterflyLogoSmallIcon } from '../ui/Icon';
+import { useCheckups } from '@/src/hooks/useCheckups';
+import { CheckupItem } from '@/src/app/api/checkups';
 
 // Локализация
 const translations = {
@@ -15,96 +17,22 @@ const translations = {
     description: "Быстрое обследование для выявления скрытых заболеваний и контроля за состоянием здоровья",
     prevSlide: "Предыдущий слайд",
     nextSlide: "Следующий слайд",
-    checkups: [
-      {
-        id: "family",
-        title: "Здоровая семья",
-        description: "Комплексное обследование для мужчин и женщин, помогающее оценить общее состояние здоровья и выявить риски заболеваний",
-        investigationsCount: 11,
-        timeRequired: "2 часа", 
-        buttonText: "Подробнее"
-      },
-      {
-        id: "pregnancy",
-        title: "Хочу стать мамой",
-        description: "Комплексное обследование для женщин, планирующих беременность, включающее важные анализы, УЗИ и консультации специалистов для подготовки к здоровому зачатию",
-        investigationsCount: 12,
-        timeRequired: "2 часа", 
-        buttonText: "Подробнее"
-      },
-      {
-        id: "health",
-        title: "Базовый чек-ап",
-        description: "Быстрое но полное обследование организма, включающее основные анализы, ЭКГ и консультацию терапевта для оценки общего состояния здоровья",
-        investigationsCount: 8,
-        timeRequired: "1 час", 
-        buttonText: "Подробнее"
-      },
-      {
-        id: "heart",
-        title: "Здоровое сердце",
-        description: "Углубленная диагностика сердечно-сосудистой системы с консультацией кардиолога для выявления и профилактики сердечных заболеваний",
-        investigationsCount: 10,
-        timeRequired: "1,5 часа", 
-        buttonText: "Подробнее"
-      },
-      {
-        id: "children",
-        title: "Детское здоровье",
-        description: "Комплексное обследование для детей разных возрастов, включающее осмотр педиатра и необходимые анализы для контроля развития ребенка",
-        investigationsCount: 9,
-        timeRequired: "1 час", 
-        buttonText: "Подробнее"
-      }
-    ]
+    loading: "Загрузка чек-апов...",
+    error: "Не удалось загрузить данные чек-апов",
+    detailsButton: "Подробнее",
+    checks: "исследований",
+    time: "часа"
   },
   uz: {
     title: "Bir tashrif davomida tekshiruvdan o'ting",
     description: "Yashirin kasalliklarni aniqlash va sog'lig'ingizni nazorat qilish uchun tezkor tekshiruv",
     prevSlide: "Oldingi slayd",
     nextSlide: "Keyingi slayd",
-    checkups: [
-      {
-        id: "family",
-        title: "Sog'lom oila",
-        description: "Erkaklar va ayollar uchun kompleks tekshiruv, umumiy sog'liqni baholash va kasallik xavflarini aniqlashga yordam beradi",
-        investigationsCount: 11,
-        timeRequired: "2 soat", 
-        buttonText: "Batafsil"
-      },
-      {
-        id: "pregnancy",
-        title: "Ona bo'lmoqchiman",
-        description: "Homiladorlikni rejalashtiruvchi ayollar uchun kompleks tekshiruv: muhim tahlillar, UTT va sog'lom homiladorlikka tayyorgarlik uchun mutaxassislar konsultatsiyasi",
-        investigationsCount: 12,
-        timeRequired: "2 soat", 
-        buttonText: "Batafsil"
-      },
-      {
-        id: "health",
-        title: "Asosiy tekshiruv",
-        description: "Tez, ammo to'liq tanani tekshirish, asosiy tahlillar, EKG va umumiy sog'liq holatini baholash uchun terapevt maslahati",
-        investigationsCount: 8,
-        timeRequired: "1 soat", 
-        buttonText: "Batafsil"
-      },
-      {
-        id: "heart",
-        title: "Sog'lom yurak",
-        description: "Yurak-qon tomir tizimining chuqurlashtirilgan diagnostikasi, yurak kasalliklarini aniqlash va oldini olish uchun kardiolog maslahati",
-        investigationsCount: 10,
-        timeRequired: "1,5 soat", 
-        buttonText: "Batafsil"
-      },
-      {
-        id: "children",
-        title: "Bolalar salomatligi",
-        description: "Turli yoshdagi bolalar uchun kompleks tekshiruv, pediatr ko'rigi va bolaning rivojlanishini nazorat qilish uchun zarur tahlillarni o'z ichiga oladi",
-        investigationsCount: 9,
-        timeRequired: "1 soat", 
-        buttonText: "Batafsil"
-      }
-    ]
+    loading: "Tekshiruvlar yuklanmoqda...",
+    error: "Tekshiruvlar ma'lumotlarini yuklab bo'lmadi",
+    detailsButton: "Batafsil",
+    checks: "tekshiruv",
+    time: "soat"
   }
 };
 
@@ -141,10 +69,12 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
   
+  // Используем существующий хук для получения чек-апов
+  const { checkups, loading, error } = useCheckups();
+  
   // Получаем локализованные данные
   const sliderTitle = title || t('title') || '';
-  const sliderDescription = description || t('description')||'';
-  const checkups = t('checkups', { returnObjects: true }) as any[];
+  const sliderDescription = description || t('description') || '';
   
   // Разделение текстов на строки
   const titleLines = splitTextIntoLines(sliderTitle, 2);
@@ -172,52 +102,118 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
     </div>
   );
   
-  // Создаем слайды с карточками
-  const slides = checkups.map((checkup) => {
-    // Определяем иконку в зависимости от типа чек-апа
-    const icon = checkup.id === 'pregnancy' 
-      ? <PregnancyIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />
-      : <ButterflyLogoSmallIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />;
-    
-    // Создаем карточку
+  // Если данные загружаются
+  if (loading) {
     return (
-      <UniversalCard
-        key={checkup.id}
-        title={checkup.title}
-        description={checkup.description}
-        investigationsCount={checkup.investigationsCount}
-        timeRequired={checkup.timeRequired}
-        buttonText={checkup.buttonText}
-        link={`/checkups/${checkup.id}`}
-        icon={icon}
-        variant="family"
-        className="min-h-[430px] hover:shadow-lg transition-all duration-300 relative"
-        bordered={true}
-        borderRadius="2xl"
-        padding="0"
-        hoverColor={theme === 'light' ? 'bg-light-accent hover:bg-light-accent' : 'bg-dark-accent hover:bg-dark-accent'}
-        styles={{
-          container: { padding: '40px', position: 'relative' },
-          title: { fontFamily: 'Graphik LCG, sans-serif', fontWeight: 500, fontSize: '40px' },
-          description: { fontFamily: 'Graphik LCG, sans-serif', fontWeight: 400, fontSize: '18px' }
-        }}
-      />
+      <div className="flex justify-center items-center h-80 w-full">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent"></div>
+        <span className="ml-3 text-light-text dark:text-dark-text">{t('loading')}</span>
+      </div>
     );
-  });
+  }
+  
+  // Если произошла ошибка
+  if (error) {
+    return (
+      <div className="text-center p-10 text-red-500 w-full">
+        <p>{t('error')}</p>
+      </div>
+    );
+  }
+  
+
+const formatDuration = (duration: string | number | undefined): string => {
+  // Если duration не передан или не является числом, возвращаем значение по умолчанию
+  if (duration === undefined || duration === null) {
+    return `2 ${t('time')}`;
+  }
+
+  // Преобразуем входное значение в число минут
+  const minutes = typeof duration === 'string' 
+    ? parseInt(duration, 10) 
+    : duration;
+
+  // Если не удалось преобразовать в число, возвращаем значение по умолчанию  
+  if (isNaN(minutes)) {
+    return `2 ${t('time')}`;
+  }
+
+  // Преобразуем минуты в часы и минуты
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  // Формируем строку времени
+  if (hours === 0) {
+    return `${remainingMinutes} мин`;
+  } else if (remainingMinutes === 0) {
+    return `${hours} ${t('time')}`;
+  } else {
+    // Округляем минуты до десятых долей часа
+    const formattedHours = hours + Math.round(remainingMinutes / 6) / 10;
+    return `${formattedHours} ${t('time')}`;
+  }
+};
+// Создаем слайды с карточками из данных API
+const slides = checkups.map((checkup: CheckupItem) => {
+  // Определяем иконку в зависимости от слага чек-апа
+  const icon = checkup.slug.includes('pregnan') || checkup.slug.includes('mama') 
+    ? <PregnancyIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />
+    : <ButterflyLogoSmallIcon size={190} color={theme === 'light' ? '#094A54' : '#ffffff'} />;
+  
+  // Получаем количество исследований на основе списка тестов
+  const investigationsCount = checkup.medical_tests?.length || 0;
+  
+  // Правильно форматируем время прохождения чек-апа
+  const timeRequired = formatDuration(checkup.duration);
+  
+  // Создаем карточку
+  return (
+    <UniversalCard
+      key={checkup.uuid}
+      title={checkup.title}
+      description={checkup.card_description || checkup.mini_description}
+      investigationsCount={investigationsCount}
+      timeRequired={timeRequired}
+      buttonText={t('detailsButton')}
+      link={`/checkups/${checkup.slug}`}
+      icon={icon}
+      variant="family"
+      className="min-h-[430px] hover:shadow-lg transition-all duration-300 relative"
+      bordered={true}
+      borderRadius="2xl"
+      padding="0"
+      hoverColor={theme === 'light' ? 'bg-light-accent hover:bg-light-accent' : 'bg-dark-accent hover:bg-dark-accent'}
+      styles={{
+        container: { padding: '40px', position: 'relative' },
+        title: { fontFamily: 'Graphik LCG, sans-serif', fontWeight: 500, fontSize: '40px' },
+        description: { fontFamily: 'Graphik LCG, sans-serif', fontWeight: 400, fontSize: '18px' }
+      }}
+    />
+  );
+});
+  
+  // Проверка, есть ли слайды для отображения
+  if (slides.length === 0) {
+    return (
+      <div className="text-center p-10 text-light-text dark:text-dark-text w-full">
+        <p>Нет доступных чек-апов</p>
+      </div>
+    );
+  }
 
   return (
     <UniversalSlider
       slides={slides}
       title={formattedTitle}
       description={formattedDescription}
-       slidesPerView={2}
-        slidesPerMobileView={1}
-        spaceBetween={20}
-        showNavigation={true}
-        navigationPrevLabel={t('prevSlide')}
-        navigationNextLabel={t('nextSlide')}
-        showPagination={false}
-        loop={true} 
+      slidesPerView={2}
+      slidesPerMobileView={1}
+      spaceBetween={20}
+      showNavigation={true}
+      navigationPrevLabel={t('prevSlide')}
+      navigationNextLabel={t('nextSlide')}
+      showPagination={false}
+      loop={true} 
       className={className}
       titleClassName="text-3xl md:text-[40px] mt-20 font-bold text-light-text dark:text-dark-text"
       descriptionClassName="text-light-text dark:text-dark-text text-base md:text-lg"

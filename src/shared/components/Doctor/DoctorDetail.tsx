@@ -37,6 +37,7 @@ export interface Doctor {
   basicEducation?: Education[];
   additionalEducation?: Education[];
   certificates?: Certificate[];
+    onAppointmentClick?: () => void;
 }
 
 // Type for translations
@@ -153,8 +154,6 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
   
   // Функция для перехода на страницу записи
   const handleAppointment = (): void => {
-    // Перенаправление на страницу записи без привязки к конкретному ID доктора
-    // Используем имя и специализацию для идентификации
     router.push('/appointment');
   };
   
@@ -242,23 +241,17 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
               )}
             </div>
             
-            <Link href="/account/appointment" className="mt-8">
-              {/* Кнопка с темной обводкой */}
               <button 
-                onClick={handleAppointment}
+               onClick={doctor.onAppointmentClick}
                 className="px-8 py-4 rounded-[12px] bg-transparent text-[#23464e] dark:text-white border-2 border-[#23464e] dark:border-white hover:bg-[#00c78b] hover:text-white hover:border-[#00c78b] transition-all duration-300 font-medium w-full md:w-auto"
               >
                 {t('bookAppointment')}
               </button>
-            </Link>
           </div>
         </div>
       </div>
       
-      {/* Образование */}
    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-  {/* Обертка с flex-col и h-full для обоих блоков */}
-  {/* Основное образование */}
   <div className="bg-white dark:bg-dark-block rounded-[24px] p-12 shadow-sm flex flex-col h-full">
     <h2 className="text-[24px] font-medium text-[#23464e] dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
       {t('basicEducation')}
@@ -269,7 +262,7 @@ export default function DoctorDetail({ doctor }: DoctorDetailProps): React.React
       {doctor.basicEducation && doctor.basicEducation.map((edu, index) => (
         <div key={index} className="pb-4 last:pb-0">
           <div className="font-medium text-[18px] text-[#23464e] dark:text-white mb-1">
-            {edu.years}
+            {edu.course}
           </div>
           <div className="text-[#23464e] text-[18px] dark:text-white opacity-80">
             {edu.institution}

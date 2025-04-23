@@ -95,7 +95,7 @@ export const BenefitsGrid: React.FC<BenefitsGridProps> = ({
   title,
   description,
   readMoreText,
-  readMoreLink = '/clinic/about',
+  readMoreLink = '/clinic',
   benefits,
 }) => {
   const { theme } = useThemeStore();
