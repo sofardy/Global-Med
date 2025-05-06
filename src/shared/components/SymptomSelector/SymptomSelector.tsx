@@ -323,7 +323,7 @@ export const SymptomSelector: React.FC = () => {
     
     // Ограничиваем список сервисов (чек-апов с ценой и длительностью)
     const serviceInfo = checkupData.data.slice(0, 2).map(c => 
-      `${c.title}: ${c.duration} мин, ${c.price} руб.`
+      `${c.title}: ${c.duration} мин, ${c.price} UZS.`
     );
     
     return [

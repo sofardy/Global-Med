@@ -23,7 +23,6 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(({
   const [isPurposeOpen, setIsPurposeOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
   
-  // Локальное состояние для чекбокса
   const [consentChecked, setConsentChecked] = useState(false);
   
   // Правила валидации

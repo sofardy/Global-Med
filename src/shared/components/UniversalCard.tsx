@@ -295,13 +295,21 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   );
   
   // Блок с дополнительной информацией
-  const AdditionalInfoBlock = () => (
-    additionalInfo && (
-      <p className={`${descriptionSizeClass} ${theme === 'dark' ? 'text-[#FFFFFF80]' : 'text-[#094A5480]'} mb-3 sm:mb-4 md:mb-5`}>
-        {additionalInfo}
-      </p>
-    )
-  );
+const AdditionalInfoBlock = () => (
+  additionalInfo && (
+    <p className={`
+      ${descriptionSizeClass} 
+      ${isHovered 
+        ? 'text-white' 
+        : (theme === 'dark' ? 'text-[#FFFFFF80]' : 'text-[#094A5480]')
+      } 
+      mb-3 sm:mb-4 md:mb-5
+      transition-colors duration-300
+    `}>
+      {additionalInfo}
+    </p>
+  )
+);
   
   const renderFeatures = (
     features: Array<string | Feature> | undefined, 
@@ -475,10 +483,18 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
             {title}
           </h3>
           
-          {/* Иконка по центру */}
-          <div className="flex items-center justify-center mb-10 mt-10 flex-grow">
-            {processedIcon}
-          </div>
+        <div className="flex items-center justify-center mb-10 mt-10 flex-grow">
+  {React.isValidElement(processedIcon) ? 
+    React.cloneElement(
+      processedIcon as React.ReactElement, 
+      { 
+        size: isMobile ? 60 : 90,
+        className: `${(processedIcon as React.ReactElement).props.className || ''} transition-transform duration-300 ${isHovered ? 'scale-110' : ''}` 
+      }
+    ) 
+    : processedIcon
+  }
+</div>
           
           {/* Кнопка внизу */}
           <Link href={link || '#'} className="w-full block mt-4">

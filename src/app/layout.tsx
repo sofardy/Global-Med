@@ -22,7 +22,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    
     <html lang="ru" suppressHydrationWarning>
+          <head>
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        </head>
       <body className={`${inter.className} bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text`}>
         <ThemeProvider>
           <LanguageProvider>

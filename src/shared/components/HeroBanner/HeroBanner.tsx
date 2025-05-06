@@ -157,10 +157,21 @@ export const HeroBanner: React.FC = () => {
           )}
           
           {/* Локация внизу */}
-          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 md:left-12 lg:left-50 flex items-center text-white z-10">
-            <LocationIcon color="#094A54" size={20} className="mr-4" />
-            <span className="text-xs sm:text-sm md:text-base text-[#094A54]">{t('location')}</span>
-          </div>
+       {/* Локация внизу - с добавлением ссылки на Яндекс.Карты */}
+<div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 md:left-12 lg:left-50 flex items-center z-10">
+  <a 
+    href={`https://yandex.ru/maps/?text=${encodeURIComponent(t('location'))}`}
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="flex items-center hover:opacity-80 transition-opacity group"
+    aria-label="Показать местоположение на карте"
+  >
+    <LocationIcon color="#094A54" size={20} className="mr-4 group-hover:scale-110 transition-transform" />
+    <span className="text-xs sm:text-sm md:text-base text-[#094A54] group-hover:underline">
+      {t('location')}
+    </span>
+  </a>
+</div>
         </>
       )}
       

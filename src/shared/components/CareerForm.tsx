@@ -240,26 +240,28 @@ const CareerForm = () => {
             </div>
             
             {/* Resume upload */}
-            <div>
-              <button
-                type="button"
-                onClick={handleAttachClick}
-                className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-light-bg dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-light-text dark:text-dark-text"
-              >
-                <svg className="w-6 h-6 text-light-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                </svg>
-                <span className="flex-1 text-left">{getFileName()}</span>
-              </button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept=".pdf"
-                className="hidden"
-                aria-label={t('attachResume')}
-              />
-            </div>
+<div>
+  <button
+    type="button"
+    onClick={handleAttachClick}
+    className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-light-bg dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-light-text dark:text-dark-text"
+  >
+    <svg className="w-6 h-6 text-light-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+    </svg>
+    <span className="flex-1 text-left">
+      {'Загрузить файл'}
+    </span>
+  </button>
+  <input
+    type="file"
+    ref={fileInputRef}
+    onChange={handleFileChange}
+    accept=".pdf"
+    className="hidden"
+    aria-label={t('attachResume')}
+  />
+</div>
             
             {/* Cover letter */}
             <div>

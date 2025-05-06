@@ -44,7 +44,7 @@ const translations = {
       }
     ]
   },
-  uz: {
+ uz: {
     title: "Sog'lig'ingiz haqida g'amxo'rlik qiladigan klinika",
     description: "Biz ilg'or tibbiy texnologiyalar, qulay sharoitlar va tajribali mutaxassislar jamoasini birlashtirgan holda har bir bemorga sifatli davolashni ta'minlaymiz",
     readMore: "Klinika haqida batafsil",
@@ -54,7 +54,7 @@ const translations = {
         title: 'Statsionar davolash',
         subtitle: '',
         description: 'Qulay palatalar, sutkalik parvarish va har bir bemorga individual yondashuv',
-        iconPath: 'InpatientIcon',
+        iconPath: <MobileDeviceIcon/>, 
         isActive: true
       },
       {
@@ -62,21 +62,21 @@ const translations = {
         title: 'Venalar rentgeni',
         subtitle: '',
         description: 'Yuqori aniqlikdagi qon tomirlarni ilg\'or diagnostikasi mavjud bo\'lgan birinchi klinikalardan biri',
-        iconPath: 'VenographyIcon'
+        iconPath: <StethoscopeIconk2/>
       },
       {
         id: 'spring-water',
         title: 'Buloq va noyob suv',
         subtitle: '',
         description: 'Sog\'lomlashtirish dasturlari uchun noyob tarkibga ega toza tabiiy suvdan foydalanamiz',
-        iconPath: 'WaterIcon'
+        iconPath: <HeartDoubleIcon/> 
       },
       {
         id: 'high-level',
         title: 'Yuqori darajadagi tibbiyot',
         subtitle: '',
         description: 'Sog\'lig\'ingiz uchun zamonaviy uskunalar, ekspert jamoa va sifatli xizmat',
-        iconPath: 'MedicineIcon'
+        iconPath: <HealthPlusIcon/> 
       }
     ]
   }
@@ -113,7 +113,7 @@ const gridDescription = description || t('description') || '';
           <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto md:h-[500px] lg:h-[800px] p-8 md:p-10 bg-white dark:bg-dark-block text-[#173F46] dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[728px] flex flex-col">
             <div className="relative z-10 max-w-3xl">
               <div className="space-y-6">
-  <h2 className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-[1]">
+<h2 className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-[1.15] md:leading-[1.2] lg:leading-[1.25]">
   {gridTitle}
 </h2>
               </div>

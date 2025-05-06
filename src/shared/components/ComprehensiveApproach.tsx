@@ -29,25 +29,30 @@ export default function ComprehensiveApproach(): JSX.Element {
      ? 'text-white' 
      : theme === 'light' ? 'text-light-text' : 'text-dark-text';
    
-   // Create a clone of the icon with the appropriate color prop
+   // Create a clone of the icon with the appropriate color and size props
    const iconWithColor = React.cloneElement(icon, { 
-     color: hover ? '#FFFFFF' : '#094A54'  // White when hovering, default accent color otherwise
+     color: hover 
+       ? '#FFFFFF'  // White when hovering (both light and dark mode)
+       : theme === 'light' ? '#094A54' : '#FFFFFF', // Default color based on theme
+     size: 80 // Set icon size to 80px
    });
    
    return (
      <div 
-       className={`p-6 rounded-xl min-h-[300px] h-full ${bgColor} flex flex-col relative transition-colors duration-300`}
+       className={`p-6 rounded-xl min-h-[340px] h-full ${bgColor} flex flex-col relative transition-colors duration-300`}
        onMouseEnter={() => setHover(true)}
        onMouseLeave={() => setHover(isActive)}
      >
        {/* Круглая точка в правом верхнем углу */}
-       <div className="absolute top-4 right-4 w-3 h-3 md:w-4 md:h-4 rounded-full bg-gray-100 dark:bg-gray-700"></div>
+       <div className={`absolute top-4 right-4 w-3 h-3 md:w-4 md:h-4 rounded-full ${
+         hover ? 'bg-white' : (theme === 'light' ? 'bg-gray-100' : 'bg-gray-700')
+       } transition-colors duration-300`}></div>
        
-       <h3 className={`text-xl md:text-2xl font-medium mb-6 ${textColor}`}>
+       <h3 className={`text-xl mb-auto md:text-2xl font-medium ${textColor}`}>
          {title}
        </h3>
        
-       <div className="flex justify-center my-6">
+       <div className="flex justify-center items-center my-8">
          {iconWithColor}
        </div>
        
@@ -58,8 +63,6 @@ export default function ComprehensiveApproach(): JSX.Element {
    );
  };
  
-
-
  return (
    <div className="mt-20">
      {/* Заголовок и подзаголовок */}
