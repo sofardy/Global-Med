@@ -1,9 +1,11 @@
+import ContactForm from "@/src/shared/components/ContactForm";
+import { ContactInfo } from "@/src/shared/components/ContactInfo";
+
 export default function Contacts() {
   return (
-    <main className="container py-10">
-          <div className="flex justify-end space-x-4 mb-8">
-              Contacts
-      </div>
+    <main>
+      <ContactForm />
+       <ContactInfo />
     </main>
   );
 }
