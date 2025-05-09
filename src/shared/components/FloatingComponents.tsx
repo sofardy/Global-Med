@@ -237,8 +237,7 @@ export const FloatingComponents: React.FC = () => {
       </button>
 
       {/* Кнопка чата и форма */}
-      <div className="fixed right-6 bottom-6 md:right-8 md:bottom-8 z-30">
-        {/* Выдвигающаяся форма чата */}
+      {/* <div className="fixed right-6 bottom-6 md:right-8 md:bottom-8 z-30">
         <div 
           ref={chatRef}
           className={`absolute bottom-full right-0 mb-4 w-[320px] md:w-[360px] rounded-xl shadow-xl 
@@ -254,7 +253,6 @@ export const FloatingComponents: React.FC = () => {
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Поле имени */}
               <div>
                 <div className="relative rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-light-accent">
                   <input
@@ -273,7 +271,6 @@ export const FloatingComponents: React.FC = () => {
                 </div>
               </div>
               
-              {/* Поле телефона */}
               <div>
                 <div className="relative rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-light-accent">
                   {formData.phone.length > 0 && (
@@ -301,7 +298,6 @@ export const FloatingComponents: React.FC = () => {
                 </div>
               </div>
               
-              {/* Поле сообщения */}
               <div>
                 <div className="relative rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-light-accent">
                   <textarea
@@ -319,7 +315,6 @@ export const FloatingComponents: React.FC = () => {
                 </div>
               </div>
               
-              {/* Кнопка отправки */}
               <button
                 type="submit"
                 className="w-full p-4 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors"
@@ -330,13 +325,11 @@ export const FloatingComponents: React.FC = () => {
           </div>
         </div>
         
-        {/* Кнопка открытия чата */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             setIsChatOpen(!isChatOpen);
             if (!isChatOpen) {
-              // Сбрасываем состояние валидации при открытии формы
               setFormIsValid(true);
             }
           }}
@@ -344,18 +337,16 @@ export const FloatingComponents: React.FC = () => {
           aria-label={t('chat.chatButton')}
         >
           {isChatOpen ? (
-            // Крестик для закрытия
             <div className="p-3 rounded-full bg-light-accent">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 6L6 18M6 6L18 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
           ) : (
-            // SVG чата
             <ChatIcon size={80} />
           )}
         </button>
-      </div>
+      </div> */}
     </>
   );
 };

@@ -1,3 +1,5 @@
+// src/shared/components/CareerForm.tsx
+
 'use client';
 
 import React, { useState, useRef } from 'react';
@@ -6,6 +8,7 @@ import { useTranslation } from '@/src/hooks/useTranslation';
 import Link from 'next/link';
 import Modal from '@/src/shared/components/Modal/Modal';
 import { useFormValidation } from '@/src/hooks/useFormValidation';
+import { FormService } from '../services/FormService';
 
 const translations = {
   ru: {
@@ -31,7 +34,8 @@ const translations = {
     successDetailedMessage: 'Мы внимательно рассмотрим вашу кандидатуру, и если ваш опыт и навыки соответствуют нашим требованиям, наш HR-менеджер обязательно свяжется с вами',
     successClose: 'Закрыть',
     resume: 'Резюме',
-    notSelected: 'Не выбрано'
+    notSelected: 'Не выбрано',
+    uploadFile: 'Загрузить файл'
   },
   uz: {
     title: 'Tibbiyotda ekspertlar jamoasiga qo\'shiling',
@@ -56,7 +60,8 @@ const translations = {
     successDetailedMessage: 'Biz sizning nomzodingizni sinchkovlik bilan ko\'rib chiqamiz, va agar sizning tajribangiz va ko\'nikmalaringiz bizning talablarimizga mos kelsa, HR-menejerimiz siz bilan bog\'lanadi',
     successClose: 'Yopish',
     resume: 'Rezyume',
-    notSelected: 'Tanlanmagan'
+    notSelected: 'Tanlanmagan',
+    uploadFile: 'Faylni yuklash'
   }
 };
 
@@ -68,6 +73,7 @@ const CareerForm = () => {
   // Модальные окна
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Локальное состояние для чекбокса
   const [consentChecked, setConsentChecked] = useState(false);
@@ -106,7 +112,8 @@ const CareerForm = () => {
         required: true,
         customValidator: (value) => Boolean(value) === true
       }
-    }
+    },
+    'career_form'
   );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,18 +144,50 @@ const CareerForm = () => {
     }
   };
   
-  const handleConfirmSubmit = () => {
-    setIsConfirmModalOpen(false);
+
+const handleConfirmSubmit = async () => {
+  setIsConfirmModalOpen(false);
+  setIsSubmitting(true);
+  
+  try {
+    // Правильное преобразование типов для отправки данных
+    const formDataToSubmit = {
+      name: formData.name as string, // Явное приведение к string
+      phone: formData.phone as string, // Явное приведение к string
+      cover_letter: formData.coverLetter as string, // Явное приведение к string
+      form_type: 'career_form'
+    };
     
-    // Здесь была бы логика отправки формы на сервер, где объединяем formData и файл
-    console.log('Form submitted:', { 
-      ...formData, 
-      resumeFile // Здесь мы добавляем сам файл для отправки
-    });
+    // Отправляем данные на сервер
+    await FormService.submitForm(formDataToSubmit);
+    
+    // Здесь можно добавить отдельную логику для отправки файла резюме
+    // если API поддерживает multipart/form-data
+    if (resumeFile) {
+      const fileFormData = new FormData();
+      fileFormData.append('resume', resumeFile);
+      fileFormData.append('name', formData.name as string);
+      fileFormData.append('phone', formData.phone as string);
+      
+      // Этот код закомментирован, т.к. мы не знаем точно, поддерживает ли API загрузку файлов
+      // await axios.post(`${API_BASE_URL}/career/resume`, fileFormData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //     'X-Language': 'ru'
+      //   }
+      // });
+      
+      console.log('Файл резюме для загрузки:', resumeFile);
+    }
     
     // Показываем модальное окно успеха
     setIsSuccessModalOpen(true);
-  };
+  } catch (error) {
+    console.error('Error submitting form:', error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   
   const handleSuccessClose = () => {
     setIsSuccessModalOpen(false);
@@ -164,7 +203,7 @@ const CareerForm = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col md:flex-row gap-5 rounded-2xl overflow-hidden  mt-6 sm:mt-8 md:mt-40 mb-6 sm:mb-8 md:mb-40">
+      <div className="w-full flex flex-col md:flex-row gap-5 rounded-2xl overflow-hidden mt-6 sm:mt-8 md:mt-40 mb-6 sm:mb-8 md:mb-40">
         {/* Left section with background image */}
         <div className="w-full md:w-1/2 bg-light-accent text-white p-8 relative min-h-[340px] md:min-h-[490px] rounded-2xl overflow-hidden">
           
@@ -188,12 +227,12 @@ const CareerForm = () => {
             </div>
             
             <div className="mt-auto">
-              <div  className="inline-flex items-center gap-2 py-3 px-6 border border-white rounded-xl text-white hover:bg-white/10 transition-colors">
+              <Link href="/clinic" className="inline-flex items-center gap-2 py-3 px-6 border border-white rounded-xl text-white hover:bg-white/10 transition-colors">
                 {t('aboutButton')}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 5L16 12L9 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -214,9 +253,12 @@ const CareerForm = () => {
                     ? 'border-red-500 focus:ring-red-500' 
                     : 'border-gray-200 dark:border-gray-700 focus:ring-light-accent'
                 } focus:outline-none focus:ring-2 text-light-text dark:text-dark-text`}
+                disabled={isSubmitting}
+                aria-invalid={formErrors.name}
+                aria-describedby={formErrors.name ? "name-error" : undefined}
               />
               {formErrors.name && (
-                <p className="mt-2 text-sm text-red-500">{t('nameError')}</p>
+                <p className="mt-2 text-sm text-red-500" id="name-error">{t('nameError')}</p>
               )}
             </div>
             
@@ -233,35 +275,40 @@ const CareerForm = () => {
                     ? 'border-red-500 focus:ring-red-500' 
                     : 'border-gray-200 dark:border-gray-700 focus:ring-light-accent'
                 } focus:outline-none focus:ring-2 text-light-text dark:text-dark-text`}
+                disabled={isSubmitting}
+                aria-invalid={formErrors.phone}
+                aria-describedby={formErrors.phone ? "phone-error" : undefined}
               />
               {formErrors.phone && (
-                <p className="mt-2 text-sm text-red-500">{t('phoneError')}</p>
+                <p className="mt-2 text-sm text-red-500" id="phone-error">{t('phoneError')}</p>
               )}
             </div>
             
             {/* Resume upload */}
-<div>
-  <button
-    type="button"
-    onClick={handleAttachClick}
-    className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-light-bg dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-light-text dark:text-dark-text"
-  >
-    <svg className="w-6 h-6 text-light-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-    </svg>
-    <span className="flex-1 text-left">
-      {'Загрузить файл'}
-    </span>
-  </button>
-  <input
-    type="file"
-    ref={fileInputRef}
-    onChange={handleFileChange}
-    accept=".pdf"
-    className="hidden"
-    aria-label={t('attachResume')}
-  />
-</div>
+            <div>
+              <button
+                type="button"
+                onClick={handleAttachClick}
+                className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-light-bg dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-light-text dark:text-dark-text"
+                disabled={isSubmitting}
+              >
+                <svg className="w-6 h-6 text-light-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                </svg>
+                <span className="flex-1 text-left">
+                  {resumeFile ? getFileName() : t('uploadFile')}
+                </span>
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+                aria-label={t('attachResume')}
+                disabled={isSubmitting}
+              />
+            </div>
             
             {/* Cover letter */}
             <div>
@@ -272,6 +319,7 @@ const CareerForm = () => {
                 placeholder={t('coverLetter')}
                 rows={4}
                 className="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-light-bg dark:bg-dark-bg focus:outline-none focus:ring-2 focus:ring-light-accent resize-none text-light-text dark:text-dark-text"
+                disabled={isSubmitting}
               />
             </div>
             
@@ -286,22 +334,36 @@ const CareerForm = () => {
                 className={`h-5 w-5 rounded border-gray-300 text-light-accent focus:ring-light-accent ${
                   formErrors.consent ? 'border-red-500' : ''
                 }`}
+                disabled={isSubmitting}
+                aria-invalid={formErrors.consent}
+                aria-describedby={formErrors.consent ? "consent-error" : undefined}
               />
               <label htmlFor="consent" className="ml-3 block text-sm text-light-text dark:text-dark-text">
                 {t('consent')}
               </label>
             </div>
             {formErrors.consent && (
-              <p className="mt-1 text-sm text-red-500">{t('consentError')}</p>
+              <p className="mt-1 text-sm text-red-500" id="consent-error">{t('consentError')}</p>
             )}
             
             {/* Submit button */}
             <button
               type="button"
               onClick={handleSubmitClick}
-              className="w-full p-4 bg-light-accent text-white rounded-xl hover:bg-light-accent/90 transition-colors"
+              className="w-full p-4 bg-light-accent text-white rounded-xl hover:bg-light-accent/90 transition-colors flex justify-center items-center"
+              disabled={isSubmitting}
             >
-              {t('submit')}
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Отправка...
+                </>
+              ) : (
+                t('submit')
+              )}
             </button>
           </div>
         </div>
@@ -345,12 +407,32 @@ const CareerForm = () => {
             )}
           </div>
           
-          <button 
-            onClick={handleConfirmSubmit}
-            className="w-full py-4 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors"
-          >
-            {t('confirmSubmit')}
-          </button>
+          <div className="flex gap-3 mt-2">
+            <button 
+              onClick={() => setIsConfirmModalOpen(false)}
+              className="flex-1 py-4 border border-gray-300 dark:border-gray-600 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              disabled={isSubmitting}
+            >
+              {t('confirmClose')}
+            </button>
+            <button 
+              onClick={handleConfirmSubmit}
+              className="flex-1 py-4 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Отправка...
+                </>
+              ) : (
+                t('confirmSubmit')
+              )}
+            </button>
+          </div>
         </div>
       </Modal>
       

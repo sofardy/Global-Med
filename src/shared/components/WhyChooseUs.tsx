@@ -1,7 +1,10 @@
+// src/shared/components/WhyChooseUs.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useThemeStore } from '@/src/store/theme';
+import { useLanguageStore } from '@/src/store/language';
+import { usePartnersStore } from '@/src/store/partners';
 
 interface BenefitCardProps {
   title: string;
@@ -11,6 +14,18 @@ interface BenefitCardProps {
 
 export default function WhyChooseUs(): React.ReactElement {
   const { theme } = useThemeStore();
+  const { currentLocale } = useLanguageStore();
+  
+  // Используем стор
+  const { fetchPartners, loading, error, getWhyChooseUsCards } = usePartnersStore();
+  
+  // Получаем данные для карточек "Почему выбирают нас"
+  const whyChooseUsData = getWhyChooseUsCards();
+  
+  // Загрузка данных при монтировании компонента
+  useEffect(() => {
+    fetchPartners(currentLocale);
+  }, [fetchPartners, currentLocale]);
 
   const BenefitCard: React.FC<BenefitCardProps> = ({ 
     title, 
@@ -46,6 +61,35 @@ export default function WhyChooseUs(): React.ReactElement {
     );
   };
 
+  
+  // Данные для карточек по умолчанию
+  const defaultBenefitCards = [
+    {
+      title: "Высокий профессионализм",
+      description: "Наши специалисты — эксперты с многолетним опытом, регулярно повышающие квалификацию"
+    },
+    {
+      title: "Гибкость сотрудничества",
+      description: "Мы предлагаем решения, адаптированные под особенности и потребности каждой компании"
+    },
+    {
+      title: "Современное оборудование",
+      description: "Используем передовые технологии для обеспечения высокого качества наших услуг"
+    },
+    {
+      title: "Надёжность и поддержка",
+      description: "Предоставляем круглосуточную поддержку и возможность онлайн-консультаций"
+    }
+  ];
+  
+  // Используем данные из API, если они есть, иначе используем дефолтные
+  const benefitCards = whyChooseUsData.length > 0 
+    ? whyChooseUsData.map(item => ({
+        title: item.title,
+        description: item.subtitle
+      }))
+    : defaultBenefitCards;
+
   return (
     <div className="mt-24">
       <div className="flex flex-col md:flex-row justify-between mb-10">
@@ -65,33 +109,14 @@ export default function WhyChooseUs(): React.ReactElement {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="md:col-span-1">
-          <BenefitCard 
-            title="Высокий профессионализм" 
-            description="Наши специалисты — эксперты с многолетним опытом, регулярно повышающие квалификацию"
-          />
-        </div>
-        
-        <div className="md:col-span-1">
-          <BenefitCard 
-            title="Гибкость сотрудничества" 
-            description="Мы предлагаем решения, адаптированные под особенности и потребности каждой компании"
-          />
-        </div>
-        
-        <div className="md:col-span-1">
-          <BenefitCard 
-            title="Современное оборудование" 
-            description="Используем передовые технологии для обеспечения высокого качества наших услуг"
-          />
-        </div>
-        
-        <div className="md:col-span-1">
-          <BenefitCard 
-            title="Надёжность и поддержка" 
-            description="Предоставляем круглосуточную поддержку и возможность онлайн-консультаций"
-          />
-        </div>
+        {benefitCards.map((card, index) => (
+          <div key={index} className="md:col-span-1">
+            <BenefitCard 
+              title={card.title} 
+              description={card.description}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

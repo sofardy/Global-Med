@@ -8,7 +8,7 @@ import { routes } from '../shared/config/routes';
 import { FloatingComponents } from '../shared/components/FloatingComponents';
 import { PageTransition } from '../shared/components/PageTransition';
 import ClientLayout from '../shared/layout/ClientLayout/ClientLayout';
-
+import AmoCrmScript from "../shared/components/AmoCrmScript";
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
 export const metadata: Metadata = {
@@ -35,6 +35,7 @@ export default function RootLayout({
               {children}
             </ClientLayout>
             <FloatingComponents />
+            <AmoCrmScript />
           </LanguageProvider>
         </ThemeProvider>
       </body>

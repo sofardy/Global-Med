@@ -1,9 +1,12 @@
+// src/shared/components/ContactForm.tsx
+
 'use client';
 
 import React, { useState, useRef } from 'react';
 import { useThemeStore } from '@/src/store/theme';
 import Image from 'next/image';
 import Modal from '@/src/shared/components/Modal/Modal';
+import { FormService } from '../services/FormService';
 
 // Интерфейс для данных формы
 interface FormData {
@@ -25,6 +28,7 @@ export default function ContactForm(): JSX.Element {
   const { theme } = useThemeStore();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState<boolean>(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     phone: '',
@@ -126,20 +130,38 @@ export default function ContactForm(): JSX.Element {
     setIsSuccessModalOpen(false);
   };
   
-  const confirmSubmission = (): void => {
-    // Здесь была бы отправка данных на сервер
-    console.log('Отправка данных:', formData);
-    
+  const confirmSubmission = async (): Promise<void> => {
+    setIsSubmitting(true);
     setIsConfirmationModalOpen(false);
-    setIsSuccessModalOpen(true);
     
-    // Сбрасываем форму
-    setFormData({
-      name: '',
-      phone: '',
-      company: '',
-      consent: false
-    });
+    try {
+      // Преобразуем данные в формат API
+      const submissionData = {
+        name: formData.name,
+        phone: formData.phone,
+        company_name: formData.company,
+        form_type: 'contact_form'
+      };
+      
+      // Отправляем данные на сервер
+      await FormService.submitForm(submissionData);
+      
+      // Показываем модальное окно успеха
+      setIsSuccessModalOpen(true);
+      
+      // Сбрасываем форму
+      setFormData({
+        name: '',
+        phone: '',
+        company: '',
+        consent: false
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // Здесь можно показать ошибку пользователю
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -191,6 +213,7 @@ export default function ContactForm(): JSX.Element {
                     ? 'border-red-500' 
                     : 'border-gray-200 dark:border-gray-700'
                 } text-light-text dark:text-dark-text focus:outline-none focus:border-light-accent`}
+                disabled={isSubmitting}
               />
               {formErrors.name && (
                 <p className="mt-1 text-sm text-red-500">Пожалуйста, введите имя</p>
@@ -214,6 +237,7 @@ export default function ContactForm(): JSX.Element {
                       ? 'border-red-500' 
                       : 'border-gray-200 dark:border-gray-700'
                   } text-light-text dark:text-dark-text focus:outline-none focus:border-light-accent`}
+                  disabled={isSubmitting}
                 />
               </div>
               {formErrors.phone && (
@@ -230,6 +254,7 @@ export default function ContactForm(): JSX.Element {
                 onChange={handleInputChange}
                 placeholder="Название компании"
                 className="w-full p-5 text-lg rounded-xl bg-light-bg dark:bg-dark-bg border border-gray-200 dark:border-gray-700 text-light-text dark:text-dark-text focus:outline-none focus:border-light-accent"
+                disabled={isSubmitting}
               />
             </div>
             
@@ -247,6 +272,7 @@ export default function ContactForm(): JSX.Element {
                       ? 'border-red-500' 
                       : 'border-gray-300'
                   } rounded-sm bg-light-bg dark:bg-dark-bg focus:ring-light-accent`}
+                  disabled={isSubmitting}
                 />
               </div>
               <label 
@@ -264,9 +290,20 @@ export default function ContactForm(): JSX.Element {
             {/* Кнопка отправки */}
             <button
               type="submit"
-              className="w-full py-5 px-6 text-lg bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors"
+              className="w-full py-5 px-6 text-lg bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center"
+              disabled={isSubmitting}
             >
-              Отправить
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Отправка...
+                </>
+              ) : (
+                'Отправить'
+              )}
             </button>
           </form>
         </div>
@@ -320,14 +357,26 @@ export default function ContactForm(): JSX.Element {
             <button 
               onClick={closeConfirmationModal}
               className="flex-1 py-4 border border-gray-300 dark:border-gray-600 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              disabled={isSubmitting}
             >
               Отменить
             </button>
             <button 
               onClick={confirmSubmission}
-              className="flex-1 py-4 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors"
+              className="flex-1 py-4 bg-light-accent text-white rounded-xl font-medium hover:bg-opacity-90 transition-colors flex justify-center items-center"
+              disabled={isSubmitting}
             >
-              Подтвердить
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Отправка...
+                </>
+              ) : (
+                'Подтвердить'
+              )}
             </button>
           </div>
         </div>

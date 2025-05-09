@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/shared/components/AppointmentSection.tsx
+
 'use client';
 
 import React, { useState, useRef } from 'react';
@@ -27,24 +28,33 @@ const translations = {
   }
 };
 
+// Типизируем purposeOptions
+type PurposeOptions = Record<string, string>;
+
 interface AppointmentSectionProps {
   className?: string;
   onSuccess?: () => void;
+  formId?: string;
 }
 
 export const AppointmentSection: React.FC<AppointmentSectionProps> = ({
   className = '',
-  onSuccess
+  onSuccess,
+  formId = 'appointment_section_form'
 }) => {
   const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  // Получаем опции для выпадающего списка
-  const purposeOptions = t('modal.purposeOptions', { returnObjects: true });
+  
+  // Получаем опции для выпадающего списка с явной типизацией
+  const purposeOptions: PurposeOptions = (
+    (heroTranslations?.ru?.modal?.purposeOptions as PurposeOptions) || 
+    { consultation: 'Консультация', analysis: 'Анализы', checkup: 'Чек-ап', legalPersons: 'Для юридических лиц' }
+  );
   
   // Временные данные формы для подтверждения
-  const [tempFormData, setTempFormData] = useState<any>(null);
+  const [tempFormData, setTempFormData] = useState<Record<string, any> | null>(null);
   
   // Ссылка на компонент формы
   const formRef = useRef<any>(null);
@@ -118,9 +128,11 @@ export const AppointmentSection: React.FC<AppointmentSectionProps> = ({
           <AppointmentForm
             ref={formRef}
             onSuccess={handleFormSuccess}
-            onCancel={() => {}}
+            onCancel={() => {}} // Пустая функция для onCancel
             translationNamespace={heroTranslations}
-            keepFormAfterSubmit={true} // Передаем параметр, чтобы форма оставалась после отправки
+            keepFormAfterSubmit={true}
+            // Передаем formName только если тип компонента поддерживает его
+            {...(formId ? { formName: formId } : {})}
           />
         </div>
         
@@ -155,14 +167,19 @@ export const AppointmentSection: React.FC<AppointmentSectionProps> = ({
               </div>
               <div className="mb-4">
                 <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Телефон:</div>
-                <div className="font-medium text-lg">{tempFormData.phone.startsWith('+') ? tempFormData.phone : `+998 ${tempFormData.phone}`}</div>
+                <div className="font-medium text-lg">
+                  {typeof tempFormData.phone === 'string' && tempFormData.phone.startsWith('+') 
+                    ? tempFormData.phone 
+                    : `+998 ${tempFormData.phone}`}
+                </div>
               </div>
               <div>
                 <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Цель обращения:</div>
                 <div className="font-medium text-lg">
-                  {purposeOptions && purposeOptions[tempFormData.purpose] 
+                  {typeof tempFormData.purpose === 'string' && purposeOptions && 
+                   tempFormData.purpose in purposeOptions
                     ? purposeOptions[tempFormData.purpose] 
-                    : tempFormData.purpose}
+                    : (tempFormData.purpose || 'Не указано')}
                 </div>
               </div>
             </div>

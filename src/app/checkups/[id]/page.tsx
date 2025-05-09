@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { checkupDetailTranslations } from '@/src/shared/mocks/checkupHeroData';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
@@ -10,6 +10,7 @@ import { AnimatedButton, AnimatedButtonWrapper } from '@/src/shared/ui/Button/An
 import axios from 'axios';
 
 interface MedicalTest {
+  value: ReactNode;
   uuid: string;
   name: string;
   mini_description: string;
@@ -243,39 +244,18 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         </div>
         
         {/* Правый блок - FAQ секция с медицинскими тестами */}
-        <div className="w-full md:w-1/2 flex flex-col gap-2">
-          {/* Используем medical_tests из API для отображения вместо статичных FAQ */}
-          {checkup.medical_tests.map((test, index) => (
-            <div key={test.uuid} className="rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
-              <button 
-                onClick={() => toggleItem(`medical-test-${test.uuid}`)}
-                className="w-full flex items-center justify-between p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 text-left focus:outline-none bg-white dark:bg-dark-block"
-              >
-                <span className="font-medium text-sm sm:text-base md:text-lg">
-                  {test.name}
-                </span>
-                <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl ${openItems[`medical-test-${test.uuid}`] ? 'bg-light-accent text-white' : 'border border-gray-300 dark:border-gray-600'}`}>
-                  <svg 
-                    className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${openItems[`medical-test-${test.uuid}`] ? 'transform rotate-180' : ''}`} 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </button>
-              
-              {openItems[`medical-test-${test.uuid}`] && (
-                <div className="p-3 sm:p-4 md:p-5 px-4 sm:px-8 md:px-10 bg-white dark:bg-dark-block text-[#173F46]/80 dark:text-white/80">
-                  <p className="text-sm sm:text-base max-w-full sm:max-w-[90%] md:max-w-[80%]">
-                    {test.mini_description || "Подробная информация об исследовании отсутствует."}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+<div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-teal-900 dark:bg-dark-block">
+  {checkup.medical_tests.map((test) => (
+    <div key={test.uuid} className="py-4 border-b border-teal-800 flex justify-between items-center">
+      <span className="text-base md:text-lg text-white">
+        {test.name}
+      </span>
+      <span className="text-base md:text-lg font-medium text-white">
+        {test.value}
+      </span>
+    </div>
+  ))}
+</div>
       </div>
       
       <BenefitsCheckUps />
