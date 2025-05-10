@@ -12,6 +12,7 @@ interface AnalysisItem {
   slug: string;
   name: string;
   mini_description: string;
+  icon: string;
 }
 
 export const AnalysisGridTho = () => {
