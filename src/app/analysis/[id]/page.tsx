@@ -10,6 +10,7 @@ import AnalysisRecommendations from '@/src/shared/components/AnalysisRecommendat
 import { AnimatedButton } from '@/src/shared/ui/Button/AnimatedButton';
 import axios from 'axios';
 import { API_BASE_URL } from '@/src/config/constants';
+import {useLanguageStore} from "@/src/store/language";
 
 interface AnalysisItem {
   uuid: string;
@@ -37,13 +38,20 @@ export default function Page({ params }: PageProps) {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showAllPrices, setShowAllPrices] = useState(false);
+
+  const { currentLocale } = useLanguageStore();
   
   // Загрузка данных анализа
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/medical-tests/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/medical-tests/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
+          }
+        });
         setAnalysis(response.data.data);
         setError(null);
       } catch (err) {

@@ -8,6 +8,7 @@ import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { BenefitsCheckUps } from '@/src/shared/components/BenefitScheckUps';
 import { AnimatedButton, AnimatedButtonWrapper } from '@/src/shared/ui/Button/AnimatedButton';
 import axios from 'axios';
+import {useLanguageStore} from "@/src/store/language";
 
 interface MedicalTest {
   value: ReactNode;
@@ -51,6 +52,8 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
   
   // Состояние определения мобильного устройства
   const [isMobile, setIsMobile] = useState(false);
+
+  const { currentLocale } = useLanguageStore();
   
   // Загрузка данных из API
   useEffect(() => {
@@ -59,7 +62,12 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         setLoading(true);
         console.log('Запрашиваем данные для id:', params.id);
         
-        const response = await axios.get(`https://globalmed.kelyanmedia.com/api/checkups/${params.id}`);
+        const response = await axios.get(`https://globalmed.kelyanmedia.com/api/checkups/${params.id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
+          }
+        });
         console.log('Получен ответ:', response.data);
         
         // API возвращает объект с полем data, содержащим данные о чек-апе
@@ -80,7 +88,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
     if (params.id) {
       fetchCheckupDetail();
     }
-  }, [params.id]);
+  }, [params.id, currentLocale]);
   
   // Определяем размер экрана при загрузке и изменении размера окна
   useEffect(() => {
