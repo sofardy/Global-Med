@@ -1,6 +1,24 @@
-// src/store/doctors.ts
 import { create } from 'zustand';
-import { Doctor, DoctorFilters, getDoctors } from '../app/api/doctors';
+import { Doctor, DoctorFilters } from '../app/api/doctors';
+import httpClient from '@/src/shared/services/HttpClient';
+
+// Обновляем функцию getDoctors, если она используется
+export const getDoctors = async (filters: DoctorFilters, page = 1) => {
+    const queryParams = new URLSearchParams();
+
+    // Добавляем все фильтры как query параметры
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            queryParams.append(key, String(value));
+        }
+    });
+
+    // Добавляем номер страницы
+    queryParams.append('page', String(page));
+
+    const response = await httpClient.get<any>(`/doctors?${queryParams.toString()}`);
+    return response;
+};
 
 interface DoctorsState {
     // Состояние данных
