@@ -140,7 +140,7 @@ export default function ServicesPage() {
                   title={service.name}
                   description={service.card_description || service.mini_description}
                   additionalInfo={`${service.services_list.length} услуг`}
-                  icon={applyColorToIcon(getIconForService(service.slug), getIconColorByTheme(theme))}
+                  icon={service.icon}
                   link={`/services/${service.slug}`}
                   buttonText="Подробнее"
                   className="h-full"

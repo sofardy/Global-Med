@@ -176,7 +176,7 @@ const slides = checkups.map((checkup: CheckupItem) => {
       timeRequired={timeRequired}
       buttonText={t('detailsButton')}
       link={`/checkups/${checkup.slug}`}
-      icon={icon}
+      icon={checkup.icon}
       variant="family"
       className="min-h-[430px] hover:shadow-lg transition-all duration-300 relative"
       bordered={true}

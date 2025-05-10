@@ -5,6 +5,7 @@ import { useThemeStore } from '@/src/store/theme';
 import { API_BASE_URL } from '@/src/config/constants';
 import axios from 'axios';
 import { getAnalysisIcon } from '@/src/config/iconMapping';
+import {useLanguageStore} from "@/src/store/language";
 
 interface AnalysisItem {
   uuid: string;
@@ -20,13 +21,20 @@ export const AnalysisGridTho = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [visibleGroups, setVisibleGroups] = useState(1);
   const { theme } = useThemeStore();
+
+  const { currentLocale } = useLanguageStore();
   
   // Загрузка данных с API
   useEffect(() => {
     const fetchAnalyses = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/medical-tests`);
+        const response = await axios.get(`${API_BASE_URL}/medical-tests`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
+          }
+        });
         setAnalyses(response.data.data);
         setError(null);
       } catch (err) {
@@ -103,7 +111,7 @@ export const AnalysisGridTho = () => {
               title={analysis.name}
               description={analysis.mini_description || ''} 
               additionalInfo={`${Math.floor(Math.random() * 10) + 5} показателей`} // Генерируем случайное количество или можете заменить на реальное, если API его предоставляет
-              icon={applyColorToIcon(getAnalysisIcon(analysis.slug), getIconColorByTheme(theme))}
+              icon={analysis.icon}
               link={`/analysis/${analysis.slug}`}
               buttonText="Подробнее"
               className="h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]"

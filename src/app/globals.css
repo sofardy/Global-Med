@@ -36,3 +36,15 @@ body {
   color: var(--text-color);
 }
 
+.amo-button-holder {
+  right: 37px !important;
+  bottom: 32px !important;
+}
+
+.noFill {
+    fill: none !important;
+
+  &:hover {
+    fill: none !important;
+  }
+}

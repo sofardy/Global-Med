@@ -7,6 +7,7 @@ import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import axios from 'axios';
+import {useLanguageStore} from "@/src/store/language";
 
 // Интерфейсы для типизации данных API
 interface MedicalTest {
@@ -33,13 +34,19 @@ export default function Checkups() {
   const [checkupItems, setCheckupItems] = useState<CheckupItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { currentLocale } = useLanguageStore();
 
   // Загрузка данных с API при монтировании компонента
   useEffect(() => {
     const fetchCheckups = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('https://globalmed.kelyanmedia.com/api/checkups');
+        const response = await axios.get('https://globalmed.kelyanmedia.com/api/checkups', {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
+          }
+        });
         setCheckupItems(response.data.data);
         setError(null);
       } catch (err) {
@@ -92,7 +99,7 @@ export default function Checkups() {
               title={item.title}
               description={item.card_description || item.description}
               // Используем иконку из мока на основе slug
-              icon={getIconBySlug(item.slug)}
+              icon={item.icon}
               link={`/checkups/${item.slug}`}
               buttonText="Подробнее"
               showButton={true}
