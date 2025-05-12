@@ -26,6 +26,7 @@ const translations = {
       clinic: 'Klinika haqida',
       contacts: 'Bogʻlanish',
       doctors: 'Shifokorlar',
+      dietolog: 'Diyetolog',
     },
   },
   ru: {
@@ -38,9 +39,11 @@ const translations = {
       clinic: 'О клинике',
       contacts: 'Контакты',
       doctors: 'Врачи',
+      dietolog: 'Диетолог',
     },
   },
 };
+
 
 function BreadcrumbsContent({
   className = '',

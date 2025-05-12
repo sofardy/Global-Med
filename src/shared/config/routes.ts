@@ -1,7 +1,6 @@
-
 export interface SubRoute {
     path: string;
-    translationKey: string;
+    translationKey: string; // labels ichidagi key bo'lishi kerak
   }
   
   export interface Route {
@@ -23,7 +22,18 @@ export interface SubRoute {
   export const routes: Route[] = [
     {
       path: RoutePathEnum.SERVICES,
-      translationKey: 'services'
+      translationKey: 'services',
+      hasSubmenu: true,
+      submenuItems: [
+        {
+          path: '/services',
+          translationKey: 'services'
+        },
+        {
+          path: '/services/dietolog',
+          translationKey: 'dietolog' // ✅ faqat kichik harflar bilan
+        }
+      ]
     },
     {
       path: RoutePathEnum.CHECKUPS,

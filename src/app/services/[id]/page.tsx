@@ -81,13 +81,20 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
   
   // Состояние определения мобильного устройства
   const [isMobile, setIsMobile] = useState(false);
-  
+  const { currentLocale } = useTranslation(translations);
   // Загрузка данных услуги
   useEffect(() => {
     const fetchServiceData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ServiceResponse>(`https://globalmed.kelyanmedia.com/api/services/${id}`);
+        const response = await axios.get<ServiceResponse>(
+          `https://globalmed.kelyanmedia.com/api/services/${id}`,
+          {
+            headers: {
+              'X-Language': currentLocale === 'uz' ? 'uz' : 'ru', // kerakli tilni yuboramiz
+            },
+          }
+        );
         console.log(response);
         setServiceData(response.data.data);
         setError(null);
@@ -98,9 +105,9 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
         setLoading(false);
       }
     };
-
+  
     fetchServiceData();
-  }, [id]);
+  }, [id, currentLocale]); 
   
   // Определяем размер экрана при загрузке и изменении размера окна
   useEffect(() => {
