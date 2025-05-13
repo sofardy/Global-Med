@@ -126,8 +126,6 @@ export default function ServicesPage() {
       <UniversalHeroSection
         imageUrl={heroData.imageUrl}
         imageAlt={heroData.imageAlt}
-        mainCard={heroData.mainCard}
-        secondaryCards={heroData.secondaryCards}
         className="mb-20"
       />
 
