@@ -128,7 +128,7 @@ export default function Page({ params }: PageProps) {
         
         <div className="relative z-10 p-10 text-white">
           <h1 className="text-2xl sm:text-3xl md:text-[56px] font-medium mb-3 md:mb-6">
-            Анализы: {analysis.name}
+            {analysis.name}
           </h1>
           
           <p className="text-base sm:text-lg max-w-3xl mb-6 md:mb-6">

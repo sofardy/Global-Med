@@ -310,7 +310,7 @@ export default function Clinic() {
       </div>
 
       {/* Компоненты с данными администраторов и оборудования */}
-      <MedicalEquipmentSlider />
+      {/* <MedicalEquipmentSlider /> */}
       
       {/* Передаем данные администраторов в компонент */}
       {/* <AdministrationSlider administrators={administrators} /> */}
