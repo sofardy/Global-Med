@@ -13,6 +13,7 @@ interface BreadcrumbsProps {
   hideCurrent?: boolean;
   locale: 'uz' | 'ru';
   routes: Route[];
+  displayPath: string
 }
 
 const translations = {
@@ -63,16 +64,16 @@ function BreadcrumbsContent({
     ? pathname.slice(localePrefix.length)
     : pathname;
 
-    const segments = cleanedPath
+  const segments = cleanedPath
     .split('/')
     .filter(Boolean)
     .map((segment, index, array) => {
       const pathWithoutLocale = '/' + array.slice(0, index + 1).join('/');
       const fullPath = `${localePrefix}${pathWithoutLocale}`;
-  
+
       // 🔽 Avval asosiy route dan izlaymiz
       let route = routes.find((r) => r.path === pathWithoutLocale);
-  
+
       // 🔽 Agar topilmasa, submenuItems dan izlaymiz
       if (!route) {
         for (const r of routes) {
@@ -85,20 +86,20 @@ function BreadcrumbsContent({
           }
         }
       }
-  
+
       const key = route?.translationKey;
       const labelMap = translations[locale]?.labels ?? {};
-  
+
       const name =
         key && key in labelMap
           ? labelMap[key]
           : decodeURIComponent(segment)
-              .replace(/-/g, ' ')
-              .replace(/\b\w/g, (c) => c.toUpperCase());
-  
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+
       return { path: fullPath, name };
     });
-  
+
 
   if (!hideHome) {
     const homeName = translations[locale]?.home ?? 'Home';
@@ -118,14 +119,18 @@ function BreadcrumbsContent({
           const isLast = index === segments.length - 1;
           return (
             <React.Fragment key={segment.path}>
+
               <li className="flex items-center">
                 {isLast ? (
                   <span className="text-gray-900 dark:text-white">{segment.name}</span>
                 ) : (
                   <Link
-                    href={segment.path}
+                  href={
+                    segment.path.replace(`/${locale}`, '') || '/'
+                  }
                     className="hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
+
                     {segment.name}
                   </Link>
                 )}
