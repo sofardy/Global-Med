@@ -8,6 +8,7 @@ import { useThemeStore } from '@/src/store/theme';
 import { useLanguageStore } from '@/src/store/language';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { LogoutIcon, LogoIcon, LogoTextIcon, UserIcon, NotificationIcon, CalendarIcon, LabIcon, PulseIcon, LocationIconk2, GlobeIcon } from '@/src/shared/ui/Icon';
+import { useAuth } from '@/src/hooks/useAuth';
 
 // Translations
 const translations = {
@@ -64,7 +65,7 @@ export default function AccountHeader() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
-  
+   const { logout } = useAuth();
   // Refs for dropdowns
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -162,11 +163,13 @@ export default function AccountHeader() {
     setHasUnreadNotifications(hasUnread);
   }, [notifications]);
 
-  // Handle logout
-  const handleLogout = () => {
-    console.log('Logging out');
-    router.push('/account/login');
-  };
+const handleLogout = async () => {
+  try {
+    await logout();
+  } catch (error) {
+    console.error('Ошибка при выходе:', error);
+  }
+};
 
   // Toggle notification dropdown
   const toggleNotifications = () => {

@@ -8,6 +8,7 @@ import { useLanguageStore } from '@/src/store/language';
 import { useTranslation } from '@/src/hooks/useTranslation';
 import { CalendarIcon, GlobeIcon, LabIcon, LocationIconk2, LogoutIcon, PulseIcon, UserIcon } from '../ui/Icon';
 import Modal from './Modal/Modal';
+import { useAuth } from '@/src/hooks/useAuth';
 
 const translations = {
  ru: {
@@ -46,7 +47,7 @@ export default function AccountSidebar() {
  const { theme } = useThemeStore();
  const { currentLocale, setLocale } = useLanguageStore();
  const { t } = useTranslation(translations);
- 
+ const { logout } = useAuth();
  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -109,9 +110,13 @@ export default function AccountSidebar() {
    return icons[iconName as keyof typeof icons] || null;
  };
 
- const handleLogout = () => {
-   router.push('/account');
- };
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Ошибка при выходе из системы:', error);
+    }
+  };
 
  const renderSidebarContent = () => (
    <>
