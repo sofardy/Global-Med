@@ -35,6 +35,8 @@ export default function Checkups() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { currentLocale } = useLanguageStore();
+  console.log(currentLocale,'currentLocale');
+  
 
   // Загрузка данных с API при монтировании компонента
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function Checkups() {
         const response = await axios.get('https://globalmed.kelyanmedia.com/api/checkups', {
           headers: {
             'Content-Type': 'application/json',
-            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
+            'X-Language': currentLocale, // Используем currentLocale с fallback на 'ru'
           }
         });
         setCheckupItems(response.data.data);
@@ -58,7 +60,7 @@ export default function Checkups() {
     };
 
     fetchCheckups();
-  }, []);
+  }, [currentLocale]);
 
   // Функция для получения иконки из мока по slug
   const getIconBySlug = (slug: string) => {
@@ -92,7 +94,7 @@ export default function Checkups() {
             <UniversalCard
               key={item.uuid}
               features={[
-                { text: `${item.medical_tests.length} исследований`, icon: "doc" },
+                { text: `${item.medical_tests.length} ${currentLocale === 'uz' ? 'tadqiqot' : 'исследований'}`, icon: "doc" },
                 { text: item.duration, icon: "time" }
               ]}
               variant="surgery"
@@ -106,7 +108,7 @@ export default function Checkups() {
               buttonStyle="filled"
               hoverBgColor="light-accent"
               titleSize="text-2xl md:text-[40px]"
-              additionalInfo={`${item.medical_tests.length} исследований • ${item.duration}`}
+              additionalInfo={`${item.medical_tests.length} ${currentLocale === 'uz' ? 'tadqiqot' : 'исследований'} • ${item.duration}`}
               className="border-none shadow-none rounded-b-2xl md:rounded-2xl p-8"
             />
           ))}

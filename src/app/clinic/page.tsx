@@ -310,20 +310,20 @@ export default function Clinic() {
       </div>
 
       {/* Компоненты с данными администраторов и оборудования */}
-      <MedicalEquipmentSlider />
+      {/* <MedicalEquipmentSlider /> */}
       
       {/* Передаем данные администраторов в компонент */}
-      <AdministrationSlider administrators={administrators} />
+      {/* <AdministrationSlider administrators={administrators} /> */}
       
       <CareerForm />
       
       {/* Используем форматированные сертификаты */}
-      <CertificatesSlider 
+      {/* <CertificatesSlider 
         certificates={formattedCertificates}
         title="Доверие и качество"
         description="Все наши медицинские услуги лицензированы и соответствуют строгим стандартам"
       />
-      
+       */}
       <ContactInfo />
     </main>
   );
