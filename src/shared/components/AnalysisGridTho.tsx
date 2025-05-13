@@ -25,7 +25,6 @@ export const AnalysisGridTho = () => {
 
   const { currentLocale } = useLanguageStore();
   
-  // Загрузка данных с API
   useEffect(() => {
     const fetchAnalyses = async () => {
       try {
@@ -33,7 +32,7 @@ export const AnalysisGridTho = () => {
         const response = await axios.get(`${API_BASE_URL}/medical-tests`, {
           headers: {
             'Content-Type': 'application/json',
-            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
+            'X-Language': currentLocale, 
           }
         });
         setAnalyses(response.data.data);
@@ -47,7 +46,7 @@ export const AnalysisGridTho = () => {
     };
 
     fetchAnalyses();
-  }, []);
+  }, [currentLocale]);
 
   // Обработка размера экрана
   useEffect(() => {
@@ -114,7 +113,7 @@ export const AnalysisGridTho = () => {
               additionalInfo={`${Math.floor(Math.random() * 10) + 5} показателей`} // Генерируем случайное количество или можете заменить на реальное, если API его предоставляет
               icon={analysis.icon}
               link={`/analysis/${analysis.slug}`}
-              buttonText="Подробнее"
+              buttonText={currentLocale === "ru" ? "Подробнее" : "Batafsil"}
               className="h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]"
             />
           </div>
