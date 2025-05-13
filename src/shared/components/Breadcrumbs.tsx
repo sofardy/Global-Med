@@ -13,7 +13,6 @@ interface BreadcrumbsProps {
   hideCurrent?: boolean;
   locale: 'uz' | 'ru';
   routes: Route[];
-  displayPath: string
 }
 
 const translations = {
