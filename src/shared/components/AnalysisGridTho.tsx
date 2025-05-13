@@ -6,13 +6,16 @@ import { useLanguageStore } from '@/src/store/language';
 import { API_BASE_URL } from '@/src/config/constants';
 import axios from 'axios';
 import { getAnalysisIcon } from '@/src/config/iconMapping';
+import {useLanguageStore} from "@/src/store/language";
 
 interface AnalysisItem {
   uuid: string;
   slug: string;
   name: string;
   mini_description: string;
+
   icon?: string | null; // Опциональное поле для иконки с сервера
+
 }
 
 export const AnalysisGridTho = () => {
@@ -22,7 +25,9 @@ export const AnalysisGridTho = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [visibleGroups, setVisibleGroups] = useState(1);
   const { theme } = useThemeStore();
+
   const { currentLocale } = useLanguageStore(); // Получаем текущий язык
+
   
   // Загрузка данных с API
   useEffect(() => {
@@ -31,7 +36,9 @@ export const AnalysisGridTho = () => {
         setLoading(true);
         const response = await axios.get(`${API_BASE_URL}/medical-tests`, {
           headers: {
+
             'X-Language': currentLocale // Добавляем заголовок X-Language с текущим языком
+
           }
         });
         setAnalyses(response.data.data);
@@ -133,8 +140,10 @@ export const AnalysisGridTho = () => {
               variant="analysis-card"
               title={analysis.name}
               description={analysis.mini_description || ''} 
+
               additionalInfo={`${Math.floor(Math.random() * 10) + 5} ${currentLocale === 'uz' ? 'ko\'rsatkichlar' : 'показателей'}`}
               icon={renderIcon(analysis)}
+
               link={`/analysis/${analysis.slug}`}
               buttonText={currentLocale === 'uz' ? 'Batafsil' : 'Подробнее'}
               className="h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]"

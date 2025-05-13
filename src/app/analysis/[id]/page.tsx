@@ -7,8 +7,10 @@ import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { translations } from '@/src/shared/mocks/analysisData';
 import AnalysisRecommendations from '@/src/shared/components/AnalysisRecommendations';
 import { AnimatedButton } from '@/src/shared/ui/Button/AnimatedButton';
+
 import httpClient from '@/src/shared/services/HttpClient';
 import { useLanguageStore } from '@/src/store/language';
+
 interface AnalysisItem {
   uuid: string;
   slug: string;
@@ -35,6 +37,7 @@ export default function Page({ params }: PageProps) {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showAllPrices, setShowAllPrices] = useState(false);
+
   const { currentLocale } = useLanguageStore();
   // Загрузка данных анализа
 useEffect(() => {
@@ -56,6 +59,9 @@ useEffect(() => {
   
   fetchAnalysis();
 }, [id, currentLocale]);
+
+
+
   
   // Определение мобильной версии
   useEffect(() => {
@@ -120,7 +126,7 @@ useEffect(() => {
         
         <div className="relative z-10 p-10 text-white">
           <h1 className="text-2xl sm:text-3xl md:text-[56px] font-medium mb-3 md:mb-6">
-            Анализы: {analysis.name}
+            {analysis.name}
           </h1>
           
           <p className="text-base sm:text-lg max-w-3xl mb-6 md:mb-6">

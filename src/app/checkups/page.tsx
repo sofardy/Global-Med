@@ -6,6 +6,7 @@ import { checkupHeroData } from '@/src/shared/mocks/checkupHeroData';
 import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
+
 import { useCheckups } from '@/src/hooks/useCheckups';
 
 export default function Checkups() {
@@ -14,6 +15,7 @@ export default function Checkups() {
   // Функция для создания SVG элемента с измененным размером
   const renderSvgWithSize = (svgString: string | null) => {
     if (!svgString) return null;
+
     
     // Создаем обёртку для SVG с нужным размером
     return (
@@ -50,21 +52,23 @@ export default function Checkups() {
             <UniversalCard
               key={item.uuid}
               features={[
-                { text: `${item.medical_tests.length} исследований`, icon: "doc" },
+                { text: `${item.medical_tests.length} ${currentLocale === 'uz' ? 'tadqiqot' : 'исследований'}`, icon: "doc" },
                 { text: item.duration, icon: "time" }
               ]}
               variant="surgery"
               title={item.title}
+
               description={item.card_description || item.mini_description || item.description}
               // Используем SVG из API с нужным размером
               icon={renderSvgWithSize(item.icon)}
+
               link={`/checkups/${item.slug}`}
               buttonText="Подробнее"
               showButton={true}
               buttonStyle="filled"
               hoverBgColor="light-accent"
               titleSize="text-2xl md:text-[40px]"
-              additionalInfo={`${item.medical_tests.length} исследований • ${item.duration}`}
+              additionalInfo={`${item.medical_tests.length} ${currentLocale === 'uz' ? 'tadqiqot' : 'исследований'} • ${item.duration}`}
               className="border-none shadow-none rounded-b-2xl md:rounded-2xl p-8"
             />
           ))}
