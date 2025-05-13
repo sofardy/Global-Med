@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { useThemeStore } from '@/src/store/theme';
 import { useInView } from 'react-intersection-observer';
 
-// AnimatedCounter - raqamli animatsiya
 const AnimatedCounter = ({ end, duration = 4000, className = '' }) => {
   const [count, setCount] = useState(0);
   const countRef = useRef(0);
@@ -127,7 +126,6 @@ const InfoCard = ({ title, description, hasDot = false, isWide = false, isNumeri
   );
 };
 
-// UniversalHeroSection - asosiy komponent
 const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

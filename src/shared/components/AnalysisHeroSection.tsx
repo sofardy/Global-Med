@@ -17,8 +17,6 @@ export const AnalysisHeroSection: React.FC<AnalysisHeroSectionProps> = ({
       <UniversalHeroSection
         imageUrl={analysisHeroData.imageUrl}
         imageAlt={analysisHeroData.imageAlt}
-        mainCard={analysisHeroData.mainCard}
-        secondaryCards={analysisHeroData.secondaryCards}
       />
     </div>
   );
