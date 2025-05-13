@@ -244,15 +244,15 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         </div>
         
         {/* Правый блок - FAQ секция с медицинскими тестами */}
-<div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-teal-900 dark:bg-dark-block">
+<div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-white dark:bg-dark-block">
   {checkup.medical_tests.map((test) => (
-    <div key={test.uuid} className="py-4 border-b border-teal-800 flex justify-between items-center">
-      <span className="text-base md:text-lg text-white">
+    <div key={test.uuid} className="py-4 border-b border-gray-200 dark:border-teal-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+      <div className="text-base md:text-lg text-light-text dark:text-white pr-4 max-w-[70%]">
         {test.name}
-      </span>
-      <span className="text-base md:text-lg font-medium text-white">
+      </div>
+      <div className="text-base md:text-lg font-medium text-light-text dark:text-white whitespace-nowrap ml-auto">
         {test.value}
-      </span>
+      </div>
     </div>
   ))}
 </div>
