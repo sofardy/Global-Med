@@ -76,8 +76,6 @@ export default function Checkups() {
       <UniversalHeroSection
         imageUrl={checkupHeroData.imageUrl}
         imageAlt={checkupHeroData.imageAlt}
-        mainCard={checkupHeroData.mainCard}
-        secondaryCards={checkupHeroData.secondaryCards}
       />
 
       {loading ? (
