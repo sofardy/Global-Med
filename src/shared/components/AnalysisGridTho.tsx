@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { UniversalCard } from '../components/UniversalCard';
 import { applyColorToIcon, getIconColorByTheme } from '../utils/iconUtils';
 import { useThemeStore } from '@/src/store/theme';
+import { useLanguageStore } from '@/src/store/language';
 import { API_BASE_URL } from '@/src/config/constants';
 import axios from 'axios';
 import { getAnalysisIcon } from '@/src/config/iconMapping';
@@ -12,7 +13,9 @@ interface AnalysisItem {
   slug: string;
   name: string;
   mini_description: string;
-  icon: string;
+
+  icon?: string | null; // Опциональное поле для иконки с сервера
+
 }
 
 export const AnalysisGridTho = () => {
@@ -23,7 +26,8 @@ export const AnalysisGridTho = () => {
   const [visibleGroups, setVisibleGroups] = useState(1);
   const { theme } = useThemeStore();
 
-  const { currentLocale } = useLanguageStore();
+  const { currentLocale } = useLanguageStore(); // Получаем текущий язык
+
   
   // Загрузка данных с API
   useEffect(() => {
@@ -32,8 +36,9 @@ export const AnalysisGridTho = () => {
         setLoading(true);
         const response = await axios.get(`${API_BASE_URL}/medical-tests`, {
           headers: {
-            'Content-Type': 'application/json',
-            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
+
+            'X-Language': currentLocale // Добавляем заголовок X-Language с текущим языком
+
           }
         });
         setAnalyses(response.data.data);
@@ -47,7 +52,7 @@ export const AnalysisGridTho = () => {
     };
 
     fetchAnalyses();
-  }, []);
+  }, [currentLocale]); // Добавляем currentLocale в зависимости, чтобы перезагружать при смене языка
 
   // Обработка размера экрана
   useEffect(() => {
@@ -60,6 +65,25 @@ export const AnalysisGridTho = () => {
     
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Функция для рендеринга иконки с учетом серверных данных
+  const renderIcon = (analysis: AnalysisItem) => {
+    if (analysis.icon) {
+      // Если с сервера пришла SVG строка, используем её
+      return (
+        <div 
+          className="svg-icon-container" 
+          dangerouslySetInnerHTML={{ __html: analysis.icon }} 
+        />
+      );
+    } else {
+      // Используем локальную иконку из маппинга
+      return applyColorToIcon(
+        getAnalysisIcon(analysis.slug), 
+        getIconColorByTheme(theme)
+      );
+    }
+  };
 
   // Группировка данных по 4 элемента для мобильного вида
   const itemsPerGroup = 4;
@@ -84,6 +108,11 @@ export const AnalysisGridTho = () => {
   // Проверка, можно ли показать еще группы
   const canShowMore = isMobile && visibleGroups < groupedData.length;
 
+  // Локализация текста кнопки "Показать ещё"
+  const showMoreText = currentLocale === 'uz' 
+    ? `Yana ${Math.min(itemsPerGroup, analyses.length - visibleItems.length)} tahlillarni ko'rsating` 
+    : `Показать ещё ${Math.min(itemsPerGroup, analyses.length - visibleItems.length)} анализа`;
+
   if (loading) {
     return (
       <div className="mt-20 flex justify-center items-center h-64">
@@ -96,7 +125,7 @@ export const AnalysisGridTho = () => {
     return (
       <div className="mt-20">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>{error}</p>
+          <p>{currentLocale === 'uz' ? 'Ma\'lumotlarni yuklashda xatolik yuz berdi' : error}</p>
         </div>
       </div>
     );
@@ -111,10 +140,12 @@ export const AnalysisGridTho = () => {
               variant="analysis-card"
               title={analysis.name}
               description={analysis.mini_description || ''} 
-              additionalInfo={`${Math.floor(Math.random() * 10) + 5} показателей`} // Генерируем случайное количество или можете заменить на реальное, если API его предоставляет
-              icon={analysis.icon}
+
+              additionalInfo={`${Math.floor(Math.random() * 10) + 5} ${currentLocale === 'uz' ? 'ko\'rsatkichlar' : 'показателей'}`}
+              icon={renderIcon(analysis)}
+
               link={`/analysis/${analysis.slug}`}
-              buttonText="Подробнее"
+              buttonText={currentLocale === 'uz' ? 'Batafsil' : 'Подробнее'}
               className="h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]"
             />
           </div>
@@ -127,10 +158,25 @@ export const AnalysisGridTho = () => {
             onClick={showMoreItems}
             className="px-6 py-3 bg-light-accent text-white rounded-xl hover:bg-light-accent/90 transition-colors"
           >
-            Показать ещё {Math.min(itemsPerGroup, analyses.length - visibleItems.length)} анализа
+            {showMoreText}
           </button>
         </div>
       )}
+      
+      {/* Добавляем стили для правильного отображения SVG иконок с сервера */}
+      <style jsx global>{`
+        .svg-icon-container svg {
+          width: ${isMobile ? '60px' : '90px'};
+          height: ${isMobile ? '60px' : '90px'};
+          color: ${theme === 'light' ? '#224F5B' : 'white'};
+          transition: transform 0.3s ease;
+        }
+        
+        .universal-card:hover .svg-icon-container svg {
+          transform: scale(1.1);
+          color: white;
+        }
+      `}</style>
     </div>
   );
 };

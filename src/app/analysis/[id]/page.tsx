@@ -1,4 +1,3 @@
-// src/app/analysis/[id]/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -8,9 +7,9 @@ import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { translations } from '@/src/shared/mocks/analysisData';
 import AnalysisRecommendations from '@/src/shared/components/AnalysisRecommendations';
 import { AnimatedButton } from '@/src/shared/ui/Button/AnimatedButton';
-import axios from 'axios';
-import { API_BASE_URL } from '@/src/config/constants';
-import {useLanguageStore} from "@/src/store/language";
+
+import httpClient from '@/src/shared/services/HttpClient';
+import { useLanguageStore } from '@/src/store/language';
 
 interface AnalysisItem {
   uuid: string;
@@ -40,30 +39,29 @@ export default function Page({ params }: PageProps) {
   const [showAllPrices, setShowAllPrices] = useState(false);
 
   const { currentLocale } = useLanguageStore();
-  
   // Загрузка данных анализа
-  useEffect(() => {
-    const fetchAnalysis = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/medical-tests/${id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Language': currentLocale || 'ru', // Используем currentLocale с fallback на 'ru'
-          }
-        });
-        setAnalysis(response.data.data);
-        setError(null);
-      } catch (err) {
-        console.error(`Error fetching analysis with slug ${id}:`, err);
-        setError('Не удалось загрузить данные анализа');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchAnalysis();
-  }, [id]);
+useEffect(() => {
+  const fetchAnalysis = async () => {
+    try {
+      setLoading(true);
+      const response = await httpClient.get<{ data: AnalysisItem }>(`/medical-tests/${id}`);
+      setAnalysis(response.data);
+      setError(null);
+    } catch (err) {
+      console.error(`Error fetching analysis with slug ${id}:`, err);
+      setError(currentLocale === 'uz' 
+        ? 'Tahlil ma\'lumotlarini yuklab olib bo\'lmadi' 
+        : 'Не удалось загрузить данные анализа');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  fetchAnalysis();
+}, [id, currentLocale]);
+
+
+
   
   // Определение мобильной версии
   useEffect(() => {

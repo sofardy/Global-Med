@@ -1,6 +1,18 @@
+// src/hooks/useAnalyses.ts
 import { useState, useEffect } from 'react';
 import { AnalysisItem } from '@/src/types/analysis';
-import { fetchAnalyses, fetchAnalysisBySlug } from '@/src/app/api/analyses';
+import httpClient from '@/src/shared/services/HttpClient';
+
+// Обновляем функции fetchAnalyses и fetchAnalysisBySlug
+export const fetchAnalyses = async () => {
+    const response = await httpClient.get<{ data: AnalysisItem[] }>('/medical-tests');
+    return response;
+};
+
+export const fetchAnalysisBySlug = async (slug: string) => {
+    const response = await httpClient.get<{ data: AnalysisItem }>(`/medical-tests/${slug}`);
+    return response.data;
+};
 
 export const useAnalyses = () => {
     const [analyses, setAnalyses] = useState<AnalysisItem[]>([]);
