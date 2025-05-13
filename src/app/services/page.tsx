@@ -73,29 +73,29 @@ export default function ServicesPage() {
     imageAlt: currentLocale === 'uz'
       ? "Klinikamizdagi tibbiy xizmatlar"
       : "Медицинские услуги в нашей клинике",
-    mainCard: {
-      title: currentLocale === 'uz'
-        ? "Tibbiy xizmatlar"
-        : "Медицинские услуги",
-      description:
-        currentLocale === 'uz'
-          ? "Biz zamonaviy usullar va asbob-uskunalardan foydalangan holda professional tekshiruv va davolash xizmatlarini taqdim etamiz. Markazimizda tajribali shifokorlar sizni individual yondashuv bilan kutib olishadi va davolanish jarayonining har bir bosqichida qulaylikni ta'minlaydi."
-          : "Мы предоставляем профессиональное обследование и лечение, используя новейшие методы и оборудование, чтобы обеспечить вам высококачественную медицинскую помощь. В нашем центре вас ждут опытные врачи, готовые предоставить индивидуальный подход и гарантировать комфорт на каждом этапе лечения.",
-    },
-    secondaryCards: [
-      {
-        title: "10",
-        description: currentLocale === 'uz'
-          ? "yo‘nalish bo‘yicha yuqori sifatli tibbiy xizmatlar ko‘rsatamiz"
-          : "направлений, в которых мы оказываем высококачественное медицинское обслуживание"
-      },
-      {
-        title: "10 000+",
-        description: currentLocale === 'uz'
-          ? "har yili minglab bemorlar sog‘lig‘ini bizga ishonib topshiradi"
-          : "пациентов ежегодно доверяют нам своё здоровье, проходя диагностику и лечение в клинике"
-      }
-    ]
+    // mainCard: {
+    //   title: currentLocale === 'uz'
+    //     ? "Tibbiy xizmatlar"
+    //     : "Медицинские услуги",
+    //   description:
+    //     currentLocale === 'uz'
+    //       ? "Biz zamonaviy usullar va asbob-uskunalardan foydalangan holda professional tekshiruv va davolash xizmatlarini taqdim etamiz. Markazimizda tajribali shifokorlar sizni individual yondashuv bilan kutib olishadi va davolanish jarayonining har bir bosqichida qulaylikni ta'minlaydi."
+    //       : "Мы предоставляем профессиональное обследование и лечение, используя новейшие методы и оборудование, чтобы обеспечить вам высококачественную медицинскую помощь. В нашем центре вас ждут опытные врачи, готовые предоставить индивидуальный подход и гарантировать комфорт на каждом этапе лечения.",
+    // },
+    // secondaryCards: [
+    //   {
+    //     title: "10",
+    //     description: currentLocale === 'uz'
+    //       ? "yo‘nalish bo‘yicha yuqori sifatli tibbiy xizmatlar ko‘rsatamiz"
+    //       : "направлений, в которых мы оказываем высококачественное медицинское обслуживание"
+    //   },
+    //   {
+    //     title: "10 000+",
+    //     description: currentLocale === 'uz'
+    //       ? "har yili minglab bemorlar sog‘lig‘ini bizga ishonib topshiradi"
+    //       : "пациентов ежегодно доверяют нам своё здоровье, проходя диагностику и лечение в клинике"
+    //   }
+    // ]
   };
   useEffect(() => {
     const fetchServices = async () => {
