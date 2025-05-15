@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useThemeStore } from '@/src/store/theme';
 import { useInView } from 'react-intersection-observer';
+import { useTranslation } from '@/src/hooks/useTranslation';
+import { useLanguageStore } from '@/src/store/language';
 
 const AnimatedCounter = ({ end, duration = 4000, className = '' }) => {
   const [count, setCount] = useState(0);
@@ -129,6 +131,9 @@ const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { currentLocale } = useLanguageStore();
+
+  console.log(currentLocale,'currentLocale');
 
   useEffect(() => {
     const fetchData = async () => {
