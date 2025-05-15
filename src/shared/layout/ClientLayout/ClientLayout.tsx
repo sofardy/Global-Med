@@ -15,7 +15,7 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children, routes }: ClientLayoutProps) {
   const pathname = usePathname();
-  const { currentLocale } = useLanguageStore(); // ✅ global holatda tanlab olingan til
+  const { currentLocale } = useLanguageStore();
 
   const hideHeaderFooter = pathname?.startsWith('/account');
 

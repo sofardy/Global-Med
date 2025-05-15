@@ -133,7 +133,11 @@ const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/checkups');
+        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/checkups',{
+          headers: {
+            'X-Language': currentLocale
+          },
+        });
         const result = await response.json();
         setData(result);
         setLoading(false);
@@ -144,7 +148,7 @@ const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
     };
 
     fetchData();
-  }, []);
+  }, [currentLocale]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
