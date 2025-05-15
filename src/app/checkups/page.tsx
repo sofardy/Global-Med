@@ -101,12 +101,12 @@ export default function Checkups() {
               // Используем иконку из мока на основе slug
               icon={item.icon}
               link={`/checkups/${item.slug}`}
-              buttonText="Подробнее"
+              buttonText={`${currentLocale === 'uz' ? 'Batafsil' : 'подробнee'}`}
               showButton={true}
               buttonStyle="filled"
               hoverBgColor="light-accent"
               titleSize="text-2xl md:text-[40px]"
-              additionalInfo={`${item.medical_tests.length} ${currentLocale === 'uz' ? 'tadqiqot' : 'исследований'} • ${item.duration}`}
+              additionalInfo={`${item.medical_tests.length} ${currentLocale === 'uz' ? 'Tadqiqot' : 'исследований'} • ${item.duration}`}
               className="border-none shadow-none rounded-b-2xl md:rounded-2xl p-8"
             />
           ))}
