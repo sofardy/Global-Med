@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useThemeStore } from '@/src/store/theme';
 import { useInView } from 'react-intersection-observer';
+import { useTranslation } from '@/src/hooks/useTranslation';
+import { useLanguageStore } from '@/src/store/language';
 
 const AnimatedCounter = ({ end, duration = 4000, className = '' }) => {
   const [count, setCount] = useState(0);
@@ -61,7 +63,6 @@ const AnimatedCounter = ({ end, duration = 4000, className = '' }) => {
   return <span ref={ref} className={className}>{formatResult()}</span>;
 };
 
-// InfoCard - har bir kartochka
 const InfoCard = ({ title, description, hasDot = false, isWide = false, isNumeric = false, className = '' }) => {
   const { theme } = useThemeStore();
   const [isHovered, setIsHovered] = useState(false);
@@ -130,11 +131,18 @@ const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { currentLocale } = useLanguageStore();
+
+  console.log(currentLocale,'currentLocale');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/services');
+        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/checkups',{
+          headers: {
+            'X-Language': currentLocale
+          },
+        });
         const result = await response.json();
         setData(result);
         setLoading(false);
@@ -145,7 +153,7 @@ const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
     };
 
     fetchData();
-  }, []);
+  }, [currentLocale]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -168,7 +176,7 @@ const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
         <InfoCard
           title={items[0]?.title}
-          description={items[1]?.subtitle}
+          description={items[0]?.subtitle}
           isWide={true}
           isNumeric={/^\d/.test(items[1]?.title)}
           className="md:col-span-2 mb-3 sm:mb-4 md:mb-0"

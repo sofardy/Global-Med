@@ -106,6 +106,7 @@ export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
     <DoctorCard
       key={doctor.uuid}
       id={doctor.uuid}
+      link={doctor.slug}
       name={doctor.full_name}
       specialization={doctor.specialization}
       image={doctor.image_url}

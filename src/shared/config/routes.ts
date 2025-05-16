@@ -23,7 +23,7 @@ export interface SubRoute {
     {
       path: RoutePathEnum.SERVICES,
       translationKey: 'services',
-      hasSubmenu: true,
+      hasSubmenu: false,
       submenuItems: [
         {
           path: '/services',
@@ -31,7 +31,7 @@ export interface SubRoute {
         },
         {
           path: '/services/dietolog',
-          translationKey: 'dietolog' // ✅ faqat kichik harflar bilan
+          translationKey: 'dietolog' 
         }
       ]
     },

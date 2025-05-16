@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useThemeStore } from '@/src/store/theme';
 import { useTranslation } from '@/src/hooks/useTranslation';
@@ -17,6 +17,7 @@ interface ReviewCardProps {
   external_icon?: string;
   external_link?: string;
   service_icon?: string
+
 }
 
 const translations = {
@@ -47,6 +48,16 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
 
+  const iconRef = useRef<HTMLSpanElement | null>(null);
+  useEffect(() => {
+    if (iconRef.current) {
+      const svg = iconRef.current.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('width', '24');
+        svg.setAttribute('height', 'auto');
+      }
+    }
+  }, [external_icon]);
   const getReviewSourceLink = () => {
     if (external_icon && external_link) {
       return (
@@ -54,12 +65,12 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
           href={external_link}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-10 text-[#73B1A4] hover:underline mt-4"
+          className="flex items-center gap-3 text-[#73B1A4] hover:underline mt-4"
         >
-
           <span
-            className="mr-2 w-6 h-6 inline-block me-[40px]"
-            dangerouslySetInnerHTML={{ __html: external_icon }}
+            ref={iconRef}
+            className="inline-block"
+            dangerouslySetInnerHTML={{ __html: external_icon || '' }}
           />
           <p>{t('readMore')}</p>
         </a>
@@ -115,7 +126,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
               {service_icon ? (
                 <span
                   className="w-6 h-6 mr-2 block"
-                  style={{ fill: '#73B1A4' }}  
+                  style={{ fill: '#73B1A4' }}
                   dangerouslySetInnerHTML={{ __html: service_icon }}
                 />
               ) : (

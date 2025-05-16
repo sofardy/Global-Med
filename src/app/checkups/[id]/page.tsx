@@ -255,10 +255,12 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         <div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-teal-900 dark:bg-dark-block">
           {checkup.medical_tests.map((test) => (
             <div key={test.uuid} className="py-4 border-b border-teal-800 flex justify-between items-center">
-              <span className="text-base md:text-lg text-white">
+              <span className="lg:w-[70%] text-base md:text-lg text-white">
                 {test.name}
               </span>
-              <span className="text-base md:text-lg font-medium text-white">
+              <span style={{
+                textAlign:"right"
+              }} className="text-base md:text-lg font-medium text-white ">
                 {test.value}
               </span>
             </div>
