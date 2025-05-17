@@ -127,36 +127,13 @@ const InfoCard = ({ title, description, hasDot = false, isWide = false, isNumeri
   );
 };
 
-const UniversalHeroSection = ({ imageUrl, imageAlt, className = '' }) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const UniversalHeroSection = ({ imageUrl, imageAlt,data, className = '' }) => {
   const { currentLocale } = useLanguageStore();
 
   console.log(currentLocale,'currentLocale');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/checkups',{
-          headers: {
-            'X-Language': currentLocale
-          },
-        });
-        const result = await response.json();
-        setData(result);
-        setLoading(false);
-      } catch (err) {
-        setError('Error fetching data');
-        setLoading(false);
-      }
-    };
 
-    fetchData();
-  }, [currentLocale]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
 
   const items = data?.data?.content?.info?.data?.items || [];
 

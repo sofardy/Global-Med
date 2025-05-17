@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import UniversalHeroSection from '@/src/shared/components/UniversalHeroSection';
 import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { useThemeStore } from '@/src/store/theme';
-import { useLanguageStore } from '@/src/store/language'; 
+import { useLanguageStore } from '@/src/store/language';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import axios from 'axios';
@@ -63,7 +63,7 @@ interface ServicesResponse {
 
 export default function ServicesPage() {
   const { theme } = useThemeStore();
-  const { currentLocale } = useLanguageStore(); 
+  const { currentLocale } = useLanguageStore();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -105,7 +105,7 @@ export default function ServicesPage() {
           'https://globalmed.kelyanmedia.com/api/services',
           {
             headers: {
-              'X-Language': currentLocale || 'ru' 
+              'X-Language': currentLocale || 'ru'
             }
           }
         );
@@ -120,10 +120,29 @@ export default function ServicesPage() {
     };
 
     fetchServices();
-  }, [currentLocale]); 
+  }, [currentLocale]);
+  const [dataPagesService, setDataPagesService] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/services', {
+          headers: {
+            'X-Language': currentLocale
+          },
+        });
+        const result = await response.json();
+        setDataPagesService(result);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [currentLocale]);
   return (
     <main>
       <UniversalHeroSection
+        data={dataPagesService}
         imageUrl={heroData.imageUrl}
         imageAlt={heroData.imageAlt}
         className="mb-20"
@@ -149,7 +168,7 @@ export default function ServicesPage() {
                   additionalInfo={`${service.services_list.length} ${currentLocale === 'uz' ? 'xizmat' : 'услуг'}`}
                   icon={service.icon}
                   link={`/services/${service.slug}`}
-                  buttonText={` ${currentLocale === 'uz' ? 'Batafsil' : 'Подробнее'}`} 
+                  buttonText={` ${currentLocale === 'uz' ? 'Batafsil' : 'Подробнее'}`}
                   className="h-full"
                   iconPosition="center"
                 />
