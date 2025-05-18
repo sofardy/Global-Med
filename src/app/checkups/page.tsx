@@ -7,7 +7,7 @@ import { UniversalCard } from '@/src/shared/components/UniversalCard';
 import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
 import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import axios from 'axios';
-import {useLanguageStore} from "@/src/store/language";
+import { useLanguageStore } from "@/src/store/language";
 
 // Интерфейсы для типизации данных API
 interface MedicalTest {
@@ -35,8 +35,8 @@ export default function Checkups() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { currentLocale } = useLanguageStore();
-  console.log(currentLocale,'currentLocale');
-  
+  console.log(currentLocale, 'currentLocale');
+
 
   // Загрузка данных с API при монтировании компонента
   useEffect(() => {
@@ -61,12 +61,33 @@ export default function Checkups() {
 
     fetchCheckups();
   }, [currentLocale]);
+  
+  console.log(currentLocale, 'currentLocale');
+  
+  const [dataPagesCheckup, setDataPagesCheckup] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/checkups', {
+          headers: {
+            'X-Language': currentLocale
+          },
+        });
+        const result = await response.json();
+        setDataPagesCheckup(result);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [currentLocale]);
 
   // Функция для получения иконки из мока по slug
   const getIconBySlug = (slug: string) => {
     // Ищем соответствующий элемент в моковых данных
     const mockItem = checkupItemsData.find(item => item.id === slug);
-    
+
     // Если нашли элемент, возвращаем его иконку, иначе возвращаем дефолтную
     return mockItem ? mockItem.iconPath : "/icons/medical-check.svg";
   };
@@ -74,6 +95,7 @@ export default function Checkups() {
   return (
     <main>
       <UniversalHeroSection
+        data={dataPagesCheckup}
         imageUrl={checkupHeroData.imageUrl}
         imageAlt={checkupHeroData.imageAlt}
       />
@@ -112,7 +134,7 @@ export default function Checkups() {
           ))}
         </div>
       )}
-      
+
       <AppointmentSection />
       <ContactInfo />
     </main>

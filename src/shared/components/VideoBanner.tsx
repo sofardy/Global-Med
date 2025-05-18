@@ -60,6 +60,7 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
           onEnded={handleVideoEnd}
           muted
           playsInline
+          autoPlay
         />
         
         {/* Затемнение для видео */}
@@ -67,7 +68,6 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
       </div>
       
       {/* Центральный блок с текстом - адаптивный размер */}
-      {!isPlaying && (
         <div className="absolute inset-0 z-10 flex items-center justify-center">
           <div className="w-[280px] h-auto sm:w-[320px] md:w-[375px] lg:h-[375px] bg-light-text dark:bg-dark-block rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
             <div className="text-center text-white">
@@ -80,7 +80,6 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
             </div>
           </div>
         </div>
-      )}
       
       {/* Иконка воспроизведения при наведении - адаптивный размер */}
       {!isPlaying && (
