@@ -38,7 +38,7 @@ export default function AccountLayout({
 
   useEffect(() => {
     if (isClient) {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       if (!token && pathname !== "/account/login") {
         localStorage.clear();
         sessionStorage.clear();
