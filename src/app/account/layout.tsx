@@ -1,10 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import AccountSidebar from "../../shared/components/AccountSidebar";
+import { usePathname, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import LoginHeader from "@/src/shared/layout/AccountHeader/LoginHeader";
-import { cookies } from "next/headers";
+
+const AccountSidebar = dynamic(
+  () => import("../../shared/components/AccountSidebar"),
+  {
+    ssr: false,
+  }
+);
 
 export default function AccountLayout({
   children,
@@ -12,10 +18,12 @@ export default function AccountLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -29,20 +37,21 @@ export default function AccountLayout({
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.pathname = "/account/login";
+    if (isClient) {
+      const token = localStorage.getItem("token");
+      if (!token && pathname !== "/account/login") {
+        localStorage.clear();
+        sessionStorage.clear();
+        router.push("/account/login");
+      }
     }
-    setIsAuthenticated(!!token);
-  }, []);
+  }, [isClient, pathname, router]);
 
   if (pathname === "/account/login") {
     return <>{children}</>;
   }
 
-  if (!isAuthenticated) {
+  if (!isClient) {
     return null;
   }
 
