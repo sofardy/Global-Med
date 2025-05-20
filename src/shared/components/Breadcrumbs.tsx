@@ -1,52 +1,63 @@
-'use client';
+"use client";
 
-import React, { Suspense } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ChevronRightIcon } from '@heroicons/react/24/outline';
-import { Route } from '@/src/shared/config/routes';
+import React, { Suspense } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Route } from "@/src/shared/config/routes";
 
 interface BreadcrumbsProps {
   className?: string;
   separator?: React.ReactNode;
   hideHome?: boolean;
   hideCurrent?: boolean;
-  locale: 'uz' | 'ru';
+  locale: "uz" | "ru";
   routes: Route[];
 }
 
 const translations = {
   uz: {
-    home: 'Bosh sahifa',
+    home: "Bosh sahifa",
     labels: {
-      services: 'Xizmatlar',
-      checkups: 'Tekshiruvlar',
-      analysis: 'Tahlillar',
-      partners: 'Hamkorlar',
-      clinic: 'Klinika haqida',
-      contacts: 'Bogʻlanish',
-      doctors: 'Shifokorlar',
-      dietolog: 'Diyetolog',
+      services: "Xizmatlar",
+      checkups: "Tekshiruvlar",
+      analysis: "Tahlillar",
+      partners: "Hamkorlar",
+      clinic: "Klinika haqida",
+      contacts: "Bogʻlanish",
+      doctors: "Shifokorlar",
+      dietolog: "Diyetolog",
+      checkup: "Tekshiruv",
+      service: "Xizmat",
+      doctor: "Shifokor",
+      partner: "Hamkor",
+      contact: "Bogʻlanish",
+      analysis_detail: "Tahlil",
     },
   },
   ru: {
-    home: 'Главная',
+    home: "Главная",
     labels: {
-      services: 'Услуги',
-      checkups: 'Чекапы',
-      analysis: 'Анализы',
-      partners: 'Партнёры',
-      clinic: 'О клинике',
-      contacts: 'Контакты',
-      doctors: 'Врачи',
-      dietolog: 'Диетолог',
+      services: "Услуги",
+      checkups: "Чекапы",
+      analysis: "Анализы",
+      partners: "Партнёры",
+      clinic: "О клинике",
+      contacts: "Контакты",
+      doctors: "Врачи",
+      dietolog: "Диетолог",
+      checkup: "Чекап",
+      service: "Услуга",
+      doctor: "Врач",
+      partner: "Партнёр",
+      contact: "Контакты",
+      analysis_detail: "Анализ",
     },
   },
 };
 
-
 function BreadcrumbsContent({
-  className = '',
+  className = "",
   separator = <ChevronRightIcon className="h-4 w-4 text-gray-400" />,
   hideHome = false,
   hideCurrent = false,
@@ -57,17 +68,17 @@ function BreadcrumbsContent({
 
   if (!pathname || !(locale in translations)) return null;
 
-  const supportedLocales = ['uz', 'ru'];
+  const supportedLocales = ["uz", "ru"];
   const localePrefix = `/${locale}`;
   const cleanedPath = pathname.startsWith(localePrefix)
     ? pathname.slice(localePrefix.length)
     : pathname;
 
   const segments = cleanedPath
-    .split('/')
+    .split("/")
     .filter(Boolean)
     .map((segment, index, array) => {
-      const pathWithoutLocale = '/' + array.slice(0, index + 1).join('/');
+      const pathWithoutLocale = "/" + array.slice(0, index + 1).join("/");
       const fullPath = `${localePrefix}${pathWithoutLocale}`;
 
       // 🔽 Avval asosiy route dan izlaymiz
@@ -77,7 +88,9 @@ function BreadcrumbsContent({
       if (!route) {
         for (const r of routes) {
           if (r.hasSubmenu && Array.isArray((r as any).submenuItems)) {
-            const submenuMatch = (r as any).submenuItems.find((sub: any) => sub.path === pathWithoutLocale);
+            const submenuMatch = (r as any).submenuItems.find(
+              (sub: any) => sub.path === pathWithoutLocale
+            );
             if (submenuMatch) {
               route = submenuMatch;
               break;
@@ -93,15 +106,14 @@ function BreadcrumbsContent({
         key && key in labelMap
           ? labelMap[key]
           : decodeURIComponent(segment)
-            .replace(/-/g, ' ')
-            .replace(/\b\w/g, (c) => c.toUpperCase());
+              .replace(/-/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase());
 
       return { path: fullPath, name };
     });
 
-
   if (!hideHome) {
-    const homeName = translations[locale]?.home ?? 'Home';
+    const homeName = translations[locale]?.home ?? "Home";
     segments.unshift({ path: localePrefix, name: homeName });
   }
   if (segments.length === 1 && segments[0].path === localePrefix) {
@@ -118,18 +130,16 @@ function BreadcrumbsContent({
           const isLast = index === segments.length - 1;
           return (
             <React.Fragment key={segment.path}>
-
               <li className="flex items-center">
                 {isLast ? (
-                  <span className="text-gray-900 dark:text-white">{segment.name}</span>
+                  <span className="text-gray-900 dark:text-white">
+                    {segment.name}
+                  </span>
                 ) : (
                   <Link
-                  href={
-                    segment.path.replace(`/${locale}`, '') || '/'
-                  }
+                    href={segment.path.replace(`/${locale}`, "") || "/"}
                     className="hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
-
                     {segment.name}
                   </Link>
                 )}

@@ -6,13 +6,12 @@
   --light-bg: #f7f7f7;
   --light-block: #ffffff;
   --light-accent: #00c78b;
-  --light-text: #094A54;
-  
+  --light-text: #094a54;
+
   --dark-bg: #11363c;
   --dark-block: #094a54;
   --dark-accent: #00c78b;
   --dark-text: #ffffff;
-
 }
 
 .light {
@@ -20,7 +19,6 @@
   --block-color: var(--light-block);
   --accent-color: var(--light-accent);
   --text-color: var(--light-text);
-
 }
 
 .dark {
@@ -41,14 +39,14 @@ body {
   bottom: 32px !important;
 }
 
-@media(max-width: 500px) {
-    .amo-button-holder {
-        right: 30px !important;
-    }
+@media (max-width: 500px) {
+  .amo-button-holder {
+    right: 30px !important;
+  }
 }
 
 .noFill {
-    fill: none !important;
+  fill: none !important;
 
   &:hover {
     fill: none !important;
