@@ -198,6 +198,7 @@ export default function AccountHeader() {
   }, [notifications]);
 
   // Handle logout
+
   const handleLogout = () => {
     localStorage.clear();
     sessionStorage.clear();

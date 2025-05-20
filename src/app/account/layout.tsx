@@ -13,6 +13,7 @@ export default function AccountLayout({
 }) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -27,16 +28,24 @@ export default function AccountLayout({
     };
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.pathname = "/account/login";
+    }
+    setIsAuthenticated(!!token);
+  }, []);
+
   if (pathname === "/account/login") {
     return <>{children}</>;
   }
 
-  if (!localStorage.getItem("token")) {
-    localStorage.clear();
-    sessionStorage.clear();
-
-    return (window.location.pathname = "/account/login");
+  if (!isAuthenticated) {
+    return null;
   }
+
   return (
     <div>
       <LoginHeader />
