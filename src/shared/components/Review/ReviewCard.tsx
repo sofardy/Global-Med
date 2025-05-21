@@ -27,8 +27,8 @@ const translations = {
   },
   uz: {
     service: "Xizmat:",
-    readMore: "Sharhni o‘qish",
-    watchMore: "Sharhni ko‘rish",
+    readMore: "Sharhni o'qish",
+    watchMore: "Sharhni ko'rish",
   },
 };
 
@@ -48,6 +48,8 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
   const { t } = useTranslation(translations);
 
   const iconRef = useRef<HTMLSpanElement | null>(null);
+  const serviceIconRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (iconRef.current) {
       const svg = iconRef.current.querySelector("svg");
@@ -57,6 +59,29 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
       }
     }
   }, [external_icon]);
+
+  // Control service icon color based on theme
+  useEffect(() => {
+    if (serviceIconRef.current && service_icon) {
+      const svg = serviceIconRef.current.querySelector("svg");
+      if (svg) {
+        // Set default size
+        svg.setAttribute("width", "24");
+        svg.setAttribute("height", "24");
+
+        // Add or update fill attribute based on theme
+        const fillColor = theme === "light" ? "#173F46" : "#FFFFFF";
+        svg.setAttribute("fill", fillColor);
+
+        // Also update any path elements that might have their own fill
+        const paths = svg.querySelectorAll("path");
+        paths.forEach((path) => {
+          path.setAttribute("fill", fillColor);
+        });
+      }
+    }
+  }, [theme, service_icon]);
+
   const getReviewSourceLink = () => {
     if (external_icon && external_link) {
       return (
@@ -100,7 +125,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
 
     return null;
   };
-  console.log(service);
+
   return (
     <div
       className={`p-6 rounded-2xl h-[420px] flex flex-col group ${
@@ -139,10 +164,10 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
             </div>
             <div className="flex items-center">
               {service_icon ? (
-                <span
+                <div
                   id="review-icon"
-                  className="w-[24px] h-[24px] mr-[8px] block group-hover:fill-black group-hover:dark:fill-white transition-colors duration-200"
-                  style={{ fill: "#73B1A4" }}
+                  ref={serviceIconRef}
+                  className="w-[24px] h-[24px] mr-[8px] block"
                   dangerouslySetInnerHTML={{ __html: service_icon }}
                 />
               ) : (

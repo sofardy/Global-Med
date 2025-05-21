@@ -746,12 +746,12 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
               <div
                 style={{ color: finalIconColor }}
                 dangerouslySetInnerHTML={{ __html: modifySvgFill(icon) }}
-                className={`absolute right-0 top-[-50px] sm:scale-[0.6] md:scale-[0.8] lg:scale-[1] ${
+                className={`absolute w-[190px] h-[190px] flex items-center justify-center right-0 top-[-30px] sm:scale-[0.6] md:scale-[0.8] lg:scale-[1] ${
                   isHovered ? "scale-110" : ""
                 }`}
               />
             ) : (
-              <div className="absolute top-[-50px] right-0 dark:text-white">
+              <div className="absolute top-[-40px] right-0 dark:text-white">
                 {icon}
               </div>
             )}
