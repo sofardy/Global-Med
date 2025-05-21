@@ -57,10 +57,10 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
           src={videoSrc}
-          onEnded={handleVideoEnd}
           muted
           playsInline
           autoPlay
+          loop
         />
         
         {/* Затемнение для видео */}
