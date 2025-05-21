@@ -277,7 +277,7 @@ const DoctorSearchSection: React.FC = () => {
      setIsSpecialtyOpen(!isSpecialtyOpen);
    }
  };
- 
+
  return (
    <div className="w-full">
      <div className="relative w-full h-[500px] rounded-2xl overflow-hidden mb-6">

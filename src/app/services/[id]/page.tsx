@@ -10,10 +10,16 @@ import { AnimatedButton } from "@/src/shared/ui/Button/AnimatedButton";
 import axios from "axios";
 import { GBContext } from "@/src/context/globalize-breadcrumb";
 
-// Типизация для данных
+// Data type definitions
 interface ServicePrice {
   name: string;
   value: string;
+}
+
+interface Symptom {
+  uuid: string;
+  slug: string;
+  name: string;
 }
 
 interface Symptom {
@@ -30,8 +36,10 @@ interface ServiceData {
   mini_description: string;
   card_description: string;
   symptoms_list: (string | Symptom)[];
+  symptoms_list: (string | Symptom)[];
   services_list: ServicePrice[];
   icon: string | null;
+  symptoms_title: string;
   symptoms_title: string;
 }
 
@@ -45,7 +53,7 @@ export interface ServiceDetailProps {
   };
 }
 
-// Переводы для страницы услуг
+// Translations for the services page
 const translations = {
   ru: {
     appointmentButton: "Записаться на прием",
@@ -80,16 +88,16 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
   const { t } = useTranslation(translations);
   const { id } = params;
 
-  // Состояния для показа/скрытия длинных списков
+  // States for toggling long lists
   const [expandedSymptoms, setExpandedSymptoms] = useState(false);
   const [expandedServices, setExpandedServices] = useState(false);
 
-  // Состояние для хранения данных услуги
+  // State for service data
   const [serviceData, setServiceData] = useState<ServiceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Состояние определения мобильного устройства
+  // State for detecting mobile devices
   const [isMobile, setIsMobile] = useState(false);
   const { currentLocale } = useTranslation(translations);
   const { setTitle }: any = useContext(GBContext);
@@ -106,7 +114,6 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
             },
           }
         );
-        console.log(response);
         setServiceData(response.data.data);
         setTitle(response.data.data.name);
         setError(null);
@@ -123,7 +130,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
     fetchServiceData();
   }, [id, currentLocale]);
 
-  // Определяем размер экрана при загрузке и изменении размера окна
+  // Detect screen size on load and resize
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -137,7 +144,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
     };
   }, []);
 
-  // Функция для открытия формы записи
+  // Function to scroll to appointment form
   const handleAppointment = () => {
     // Скроллинг к форме записи
     const appointmentSection = document.getElementById("appointment-section");
@@ -146,10 +153,8 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
     }
   };
 
-  // Количество видимых симптомов на мобильных устройствах
+  // Number of visible symptoms and services on mobile
   const visibleSymptomsCount = 4;
-
-  // Количество видимых услуг на мобильных устройствах
   const visibleServicesCount = 5;
 
   if (loading) {
@@ -383,7 +388,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
         </div>
       </div>
 
-      {/* DoctorBenefits компонент */}
+      {/* Additional components */}
       <DoctorBenefits />
       <div id="appointment-section">
         <AppointmentSection />
