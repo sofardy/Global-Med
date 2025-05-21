@@ -2,18 +2,15 @@ import { create } from 'zustand';
 import { Doctor, DoctorFilters } from '../app/api/doctors';
 import httpClient from '@/src/shared/services/HttpClient';
 
-// Обновляем функцию getDoctors, если она используется
 export const getDoctors = async (filters: DoctorFilters, page = 1) => {
     const queryParams = new URLSearchParams();
 
-    // Добавляем все фильтры как query параметры
     Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
             queryParams.append(key, String(value));
         }
     });
 
-    // Добавляем номер страницы
     queryParams.append('page', String(page));
 
     const response = await httpClient.get<any>(`/doctors?${queryParams.toString()}`);
@@ -21,61 +18,55 @@ export const getDoctors = async (filters: DoctorFilters, page = 1) => {
 };
 
 interface DoctorsState {
-    // Состояние данных
     doctors: Doctor[];
     loading: boolean;
     error: string | null;
-
-    // Фильтры поиска
     filters: DoctorFilters;
-
-    // Пагинация
-    currentPage: number;
-    totalPages: number;
     totalDoctors: number;
-
-    // Методы
     setFilters: (filters: DoctorFilters) => void;
-    setPage: (page: number) => void;
     fetchDoctors: () => Promise<void>;
     clearResults: () => void;
 }
 
 export const useDoctorsStore = create<DoctorsState>()((set, get) => ({
-    // Начальное состояние
     doctors: [],
     loading: false,
     error: null,
-
     filters: {},
-
-    currentPage: 1,
-    totalPages: 1,
     totalDoctors: 0,
-
-    // Установка фильтров поиска
-    setFilters: (filters) => set({ filters, currentPage: 1 }),
-
-    // Изменение страницы для пагинации
-    setPage: (page) => set({ currentPage: page }),
-
-    // Очистка результатов
-    clearResults: () => set({ doctors: [], error: null }),
-
-    // Основной метод для получения данных
+    setFilters: (filters) => set({ filters }),
     fetchDoctors: async () => {
-        const { filters, currentPage } = get();
-
+        const { filters } = get();
         try {
             set({ loading: true, error: null });
 
-            const response = await getDoctors(filters, currentPage);
+            // Fetch first page to get total pages
+            const firstPageResponse = await getDoctors(filters, 1);
+            const firstPageDoctors = firstPageResponse.data;
+            const totalPages = firstPageResponse.meta.last_page;
+            const totalDoctors = firstPageResponse.meta.total;
+
+            if (totalPages === 1) {
+                set({
+                    doctors: firstPageDoctors,
+                    totalDoctors,
+                    loading: false
+                });
+                return;
+            }
+
+            // Fetch remaining pages concurrently
+            const pagePromises = [];
+            for (let page = 2; page <= totalPages; page++) {
+                pagePromises.push(getDoctors(filters, page));
+            }
+            const remainingResponses = await Promise.all(pagePromises);
+            const remainingDoctors = remainingResponses.flatMap(response => response.data);
+            const allDoctors = [...firstPageDoctors, ...remainingDoctors];
 
             set({
-                doctors: response.data,
-                currentPage: response.meta.current_page,
-                totalPages: response.meta.last_page,
-                totalDoctors: response.meta.total,
+                doctors: allDoctors,
+                totalDoctors,
                 loading: false
             });
         } catch (error) {
@@ -85,5 +76,6 @@ export const useDoctorsStore = create<DoctorsState>()((set, get) => ({
                 loading: false
             });
         }
-    }
+    },
+    clearResults: () => set({ doctors: [], error: null }),
 }));
