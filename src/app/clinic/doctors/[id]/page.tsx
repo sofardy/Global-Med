@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import DoctorDetail from '@/src/shared/components/Doctor/DoctorDetail';
-import { useAuth } from '@/src/hooks/useAuth';
+import React, { useContext, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import DoctorDetail from "@/src/shared/components/Doctor/DoctorDetail";
+import { useAuth } from "@/src/hooks/useAuth";
+import { GBContext } from "@/src/context/globalize-breadcrumb";
 
 interface EducationDetail {
   title: string;
@@ -49,43 +50,56 @@ export default function DoctorDetailPage(): JSX.Element {
   const [doctor, setDoctor] = useState<DoctorDetailData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { setTitle }: any = useContext(GBContext);
 
   const handleAppointmentClick = (): void => {
     console.log("Проверка авторизации:", isAuthenticated());
-    
+
     if (isAuthenticated()) {
       router.push(`/account/appointment?doctor_id=${doctor?.uuid}`);
     } else {
-      router.push(`/account/login?redirect_to=/account/appointment?doctor_id=${doctor?.uuid}`);
+      router.push(
+        `/account/login?redirect_to=/account/appointment?doctor_id=${doctor?.uuid}`
+      );
     }
   };
-
   useEffect(() => {
     const fetchDoctorDetail = async (): Promise<void> => {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Проверяем и преобразуем id к нужному типу
         const doctorId = Array.isArray(id) ? id[0] : id;
-        
+
         if (!doctorId) {
-          throw new Error('Некорректный идентификатор доктора');
+          throw new Error("Некорректный идентификатор доктора");
         }
-        
-        const apiUrl =  'https://globalmed.kelyanmedia.com/api';
-        const response = await fetch(`${apiUrl}/doctors/${doctorId}`);
-        
+
+        // Определяем язык из URL
+        const pathname = window.location.pathname;
+        const locale = pathname.startsWith("/ru") ? "ru" : "uz";
+
+        const apiUrl = "https://globalmed.kelyanmedia.com/api";
+        const response = await fetch(`${apiUrl}/doctors/${doctorId}`, {
+          headers: {
+            "X-Language": locale === "uz" ? "uz" : "ru", // kerakli tilni yuboramiz
+          },
+        });
+
         if (!response.ok) {
           throw new Error(`Ошибка API: ${response.status}`);
         }
-        
+
         const data: DoctorDetailResponse = await response.json();
         setDoctor(data.data);
+        setTitle(data.data.full_name);
         setLoading(false);
       } catch (err) {
-        console.error('Ошибка при загрузке доктора:', err);
-        setError('Не удалось загрузить информацию о докторе. Пожалуйста, попробуйте позже.');
+        console.error("Ошибка при загрузке доктора:", err);
+        setError(
+          "Не удалось загрузить информацию о докторе. Пожалуйста, попробуйте позже."
+        );
         setLoading(false);
       }
     };
@@ -93,7 +107,7 @@ export default function DoctorDetailPage(): JSX.Element {
     if (id) {
       fetchDoctorDetail();
     } else {
-      setError('Идентификатор доктора не указан');
+      setError("Идентификатор доктора не указан");
       setLoading(false);
     }
   }, [id]);
@@ -103,7 +117,9 @@ export default function DoctorDetailPage(): JSX.Element {
       <div className="container mx-auto py-10 flex items-center justify-center min-h-[60vh]">
         <div className="animate-pulse flex flex-col items-center">
           <div className="w-12 h-12 rounded-full border-4 border-light-accent border-t-transparent animate-spin"></div>
-          <p className="mt-4 text-light-text dark:text-dark-text">Загрузка...</p>
+          <p className="mt-4 text-light-text dark:text-dark-text">
+            Загрузка...
+          </p>
         </div>
       </div>
     );
@@ -113,7 +129,7 @@ export default function DoctorDetailPage(): JSX.Element {
     return (
       <div className="container mx-auto py-10">
         <div className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-4 rounded-lg">
-          <p>{error || 'Информация о докторе не найдена'}</p>
+          <p>{error || "Информация о докторе не найдена"}</p>
         </div>
       </div>
     );
@@ -130,32 +146,34 @@ export default function DoctorDetailPage(): JSX.Element {
     languages: doctor.languages,
     experience: doctor.experience_years,
     appointmentCost: doctor.price_from,
-    
+
     // Преобразуем образование
-    basicEducation: doctor.education.length > 0 
-      ? doctor.education[0].details.map(item => ({
-          institution: item.title,
-          course: item.subtitle
-        }))
-      : [],
-      
-    additionalEducation: doctor.education.length > 1 
-      ? doctor.education[1].details.map(item => ({
-          institution: item.title,
-          course: item.subtitle
-        }))
-      : [],
-      
+    basicEducation:
+      doctor.education.length > 0
+        ? doctor.education[0].details.map((item) => ({
+            institution: item.title,
+            course: item.subtitle,
+          }))
+        : [],
+
+    additionalEducation:
+      doctor.education.length > 1
+        ? doctor.education[1].details.map((item) => ({
+            institution: item.title,
+            course: item.subtitle,
+          }))
+        : [],
+
     // Преобразуем сертификаты
-    certificates: doctor.certificates.map(cert => ({
+    certificates: doctor.certificates.map((cert) => ({
       id: cert.name,
       imageUrl: cert.image,
       title: cert.name,
-      expiryDate: cert.subname
+      expiryDate: cert.subname,
     })),
 
     // Добавляем обработчик для кнопки записи на прием
-    onAppointmentClick: handleAppointmentClick
+    onAppointmentClick: handleAppointmentClick,
   };
 
   return <DoctorDetail doctor={doctorData} />;
