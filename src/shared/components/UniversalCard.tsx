@@ -222,7 +222,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   };
 
   const cardClasses = `
-    universal-card relative ${getBorderRadiusClass()} ${getPaddingClass()} transition-all duration-300 
+    universal-card relative ${getBorderRadiusClass()} ${getPaddingClass()} transition-all duration-300 overflow-hidden 
     ${isMobile ? `${heightMobile}]` : `${minHeight}`} h-full
     ${getBackgroundClass()}
     ${getBorderClass()}
@@ -270,7 +270,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     if (variant === "analysis") {
       return `${positionClass} mt-4 sm:mt-6 md:mt-[50px] mb-4 sm:mb-6 md:mb-[50px]`;
     } else if (variant === "service") {
-      return `${positionClass} mt-2 sm:mt-3 md:mt-4 mb-4 sm:mb-6 md:mb-[50px]`;
+      return `${positionClass} mt-2 sm:mt-3 md:mt-4 mb-4 sm:mb-6 md:mb-[50px] w-[90px] max-w-[90px] h-auto`;
     } else {
       return `${positionClass} my-3 sm:my-4 md:my-6`;
     }
@@ -504,7 +504,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       const modifiedSvg = modifySvgFill(icon);
       return (
         <div className={iconClasses} style={{ color: finalIconColor }}>
-          <div dangerouslySetInnerHTML={{ __html: modifiedSvg }} />
+          <div className={'max-w-full'} dangerouslySetInnerHTML={{ __html: modifiedSvg }} />
         </div>
       );
     } else {
@@ -847,7 +847,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         )}
       </div>
 
-      <div>
+      <div className={'flex items-center flex-col'}>
         {variant === "analysis" ? (
             // Для анализов: заголовок → иконка → подзаголовок → описание
             <div className="flex flex-col justify-between h-full">

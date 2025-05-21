@@ -58,3 +58,7 @@ body {
 .svgCustomColorStroke {
   stroke: var(--svg-stroke-color) !important;
 }
+
+svg {
+  max-width: 100%;
+}
