@@ -1,4 +1,3 @@
-// src/app/analysis/[id]/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -8,9 +7,14 @@ import { ContactInfo } from '@/src/shared/components/ContactInfo';
 import { translations } from '@/src/shared/mocks/analysisData';
 import AnalysisRecommendations from '@/src/shared/components/AnalysisRecommendations';
 import { AnimatedButton } from '@/src/shared/ui/Button/AnimatedButton';
+
 import axios from 'axios';
 import { API_BASE_URL } from '@/src/config/constants';
-import {useLanguageStore} from "@/src/store/language";
+
+
+
+import httpClient from '@/src/shared/services/HttpClient';
+import { useLanguageStore } from '@/src/store/language';
 
 interface AnalysisItem {
   uuid: string;
@@ -39,6 +43,7 @@ export default function Page({ params }: PageProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [showAllPrices, setShowAllPrices] = useState(false);
 
+
   const { currentLocale } = useLanguageStore();
   
   // Загрузка данных анализа
@@ -64,6 +69,7 @@ export default function Page({ params }: PageProps) {
     
     fetchAnalysis();
   }, [id]);
+
   
   // Определение мобильной версии
   useEffect(() => {
