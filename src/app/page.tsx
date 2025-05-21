@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <main>
       <HeroBanner />
-      <SymptomSelector />
+      {/*<SymptomSelector />*/}
       <MedicalServices />
       <CheckupSlider />
       <AnalysisGrid />

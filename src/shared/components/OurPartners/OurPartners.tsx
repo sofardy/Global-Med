@@ -99,39 +99,36 @@ const OurPartners = () => {
       </h2>
 
       {/* Бегущая строка */}
-      <div className="relative">
-        {/* Градиентные маски по краям */}
-        <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-white dark:from-dark-bg to-transparent z-10"></div>
-        <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-white dark:from-dark-bg to-transparent z-10"></div>
-
+      <div className="relative flex items-center justify-center">
         {/* Контейнер для анимации */}
-        <div className="flex animate-scroll">
-          {duplicatedImages.map((image, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 mx-3"
-              style={{
-                width: "375px",
-              }}
-            >
-              <div
-                className="bg-white dark:bg-dark-block flex items-center justify-center p-6 duration-300"
-                style={{
-                  width: "375px",
-                  height: "420px",
-                  borderRadius: "16px",
-                }}
-              >
-                <img
-                  src={image}
-                  alt={`Partner ${(index % partnerImages.length) + 1}`}
-                  className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                  loading="lazy"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        {/*<div className="flex animate-scroll">*/}
+        {/*  {duplicatedImages.map((image, index) => (*/}
+        {/*    <div*/}
+        {/*      key={index}*/}
+        {/*      className="flex-shrink-0 mx-3"*/}
+        {/*      style={{*/}
+        {/*        width: "375px",*/}
+        {/*      }}*/}
+        {/*    >*/}
+        {/*      <div*/}
+        {/*        className="bg-white dark:bg-dark-block flex items-center justify-center p-6 duration-300"*/}
+        {/*        style={{*/}
+        {/*          width: "375px",*/}
+        {/*          height: "420px",*/}
+        {/*          borderRadius: "16px",*/}
+        {/*        }}*/}
+        {/*      >*/}
+        {/*        <img*/}
+        {/*          src={image}*/}
+        {/*          alt={`Partner ${(index % partnerImages.length) + 1}`}*/}
+        {/*          className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"*/}
+        {/*          loading="lazy"*/}
+        {/*        />*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*  ))}*/}
+        {/*</div>*/}
+        <img src="/images/logo-new.jpg" alt=""/>
       </div>
 
       {/* CSS для анимации */}

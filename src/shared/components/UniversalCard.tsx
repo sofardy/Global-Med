@@ -236,9 +236,9 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
 
   // Уменьшение размера текста для мобильных устройств
   const titleSizeClass = isMobile
-    ? "text-xl sm:text-2xl md:text-[24px] leading-tight sm:leading-normal md:leading-[1.2]"
+    ? "text-xl sm:text-2xl md:text-[20px] leading-tight sm:leading-normal md:leading-[1.2]"
     : titleSize ||
-      "text-xl sm:text-2xl md:text-[24px] leading-tight sm:leading-normal md:leading-[1.2]";
+      "text-xl sm:text-2xl md:text-[20px] leading-tight sm:leading-normal md:leading-[1.2]";
 
   const descriptionSizeClass = isMobile
     ? "text-sm sm:text-base md:text-[18px]  leading-tight sm:leading-normal md:leading-[1.4]"
@@ -822,14 +822,12 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
             <IconBlock />
             <SubtitleBlock />
             <DescriptionBlock />
-            <AdditionalInfoBlock />
           </div>
         ) : variant === "service" ? (
           // Для услуг: заголовок → описание → доп.инфо (количество услуг) → иконка
           <>
             <DescriptionBlock />
             <AdditionalInfoBlock />
-            <IconBlock />
             {/* Кнопка будет добавлена внизу карточки */}
           </>
         ) : descriptionBeforeIcon ? (
@@ -838,7 +836,6 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
             <DescriptionBlock />
             <AdditionalInfoBlock />
             <SubtitleBlock />
-            <IconBlock />
           </>
         ) : (
           // Стандартный режим с иконкой перед описанием
@@ -846,26 +843,50 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
             <AdditionalInfoBlock />
             <IconBlock />
             <SubtitleBlock />
-            <DescriptionBlock />
           </>
         )}
       </div>
 
-      {/* Кнопка внизу карточки */}
-      {(variant === "service" || (showButton && buttonText)) && (
-        <button
-          className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
+      <div>
+        {variant === "analysis" ? (
+            // Для анализов: заголовок → иконка → подзаголовок → описание
+            <div className="flex flex-col justify-between h-full">
+              <AdditionalInfoBlock />
+            </div>
+        ) : variant === "service" ? (
+            // Для услуг: заголовок → описание → доп.инфо (количество услуг) → иконка
+            <>
+              <IconBlock />
+              {/* Кнопка будет добавлена внизу карточки */}
+            </>
+        ) : descriptionBeforeIcon ? (
+            // Стандартный режим с описанием перед иконкой
+            <>
+              <IconBlock />
+            </>
+        ) : (
+            // Стандартный режим с иконкой перед описанием
+            <>
+              <DescriptionBlock />
+            </>
+        )}
+
+        {/* Кнопка внизу карточки */}
+        {(variant === "service" || (showButton && buttonText)) && (
+            <button
+                className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
             w-full h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
             ${
-              isHovered
-                ? "bg-white text-light-accent"
-                : "bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text"
-            }`}
-          style={styles.button}
-        >
-          {buttonText}
-        </button>
-      )}
+                    isHovered
+                        ? "bg-white text-light-accent"
+                        : "bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text"
+                }`}
+                style={styles.button}
+            >
+              {buttonText}
+            </button>
+        )}
+      </div>
 
       {/* CSS для маркеров списка */}
       <style jsx global>{`

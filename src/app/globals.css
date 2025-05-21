@@ -19,6 +19,7 @@
   --block-color: var(--light-block);
   --accent-color: var(--light-accent);
   --text-color: var(--light-text);
+  --svg-stroke-color: #26616a;
 }
 
 .dark {
@@ -26,6 +27,7 @@
   --block-color: var(--dark-block);
   --accent-color: var(--dark-accent);
   --text-color: var(--dark-text);
+  --svg-stroke-color: #ffffff;
 }
 
 body {
@@ -51,4 +53,8 @@ body {
   &:hover {
     fill: none !important;
   }
+}
+
+.svgCustomColorStroke {
+  stroke: var(--svg-stroke-color) !important;
 }
