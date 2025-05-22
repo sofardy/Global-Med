@@ -109,13 +109,10 @@ export const ReviewsSlider: React.FC<ReviewsSliderProps> = ({
           {sliderDescription}
         </p>
       }
-      slidesPerView={4}
-      slidesPerView1536={4}
-      slidesPerView1280={3}
-      slidesPerView1024={2}
+      slidesPerView={1}
+      slidesPerMobileView={1}
       slidesPerView768={2}
-      slidesPerMobileView={1.2}
-      mobileBreakpoint={991}
+      slidesPerView1024={4}
       spaceBetween={20}
       showNavigation={true}
       navigationPrevLabel={t("prevSlide")}
