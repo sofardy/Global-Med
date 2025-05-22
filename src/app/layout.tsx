@@ -30,16 +30,16 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text`}
       >
-        <ThemeProvider>
-          <LanguageProvider>
-            <GlobalizeBreadcrumb>
+        <GlobalizeBreadcrumb>
+          <ThemeProvider>
+            <LanguageProvider>
               <PageTransition />
               <ClientLayout routes={routes}>{children}</ClientLayout>
               <FloatingComponents />
               <AmoCrmScript />
-            </GlobalizeBreadcrumb>
-          </LanguageProvider>
-        </ThemeProvider>
+            </LanguageProvider>
+          </ThemeProvider>
+        </GlobalizeBreadcrumb>
       </body>
     </html>
   );

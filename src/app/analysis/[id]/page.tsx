@@ -71,7 +71,7 @@ export default function Page({ params }: PageProps) {
     };
 
     fetchAnalysis();
-  }, [id]);
+  }, [id, currentLocale]);
 
   // Определение мобильной версии
   useEffect(() => {
