@@ -36,10 +36,8 @@ interface ServiceData {
   mini_description: string;
   card_description: string;
   symptoms_list: (string | Symptom)[];
-  symptoms_list: (string | Symptom)[];
   services_list: ServicePrice[];
   icon: string | null;
-  symptoms_title: string;
   symptoms_title: string;
 }
 
@@ -110,7 +108,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
           `https://globalmed.kelyanmedia.com/api/services/${id}`,
           {
             headers: {
-              "X-Language": currentLocale === "uz" ? "uz" : "ru", // kerakli tilni yuboramiz
+              "X-Language": currentLocale === "uz" ? "uz" : "ru",
             },
           }
         );

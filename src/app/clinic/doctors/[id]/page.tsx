@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import DoctorDetail from "@/src/shared/components/Doctor/DoctorDetail";
 import { useAuth } from "@/src/hooks/useAuth";
 import { GBContext } from "@/src/context/globalize-breadcrumb";
+import { useLanguageStore } from "@/src/store/language";
 
 interface EducationDetail {
   title: string;
@@ -51,7 +52,7 @@ export default function DoctorDetailPage(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { setTitle }: any = useContext(GBContext);
-
+  const { currentLocale } = useLanguageStore();
   const handleAppointmentClick = (): void => {
     console.log("Проверка авторизации:", isAuthenticated());
 
@@ -63,6 +64,7 @@ export default function DoctorDetailPage(): JSX.Element {
       );
     }
   };
+
   useEffect(() => {
     const fetchDoctorDetail = async (): Promise<void> => {
       try {
@@ -76,14 +78,10 @@ export default function DoctorDetailPage(): JSX.Element {
           throw new Error("Некорректный идентификатор доктора");
         }
 
-        // Определяем язык из URL
-        const pathname = window.location.pathname;
-        const locale = pathname.startsWith("/ru") ? "ru" : "uz";
-
         const apiUrl = "https://globalmed.kelyanmedia.com/api";
         const response = await fetch(`${apiUrl}/doctors/${doctorId}`, {
           headers: {
-            "X-Language": locale === "uz" ? "uz" : "ru", // kerakli tilni yuboramiz
+            "X-Language": currentLocale === "uz" ? "uz" : "ru",
           },
         });
 
@@ -110,7 +108,7 @@ export default function DoctorDetailPage(): JSX.Element {
       setError("Идентификатор доктора не указан");
       setLoading(false);
     }
-  }, [id]);
+  }, [id, currentLocale]);
 
   if (loading) {
     return (
