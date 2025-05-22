@@ -229,6 +229,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     ${link || onClick ? "cursor-pointer hover:shadow-md" : ""}
     ${getAnimationClass()}
     ${className}
+    group
   `;
 
   const getTextColor = () => {
