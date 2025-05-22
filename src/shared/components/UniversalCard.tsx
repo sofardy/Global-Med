@@ -508,7 +508,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           style={{ color: isHovered ? "white" : finalIconColor }}
         >
           <div
-            className={"w-[190px] h-[190px]"}
+            className={"w-[190px] h-[190px] flex items-center"}
             dangerouslySetInnerHTML={{ __html: modifiedSvg }}
           />
         </div>
