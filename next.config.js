@@ -4,7 +4,8 @@ const nextConfig = {
   swcMinify: true,
   images: {
     domains: ['i.imgur.com', 'imgur.com', 'globalmed.kelyanmedia.com'],
-    formats: ['image/avif', 'image/webp']
+    formats: ['image/avif', 'image/webp'],
+    unoptimized: true
   },
   env: {
     API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
