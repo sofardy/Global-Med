@@ -127,14 +127,20 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   // Определение мобильного устройства
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      if (typeof window !== "undefined") {
+        setIsMobile(window.innerWidth < 768);
+      }
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", checkMobile);
+    }
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", checkMobile);
+      }
     };
   }, []);
 
@@ -281,6 +287,13 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     } else {
       return `${positionClass} my-3 sm:my-4 md:my-6`;
     }
+  };
+
+  // Get icon size based on screen width
+  const getIconSize = () => {
+    if (typeof window === "undefined") return 190; // Default size for SSR
+    if (isMobile) return 50;
+    return window.innerWidth < 1024 ? 110 : 190;
   };
 
   // Функция для отображения исследований и времени в колонку
@@ -539,7 +552,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
             />
           ) : React.isValidElement(icon) ? (
             React.cloneElement(icon as React.ReactElement, {
-              size: isMobile ? 50 : window.innerWidth < 1024 ? 110 : 190,
+              size: getIconSize(),
               className: `${
                 (icon as React.ReactElement).props.className || ""
               } transition-transform duration-300 ${
