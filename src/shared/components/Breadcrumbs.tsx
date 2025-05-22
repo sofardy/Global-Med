@@ -1,10 +1,11 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Route } from "@/src/shared/config/routes";
+import { GBContext } from "@/src/context/globalize-breadcrumb";
 
 interface BreadcrumbsProps {
   className?: string;
@@ -65,7 +66,7 @@ function BreadcrumbsContent({
   routes,
 }: BreadcrumbsProps) {
   const pathname = usePathname();
-
+  const { title }: any = useContext(GBContext);
   if (!pathname || !(locale in translations)) return null;
 
   const supportedLocales = ["uz", "ru"];
@@ -102,8 +103,16 @@ function BreadcrumbsContent({
       const key = route?.translationKey;
       const labelMap = translations[locale]?.labels ?? {};
 
+      // Check if this is the last segment of a checkup details page
+      const isLastSegmentOfCheckup =
+        index === array.length - 1 &&
+        pathWithoutLocale.includes("/checkups/") &&
+        pathWithoutLocale !== "/checkups";
+
       const name =
-        key && key in labelMap
+        isLastSegmentOfCheckup && title
+          ? title
+          : key && key in labelMap
           ? labelMap[key]
           : decodeURIComponent(segment)
               .replace(/-/g, " ")
@@ -132,9 +141,22 @@ function BreadcrumbsContent({
             <React.Fragment key={segment.path}>
               <li className="flex items-center">
                 {isLast ? (
-                  <span className="text-gray-900 dark:text-white">
-                    {segment.name}
-                  </span>
+                  (pathname.includes("/checkups/") &&
+                    pathname !== "/checkups") ||
+                  (pathname.includes("/analysis/") &&
+                    pathname !== "/analysis") ||
+                  (pathname.includes("/services/") &&
+                    pathname !== "/services") ||
+                  (pathname.includes("/doctors/") &&
+                    pathname !== "/doctors") ? (
+                    <span className="text-gray-900 dark:text-white">
+                      {title?.name || title || segment.name}
+                    </span>
+                  ) : (
+                    <span className="text-gray-900 dark:text-white">
+                      {segment.name}
+                    </span>
+                  )
                 ) : (
                   <Link
                     href={segment.path.replace(`/${locale}`, "") || "/"}

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import UniversalHeroSection from '@/src/shared/components/UniversalHeroSection';
-import { UniversalCard } from '@/src/shared/components/UniversalCard';
-import { useThemeStore } from '@/src/store/theme';
-import { useLanguageStore } from '@/src/store/language';
-import { ContactInfo } from '@/src/shared/components/ContactInfo';
-import { AppointmentSection } from '@/src/shared/components/AppointmentSection';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import UniversalHeroSection from "@/src/shared/components/UniversalHeroSection";
+import { UniversalCard } from "@/src/shared/components/UniversalCard";
+import { useThemeStore } from "@/src/store/theme";
+import { useLanguageStore } from "@/src/store/language";
+import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
+import axios from "axios";
 import {
   LightbulbIcon,
   EyeIcon,
@@ -19,22 +19,21 @@ import {
   DocumentPenIcon,
   MedicalMicroscopeIcon,
   ThyroidIcon,
-} from '@/src/shared/ui/Icon';
-import BonesIcon from '@/src/shared/ui/Icon/BonesIcon';
-import NoseIcon from '@/src/shared/ui/Icon/NoseIcon';
-
+} from "@/src/shared/ui/Icon";
+import BonesIcon from "@/src/shared/ui/Icon/BonesIcon";
+import NoseIcon from "@/src/shared/ui/Icon/NoseIcon";
 
 const serviceIconMap: { [key: string]: React.ReactNode } = {
-  'lor-247': <LightbulbIcon size={80} />,
-  'oftalmologiia': <EyeIcon size={80} />,
-  'pediatriia': <ButterflyIcon size={80} />,
-  'ginekologiia': <AngelIcon size={80} />,
-  'nevrologiia': <BlobShape size={80} />,
-  'onkologiia': <ButterflyWingsIcon size={80} />,
-  'xirurgiia': <DocumentPenIcon size={80} />,
-  'uzi': <MedicalMicroscopeIcon size={80} />,
-  'endokrinologiia': <ThyroidIcon size={80} />,
-  'travmatologiia': <AngelIcon size={80} />
+  "lor-247": <LightbulbIcon size={80} />,
+  oftalmologiia: <EyeIcon size={80} />,
+  pediatriia: <ButterflyIcon size={80} />,
+  ginekologiia: <AngelIcon size={80} />,
+  nevrologiia: <BlobShape size={80} />,
+  onkologiia: <ButterflyWingsIcon size={80} />,
+  xirurgiia: <DocumentPenIcon size={80} />,
+  uzi: <MedicalMicroscopeIcon size={80} />,
+  endokrinologiia: <ThyroidIcon size={80} />,
+  travmatologiia: <AngelIcon size={80} />,
 };
 
 interface Service {
@@ -58,9 +57,6 @@ interface ServicesResponse {
   };
 }
 
-
-
-
 export default function ServicesPage() {
   const { theme } = useThemeStore();
   const { currentLocale } = useLanguageStore();
@@ -70,9 +66,10 @@ export default function ServicesPage() {
 
   const heroData = {
     imageUrl: "/images/medical-services.png",
-    imageAlt: currentLocale === 'uz'
-      ? "Klinikamizdagi tibbiy xizmatlar"
-      : "Медицинские услуги в нашей клинике",
+    imageAlt:
+      currentLocale === "uz"
+        ? "Klinikamizdagi tibbiy xizmatlar"
+        : "Медицинские услуги в нашей клинике",
     // mainCard: {
     //   title: currentLocale === 'uz'
     //     ? "Tibbiy xizmatlar"
@@ -102,18 +99,20 @@ export default function ServicesPage() {
       try {
         setLoading(true);
         const response = await axios.get<ServicesResponse>(
-          'https://globalmed.kelyanmedia.com/api/services',
+          "https://globalmed.kelyanmedia.com/api/services",
           {
             headers: {
-              'X-Language': currentLocale || 'ru'
-            }
+              "X-Language": currentLocale || "ru",
+            },
           }
         );
         setServices(response.data.data);
         setError(null);
       } catch (err) {
-        console.error('Ошибка при загрузке списка услуг:', err);
-        setError(err instanceof Error ? err : new Error('Ошибка при загрузке данных'));
+        console.error("Ошибка при загрузке списка услуг:", err);
+        setError(
+          err instanceof Error ? err : new Error("Ошибка при загрузке данных")
+        );
       } finally {
         setLoading(false);
       }
@@ -125,11 +124,14 @@ export default function ServicesPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://globalmed.kelyanmedia.com/api/pages/services', {
-          headers: {
-            'X-Language': currentLocale
-          },
-        });
+        const response = await fetch(
+          "https://globalmed.kelyanmedia.com/api/pages/services",
+          {
+            headers: {
+              "X-Language": currentLocale,
+            },
+          }
+        );
         const result = await response.json();
         setDataPagesService(result);
       } catch (err) {
@@ -151,11 +153,15 @@ export default function ServicesPage() {
       <div className="w-full mt-16">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <p className="text-xl text-light-text dark:text-dark-text">Загрузка услуг...</p>
+            <p className="text-xl text-light-text dark:text-dark-text">
+              Загрузка услуг...
+            </p>
           </div>
         ) : error ? (
           <div className="flex justify-center items-center h-64">
-            <p className="text-xl text-red-500">Ошибка при загрузке данных. Пожалуйста, попробуйте позже.</p>
+            <p className="text-xl text-red-500">
+              Ошибка при загрузке данных. Пожалуйста, попробуйте позже.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -164,11 +170,17 @@ export default function ServicesPage() {
                 <UniversalCard
                   variant="service"
                   title={service.name}
-                  description={service.card_description || service.mini_description}
-                  additionalInfo={`${service.services_list.length} ${currentLocale === 'uz' ? 'xizmat' : 'услуг'}`}
+                  description={
+                    service.card_description || service.mini_description
+                  }
+                  additionalInfo={`${
+                    currentLocale === "uz" ? "Xizmatlar: " : "Услуги: "
+                  }${service.services_list.length}`}
                   icon={service.icon}
                   link={`/services/${service.slug}`}
-                  buttonText={` ${currentLocale === 'uz' ? 'Batafsil' : 'Подробнее'}`}
+                  buttonText={` ${
+                    currentLocale === "uz" ? "Batafsil" : "Подробнее"
+                  }`}
                   className="h-full"
                   iconPosition="center"
                 />

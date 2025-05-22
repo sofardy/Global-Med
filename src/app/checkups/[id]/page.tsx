@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, ReactNode, useContext } from "react";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { checkupDetailTranslations } from "@/src/shared/mocks/checkupHeroData";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
@@ -12,6 +12,7 @@ import {
 } from "@/src/shared/ui/Button/AnimatedButton";
 import axios from "axios";
 import { useLanguageStore } from "@/src/store/language";
+import { GBContext } from "@/src/context/globalize-breadcrumb";
 
 interface MedicalTest {
   value: ReactNode;
@@ -57,7 +58,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
   const [isMobile, setIsMobile] = useState(false);
 
   const { currentLocale } = useLanguageStore();
-
+  const { title, setTitle }: any = useContext(GBContext);
   // Загрузка данных из API
   useEffect(() => {
     const fetchCheckupDetail = async () => {
@@ -79,6 +80,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         // API возвращает объект с полем data, содержащим данные о чек-апе
         if (response.data && response.data.data) {
           setCheckup(response.data.data);
+          setTitle(response.data.data.title);
           setError(null);
         } else {
           throw new Error("Неверный формат данных в ответе API");
