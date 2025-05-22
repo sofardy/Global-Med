@@ -177,7 +177,7 @@ const DoctorSearchSection: React.FC = () => {
 
   const specialtyButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { setFilters, fetchDoctors, doctors } = useDoctorsStore();
+  const { setFilters, fetchDoctors } = useDoctorsStore();
 
   // Загрузка специализаций
   useEffect(() => {
@@ -237,8 +237,6 @@ const DoctorSearchSection: React.FC = () => {
 
     // Выполняем поиск
     fetchDoctors().then(() => {
-      console.log("Doctors after specialty filter:", doctors);
-
       // Прокручиваем к результатам
       const resultsSection = document.getElementById("doctors-results");
       if (resultsSection) {
@@ -268,7 +266,6 @@ const DoctorSearchSection: React.FC = () => {
       setFilters(filters);
 
       await fetchDoctors();
-      console.log("Doctors after search:", doctors);
 
       const resultsSection = document.getElementById("doctors-results");
       if (resultsSection) {

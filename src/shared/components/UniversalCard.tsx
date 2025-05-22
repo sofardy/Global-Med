@@ -127,14 +127,20 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   // Определение мобильного устройства
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      if (typeof window !== "undefined") {
+        setIsMobile(window.innerWidth < 768);
+      }
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", checkMobile);
+    }
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", checkMobile);
+      }
     };
   }, []);
 
@@ -173,7 +179,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
 
   const getBackgroundClass = () => {
     if (isHovered) return hoverColor || "bg-light-accent";
-    if (theme === "light") return bgColorLight || "bg-light-block";
+    if (theme === "light") return bgColorLight || "bg-white";
     return bgColorDark || "bg-dark-block";
   };
 
@@ -229,21 +235,28 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     ${link || onClick ? "cursor-pointer hover:shadow-md" : ""}
     ${getAnimationClass()}
     ${className}
+    group
   `;
 
-  const titleColor = isHovered ? "text-white" : "";
-  const descriptionColor = isHovered ? "text-white" : "";
+  const getTextColor = () => {
+    if (isHovered) return "text-white";
+    if (theme === "light") return "text-[#173F46]";
+    return "text-white";
+  };
+
+  const titleColor = getTextColor();
+  const descriptionColor = getTextColor();
 
   // Уменьшение размера текста для мобильных устройств
   const titleSizeClass = isMobile
-    ? "text-xl sm:text-2xl md:text-[20px] leading-tight sm:leading-normal md:leading-[1.2]"
+    ? "text-lg sm:text-xl md:text-2xl leading-tight"
     : titleSize ||
-      "text-xl sm:text-2xl md:text-[20px] leading-tight sm:leading-normal md:leading-[1.2]";
+      "text-xl sm:text-2xl md:text-3xl leading-tight sm:leading-normal";
 
   const descriptionSizeClass = isMobile
-    ? "text-sm sm:text-base md:text-[18px]  leading-tight sm:leading-normal md:leading-[1.4]"
+    ? "text-sm sm:text-base md:text-lg leading-tight"
     : descriptionSize ||
-      "text-base sm:text-lg md:text-[16px] leading-tight sm:leading-normal md:leading-[1.4]";
+      "text-base sm:text-lg md:text-xl leading-tight sm:leading-normal";
 
   // Класс для стиля списка
   const getListStyleClass = () => {
@@ -274,6 +287,13 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     } else {
       return `${positionClass} my-3 sm:my-4 md:my-6`;
     }
+  };
+
+  // Get icon size based on screen width
+  const getIconSize = () => {
+    if (typeof window === "undefined") return 190; // Default size for SSR
+    if (isMobile) return 50;
+    return window.innerWidth < 1024 ? 110 : 190;
   };
 
   // Функция для отображения исследований и времени в колонку
@@ -499,56 +519,46 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     const iconClasses =
       variant === "family" ? "universal-card-icon" : getIconPositionClass();
 
+    // Get icon color based on theme and hover state
+    const getIconColor = () => {
+      if (theme === "dark") return "white";
+      return isHovered ? "white" : "#173F46";
+    };
+
     if (typeof icon === "string") {
       // Иконка - это строка SVG
       const modifiedSvg = modifySvgFill(icon);
       return (
-        <div
-          className={iconClasses}
-          style={{ color: isHovered ? "white" : finalIconColor }}
-        >
+        <div className={iconClasses} style={{ color: getIconColor() }}>
           <div
-            className={"w-[190px] h-[190px] flex items-center"}
+            className={
+              "w-[50px] h-[50px] sm:w-[110px] sm:h-[110px] md:w-[190px] md:h-[190px] flex items-center"
+            }
             dangerouslySetInnerHTML={{ __html: modifiedSvg }}
           />
         </div>
       );
     } else {
       // Иконка - это React-компонент
-      const getScaledIcon = () => {
-        if (!React.isValidElement(icon)) return icon;
-
-        const currentSize = (icon as React.ReactElement<any>).props.size || 190;
-        const newSize = isMobile ? Math.floor(currentSize * 0.7) : currentSize;
-
-        return React.cloneElement(icon as React.ReactElement<any>, {
-          size: newSize,
-          className: `${
-            (icon as React.ReactElement<any>).props.className || ""
-          } ${isHovered ? "text-white" : ""}`,
-          color: isHovered ? "white" : undefined,
-        });
-      };
-
       return (
         <div className={iconClasses} style={styles.icon}>
           {typeof icon === "string" ? (
             <div
               dangerouslySetInnerHTML={{ __html: modifySvgFill(icon) }}
-              className={`w-[190px] h-[190px] transition-transform duration-300 ${
+              className={`w-[50px] h-[50px] sm:w-[110px] sm:h-[110px] md:w-[190px] md:h-[190px] transition-transform duration-300 ${
                 isHovered ? "scale-110" : ""
               }`}
-              style={{ color: isHovered ? "white" : finalIconColor }}
+              style={{ color: getIconColor() }}
             />
           ) : React.isValidElement(icon) ? (
             React.cloneElement(icon as React.ReactElement, {
-              size: isMobile ? 133 : 190, // 190 * 0.7 for mobile
+              size: getIconSize(),
               className: `${
                 (icon as React.ReactElement).props.className || ""
               } transition-transform duration-300 ${
                 isHovered ? "scale-110" : ""
               }`,
-              color: isHovered ? "white" : undefined,
+              color: getIconColor(),
             })
           ) : (
             icon

@@ -156,9 +156,9 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
         </p>
       </div>
 
-      <div className="mt-auto">
+      <div className="">
         {service && (
-          <div className="mb-16">
+          <div className="mb-10">
             <div className="text-[#173F46] dark:text-gray-400 font-medium text-lg">
               {t("service")}
             </div>
