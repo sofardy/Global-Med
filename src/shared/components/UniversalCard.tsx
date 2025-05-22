@@ -403,7 +403,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     if (!features || features.length === 0) return null;
 
     return (
-      <ul className="space-y-2 mb-6">
+      <ul className="space-y-2 mb-1 lg:mb-6">
         {features.map((feature, index) => {
           // Check if feature is an object with icon
           const isFeatureObject =
@@ -481,7 +481,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                   isHovered
                     ? "text-white"
                     : "text-light-text dark:text-dark-text"
-                } text-[18px]`}
+                } sm:text-[6px] md:text-[10px] lg:text-[15px]`}
               >
                 {featureText}
               </span>
@@ -503,8 +503,14 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       // Иконка - это строка SVG
       const modifiedSvg = modifySvgFill(icon);
       return (
-        <div className={iconClasses} style={{ color: finalIconColor }}>
-          <div className={'max-w-full'} dangerouslySetInnerHTML={{ __html: modifiedSvg }} />
+        <div
+          className={iconClasses}
+          style={{ color: isHovered ? "white" : finalIconColor }}
+        >
+          <div
+            className={"w-[190px] h-[190px]"}
+            dangerouslySetInnerHTML={{ __html: modifiedSvg }}
+          />
         </div>
       );
     } else {
@@ -512,22 +518,41 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       const getScaledIcon = () => {
         if (!React.isValidElement(icon)) return icon;
 
-        const currentSize = (icon as React.ReactElement<any>).props.size || 80;
+        const currentSize = (icon as React.ReactElement<any>).props.size || 190;
         const newSize = isMobile ? Math.floor(currentSize * 0.7) : currentSize;
-        const iconColor = theme === "dark" || isHovered ? "white" : undefined;
 
         return React.cloneElement(icon as React.ReactElement<any>, {
           size: newSize,
           className: `${
             (icon as React.ReactElement<any>).props.className || ""
-          } ${theme === "dark" || isHovered ? "text-white" : ""}`,
-          color: iconColor,
+          } ${isHovered ? "text-white" : ""}`,
+          color: isHovered ? "white" : undefined,
         });
       };
 
       return (
         <div className={iconClasses} style={styles.icon}>
-          {getScaledIcon()}
+          {typeof icon === "string" ? (
+            <div
+              dangerouslySetInnerHTML={{ __html: modifySvgFill(icon) }}
+              className={`w-[190px] h-[190px] transition-transform duration-300 ${
+                isHovered ? "scale-110" : ""
+              }`}
+              style={{ color: isHovered ? "white" : finalIconColor }}
+            />
+          ) : React.isValidElement(icon) ? (
+            React.cloneElement(icon as React.ReactElement, {
+              size: isMobile ? 133 : 190, // 190 * 0.7 for mobile
+              className: `${
+                (icon as React.ReactElement).props.className || ""
+              } transition-transform duration-300 ${
+                isHovered ? "scale-110" : ""
+              }`,
+              color: isHovered ? "white" : undefined,
+            })
+          ) : (
+            icon
+          )}
         </div>
       );
     }
@@ -651,7 +676,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                 className={`w-[60px] h-[60px] md:w-[90px] md:h-[90px] transition-transform duration-300 ${
                   isHovered ? "scale-110" : ""
                 }`}
-                style={{ color: finalIconColor }}
+                style={{ color: isHovered ? "white" : finalIconColor }}
               />
             ) : React.isValidElement(icon) ? (
               React.cloneElement(icon as React.ReactElement, {
@@ -661,6 +686,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                 } transition-transform duration-300 ${
                   isHovered ? "scale-110" : ""
                 }`,
+                color: isHovered ? "white" : undefined,
               })
             ) : (
               icon
@@ -704,7 +730,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       >
         {/* Dot in top right corner */}
         <div
-          className={`absolute top-3 sm:top-4 right-3 sm:right-4 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 rounded-full transition-colors duration-300 ${
+          className={`absolute top-2 right-2 w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-colors duration-300 ${
             isHovered
               ? "bg-white"
               : theme === "light"
@@ -713,10 +739,10 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           }`}
         ></div>
 
-        <div className="flex flex-col h-[420px] relative">
+        <div className="flex flex-col h-[280px] sm:h-[300px] md:h-[320px] relative">
           {/* Heading */}
           <h3
-            className={`${titleSizeClass} mb-8 font-medium max-w-[80%] leading-[1] ${
+            className={`text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4 font-medium max-w-[85%] leading-[1.2] ${
               isHovered ? "text-white" : "text-light-text dark:text-dark-text"
             }`}
           >
@@ -726,33 +752,45 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           {/* Description */}
           {description && (
             <p
-              className={`text-sm md:text-[18px] max-w-[90%] mb-[40px] ${
+              className={`text-xs sm:text-sm md:text-base max-w-[90%] mb-3 sm:mb-4 ${
                 isHovered ? "text-white" : "text-light-text dark:text-dark-text"
-              } opacity-80 mb-4`}
+              } opacity-80`}
             >
               {typeof description === "string" ? description : ""}
             </p>
           )}
 
           {/* Features list */}
-          {renderFeatures(features, isHovered, theme)}
+          <div className="mb-4 sm:mb-5">
+            {renderFeatures(features, isHovered, theme)}
+          </div>
 
           {/* Icon - hidden on mobile */}
           <div
-            className="md:block absolute w-full h-[10px] bottom-[150px] right-0"
-            style={{ color: finalIconColor }}
+            className="md:block absolute w-full h-[10px] bottom-[100px] sm:bottom-[110px] md:bottom-[120px] right-0"
+            style={{ color: isHovered ? "white" : finalIconColor }}
           >
             {typeof icon === "string" ? (
               <div
-                style={{ color: finalIconColor }}
+                style={{ color: isHovered ? "white" : finalIconColor }}
                 dangerouslySetInnerHTML={{ __html: modifySvgFill(icon) }}
-                className={`absolute w-[190px] h-[190px] flex items-center justify-center right-0 top-[-30px] sm:scale-[0.6] md:scale-[0.8] lg:scale-[1] ${
+                className={`absolute w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px] flex items-center justify-center right-0 top-[-15px] sm:top-[-20px] md:top-[-25px] sm:scale-[0.6] md:scale-[0.8] lg:scale-[0.9] ${
                   isHovered ? "scale-110" : ""
                 }`}
               />
             ) : (
-              <div className="absolute top-[-40px] right-0 dark:text-white">
-                {icon}
+              <div className="absolute top-[-20px] right-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px]">
+                {React.isValidElement(icon)
+                  ? React.cloneElement(icon as React.ReactElement, {
+                      size: isMobile ? 100 : 140,
+                      className: `${
+                        (icon as React.ReactElement).props.className || ""
+                      } transition-transform duration-300 ${
+                        isHovered ? "scale-110" : ""
+                      }`,
+                      color: isHovered ? "white" : undefined,
+                    })
+                  : icon}
               </div>
             )}
           </div>
@@ -761,9 +799,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           {showButton && (
             <Link href={link || "#"} className="block mt-auto z-[9999]">
               <button
-                className={`w-[60%] h-[58px] rounded-[16px] py-[19px] px-4 font-medium transition-colors ${
-                  buttonTextSize || "text-base"
-                }
+                className={`w-[75%] sm:w-[70%] md:w-[65%] h-[36px] sm:h-[40px] md:h-[45px] rounded-[10px] sm:rounded-[12px] md:rounded-[14px] py-2 sm:py-2.5 px-3 sm:px-4 font-medium transition-colors text-xs sm:text-sm md:text-base
                   ${
                     isHovered
                       ? "bg-white text-light-accent border border-light-accent"
@@ -847,44 +883,44 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         )}
       </div>
 
-      <div className={'flex items-center flex-col'}>
+      <div className={"flex items-center flex-col"}>
         {variant === "analysis" ? (
-            // Для анализов: заголовок → иконка → подзаголовок → описание
-            <div className="flex flex-col justify-between h-full">
-              <AdditionalInfoBlock />
-            </div>
+          // Для анализов: заголовок → иконка → подзаголовок → описание
+          <div className="flex flex-col justify-between h-full">
+            <AdditionalInfoBlock />
+          </div>
         ) : variant === "service" ? (
-            // Для услуг: заголовок → описание → доп.инфо (количество услуг) → иконка
-            <>
-              <IconBlock />
-              {/* Кнопка будет добавлена внизу карточки */}
-            </>
+          // Для услуг: заголовок → описание → доп.инфо (количество услуг) → иконка
+          <>
+            <IconBlock />
+            {/* Кнопка будет добавлена внизу карточки */}
+          </>
         ) : descriptionBeforeIcon ? (
-            // Стандартный режим с описанием перед иконкой
-            <>
-              <IconBlock />
-            </>
+          // Стандартный режим с описанием перед иконкой
+          <>
+            <IconBlock />
+          </>
         ) : (
-            // Стандартный режим с иконкой перед описанием
-            <>
-              <DescriptionBlock />
-            </>
+          // Стандартный режим с иконкой перед описанием
+          <>
+            <DescriptionBlock />
+          </>
         )}
 
         {/* Кнопка внизу карточки */}
         {(variant === "service" || (showButton && buttonText)) && (
-            <button
-                className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
+          <button
+            className={`mt-auto px-4 sm:px-6 rounded-2xl font-medium transition-colors
             w-full h-[45px] sm:h-[50px] md:h-[60px] text-sm sm:text-base
             ${
-                    isHovered
-                        ? "bg-white text-light-accent"
-                        : "bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text"
-                }`}
-                style={styles.button}
-            >
-              {buttonText}
-            </button>
+              isHovered
+                ? "bg-white text-light-accent"
+                : "bg-transparent border border-light-text dark:border-dark-text text-light-text dark:text-dark-text"
+            }`}
+            style={styles.button}
+          >
+            {buttonText}
+          </button>
         )}
       </div>
 

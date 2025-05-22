@@ -27,7 +27,7 @@ const translations = {
 };
 
 export default function Doctors() {
-  const { t, currentLocale } = useTranslation(translations);
+  const { t } = useTranslation(translations);
   const { doctors, loading, error, fetchDoctors, filters } = useDoctorsStore();
 
   const [visibleCount, setVisibleCount] = useState(8);
@@ -35,7 +35,7 @@ export default function Doctors() {
   useEffect(() => {
     setVisibleCount(8);
     fetchDoctors();
-  }, [JSON.stringify(filters), currentLocale]);
+  }, [JSON.stringify(filters)]);
 
   const visibleDoctors = doctors.slice(0, visibleCount);
   const showMoreButton = visibleCount < doctors.length;
