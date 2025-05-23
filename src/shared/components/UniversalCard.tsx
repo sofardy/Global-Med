@@ -281,7 +281,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
 
     // Отступы для разных вариантов
     if (variant === "analysis") {
-      return `${positionClass} mt-4 sm:mt-6 md:mt-[50px] mb-4 sm:mb-6 md:mb-[50px]`;
+      return `${positionClass} mt-4 sm:mt-6 md:mt-[50px] mb-4 sm:mb-6 md:mb-[50px] w-[90px] max-w-[90px] h-auto flex justify-center mx-auto`;
     } else if (variant === "service") {
       return `${positionClass} mt-2 sm:mt-3 md:mt-4 mb-4 sm:mb-6 md:mb-[50px] w-[90px] max-w-[90px] h-auto`;
     } else {
