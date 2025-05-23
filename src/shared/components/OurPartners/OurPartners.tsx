@@ -48,7 +48,13 @@ const fetchHomePageData = async (
 const OurPartners = () => {
   const { currentLocale } = useLanguageStore();
   const { t } = useTranslation(checkupDetailTranslations);
-  const [partnerImages, setPartnerImages] = useState<string[]>([]);
+  const [partnerImages, setPartnerImages] = useState<string[]>([
+    "/images/partners/escado.PNG",
+    "/images/partners/indigo.png",
+    "/images/partners/jetour.JPG",
+    "/images/partners/neo.JPG",
+    "/images/partners/sangarwe.PNG",
+  ]);
   const [loading, setLoading] = useState(true);
 
   // Переводы заголовка
@@ -101,34 +107,34 @@ const OurPartners = () => {
       {/* Бегущая строка */}
       <div className="relative flex items-center justify-center">
         {/* Контейнер для анимации */}
-        {/*<div className="flex animate-scroll">*/}
-        {/*  {duplicatedImages.map((image, index) => (*/}
-        {/*    <div*/}
-        {/*      key={index}*/}
-        {/*      className="flex-shrink-0 mx-3"*/}
-        {/*      style={{*/}
-        {/*        width: "375px",*/}
-        {/*      }}*/}
-        {/*    >*/}
-        {/*      <div*/}
-        {/*        className="bg-white dark:bg-dark-block flex items-center justify-center p-6 duration-300"*/}
-        {/*        style={{*/}
-        {/*          width: "375px",*/}
-        {/*          height: "420px",*/}
-        {/*          borderRadius: "16px",*/}
-        {/*        }}*/}
-        {/*      >*/}
-        {/*        <img*/}
-        {/*          src={image}*/}
-        {/*          alt={`Partner ${(index % partnerImages.length) + 1}`}*/}
-        {/*          className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"*/}
-        {/*          loading="lazy"*/}
-        {/*        />*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*  ))}*/}
-        {/*</div>*/}
-        <img src="/images/logo-new.jpg" alt=""/>
+        <div className="flex animate-scroll">
+          {duplicatedImages.map((image, index) => (
+            <div
+              key={index}
+              className="flex-shrink-0 mx-3"
+              style={{
+                width: "375px",
+              }}
+            >
+              <div
+                className="bg-white dark:bg-dark-block flex items-center justify-center p-6 duration-300"
+                style={{
+                  width: "375px",
+                  height: "420px",
+                  borderRadius: "16px",
+                }}
+              >
+                <img
+                  src={image}
+                  alt={`Partner ${(index % partnerImages.length) + 1}`}
+                  className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <img src="/images/logo-new.jpg" alt="" />
       </div>
 
       {/* CSS для анимации */}
