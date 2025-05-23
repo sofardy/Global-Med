@@ -186,7 +186,9 @@ export default function Page({ params }: PageProps) {
           </p>
 
           <h3 className="text-lg sm:text-xl font-medium mb-4 text-light-text dark:text-dark-text">
-            Симптомы, при которых следует сдать анализы:
+            {currentLocale === "ru"
+              ? "Симптомы, при которых следует сдать анализы:"
+              : "Simptomlar, analizlarni o'tkazish kerak bo'lgan holatlari:"}
           </h3>
 
           <ul className="space-y-3">

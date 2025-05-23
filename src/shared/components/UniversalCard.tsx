@@ -872,6 +872,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         ) : variant === "service" ? (
           // Для услуг: заголовок → описание → доп.инфо (количество услуг) → иконка
           <>
+            <div className="mb-6"></div>
             <DescriptionBlock />
             <AdditionalInfoBlock />
             {/* Кнопка будет добавлена внизу карточки */}
