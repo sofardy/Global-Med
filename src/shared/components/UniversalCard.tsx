@@ -119,9 +119,24 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const finalIconColor = getIconColorByTheme(theme, iconColor);
 
-  // Функция для изменения fill в SVG
+  // Get icon color based on theme and hover state
+  const getIconColor = () => {
+    if (theme === "dark") return "white";
+    return isHovered ? "white" : "#173F46";
+  };
+
+  // Функция для изменения всех цветовых атрибутов в SVG
   const modifySvgFill = (svgString: string) => {
-    return svgString.replace(/fill="[^"]*"/g, 'fill="currentColor"');
+    return svgString
+      .replace(/fill="[^"]*"/g, 'fill="currentColor"')
+      .replace(/stroke="[^"]*"/g, 'stroke="currentColor"')
+      .replace(/noFill="[^"]*"/g, 'noFill="currentColor"')
+      .replace(
+        /svgCustomColorStroke="[^"]*"/g,
+        'svgCustomColorStroke="currentColor"'
+      )
+      .replace(/style="[^"]*fill:[^"]*"/g, 'style="fill: currentColor"')
+      .replace(/style="[^"]*stroke:[^"]*"/g, 'style="stroke: currentColor"');
   };
 
   // Определение мобильного устройства
@@ -249,9 +264,9 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
 
   // Уменьшение размера текста для мобильных устройств
   const titleSizeClass = isMobile
-    ? "text-lg sm:text-xl md:text-2xl leading-tight"
+    ? "text-lg sm:text-md md:text-xl leading-tight"
     : titleSize ||
-      "text-xl sm:text-2xl md:text-3xl leading-tight sm:leading-normal";
+      "text-xl sm:text-2xl md:text-2xl leading-tight sm:leading-normal";
 
   const descriptionSizeClass = isMobile
     ? "text-sm sm:text-base md:text-lg leading-tight"
@@ -307,16 +322,11 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           {investigationsCount !== undefined && (
             <div className="flex items-center">
               <svg
-                className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${
-                  isHovered
-                    ? "text-white"
-                    : theme === "light"
-                    ? "text-light-text"
-                    : "text-dark-text"
-                }`}
+                className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                style={{ color: getIconColor() }}
               >
                 <path
                   strokeLinecap="round"
@@ -338,16 +348,11 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           {timeRequired && (
             <div className="flex items-center">
               <svg
-                className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${
-                  isHovered
-                    ? "text-white"
-                    : theme === "light"
-                    ? "text-light-text"
-                    : "text-dark-text"
-                }`}
+                className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                style={{ color: getIconColor() }}
               >
                 <path
                   strokeLinecap="round"
@@ -425,10 +430,8 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     return (
       <ul className="space-y-2 mb-1 lg:mb-6">
         {features.map((feature, index) => {
-          // Check if feature is an object with icon
           const isFeatureObject =
             typeof feature === "object" && feature !== null;
-          // Get feature text safely
           const featureText = isFeatureObject
             ? (feature as Feature).text
             : (feature as string);
@@ -439,16 +442,11 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                 <>
                   {(feature as Feature).icon === "doc" ? (
                     <svg
-                      className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${
-                        isHovered
-                          ? "text-white"
-                          : theme === "light"
-                          ? "text-light-text"
-                          : "text-dark-text"
-                      }`}
+                      className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      style={{ color: getIconColor() }}
                     >
                       <path
                         strokeLinecap="round"
@@ -459,16 +457,11 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                     </svg>
                   ) : (feature as Feature).icon === "time" ? (
                     <svg
-                      className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 ${
-                        isHovered
-                          ? "text-white"
-                          : theme === "light"
-                          ? "text-light-text"
-                          : "text-dark-text"
-                      }`}
+                      className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      style={{ color: getIconColor() }}
                     >
                       <path
                         strokeLinecap="round"
@@ -478,21 +471,13 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                       />
                     </svg>
                   ) : (
-                    <span
-                      className={`${
-                        isHovered ? "text-white" : "text-light-accent"
-                      } mr-2`}
-                    >
+                    <span className={`mr-2`} style={{ color: getIconColor() }}>
                       •
                     </span>
                   )}
                 </>
               ) : (
-                <span
-                  className={`${
-                    isHovered ? "text-white" : "text-light-accent"
-                  } mr-2`}
-                >
+                <span className={`mr-2`} style={{ color: getIconColor() }}>
                   •
                 </span>
               )}
@@ -519,12 +504,6 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     const iconClasses =
       variant === "family" ? "universal-card-icon" : getIconPositionClass();
 
-    // Get icon color based on theme and hover state
-    const getIconColor = () => {
-      if (theme === "dark") return "white";
-      return isHovered ? "white" : "#173F46";
-    };
-
     if (typeof icon === "string") {
       // Иконка - это строка SVG
       const modifiedSvg = modifySvgFill(icon);
@@ -541,7 +520,10 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
     } else {
       // Иконка - это React-компонент
       return (
-        <div className={iconClasses} style={styles.icon}>
+        <div
+          className={iconClasses}
+          style={{ ...styles.icon, color: getIconColor() }}
+        >
           {typeof icon === "string" ? (
             <div
               dangerouslySetInnerHTML={{ __html: modifySvgFill(icon) }}
@@ -686,7 +668,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                 className={`w-[60px] h-[60px] md:w-[90px] md:h-[90px] transition-transform duration-300 ${
                   isHovered ? "scale-110" : ""
                 }`}
-                style={{ color: isHovered ? "white" : finalIconColor }}
+                style={{ color: getIconColor() }}
               />
             ) : React.isValidElement(icon) ? (
               React.cloneElement(icon as React.ReactElement, {
@@ -696,7 +678,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                 } transition-transform duration-300 ${
                   isHovered ? "scale-110" : ""
                 }`,
-                color: isHovered ? "white" : undefined,
+                color: getIconColor(),
               })
             ) : (
               icon
@@ -778,11 +760,11 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           {/* Icon - hidden on mobile */}
           <div
             className="md:block absolute w-full h-[10px] bottom-[100px] sm:bottom-[110px] md:bottom-[120px] right-0"
-            style={{ color: isHovered ? "white" : finalIconColor }}
+            style={{ color: getIconColor() }}
           >
             {typeof icon === "string" ? (
               <div
-                style={{ color: isHovered ? "white" : finalIconColor }}
+                style={{ color: getIconColor() }}
                 dangerouslySetInnerHTML={{ __html: modifySvgFill(icon) }}
                 className={`absolute w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px] flex items-center justify-center right-0 top-[-15px] sm:top-[-20px] md:top-[-25px] sm:scale-[0.6] md:scale-[0.8] lg:scale-[0.9] ${
                   isHovered ? "scale-110" : ""
@@ -798,7 +780,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                       } transition-transform duration-300 ${
                         isHovered ? "scale-110" : ""
                       }`,
-                      color: isHovered ? "white" : undefined,
+                      color: getIconColor(),
                     })
                   : icon}
               </div>
@@ -872,7 +854,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         ) : variant === "service" ? (
           // Для услуг: заголовок → описание → доп.инфо (количество услуг) → иконка
           <>
-            <div className="mb-6"></div>
+            <div className="mb-10"></div>
             <DescriptionBlock />
             <AdditionalInfoBlock />
             {/* Кнопка будет добавлена внизу карточки */}
