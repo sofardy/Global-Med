@@ -59,6 +59,10 @@ body {
   stroke: var(--svg-stroke-color) !important;
 }
 
+.universal-card:hover .svgCustomColorStroke {
+  stroke: white !important;
+}
+
 svg {
   max-width: 100%;
 }

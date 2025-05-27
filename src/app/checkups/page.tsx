@@ -143,7 +143,7 @@ export default function Checkups() {
               icon={item.icon}
               link={`/checkups/${item.slug}`}
               buttonText={`${
-                currentLocale === "uz" ? "Batafsil" : "подробнee"
+                currentLocale === "uz" ? "Batafsil" : "Подробнее"
               }`}
               showButton={true}
               buttonStyle="filled"
