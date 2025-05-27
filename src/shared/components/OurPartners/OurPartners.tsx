@@ -4,6 +4,9 @@ import { API_BASE_URL } from "@/src/config/constants";
 import { useLanguageStore } from "@/src/store/language";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { checkupDetailTranslations } from "@/src/shared/mocks/checkupHeroData";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 
 interface PartnersGalleryData {
   key: string;
@@ -48,13 +51,7 @@ const fetchHomePageData = async (
 const OurPartners = () => {
   const { currentLocale } = useLanguageStore();
   const { t } = useTranslation(checkupDetailTranslations);
-  const [partnerImages, setPartnerImages] = useState<string[]>([
-    "/images/partners/escado.PNG",
-    "/images/partners/indigo.png",
-    "/images/partners/jetour.JPG",
-    "/images/partners/neo.JPG",
-    "/images/partners/sangarwe.PNG",
-  ]);
+  const [partnerImages, setPartnerImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Переводы заголовка
@@ -94,28 +91,30 @@ const OurPartners = () => {
     return null;
   }
 
-  // Дублируем изображения для бесшовной анимации
-  const duplicatedImages = [...partnerImages, ...partnerImages];
-
   return (
-    <div className="overflow-hidden py-5">
+    <div className="py-5 overflow-x-hidden">
       {/* Заголовок */}
       <h2 className="text-3xl md:text-5xl font-medium text-light-text dark:text-dark-text mb-8">
         {getTitle()}
       </h2>
 
-      {/* Бегущая строка */}
-      <div className="relative flex items-center justify-center">
-        {/* Контейнер для анимации */}
-        <div className="flex animate-scroll">
-          {duplicatedImages.map((image, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 mx-3"
-              style={{
-                width: "375px",
-              }}
-            >
+      {/* Swiper Carousel */}
+      <div className="overflow-hidden">
+        <Swiper
+          modules={[Autoplay]}
+          spaceBetween={24}
+          slidesPerView="auto"
+          loop={true}
+          autoplay={{
+            delay: 0,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          speed={3000}
+          className="partners-swiper"
+        >
+          {partnerImages.map((image, index) => (
+            <SwiperSlide key={index} className="!w-[375px]">
               <div
                 className="bg-white dark:bg-dark-block flex items-center justify-center p-6 duration-300"
                 style={{
@@ -126,52 +125,34 @@ const OurPartners = () => {
               >
                 <img
                   src={image}
-                  alt={`Partner ${(index % partnerImages.length) + 1}`}
+                  alt={`Partner ${index + 1}`}
                   className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
                   loading="lazy"
                 />
               </div>
-            </div>
+            </SwiperSlide>
           ))}
-        </div>
-        <img src="/images/logo-new.jpg" alt="" />
+        </Swiper>
       </div>
 
-      {/* CSS для анимации */}
-      <style jsx>{`
-        @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-${partnerImages.length * (375 + 48)}px);
-          }
+      {/* Custom styles for Swiper */}
+      <style jsx global>{`
+        .partners-swiper {
+          width: 100%;
+          overflow: hidden;
         }
 
-        .animate-scroll {
-          animation: scroll ${partnerImages.length * 4}s linear infinite;
+        .partners-swiper .swiper-slide {
+          transition: transform 0.3s ease;
+          opacity: 1;
         }
 
-        .animate-scroll:hover {
-          animation-play-state: paused;
+        .partners-swiper .swiper-slide:hover {
+          transform: scale(1.02);
         }
 
-        @media (max-width: 1536px) {
-          .animate-scroll {
-            animation: scroll ${partnerImages.length * 5}s linear infinite;
-          }
-        }
-
-        @media (max-width: 1024px) {
-          .animate-scroll {
-            animation: scroll ${partnerImages.length * 6}s linear infinite;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .animate-scroll {
-            animation: scroll ${partnerImages.length * 7}s linear infinite;
-          }
+        .partners-swiper .swiper-wrapper {
+          transition-timing-function: linear !important;
         }
       `}</style>
     </div>
