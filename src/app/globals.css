@@ -1,7 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+* {
+  scroll-behavior: smooth !important;
+}
 :root {
   --light-bg: #f7f7f7;
   --light-block: #ffffff;

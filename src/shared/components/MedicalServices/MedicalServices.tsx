@@ -80,7 +80,6 @@ export const MedicalServices = () => {
   const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
   const { currentLocale } = useLanguageStore();
-  const [isMobile, setIsMobile] = useState(false);
   const [showAllItems, setShowAllItems] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,15 +116,7 @@ export const MedicalServices = () => {
     fetchServices();
   }, [currentLocale]);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  const displayedServices =
-    isMobile && !showAllItems ? services.slice(0, 4) : services;
+  const displayedServices = showAllItems ? services : services.slice(0, 2);
 
   return (
     <div className="w-full">
@@ -235,7 +226,7 @@ export const MedicalServices = () => {
                   )}
                 </div>
 
-                {isMobile && services.length > 4 && (
+                {services.length > 2 && (
                   <div className="flex justify-center mt-8">
                     <button
                       onClick={() => setShowAllItems(!showAllItems)}

@@ -177,7 +177,15 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   };
 
   const handleTouchEnd = () => {
-    // Не сбрасываем isHovered на мобильных устройствах для сохранения эффекта
+    // Add a small delay before removing hover state on mobile
+    setTimeout(() => {
+      setIsHovered(false);
+    }, 100);
+  };
+
+  const handleTouchMove = () => {
+    // Remove hover state when user moves their finger
+    setIsHovered(false);
   };
 
   const handleClick = () => {
@@ -568,6 +576,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
         style={styles.container}
       >
         <div className="universal-card-dot"></div>
@@ -653,6 +662,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
         style={styles.container}
       >
         <div className="flex flex-col justify-between h-full">
@@ -718,6 +728,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
         style={styles.container}
       >
         {/* Dot in top right corner */}
@@ -1062,6 +1073,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
           onMouseLeave={handleMouseLeave}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
+          onTouchMove={handleTouchMove}
           style={styles.container}
         >
           <CardContent />
@@ -1079,6 +1091,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchMove}
       style={styles.container}
     >
       <CardContent />
