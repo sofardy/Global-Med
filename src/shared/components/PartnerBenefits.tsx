@@ -1,27 +1,22 @@
 // src/shared/components/PartnerBenefits.tsx
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useThemeStore } from '@/src/store/theme';
-import Image from 'next/image';
-import { RatingStarIcon, MedicalSearchIcon } from '../ui/Icon';
-import { useLanguageStore } from '@/src/store/language';
-import { usePartnersStore } from '@/src/store/partners';
+import React, { useState, useEffect } from "react";
+import { useThemeStore } from "@/src/store/theme";
+import Image from "next/image";
+import { RatingStarIcon, MedicalSearchIcon } from "../ui/Icon";
+import { useLanguageStore } from "@/src/store/language";
+import { usePartnersStore } from "@/src/store/partners";
 
 export default function PartnerBenefits() {
   const { theme } = useThemeStore();
   const { currentLocale } = useLanguageStore();
-  const [screenSize, setScreenSize] = useState('desktop');
-  
+  const [screenSize, setScreenSize] = useState("desktop");
+
   // Используем наш новый стор
-  const { 
-    fetchPartners, 
-    loading, 
-    error, 
-    getMainPartner, 
-    getBenefitCards 
-  } = usePartnersStore();
-  
+  const { fetchPartners, loading, error, getMainPartner, getBenefitCards } =
+    usePartnersStore();
+
   // Получаем данные из стора
   const mainItem = getMainPartner();
   const benefitCards = getBenefitCards();
@@ -29,31 +24,31 @@ export default function PartnerBenefits() {
   // Загрузка данных при монтировании компонента
   useEffect(() => {
     fetchPartners(currentLocale);
-  }, [fetchPartners, currentLocale]);
+  }, [currentLocale]);
 
   // Enhanced screen size detection
   useEffect(() => {
     const checkScreenSize = () => {
       const width = window.innerWidth;
       if (width < 768) {
-        setScreenSize('mobile');
+        setScreenSize("mobile");
       } else if (width < 1024) {
-        setScreenSize('tablet');
+        setScreenSize("tablet");
       } else if (width < 1520) {
-        setScreenSize('laptop');
+        setScreenSize("laptop");
       } else {
-        setScreenSize('desktop');
+        setScreenSize("desktop");
       }
     };
-    
+
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  const isMobile = screenSize === 'mobile';
-  const isTablet = screenSize === 'tablet';
-  const isLaptop = screenSize === 'laptop';
+  const isMobile = screenSize === "mobile";
+  const isTablet = screenSize === "tablet";
+  const isLaptop = screenSize === "laptop";
 
   // Отображение загрузки
   if (loading) {
@@ -69,7 +64,9 @@ export default function PartnerBenefits() {
     return (
       <div className="container max-w-8xl mx-auto px-4 md:px-6 py-16">
         <div className="bg-red-100 dark:bg-red-900 p-4 rounded-lg">
-          <p className="text-red-600 dark:text-red-100">Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.</p>
+          <p className="text-red-600 dark:text-red-100">
+            Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.
+          </p>
         </div>
       </div>
     );
@@ -77,10 +74,10 @@ export default function PartnerBenefits() {
 
   // Dynamic sizing based on screen size
   const getMinHeight = () => {
-    if (isMobile) return 'min-h-[250px]';
-    if (isTablet) return 'min-h-[300px]';
-    if (isLaptop) return 'min-h-[350px]';
-    return 'min-h-[450px]';
+    if (isMobile) return "min-h-[250px]";
+    if (isTablet) return "min-h-[300px]";
+    if (isLaptop) return "min-h-[350px]";
+    return "min-h-[450px]";
   };
 
   // Функция для рендера SVG из строки
@@ -90,11 +87,11 @@ export default function PartnerBenefits() {
   };
 
   // Компонент FeatureCard с возможностью принимать SVG
-  const FeatureCard = ({ 
-    title, 
+  const FeatureCard = ({
+    title,
     description,
     svgString,
-    greenOnLoad = false 
+    greenOnLoad = false,
   }: {
     title: string;
     description: string;
@@ -102,61 +99,90 @@ export default function PartnerBenefits() {
     greenOnLoad?: boolean;
   }) => {
     const [hover, setHover] = useState(greenOnLoad);
-    
-    // Рендер SVG
+
+    // Рендер SVG с учетом темы и состояния наведения
     const icon = svgString ? (
-      <div 
-        className={`flex justify-center items-center transition-all duration-300`} 
-        dangerouslySetInnerHTML={{ __html: svgString }} 
+      <div
+        className={`flex justify-center items-center transition-all duration-300`}
+        dangerouslySetInnerHTML={{
+          __html: svgString.replace(
+            /fill="[^"]*"/g,
+            hover
+              ? 'fill="#FFFFFF"'
+              : theme === "light"
+              ? 'fill="#094A54"'
+              : 'fill="#FFFFFF"'
+          ),
+        }}
       />
     ) : null;
-    
+
     return (
-      <div 
+      <div
         className={`p-5 md:p-6 lg:p-8 xl:p-8 rounded-2xl transition-all duration-300 h-full ${getMinHeight()} ${
-          hover 
-            ? 'bg-light-accent text-white' 
-            : theme === 'light' 
-              ? 'bg-white text-light-text' 
-              : 'bg-dark-block text-dark-text'
+          hover
+            ? "bg-light-accent text-white"
+            : theme === "light"
+            ? "bg-white text-light-text"
+            : "bg-dark-block text-dark-text"
         }`}
         onMouseEnter={() => !isMobile && setHover(true)}
         onMouseLeave={() => !isMobile && !greenOnLoad && setHover(false)}
         onClick={() => isMobile && setHover(!hover)}
       >
         <div className="flex flex-col h-full justify-between">
-          <h3 className={`text-xl md:text-[22px] lg:text-[24px] font-medium ${isMobile ? 'mb-3' : 'mb-4'}`}>{title}</h3>
+          <h3
+            className={`text-xl md:text-[22px] lg:text-[24px] font-medium ${
+              isMobile ? "mb-3" : "mb-4"
+            }`}
+          >
+            {title}
+          </h3>
           {icon && (
-            <div className={`${isMobile ? 'my-6' : isTablet ? 'my-8' : isLaptop ? 'my-10' : 'my-[90px]'} transition-all flex justify-center`}>
+            <div
+              className={`${
+                isMobile
+                  ? "my-6"
+                  : isTablet
+                  ? "my-8"
+                  : isLaptop
+                  ? "my-10"
+                  : "my-[90px]"
+              } transition-all flex justify-center`}
+            >
               {icon}
             </div>
           )}
-          <p className="text-sm md:text-base lg:text-lg xl:text-[18px]">{description}</p>
+          <p className="text-sm md:text-base lg:text-lg xl:text-[18px]">
+            {description}
+          </p>
         </div>
       </div>
     );
   };
 
   const getBannerHeight = () => {
-    if (isMobile) return 'h-[250px]';
-    if (isTablet) return 'h-[300px]';
-    if (isLaptop) return 'h-[400px]';
-    return 'h-[500px]';
+    if (isMobile) return "h-[250px]";
+    if (isTablet) return "h-[300px]";
+    if (isLaptop) return "h-[400px]";
+    return "h-[500px]";
   };
 
   // Иконки по умолчанию
   const defaultIcons = [
     <RatingStarIcon key="rating" />,
-    <MedicalSearchIcon key="search" />
+    <MedicalSearchIcon key="search" />,
   ];
 
   return (
     <div>
       {/* Большое фото сверху с адаптивной высотой */}
-      <div className={`w-full ${getBannerHeight()} relative rounded-2xl overflow-hidden mb-6`}>
-        <Image 
-          src="/images/health-insurance.jpg" 
-          alt="Медицинская страховка" 
+      <div
+        className={`w-full ${getBannerHeight()} relative rounded-2xl overflow-hidden mb-6`}
+      >
+        <Image
+          src="/images/health-insurance.jpg"
+          alt="Медицинская страховка"
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1520px) 100vw, 100vw"
@@ -168,12 +194,16 @@ export default function PartnerBenefits() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 lg:gap-6 mt-40 mb-40">
         {/* Левый блок - информация о программах (адаптивный размер колонок) */}
         <div className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2">
-          <div className={`h-full ${getMinHeight()} p-5 md:p-6 lg:p-8 rounded-2xl bg-white dark:bg-dark-block flex flex-col justify-between`}>
+          <div
+            className={`h-full ${getMinHeight()} p-5 md:p-6 lg:p-8 rounded-2xl bg-white dark:bg-dark-block flex flex-col justify-between`}
+          >
             <h3 className="text-xl md:text-2xl lg:text-3xl xl:text-[38px] leading-[1.2] font-medium mb-3 md:mb-4 text-light-text dark:text-dark-text">
-              {mainItem?.title || "Защитите здоровье сотрудников с выгодными программами медицинского обслуживания"}
+              {mainItem?.title ||
+                "Защитите здоровье сотрудников с выгодными программами медицинского обслуживания"}
             </h3>
             <p className="text-sm md:text-base lg:text-lg xl:text-[18px] text-light-text dark:text-dark-text">
-              {mainItem?.subtitle || "Клиника Global Med предлагает комплексные решения корпоративного медицинского обслуживания, позволяющие создать благоприятную и безопасную рабочую среду, снизить количество больничных и повысить производительность труда"}
+              {mainItem?.subtitle ||
+                "Клиника Global Med предлагает комплексные решения корпоративного медицинского обслуживания, позволяющие создать благоприятную и безопасную рабочую среду, снизить количество больничных и повысить производительность труда"}
             </p>
           </div>
         </div>

@@ -933,7 +933,9 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
                     theme === "light" ? "text-light-text" : "text-dark-text"
                   } text-sm uppercase font-medium mb-4`}
                 >
-                  Личный кабинет
+                  {currentLocale === "ru"
+                    ? "Личный кабинет"
+                    : "Shaxsiy kabinet"}
                 </h3>
                 <div className="space-y-3">
                   <Link
@@ -945,7 +947,11 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
                     <div className="w-12 h-12 mr-4 rounded-full flex items-center justify-center bg-light-accent text-white shadow-lg shadow-light-accent/20">
                       <UserIcon size={18} color={"#ffffff"} />
                     </div>
-                    <span className="text-lg">Вход в кабинет</span>
+                    <span className="text-lg">
+                      {currentLocale === "ru"
+                        ? "Вход в кабинет"
+                        : "Kabinetga kirish"}
+                    </span>
                   </Link>
                 </div>
               </div>

@@ -28,7 +28,7 @@ const translations = {
 };
 
 export default function Doctors() {
-  const { t } = useTranslation(translations);
+  const { t, currentLocale } = useTranslation(translations);
   const { doctors, loading, error, filters } = useDoctorsStore();
 
   const [visibleCount, setVisibleCount] = useState(8);
@@ -42,16 +42,6 @@ export default function Doctors() {
 
   const handleShowMore = () => {
     setVisibleCount((prev) => prev + 8);
-  };
-
-  const formatExperience = (experience: string): string => {
-    if (experience.includes("лет") || experience.includes("год")) {
-      return experience;
-    }
-    const years = parseInt(experience.replace(/\D/g, ""));
-    if (years === 1) return `${years} год`;
-    if (years > 1 && years < 5) return `${years} года`;
-    return `${years} лет`;
   };
 
   return (
@@ -109,7 +99,7 @@ export default function Doctors() {
                     slug={doctor.slug}
                     name={doctor.full_name}
                     specialization={doctor.specialization}
-                    experience={formatExperience(doctor.experience_years)}
+                    experience={doctor.experience_years}
                     photoUrl={doctor.image_url}
                   />
                 ))}
