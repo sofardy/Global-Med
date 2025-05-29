@@ -125,15 +125,28 @@ export const MedicalServices = () => {
           {/* Left Block */}
           <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto lg:sticky lg:top-6 md:h-[500px] lg:h-[700px] p-8 md:p-10 bg-white dark:bg-dark-block text-[#173F46] dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[700px] flex flex-col">
             <div
-              className="absolute -right-[250px] -bottom-[250px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
+              className="absolute -right-[500px] -bottom-[150px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
               style={{
                 backgroundImage: "url(/images/doctor-pattern.png)",
                 backgroundSize: "contain",
-                transform: "rotate(-50deg)",
+                // transform: "rotate(-100deg)",
                 backgroundPosition: "right bottom",
-                backgroundRepeat: "no-repeat",
+                backgroundRepeat: "repeat-x",
+                animation:
+                  "slide-bl 10s linear infinite both alternate-reverse",
               }}
             ></div>
+
+            <style jsx>{`
+              @keyframes slide-bl {
+                0% {
+                  transform: translateY(0) translateX(0) rotate(-60deg);
+                }
+                100% {
+                  transform: translateY(300px) translateX(-300px) rotate(-60deg);
+                }
+              }
+            `}</style>
 
             <div className="relative z-10 max-w-3xl">
               <div className="space-y-6">

@@ -216,16 +216,26 @@ const CareerForm = () => {
         <div className="w-full md:w-1/2 bg-light-accent text-white p-8 relative min-h-[340px] md:min-h-[490px] rounded-2xl overflow-hidden">
           {/* Добавлен новый фоновый элемент */}
           <div
-            className="absolute -right-[150px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
+            className="absolute -right-[150px] bottom-[-100px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
             style={{
               backgroundImage: "url(/images/doctor-pattern.png)",
               backgroundSize: "contain",
-              transform: "rotate(0deg)",
+              // transform: "rotate(0deg)",
               backgroundPosition: "right bottom",
               backgroundRepeat: "no-repeat",
+              animation: "slide-tl 5s linear infinite alternate-reverse both",
             }}
           ></div>
-
+          <style jsx>{`
+            @keyframes slide-tl {
+              0% {
+                transform: translateY(0px) translateX(300px);
+              }
+              100% {
+                transform: translateY(-100px) translateX(-100px);
+              }
+            }
+          `}</style>
           {/* Content */}
           <div className="relative z-10 flex flex-col h-full">
             <div>

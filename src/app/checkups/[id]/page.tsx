@@ -179,7 +179,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         <div
           className="absolute -right-[70px] -bottom-[180px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
           style={{
-            backgroundImage: "url(/images/doctor-pattern.png)",
+            backgroundImage: "url(/images/doctor-pattern2.gif)",
             backgroundSize: "contain",
             transform: "rotate(-60deg)",
             backgroundPosition: "right bottom",
