@@ -6,6 +6,7 @@ import DoctorDetail from "@/src/shared/components/Doctor/DoctorDetail";
 import { useAuth } from "@/src/hooks/useAuth";
 import { GBContext } from "@/src/context/globalize-breadcrumb";
 import { useLanguageStore } from "@/src/store/language";
+import { API_BASE_URL } from "@/src/config/constants";
 
 interface EducationDetail {
   title: string;
@@ -78,8 +79,7 @@ export default function DoctorDetailPage(): JSX.Element {
           throw new Error("Некорректный идентификатор доктора");
         }
 
-        const apiUrl = "https://globalmed.kelyanmedia.com/api";
-        const response = await fetch(`${apiUrl}/doctors/${doctorId}`, {
+        const response = await fetch(`${API_BASE_URL}/doctors/${doctorId}`, {
           headers: {
             "X-Language": currentLocale === "uz" ? "uz" : "ru",
           },

@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import { useLanguageStore } from "@/src/store/language";
 import { GBContext } from "@/src/context/globalize-breadcrumb";
+import { API_BASE_URL } from "@/src/config/constants";
 
 interface MedicalTest {
   value: ReactNode;
@@ -67,7 +68,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
         console.log("Запрашиваем данные для id:", params.id);
 
         const response = await axios.get(
-          `https://globalmed.kelyanmedia.com/api/checkups/${params.id}`,
+          `${API_BASE_URL}/checkups/${params.id}`,
           {
             headers: {
               "Content-Type": "application/json",

@@ -21,6 +21,7 @@ import {
   ThyroidIcon,
 } from "../../ui/Icon";
 import { useLanguageStore } from "@/src/store/language";
+import { API_BASE_URL } from "@/src/config/constants";
 
 interface Service {
   uuid: string;
@@ -89,15 +90,12 @@ export const MedicalServices = () => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "https://globalmed.kelyanmedia.com/api/services",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "X-Language": currentLocale || "ru",
-            },
-          }
-        );
+        const response = await axios.get(`${API_BASE_URL}/services`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Language": currentLocale || "ru",
+          },
+        });
 
         if (response.data?.data && Array.isArray(response.data.data)) {
           setServices(response.data.data);

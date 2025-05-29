@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { UniversalSlider } from "../UniversalSlider";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { ReviewCard } from "./ReviewCard";
+import { API_BASE_URL } from "@/src/config/constants";
 
 // Tarjima matnlari
 const translations = {
@@ -54,14 +55,11 @@ export const ReviewsSlider: React.FC<ReviewsSliderProps> = ({
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch(
-          "https://globalmed.kelyanmedia.com/api/reviews",
-          {
-            headers: {
-              "X-Language": currentLocale,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/reviews`, {
+          headers: {
+            "X-Language": currentLocale,
+          },
+        });
         const json = await response.json();
         setReviews(json.data || []);
       } catch (error) {

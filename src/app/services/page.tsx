@@ -22,6 +22,7 @@ import {
 } from "@/src/shared/ui/Icon";
 import BonesIcon from "@/src/shared/ui/Icon/BonesIcon";
 import NoseIcon from "@/src/shared/ui/Icon/NoseIcon";
+import { API_BASE_URL } from "@/src/config/constants";
 
 const serviceIconMap: { [key: string]: React.ReactNode } = {
   "lor-247": <LightbulbIcon size={80} />,
@@ -99,7 +100,7 @@ export default function ServicesPage() {
       try {
         setLoading(true);
         const response = await axios.get<ServicesResponse>(
-          "https://globalmed.kelyanmedia.com/api/services",
+          `${API_BASE_URL}/services`,
           {
             headers: {
               "X-Language": currentLocale || "ru",
@@ -124,14 +125,11 @@ export default function ServicesPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://globalmed.kelyanmedia.com/api/pages/services",
-          {
-            headers: {
-              "X-Language": currentLocale,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/pages/services`, {
+          headers: {
+            "X-Language": currentLocale,
+          },
+        });
         const result = await response.json();
         setDataPagesService(result);
       } catch (err) {
