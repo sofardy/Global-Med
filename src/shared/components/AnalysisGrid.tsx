@@ -93,16 +93,30 @@ export const AnalysisGrid: React.FC<AnalysisGridProps> = ({
           {/* Контейнер с overflow-visible для фонового элемента */}
           <div className="absolute inset-0 overflow-visible">
             <div
-              className="absolute top-[450px] -left-[270px] w-[750px] h-[500px] z-[1] "
+              className="absolute top-[450px] -left-[450px] w-[750px] h-[500px] z-[1]"
               style={{
                 backgroundImage: "url(/images/doctor-pattern.png)",
                 backgroundSize: "cover",
-                transform: "rotate(18deg) scale(0.8)",
-                transformOrigin: "top right",
+                transformOrigin: "center center",
+                animation:
+                  "slide-tl2 3s linear infinite alternate-reverse both",
               }}
             ></div>
           </div>
-
+          <style jsx>{`
+            @keyframes slide-tl2 {
+              0% {
+                -webkit-transform: translateY(0) translateX(0);
+                transform: translateY(-100px) translateX(300px) rotate(10deg)
+                  scale(1.2);
+              }
+              100% {
+                -webkit-transform: translateY(-100px) translateX(-100px);
+                transform: translateY(-200px) translateX(0px) rotate(10deg)
+                  scale(1.2);
+              }
+            }
+          `}</style>
           {/* Контент блока */}
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4">
