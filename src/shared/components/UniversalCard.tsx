@@ -770,7 +770,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
 
           {/* Icon - hidden on mobile */}
           <div
-            className="md:block absolute w-full h-[10px] bottom-[100px] sm:bottom-[110px] md:bottom-[120px] right-0"
+            className="md:block absolute w-full h-[10px] bottom-[130px] sm:bottom-[130px] md:bottom-[140px] right-0"
             style={{ color: getIconColor() }}
           >
             {typeof icon === "string" ? (

@@ -9,6 +9,7 @@ import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import { AnimatedButton } from "@/src/shared/ui/Button/AnimatedButton";
 import axios from "axios";
 import { GBContext } from "@/src/context/globalize-breadcrumb";
+import { API_BASE_URL } from "@/src/config/constants";
 
 // Data type definitions
 interface ServicePrice {
@@ -105,7 +106,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
       try {
         setLoading(true);
         const response = await axios.get<ServiceResponse>(
-          `https://globalmed.kelyanmedia.com/api/services/${id}`,
+          `${API_BASE_URL}/services/${id}`,
           {
             headers: {
               "X-Language": currentLocale === "uz" ? "uz" : "ru",

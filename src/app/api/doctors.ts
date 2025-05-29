@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useLanguageStore } from "@/src/store/language";
-
-const API_URL = "https://globalmed.kelyanmedia.com/api";
+import { API_BASE_URL } from "@/src/config/constants";
 
 export interface Doctor {
   uuid: string;
@@ -77,7 +76,7 @@ export const getDoctors = async (
   const currentLanguage = language || getCurrentLanguage();
 
   try {
-    const response = await axios.get(`${API_URL}/doctors`, {
+    const response = await axios.get(`${API_BASE_URL}/doctors`, {
       params,
       headers: {
         "Content-Type": "application/json",
@@ -88,7 +87,7 @@ export const getDoctors = async (
     return response.data;
   } catch (error) {
     console.error("API Error:", {
-      url: `${API_URL}/doctors`,
+      url: `${API_BASE_URL}/doctors`,
       params: Object.fromEntries(params),
       error,
     });
@@ -109,7 +108,7 @@ export const getDoctorById = async (
   const currentLanguage = language || getCurrentLanguage();
 
   try {
-    const response = await axios.get(`${API_URL}/doctors/${uuid}`, {
+    const response = await axios.get(`${API_BASE_URL}/doctors/${uuid}`, {
       headers: {
         "Content-Type": "application/json",
         "X-Language": currentLanguage,
@@ -119,7 +118,7 @@ export const getDoctorById = async (
     return response.data.data;
   } catch (error) {
     console.error("API Error:", {
-      url: `${API_URL}/doctors/${uuid}`,
+      url: `${API_BASE_URL}/doctors/${uuid}`,
       error,
     });
     throw error;

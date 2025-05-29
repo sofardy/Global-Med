@@ -11,6 +11,7 @@ import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import axios from "axios";
 import { useLanguageStore } from "@/src/store/language";
+import { API_BASE_URL } from "@/src/config/constants";
 
 // Интерфейсы для типизации данных API
 interface MedicalTest {
@@ -45,15 +46,12 @@ export default function Checkups() {
     const fetchCheckups = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "https://globalmed.kelyanmedia.com/api/checkups",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "X-Language": currentLocale, // Используем currentLocale с fallback на 'ru'
-            },
-          }
-        );
+        const response = await axios.get(`${API_BASE_URL}/checkups`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Language": currentLocale, // Используем currentLocale с fallback на 'ru'
+          },
+        });
         setCheckupItems(response.data.data);
         setError(null);
       } catch (err) {
@@ -75,14 +73,11 @@ export default function Checkups() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://globalmed.kelyanmedia.com/api/pages/checkups",
-          {
-            headers: {
-              "X-Language": currentLocale,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/pages/checkups`, {
+          headers: {
+            "X-Language": currentLocale,
+          },
+        });
         const result = await response.json();
         setDataPagesCheckup(result);
       } catch (err) {
