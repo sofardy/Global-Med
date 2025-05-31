@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useThemeStore } from "@/src/store/theme";
 import { useTranslation } from "@/src/hooks/useTranslation";
-import { translations } from "@/src/shared/translations/ru";
+import { useThemeStore } from "@/src/store/theme";
+import { useEffect, useState } from "react";
 
 interface DateTimePickerProps {
   selectedDate: string;
@@ -30,6 +29,11 @@ export default function DateTimePicker({
     "17:00",
   ],
 }: DateTimePickerProps) {
+  const translations: any = {
+    selectDate: "Выберите дату",
+    selectTime: "Выберите время",
+    emptyTime: "Выберите время",
+  };
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
   const [mounted, setMounted] = useState(false);
