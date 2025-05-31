@@ -19,24 +19,19 @@ export interface CheckupItem {
   uuid: string;
   slug: string;
   title: string;
-  description: string;
-  mini_description: string;
+  title_uz: string;
   card_description: string;
-  duration: string;
-  price: number;
+  card_description_uz: string;
+  mini_description: string;
+  mini_description_uz: string;
   icon: string;
-  medical_tests: MedicalTest[];
-  symptoms: Symptom[];
+  duration: string | number;
+  medical_tests?: any[];
 }
 
 export interface CheckupsResponse {
   data: CheckupItem[];
-  meta: {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-  };
+  message: string;
 }
 
 /**

@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { UniversalCard } from "../UniversalCard";
+import { API_BASE_URL } from "@/src/config/constants";
+import { useClientSide } from "@/src/hooks/useClientSide";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useThemeStore } from "@/src/store/theme";
 import Image from "next/image";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   CalculatorIcon,
   ChecklistMedicalIcon,
@@ -11,8 +13,7 @@ import {
   TabletIcon,
 } from "../../ui/Icon";
 import Modal from "../Modal/Modal";
-import { useThemeStore } from "@/src/store/theme";
-import { API_BASE_URL } from "@/src/config/constants";
+import { UniversalCard } from "../UniversalCard";
 
 // Интерфейс для данных, полученных от API через endpoint /api/checkups
 interface CheckupsApiResponse {
@@ -178,14 +179,13 @@ const getIconForCardType = (
 export const SymptomSelector: React.FC = () => {
   const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
+  const isClient = useClientSide();
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [tempSelectedSymptoms, setTempSelectedSymptoms] = useState<string[]>(
     []
   );
   const [showResults, setShowResults] = useState(false);
-  const [windowWidth, setWindowWidth] = useState<number>(
-    typeof window !== "undefined" ? window.innerWidth : 0
-  );
+  const [windowWidth, setWindowWidth] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Состояние для анимации карточек
@@ -201,21 +201,20 @@ export const SymptomSelector: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
   const [cache, setCache] = useState<Record<string, CheckupsApiResponse>>({});
 
-  // Effect для отслеживания ширины окна
   useEffect(() => {
+    if (!isClient) return;
+
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", handleResize);
-      handleResize();
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-    }
-  }, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isClient]);
 
   // Функция для получения slug симптома
   const getSymptomSlug = (symptom: string): string => {

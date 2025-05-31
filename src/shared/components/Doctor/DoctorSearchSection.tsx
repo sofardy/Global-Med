@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
+import { API_BASE_URL } from "@/src/config/constants";
+import { useClientSide } from "@/src/hooks/useClientSide";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import Modal from "@/src/shared/components/Modal/Modal";
 import { useDoctorsStore } from "@/src/store/doctors";
-import axios from "axios";
-import { API_BASE_URL } from "@/src/config/constants";
 import { useLanguageStore } from "@/src/store/language";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface DropdownPosition {
   top: number;
@@ -163,6 +164,7 @@ const SpecialtiesDropdown: React.FC<SpecialtiesDropdownProps> = ({
 const DoctorSearchSection: React.FC = () => {
   const { t } = useTranslation(translations);
   const { currentLocale } = useLanguageStore();
+  const isClient = useClientSide();
 
   const [nameQuery, setNameQuery] = useState<string>("");
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState<boolean>(false);
@@ -203,6 +205,8 @@ const DoctorSearchSection: React.FC = () => {
 
   // Инициализация и определение устройства
   useEffect(() => {
+    if (!isClient) return;
+
     setIsMounted(true);
     const checkMobile = (): void => {
       setIsMobile(window.innerWidth < 768);
@@ -217,7 +221,7 @@ const DoctorSearchSection: React.FC = () => {
     return () => {
       window.removeEventListener("resize", checkMobile);
     };
-  }, [fetchDoctors]);
+  }, [isClient, fetchDoctors]);
 
   // Обработчик выбора специализации
   const handleSelectSpecialty = (specialty: Specialization | null): void => {
@@ -305,11 +309,12 @@ const DoctorSearchSection: React.FC = () => {
 
       <div className="relative w-full rounded-2xl overflow-hidden bg-light-accent text-white">
         <div
-          className="absolute -right-[300px] -bottom-[60px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
+          className="absolute -right-[500px] -bottom-[250px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
           style={{
-            backgroundImage: "url(/images/doctor-pattern.png)",
+            backgroundImage: "url(/images/doctor-pattern2.gif)",
             backgroundSize: "contain",
-            transform: "rotate(-2deg)",
+            transform: "rotate(-135deg)",
+            opacity: 0.5,
             backgroundPosition: "right bottom",
             backgroundRepeat: "no-repeat",
           }}

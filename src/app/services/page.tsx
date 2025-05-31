@@ -122,6 +122,7 @@ export default function ServicesPage() {
     fetchServices();
   }, [currentLocale]);
   const [dataPagesService, setDataPagesService] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

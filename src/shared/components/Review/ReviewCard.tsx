@@ -55,7 +55,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({
       const svg = iconRef.current.querySelector("svg");
       if (svg) {
         svg.setAttribute("width", "24");
-        svg.setAttribute("height", "auto");
+        // svg.setAttribute("height", "auto");
       }
     }
   }, [external_icon]);

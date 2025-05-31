@@ -204,16 +204,15 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
 
         {/* Фон с доктором (паттерн) - скрыт на мобильных */}
         <div
-          className="absolute right-[10px] -bottom-[180px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
+          className="absolute right-[10px] -bottom-[50px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
           style={{
-            backgroundImage: "url(/images/doctor-pattern.png)",
+            backgroundImage: "url(/images/doctor-pattern2.gif)",
             backgroundSize: "contain",
-            transform: "rotate(-45deg)",
+            transform: "rotate(-15deg) scale(1.6)",
             backgroundPosition: "right bottom",
             backgroundRepeat: "no-repeat",
           }}
         />
-
         {/* Контентная часть баннера - улучшенные отступы для мобильных */}
         <div className="relative z-10 p-6 sm:p-8 md:p-12 text-white">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium mb-4 md:mb-6">
