@@ -127,9 +127,9 @@ export default function Page({ params }: PageProps) {
         <div
           className="absolute -right-[10px] -bottom-[180px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
           style={{
-            backgroundImage: "url(/images/doctor-pattern.png)",
+            backgroundImage: "url(/images/doctor-pattern2.gif)",
             backgroundSize: "contain",
-            transform: "rotate(-50deg)",
+            transform: "rotate(-20deg)",
             backgroundPosition: "right bottom",
             backgroundRepeat: "no-repeat",
           }}

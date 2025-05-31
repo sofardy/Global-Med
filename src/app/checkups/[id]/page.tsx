@@ -178,11 +178,11 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
       {/* Верхний баннер */}
       <div className="w-full rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-16 relative bg-light-accent">
         <div
-          className="absolute -right-[70px] -bottom-[180px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
+          className="absolute -right-[10px] -bottom-[50px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
           style={{
             backgroundImage: "url(/images/doctor-pattern2.gif)",
             backgroundSize: "contain",
-            transform: "rotate(-60deg)",
+            transform: "rotate(-15deg) scale(1.6)",
             backgroundPosition: "right bottom",
             backgroundRepeat: "no-repeat",
           }}
@@ -276,8 +276,8 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
       {/* Секция программы диагностики и FAQ */}
       <div className="flex flex-col md:flex-row gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
         {/* Левый блок - описание программы */}
-        <div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-white dark:bg-dark-block relative overflow-hidden md:self-start md:h-[500px] lg:h-[600px] xl:h-[700px]">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[56px] font-medium mb-3 sm:mb-4 text-[#173F46] dark:text-white leading-tight md:leading-[1.1] lg:leading-[1]">
+        <div className="w-full md:w-1/2 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-[#02c78a] dark:bg-dark-block relative overflow-hidden md:self-start md:h-[500px] lg:h-[600px] xl:h-[700px]">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[56px] font-medium mb-3 sm:mb-4 text-white dark:text-white leading-tight md:leading-[1.1] lg:leading-[1]">
             {t("programTitle")}
           </h2>
 
@@ -285,9 +285,9 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
           <div
             className="absolute -right-[150px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
             style={{
-              backgroundImage: "url(/images/doctor-pattern.png)",
+              backgroundImage: "url(/images/doctor-pattern2.gif)",
               backgroundSize: "contain",
-              transform: "rotate(15deg)",
+              transform: "rotate(65deg) scale(1.2)",
               backgroundPosition: "right bottom",
               backgroundRepeat: "no-repeat",
             }}
@@ -296,7 +296,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
           <div className="relative z-10">
             {/* <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed mb-6">{checkup.mini_description}</p> */}
 
-            <p className="text-sm sm:text-base text-[#173F46] dark:text-white leading-relaxed">
+            <p className="text-sm sm:text-base text-white dark:text-white leading-relaxed">
               {checkup.card_description}
             </p>
           </div>

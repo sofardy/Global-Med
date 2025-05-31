@@ -9,6 +9,7 @@ import { useTranslation } from "@/src/hooks/useTranslation";
 import { PregnancyIcon, ButterflyLogoSmallIcon } from "../ui/Icon";
 import { useCheckups } from "@/src/hooks/useCheckups";
 import { CheckupItem } from "@/src/app/api/checkups";
+import { useLanguageStore } from "@/src/store/language";
 
 // Локализация
 const translations = {
@@ -70,9 +71,10 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
 }) => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
+  const { currentLocale } = useLanguageStore();
 
   // Используем существующий хук для получения чек-апов
-  const { checkups, loading, error } = useCheckups();
+  const { checkups, loading, error } = useCheckups(currentLocale);
 
   // Получаем локализованные данные
   const sliderTitle = title || t("title") || "";

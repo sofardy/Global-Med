@@ -21,7 +21,6 @@ import {
   ThyroidIcon,
 } from "../../ui/Icon";
 import { useLanguageStore } from "@/src/store/language";
-import { API_BASE_URL } from "@/src/config/constants";
 
 interface Service {
   uuid: string;
@@ -90,12 +89,15 @@ export const MedicalServices = () => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/services`, {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Language": currentLocale || "ru",
-          },
-        });
+        const response = await axios.get(
+          "https://globalmed.kelyanmedia.com/api/services",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Language": currentLocale || "ru",
+            },
+          }
+        );
 
         if (response.data?.data && Array.isArray(response.data.data)) {
           setServices(response.data.data);
@@ -121,30 +123,17 @@ export const MedicalServices = () => {
       <div className="mb-6 sm:mb-8 lg:mb-40">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
           {/* Left Block */}
-          <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto lg:sticky lg:top-6 md:h-[500px] lg:h-[700px] p-8 md:p-10 bg-white dark:bg-dark-block text-[#173F46] dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[700px] flex flex-col">
+          <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto lg:sticky lg:top-6 md:h-[500px] lg:h-[700px] p-8 md:p-10 bg-[#02C78A] dark:bg-dark-block text-white dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[700px] flex flex-col">
             <div
-              className="absolute -right-[500px] -bottom-[150px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
+              className="absolute -right-[150px] -bottom-[250px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
               style={{
-                backgroundImage: "url(/images/doctor-pattern.png)",
+                backgroundImage: "url(/images/doctor-pattern2.gif)",
                 backgroundSize: "contain",
-                // transform: "rotate(-100deg)",
+                transform: "rotate(-15deg)",
                 backgroundPosition: "right bottom",
-                backgroundRepeat: "repeat-x",
-                animation:
-                  "slide-bl 10s linear infinite both alternate-reverse",
+                backgroundRepeat: "no-repeat",
               }}
             ></div>
-
-            <style jsx>{`
-              @keyframes slide-bl {
-                0% {
-                  transform: translateY(0) translateX(0) rotate(-60deg);
-                }
-                100% {
-                  transform: translateY(300px) translateX(-300px) rotate(-60deg);
-                }
-              }
-            `}</style>
 
             <div className="relative z-10 max-w-3xl">
               <div className="space-y-6">
@@ -172,7 +161,7 @@ export const MedicalServices = () => {
 
             <Link
               href="/services"
-              className="relative z-10 h-[58px] inline-flex items-center justify-center border border-[#173F46] dark:border-white text-[#173F46] dark:text-white hover:bg-light-accent hover:text-white hover:border-light-accent rounded-2xl px-6 py-3 transition-colors mt-auto self-start"
+              className="relative z-10 h-[58px] inline-flex items-center justify-center border border-white dark:border-white text-white dark:text-white hover:bg-white hover:text-light-accent dark:hover:text-light-accent hover:border-light-accent rounded-2xl px-6 py-3 transition-colors mt-auto self-start"
             >
               <span className="tracking-wide">{t("viewAllServices")}</span>
               <svg

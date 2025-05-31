@@ -19,7 +19,7 @@ import Modal from "./Modal/Modal";
 
 const translations = {
   ru: {
-    myAppointments: "Мои записи",
+    myAppointments: "Мои результаты",
     analyses: "Анализы",
     profile: "Профиль",
     doctors: "Врачи",
@@ -34,7 +34,7 @@ const translations = {
     exit: "Выйти",
   },
   uz: {
-    myAppointments: "Mening yozuvlarim",
+    myAppointments: "Mening natijalarim",
     analyses: "Tahlillar",
     profile: "Profil",
     doctors: "Shifokorlar",
@@ -225,6 +225,7 @@ export default function AccountSidebar() {
                 onClick={() => {
                   setLocale("ru");
                   setIsLanguageOpen(false);
+                  window.location.reload();
                 }}
                 className={`
                  flex items-center w-full 
@@ -246,6 +247,7 @@ export default function AccountSidebar() {
                 onClick={() => {
                   setLocale("uz");
                   setIsLanguageOpen(false);
+                  window.location.reload();
                 }}
                 className={`
                  flex items-center w-full 

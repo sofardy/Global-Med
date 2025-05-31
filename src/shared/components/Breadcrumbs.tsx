@@ -3,7 +3,6 @@
 import React, { Suspense, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Route } from "@/src/shared/config/routes";
 import { GBContext } from "@/src/context/globalize-breadcrumb";
 
@@ -59,7 +58,7 @@ const translations = {
 
 function BreadcrumbsContent({
   className = "",
-  separator = <ChevronRightIcon className="h-4 w-4 text-gray-400" />,
+  separator = "/",
   hideHome = false,
   hideCurrent = false,
   locale,

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect, useRef, ReactNode } from "react";
+import { useClientSide } from "@/src/hooks/useClientSide";
 import { useThemeStore } from "@/src/store/theme";
-import { Swiper, SwiperSlide } from "swiper/react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import type { SwiperOptions } from "swiper/types";
 
 import "swiper/css";
@@ -75,18 +76,17 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
   onInit,
 }) => {
   const { theme } = useThemeStore();
-
+  const isClient = useClientSide();
   const prevButtonRef = useRef<HTMLButtonElement>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [activeSlidePerView, setActiveSlidePerView] = useState<number>(
-    typeof window !== "undefined" && window.innerWidth < mobileBreakpoint
-      ? slidesPerMobileView
-      : slidesPerView
-  );
+  const [activeSlidePerView, setActiveSlidePerView] =
+    useState<number>(slidesPerView);
 
   useEffect(() => {
+    if (!isClient) return;
+
     const handleResize = () => {
       const mobile = window.innerWidth < mobileBreakpoint;
       setIsMobile(mobile);
@@ -99,7 +99,7 @@ export const UniversalSlider: React.FC<UniversalSliderProps> = ({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [mobileBreakpoint, slidesPerMobileView, slidesPerView]);
+  }, [isClient, mobileBreakpoint, slidesPerMobileView, slidesPerView]);
 
   const handleSlideChange = (swiper: any) => {
     const currentScrollPosition = window.scrollY;

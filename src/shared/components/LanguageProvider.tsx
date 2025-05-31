@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { ReactNode, useEffect } from 'react';
-import { useLanguageStore } from '../../store/language';
+import { useClientSide } from "@/src/hooks/useClientSide";
+import { ReactNode, useEffect } from "react";
+import { useLanguageStore } from "../../store/language";
 
 interface LanguageProviderProps {
   children: ReactNode;
@@ -9,9 +10,12 @@ interface LanguageProviderProps {
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const { setLocale } = useLanguageStore();
-  
+  const isClient = useClientSide();
+
   useEffect(() => {
-    const storedValue = localStorage.getItem('language-storage');
+    if (!isClient) return;
+
+    const storedValue = localStorage.getItem("language-storage");
     if (storedValue) {
       try {
         const { state } = JSON.parse(storedValue);
@@ -19,10 +23,10 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
           setLocale(state.currentLocale);
         }
       } catch (e) {
-        console.error('Failed to parse stored language state', e);
+        console.error("Failed to parse stored language state", e);
       }
     }
-  }, [setLocale]);
+  }, [setLocale, isClient]);
 
   return <>{children}</>;
 };

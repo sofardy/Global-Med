@@ -9,6 +9,7 @@ import { useLanguageStore } from "../../../store/language";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { translations } from "./translations";
 import { CONTACT_INFO } from "../../constants/contact";
+import { useClientLocale } from "../../../hooks/useClientLocale";
 
 // Импорт компонентов иконок
 import {
@@ -33,8 +34,9 @@ interface HeaderProps {
 
 export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
   const { theme } = useThemeStore();
-  const { currentLocale, setLocale } = useLanguageStore();
-  const { t } = useTranslation(translations);
+  const { setLocale } = useLanguageStore();
+  const { t, currentLocale } = useTranslation(translations);
+  const { mounted } = useClientLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
@@ -174,6 +176,10 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
   const handleLanguageChange = (locale: "ru" | "uz") => {
     setLocale(locale);
     setIsLangMenuOpen(false);
+    // Use requestAnimationFrame to ensure the locale is saved before reload
+    requestAnimationFrame(() => {
+      window.location.reload();
+    });
   };
 
   // Переключение мобильного меню
@@ -246,6 +252,23 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
   const visibleRoutes = isCompactMode ? routes.slice(0, 3) : routes;
   const hiddenRoutes = isCompactMode ? routes.slice(3) : [];
   const headerRef = useRef<HTMLDivElement>(null);
+
+  // Show a loading state or skeleton while mounting
+  if (!mounted) {
+    return (
+      <header
+        className={`px-8 py-4 rounded-2xl ${
+          theme === "light" ? "bg-light-block" : "bg-dark-block"
+        } shadow-sm transition-colors duration-300 w-full`}
+      >
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Add a simple loading state here */}
+          <div className="w-full h-full animate-pulse bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header
       id="page-header"

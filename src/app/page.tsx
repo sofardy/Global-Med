@@ -31,7 +31,7 @@ export default function Home() {
       <BenefitsGrid />
       <MedicalGallery />
       <DoctorsSlider />
-      <CareerForm />
+      <CareerForm />x
       <ReviewsSlider />
       <OurPartners />
       <ContactInfo />

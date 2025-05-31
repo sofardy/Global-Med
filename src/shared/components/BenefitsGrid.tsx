@@ -125,7 +125,18 @@ export const BenefitsGrid: React.FC<BenefitsGridProps> = ({
     <div className="w-full">
       <div className="mb-6 sm:mb-8 md:mb-40">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto md:h-[500px] lg:h-[800px] p-8 md:p-10 bg-white dark:bg-dark-block text-[#173F46] dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[728px] flex flex-col">
+          <div className="col-span-1 relative rounded-2xl overflow-hidden h-auto md:h-[500px] lg:h-[800px] p-8 md:p-10 bg-[#02c78a] dark:bg-dark-block text-white dark:text-white min-h-[400px] md:min-h-[500px] lg:min-h-[728px] flex flex-col">
+            <div
+              className="absolute -right-[500px] -bottom-[250px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
+              style={{
+                backgroundImage: "url(/images/doctor-pattern2.gif)",
+                backgroundSize: "contain",
+                transform: "rotate(-135deg)",
+
+                backgroundPosition: "right bottom",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></div>
             <div className="relative z-10 max-w-3xl">
               <div className="space-y-6">
                 <h2 className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-[1.15] md:leading-[1.2] lg:leading-[1.25]">
@@ -144,7 +155,7 @@ export const BenefitsGrid: React.FC<BenefitsGridProps> = ({
 
             <a
               href={readMoreLink}
-              className="relative z-10 h-[58px] inline-flex items-center justify-center border border-[#173F46] dark:border-white text-[#173F46] dark:text-white hover:bg-light-accent hover:text-white hover:border-light-accent rounded-2xl px-6 py-3 transition-colors mt-auto self-start"
+              className="relative z-10 h-[58px] inline-flex items-center justify-center border border-white  dark:border-white text-white dark:hover:bg-light-accent hover:bg-white hover:text-[#02c78a] dark:text-white hover:bg-light-accent hover:text-white hover:border-light-accent rounded-2xl px-6 py-3 transition-colors mt-auto self-start"
             >
               <span className="tracking-wide">{gridReadMoreText}</span>
               <svg
