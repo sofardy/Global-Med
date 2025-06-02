@@ -1,18 +1,15 @@
 // src/app/clinic/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Image from "next/image";
-import { useThemeStore } from "../../store/theme";
-import { useTranslation } from "../../hooks/useTranslation";
-import MedicalEquipmentSlider from "@/src/shared/components/Doctor/MedicalEquipmentSlider";
-import AdministrationSlider from "@/src/shared/components/Doctor/AdministrationSlider";
+import { API_BASE_URL } from "@/src/config/constants";
 import CareerForm from "@/src/shared/components/CareerForm";
-import { CertificatesSlider } from "@/src/shared/components/Doctor/CertificateCard";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import { HeartIconk2, MedicalCrossIcon } from "@/src/shared/ui/Icon";
-import { API_BASE_URL } from "@/src/config/constants";
+import axios from "axios";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "../../hooks/useTranslation";
+import { useThemeStore } from "../../store/theme";
 
 // Типы для данных из API
 interface ApiResponse {
@@ -47,6 +44,37 @@ interface ApiResponse {
 }
 
 const translations = {
+  en: {
+    title: "We apply the best in medicine to keep you healthy",
+    description:
+      "We create a space where medical innovations meet doctors' experience, and patients receive quality diagnosis and treatment based on precision, attention, and care",
+    modernMedicine: {
+      title: "Modern Medicine",
+      description:
+        "We use advanced treatment and diagnostic methods to provide patients with quality care",
+    },
+    comprehensiveApproach: {
+      title: "Comprehensive Approach",
+      description:
+        "For each patient, we select an individual solution, taking into account the characteristics of the body and clinical picture",
+    },
+    values: {
+      mission: "Mission",
+      missionDescription:
+        "We strive to make quality medicine accessible by providing patients with accurate diagnosis, effective treatment, and care at every stage",
+      values: "Values",
+      valuesDescription:
+        "Professionalism, attention to detail, and a sincere desire to help each patient – these are what define our work",
+      responsibility: "Responsibility",
+      responsibilityDescription:
+        "We guarantee safety, accuracy of research, and strict adherence to medical standards",
+      expertise: "Expertise",
+      expertiseDescription:
+        "Our clinic's doctors have years of experience, regularly improve their qualifications, and use modern methods of diagnosis and treatment",
+    },
+    loading: "Loading data...",
+    error: "An error occurred while loading data",
+  },
   ru: {
     title: "Мы применяем лучшее в медицине, чтобы вы были здоровы",
     description:
@@ -113,7 +141,7 @@ const translations = {
 
 export default function Clinic() {
   const { theme } = useThemeStore();
-  const { t, currentLocale } = useTranslation(translations);
+  const { t, currentLocale }: any = useTranslation(translations);
   const [pageData, setPageData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -126,6 +154,7 @@ export default function Clinic() {
           `${API_BASE_URL}/pages/clinic`,
           {
             headers: {
+              "Content-Type": "application/json",
               "X-Language": currentLocale,
             },
           }
@@ -336,21 +365,8 @@ export default function Clinic() {
         </div>
       </div>
 
-      {/* Компоненты с данными администраторов и оборудования */}
-      {/* <MedicalEquipmentSlider /> */}
-
-      {/* Передаем данные администраторов в компонент */}
-      {/* <AdministrationSlider administrators={administrators} /> */}
-
       <CareerForm />
 
-      {/* Используем форматированные сертификаты */}
-      {/* <CertificatesSlider 
-        certificates={formattedCertificates}
-        title="Доверие и качество"
-        description="Все наши медицинские услуги лицензированы и соответствуют строгим стандартам"
-      />
-       */}
       <ContactInfo />
     </main>
   );

@@ -36,7 +36,7 @@
     "**/*.tsx",
     "next.config.js",
     ".next/types/**/*.ts"
-, "src/app/services/page.tsx", "src/shared/components/AmoCrmScript.jsx"  ],
+, "src/app/services/page.tsx", "src/shared/components/AmoCrmScript.jsx", "src/store/language.ts"  ],
   "exclude": [
     "node_modules"
   ]

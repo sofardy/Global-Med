@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import React from "react";
 import { HeartHandIcon } from "../ui/Icon";
 
 interface VideoBannerProps {
@@ -15,6 +15,10 @@ const translations = {
   },
   uz: {
     title: "Tibbiy yordamni qulay, hamyonbop va qulay qilamiz",
+  },
+  en: {
+    title:
+      "Making medical care convenient, accessible, and comfortable for you",
   },
 };
 

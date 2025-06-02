@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import DoctorDetail from "@/src/shared/components/Doctor/DoctorDetail";
-import { useAuth } from "@/src/hooks/useAuth";
-import { GBContext } from "@/src/context/globalize-breadcrumb";
-import { useLanguageStore } from "@/src/store/language";
 import { API_BASE_URL } from "@/src/config/constants";
+import { GBContext } from "@/src/context/globalize-breadcrumb";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useTranslation } from "@/src/hooks/useTranslation";
+import DoctorDetail from "@/src/shared/components/Doctor/DoctorDetail";
+import { useLanguageStore } from "@/src/store/language";
+import { useParams, useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 
 interface EducationDetail {
   title: string;
@@ -44,6 +45,32 @@ interface DoctorDetailResponse {
   data: DoctorDetailData;
 }
 
+const translations = {
+  en: {
+    loading: "Loading...",
+    doctorNotFound: "Doctor information not found",
+    errorLoading: "Failed to load doctor information. Please try again later.",
+    invalidId: "Invalid doctor identifier",
+    idNotSpecified: "Doctor identifier not specified",
+  },
+  ru: {
+    loading: "Загрузка...",
+    doctorNotFound: "Информация о докторе не найдена",
+    errorLoading:
+      "Не удалось загрузить информацию о докторе. Пожалуйста, попробуйте позже.",
+    invalidId: "Некорректный идентификатор доктора",
+    idNotSpecified: "Идентификатор доктора не указан",
+  },
+  uz: {
+    loading: "Yuklanmoqda...",
+    doctorNotFound: "Shifokor haqida ma'lumot topilmadi",
+    errorLoading:
+      "Shifokor ma'lumotlarini yuklashda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",
+    invalidId: "Noto'g'ri shifokor identifikatori",
+    idNotSpecified: "Shifokor identifikatori ko'rsatilmagan",
+  },
+};
+
 export default function DoctorDetailPage(): JSX.Element {
   const params = useParams();
   const router = useRouter();
@@ -54,6 +81,8 @@ export default function DoctorDetailPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const { setTitle }: any = useContext(GBContext);
   const { currentLocale } = useLanguageStore();
+  const { t } = useTranslation(translations);
+
   const handleAppointmentClick = (): void => {
     console.log("Проверка авторизации:", isAuthenticated());
 
@@ -72,11 +101,10 @@ export default function DoctorDetailPage(): JSX.Element {
         setLoading(true);
         setError(null);
 
-        // Проверяем и преобразуем id к нужному типу
         const doctorId = Array.isArray(id) ? id[0] : id;
 
         if (!doctorId) {
-          throw new Error("Некорректный идентификатор доктора");
+          throw new Error(t("invalidId"));
         }
 
         const response = await fetch(`${API_BASE_URL}/doctors/${doctorId}`, {
@@ -95,9 +123,7 @@ export default function DoctorDetailPage(): JSX.Element {
         setLoading(false);
       } catch (err) {
         console.error("Ошибка при загрузке доктора:", err);
-        setError(
-          "Не удалось загрузить информацию о докторе. Пожалуйста, попробуйте позже."
-        );
+        setError(t("errorLoading"));
         setLoading(false);
       }
     };
@@ -105,7 +131,7 @@ export default function DoctorDetailPage(): JSX.Element {
     if (id) {
       fetchDoctorDetail();
     } else {
-      setError("Идентификатор доктора не указан");
+      setError(t("idNotSpecified"));
       setLoading(false);
     }
   }, [id, currentLocale]);
@@ -116,7 +142,7 @@ export default function DoctorDetailPage(): JSX.Element {
         <div className="animate-pulse flex flex-col items-center">
           <div className="w-12 h-12 rounded-full border-4 border-light-accent border-t-transparent animate-spin"></div>
           <p className="mt-4 text-light-text dark:text-dark-text">
-            Загрузка...
+            {t("loading")}
           </p>
         </div>
       </div>
@@ -127,7 +153,7 @@ export default function DoctorDetailPage(): JSX.Element {
     return (
       <div className="container mx-auto py-10">
         <div className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-4 rounded-lg">
-          <p>{error || "Информация о докторе не найдена"}</p>
+          <p>{error || t("doctorNotFound")}</p>
         </div>
       </div>
     );

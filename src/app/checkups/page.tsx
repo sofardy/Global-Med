@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/src/config/constants";
+import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
+import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import { UniversalCard } from "@/src/shared/components/UniversalCard";
 import UniversalHeroSection from "@/src/shared/components/UniversalHeroSection";
 import {
   checkupHeroData,
   checkupItemsData,
 } from "@/src/shared/mocks/checkupHeroData";
-import { UniversalCard } from "@/src/shared/components/UniversalCard";
-import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
-import { ContactInfo } from "@/src/shared/components/ContactInfo";
-import axios from "axios";
 import { useLanguageStore } from "@/src/store/language";
-import { API_BASE_URL } from "@/src/config/constants";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 // Интерфейсы для типизации данных API
 interface MedicalTest {
@@ -91,7 +91,7 @@ export default function Checkups() {
   // Функция для получения иконки из мока по slug
   const getIconBySlug = (slug: string) => {
     // Ищем соответствующий элемент в моковых данных
-    const mockItem = checkupItemsData.find((item) => item.id === slug);
+    const mockItem = checkupItemsData.find((item: any) => item.id === slug);
 
     // Если нашли элемент, возвращаем его иконку, иначе возвращаем дефолтную
     return mockItem ? mockItem.iconPath : "/icons/medical-check.svg";
@@ -108,13 +108,21 @@ export default function Checkups() {
       {loading ? (
         <div className="flex justify-center items-center h-64 mt-20">
           <div className="text-xl text-light-text dark:text-dark-text">
-            Загрузка программ обследования...
+            {currentLocale === "uz"
+              ? "Tekshiruv dasturlari yuklanmoqda..."
+              : currentLocale === "en"
+              ? "Loading check-up programs..."
+              : "Загрузка программ обследования..."}
           </div>
         </div>
       ) : error ? (
         <div className="flex justify-center items-center h-64 mt-20">
           <div className="text-xl text-red-500">
-            Ошибка при загрузке данных. Пожалуйста, попробуйте позже.
+            {currentLocale === "uz"
+              ? "Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring."
+              : currentLocale === "en"
+              ? "Error loading data. Please try again later."
+              : "Ошибка при загрузке данных. Пожалуйста, попробуйте позже."}
           </div>
         </div>
       ) : (
@@ -125,7 +133,11 @@ export default function Checkups() {
               features={[
                 {
                   text: `${item.medical_tests.length} ${
-                    currentLocale === "uz" ? "tadqiqot" : "исследований"
+                    currentLocale === "uz"
+                      ? "tadqiqot"
+                      : currentLocale === "en"
+                      ? "tests"
+                      : "исследований"
                   }`,
                   icon: "doc",
                 },
@@ -134,18 +146,25 @@ export default function Checkups() {
               variant="surgery"
               title={item.title}
               description={item.card_description || item.description}
-              // Используем иконку из мока на основе slug
               icon={item.icon}
               link={`/checkups/${item.slug}`}
               buttonText={`${
-                currentLocale === "uz" ? "Batafsil" : "Подробнее"
+                currentLocale === "uz"
+                  ? "Batafsil"
+                  : currentLocale === "en"
+                  ? "Learn More"
+                  : "Подробнее"
               }`}
               showButton={true}
               buttonStyle="filled"
               hoverBgColor="light-accent"
               titleSize="text-2xl md:text-[40px]"
               additionalInfo={`${item.medical_tests.length} ${
-                currentLocale === "uz" ? "Tadqiqot" : "исследований"
+                currentLocale === "uz"
+                  ? "Tadqiqot"
+                  : currentLocale === "en"
+                  ? "Tests"
+                  : "исследований"
               } • ${item.duration}`}
               className="border-none shadow-none rounded-b-2xl md:rounded-2xl p-8"
             />

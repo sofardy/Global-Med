@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { useThemeStore } from "@/src/store/theme";
+import React from "react";
 import {
-  TelegramIcon,
-  InstagramIcon,
-  WhatsapppIcon,
   FacebookIcon,
+  InstagramIcon,
+  TelegramIcon,
+  WhatsapppIcon,
 } from "../ui/Icon";
 
 type LocaleMessages = {
@@ -19,6 +19,13 @@ type LocaleMessages = {
     contactAddress: string;
   };
   uz: {
+    phone: string;
+    emergencyHelp: string;
+    address: string;
+    socialNetworks: string;
+    contactAddress: string;
+  };
+  en: {
     phone: string;
     emergencyHelp: string;
     address: string;
@@ -55,6 +62,13 @@ const translations: LocaleMessages = {
     address: "Manzil",
     socialNetworks: "Ijtimoiy tarmoqlar va messenjerlar",
     contactAddress: "Toshkent, Yangi Sergeli ko'chasi, 35-uy",
+  },
+  en: {
+    phone: "Phone",
+    emergencyHelp: "Emergency Help",
+    address: "Address",
+    socialNetworks: "Social Networks and Messengers",
+    contactAddress: "Tashkent, Yangi Sergeli Street, 35",
   },
 };
 
@@ -104,7 +118,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
 };
 
 export const ContactInfo: React.FC = () => {
-  const { t } = useTranslation<LocaleMessages>(translations);
+  const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
 
   return (

@@ -1,18 +1,17 @@
 // src/shared/components/ComprehensiveApproach.tsx
 "use client";
 
-import React, { useState, ReactElement, useEffect } from "react";
+import { useLanguageStore } from "@/src/store/language";
+import { usePartnersStore } from "@/src/store/partners";
 import { useThemeStore } from "@/src/store/theme";
+import React, { ReactElement, useState } from "react";
 import {
-  BrainIcon,
   ClipboardIcon,
   DocumentIcon,
   HeartIconk2,
   MedicalTrackerIcon,
   PencilIcon,
 } from "../ui/Icon";
-import { useLanguageStore } from "@/src/store/language";
-import { usePartnersStore } from "@/src/store/partners";
 
 interface ServiceCardProps {
   title: string;
@@ -31,10 +30,10 @@ export default function ComprehensiveApproach(): JSX.Element {
   // Получаем данные для сервисных карточек
   const serviceCardsData = getServiceCards();
 
-  // Загрузка данных при монтировании компонента и при изменении языка
-  useEffect(() => {
-    fetchPartners(currentLocale);
-  }, [currentLocale]);
+  // // Загрузка данных при монтировании компонента и при изменении языка
+  // useEffect(() => {
+  //   fetchPartners(currentLocale);
+  // }, [currentLocale]);
 
   const ServiceCard: React.FC<ServiceCardProps> = ({
     title,
@@ -98,8 +97,67 @@ export default function ComprehensiveApproach(): JSX.Element {
     );
   };
 
+  // Заголовки и подзаголовки для разных языков
+  const translations = {
+    en: {
+      title: "Comprehensive Approach to Employee Health",
+      subtitle:
+        "Enhancing employee care through convenient and quality medical support",
+    },
+    ru: {
+      title: "Комплексный подход к здоровью сотрудников",
+      subtitle:
+        "Повышаем уровень заботы о персонале с помощью удобного и качественного медицинского сопровождения",
+    },
+    uz: {
+      title: "Xodimlarning sog'lig'iga kompleks yondashuv",
+      subtitle:
+        "Qulay va sifatli tibbiy hamrohlik orqali xodimlarga g'amxo'rlik darajasini oshiramiz",
+    },
+  };
+
+  // Иконки для карточек из API (если нет SVG)
+  const iconComponents = [
+    <MedicalTrackerIcon key="tracker" />,
+    <DocumentIcon key="document" />,
+    <PencilIcon key="pencil" />,
+    <ClipboardIcon key="clipboard" />,
+    <HeartIconk2 key="heart" />,
+  ];
+
   // Данные для карточек по умолчанию, если данные из API не загружены
   const defaultServiceCards = {
+    en: [
+      {
+        title: "Comprehensive Medical Examinations",
+        description:
+          "Regular health diagnostics and assessment using advanced technologies for early disease detection",
+        icon: <MedicalTrackerIcon />,
+      },
+      {
+        title: "Corporate Insurance",
+        description: "Individually designed insurance programs",
+        icon: <DocumentIcon />,
+      },
+      {
+        title: "Prevention and Vaccination",
+        description:
+          "Development and implementation of disease prevention measures",
+        icon: <PencilIcon />,
+      },
+      {
+        title: "Mobile Medical Services",
+        description:
+          "Organization of on-site examinations and consultations at the office, saving employees' time and providing prompt assistance",
+        icon: <ClipboardIcon />,
+      },
+      {
+        title: "Personalized Support",
+        description:
+          "Individual approach to each client: from developing examination programs to supporting corporate health improvement projects",
+        icon: <HeartIconk2 />,
+      },
+    ],
     ru: [
       {
         title: "Комплексные медицинские осмотры",
@@ -163,38 +221,25 @@ export default function ComprehensiveApproach(): JSX.Element {
     ],
   };
 
-  // Заголовки и подзаголовки для разных языков
-  const translations = {
-    ru: {
-      title: "Комплексный подход к здоровью сотрудников",
-      subtitle:
-        "Повышаем уровень заботы о персонале с помощью удобного и качественного медицинского сопровождения",
-    },
-    uz: {
-      title: "Xodimlarning sog'lig'iga kompleks yondashuv",
-      subtitle:
-        "Qulay va sifatli tibbiy hamrohlik orqali xodimlarga g'amxo'rlik darajasini oshiramiz",
-    },
-  };
-
-  // Иконки для карточек из API (если нет SVG)
-  const iconComponents = [
-    <MedicalTrackerIcon key="tracker" />,
-    <DocumentIcon key="document" />,
-    <PencilIcon key="pencil" />,
-    <ClipboardIcon key="clipboard" />,
-    <HeartIconk2 key="heart" />,
-  ];
-
   // Используем данные из API, если они есть, иначе используем дефолтные для текущего языка
   const serviceCards =
-    serviceCardsData.length > 0
+    serviceCardsData?.length > 0
       ? serviceCardsData.map((item, index) => ({
-          title: item.title,
-          description: item.subtitle,
+          title:
+            item?.title ||
+            defaultServiceCards[
+              currentLocale as keyof typeof defaultServiceCards
+            ][index]?.title,
+          description:
+            item?.subtitle ||
+            defaultServiceCards[
+              currentLocale as keyof typeof defaultServiceCards
+            ][index]?.description,
           icon: iconComponents[index % iconComponents.length],
         }))
-      : defaultServiceCards[currentLocale as keyof typeof defaultServiceCards];
+      : defaultServiceCards[
+          currentLocale as keyof typeof defaultServiceCards
+        ] || defaultServiceCards.en;
 
   return (
     <div className="mt-20">
@@ -202,12 +247,14 @@ export default function ComprehensiveApproach(): JSX.Element {
       <div className="flex flex-col md:flex-row justify-between mb-10">
         <div className="w-full md:w-1/2 mb-6 md:mb-0">
           <h2 className="text-3xl md:text-5xl font-medium text-light-text dark:text-dark-text leading-tight">
-            {translations[currentLocale as keyof typeof translations].title}
+            {translations[currentLocale as keyof typeof translations]?.title ||
+              translations.en.title}
           </h2>
         </div>
         <div className="w-full md:w-1/2">
           <p className="text-lg md:text-xl text-light-text dark:text-dark-text">
-            {translations[currentLocale as keyof typeof translations].subtitle}
+            {translations[currentLocale as keyof typeof translations]
+              ?.subtitle || translations.en.subtitle}
           </p>
         </div>
       </div>
@@ -217,25 +264,34 @@ export default function ComprehensiveApproach(): JSX.Element {
         {/* Левый большой блок - 50% */}
         <div className="md:col-span-2">
           <ServiceCard
-            title={serviceCards[0].title}
-            description={serviceCards[0].description}
-            icon={serviceCards[0].icon}
+            title={serviceCards[0]?.title || defaultServiceCards.en[0].title}
+            description={
+              serviceCards[0]?.description ||
+              defaultServiceCards.en[0].description
+            }
+            icon={serviceCards[0]?.icon || defaultServiceCards.en[0].icon}
           />
         </div>
         {/* Первый правый блок - 25% */}
         <div className="md:col-span-1">
           <ServiceCard
-            title={serviceCards[1].title}
-            description={serviceCards[1].description}
-            icon={serviceCards[1].icon}
+            title={serviceCards[1]?.title || defaultServiceCards.en[1].title}
+            description={
+              serviceCards[1]?.description ||
+              defaultServiceCards.en[1].description
+            }
+            icon={serviceCards[1]?.icon || defaultServiceCards.en[1].icon}
           />
         </div>
         {/* Второй правый блок - 25% */}
         <div className="md:col-span-1">
           <ServiceCard
-            title={serviceCards[2].title}
-            description={serviceCards[2].description}
-            icon={serviceCards[2].icon}
+            title={serviceCards[2]?.title || defaultServiceCards.en[2].title}
+            description={
+              serviceCards[2]?.description ||
+              defaultServiceCards.en[2].description
+            }
+            icon={serviceCards[2]?.icon || defaultServiceCards.en[2].icon}
           />
         </div>
       </div>
@@ -244,52 +300,22 @@ export default function ComprehensiveApproach(): JSX.Element {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <ServiceCard
-            title={
-              serviceCards[3]
-                ? serviceCards[3].title
-                : defaultServiceCards[
-                    currentLocale as keyof typeof defaultServiceCards
-                  ][3].title
-            }
+            title={serviceCards[3]?.title || defaultServiceCards.en[3].title}
             description={
-              serviceCards[3]
-                ? serviceCards[3].description
-                : defaultServiceCards[
-                    currentLocale as keyof typeof defaultServiceCards
-                  ][3].description
+              serviceCards[3]?.description ||
+              defaultServiceCards.en[3].description
             }
-            icon={
-              serviceCards[3]
-                ? serviceCards[3].icon
-                : defaultServiceCards[
-                    currentLocale as keyof typeof defaultServiceCards
-                  ][3].icon
-            }
+            icon={serviceCards[3]?.icon || defaultServiceCards.en[3].icon}
           />
         </div>
         <div>
           <ServiceCard
-            title={
-              serviceCards[4]
-                ? serviceCards[4].title
-                : defaultServiceCards[
-                    currentLocale as keyof typeof defaultServiceCards
-                  ][4].title
-            }
+            title={serviceCards[4]?.title || defaultServiceCards.en[4].title}
             description={
-              serviceCards[4]
-                ? serviceCards[4].description
-                : defaultServiceCards[
-                    currentLocale as keyof typeof defaultServiceCards
-                  ][4].description
+              serviceCards[4]?.description ||
+              defaultServiceCards.en[4].description
             }
-            icon={
-              serviceCards[4]
-                ? serviceCards[4].icon
-                : defaultServiceCards[
-                    currentLocale as keyof typeof defaultServiceCards
-                  ][4].icon
-            }
+            icon={serviceCards[4]?.icon || defaultServiceCards.en[4].icon}
           />
         </div>
       </div>

@@ -2,12 +2,12 @@
 
 "use client";
 
-import React, { useState, useRef } from "react";
-import { useThemeStore } from "@/src/store/theme";
-import { useTranslation } from "@/src/hooks/useTranslation";
-import Link from "next/link";
-import Modal from "@/src/shared/components/Modal/Modal";
 import { useFormValidation } from "@/src/hooks/useFormValidation";
+import { useTranslation } from "@/src/hooks/useTranslation";
+import Modal from "@/src/shared/components/Modal/Modal";
+import { useThemeStore } from "@/src/store/theme";
+import Link from "next/link";
+import React, { useRef, useState } from "react";
 import { FormService } from "../services/FormService";
 
 const translations = {
@@ -68,6 +68,35 @@ const translations = {
     resume: "Rezyume",
     notSelected: "Tanlanmagan",
     uploadFile: "Faylni yuklash",
+  },
+  en: {
+    title: "Join Our Team of Medical Experts",
+    description:
+      "Work in a team of medical professionals — in a stable and professional environment where experience is respected and each employee's contribution is valued",
+    aboutButton: "Learn More About the Clinic",
+    namePlaceholder: "Name",
+    phonePlaceholder: "+998 (__) ___-__-__",
+    attachResume: "Attach your resume in PDF format",
+    coverLetter: "Cover Letter",
+    consent: "I agree to the personal data processing policy",
+    submit: "Submit",
+    nameError: "Please enter your name",
+    phoneError: "Please enter a valid phone number",
+    consentError: "Consent to the policy is required",
+    confirmTitle: "Confirm Submission",
+    confirmMessage: "Please verify the entered information before submitting",
+    confirmClose: "Cancel",
+    confirmSubmit: "Submit",
+    successTitle: "Application Submitted!",
+    successMessage:
+      "Thank you for your interest in our clinic. We will contact you shortly",
+    successThankYou: "Thank You!",
+    successDetailedMessage:
+      "We will carefully review your application, and if your experience and skills match our requirements, our HR manager will contact you",
+    successClose: "Close",
+    resume: "Resume",
+    notSelected: "Not selected",
+    uploadFile: "Upload file",
   },
 };
 
@@ -240,7 +269,7 @@ const CareerForm = () => {
             <div className="mt-auto">
               <Link
                 href="/clinic"
-                className="inline-flex items-center gap-2 py-3 px-6 border border-white rounded-xl text-white hover:bg-white/10 transition-colors"
+                className="inline-flex items-center gap-2 py-3 px-6 border border-white rounded-xl text-white hover:bg-white hover:text-light-accent transition-colors"
               >
                 {t("aboutButton")}
                 <svg

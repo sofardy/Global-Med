@@ -1,7 +1,7 @@
 // src/store/partners.ts
-import { create } from "zustand";
-import axios from "axios";
 import { API_BASE_URL } from "@/src/config/constants";
+import axios from "axios";
+import { create } from "zustand";
 
 // Типы для партнерских данных
 export interface PartnerItem {
@@ -72,15 +72,12 @@ export const usePartnersStore = create<PartnersState>()((set, get) => ({
     try {
       set({ loading: true, error: null });
 
-      const response = await axios.get<PartnersData>(
-        `${API_BASE_URL}/pages/partners`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Language": locale,
-          },
-        }
-      );
+      const response: any = await axios.get(`${API_BASE_URL}/pages/partners`, {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Language": locale,
+        },
+      });
 
       set({
         items: response.data.data.content.partners.data.items,

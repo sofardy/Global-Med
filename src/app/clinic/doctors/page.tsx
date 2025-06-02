@@ -1,14 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import DoctorCard from "@/src/shared/components/Doctor/DoctorCard";
-import DoctorSearchSection from "@/src/shared/components/Doctor/DoctorSearchSection";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import DoctorCard from "@/src/shared/components/Doctor/DoctorCard";
+import DoctorSearchSection from "@/src/shared/components/Doctor/DoctorSearchSection";
 import { useDoctorsStore } from "@/src/store/doctors";
+import { useEffect, useState } from "react";
 import { DoctorsPageCleanup } from "./components/DoctorsPageCleanup";
 
 const translations = {
+  en: {
+    ourSpecialists: "Our Specialists",
+    showMore: "Show More",
+    loading: "Loading...",
+    error: "An error occurred while loading data",
+    tryAgain: "Try Again",
+    noResults: "No doctors found",
+  },
   ru: {
     ourSpecialists: "Наши специалисты",
     showMore: "Показать еще",

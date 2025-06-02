@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  AnimatedButton,
-  AnimatedButtonWrapper,
-} from "../../ui/Button/AnimatedButton";
-import { useTranslation } from "../../../hooks/useTranslation";
 import Modal from "@/src/shared/components/Modal/Modal";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
+import { AnimatedButton } from "../../ui/Button/AnimatedButton";
 
 // Типы и интерфейсы
 interface TimeSlot {
@@ -69,6 +66,23 @@ const translations = {
         "Qabulga yozilish bemorning shaxsiy kabinetida amalga oshiriladi. Davom etish uchun siz tizimga kirishingiz/ro'yxatdan o'tishingiz kerak bo'ladi",
       continueButton: "Davom etish",
       closeButton: "Yopish",
+    },
+  },
+  en: {
+    title: "Book an Appointment Online",
+    selectDay: "Choose a convenient day for you",
+    selectTime: "Choose a convenient time for you",
+    noTimeSlots: "No available time slots for the selected date",
+    bookAppointment: "Book an Appointment",
+    loading: "Loading available dates...",
+    error: "Error loading data",
+    // Modal window localization
+    authModal: {
+      title: "Go to Personal Account",
+      description:
+        "Appointment booking is done in the patient's personal account. To continue, you will need to log in/register",
+      continueButton: "Continue",
+      closeButton: "Close",
     },
   },
 };

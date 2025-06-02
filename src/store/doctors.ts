@@ -1,8 +1,6 @@
+import httpClient from "@/src/shared/services/HttpClient";
 import { create } from "zustand";
 import { Doctor, DoctorFilters } from "../app/api/doctors";
-import httpClient from "@/src/shared/services/HttpClient";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
 
 export const getDoctors = async (filters: DoctorFilters, page = 1) => {
   const queryParams = new URLSearchParams();

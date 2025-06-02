@@ -1,12 +1,12 @@
 // src/shared/components/PartnerBenefits.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useThemeStore } from "@/src/store/theme";
-import Image from "next/image";
-import { RatingStarIcon, MedicalSearchIcon } from "../ui/Icon";
 import { useLanguageStore } from "@/src/store/language";
 import { usePartnersStore } from "@/src/store/partners";
+import { useThemeStore } from "@/src/store/theme";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { MedicalSearchIcon, RatingStarIcon } from "../ui/Icon";
 
 export default function PartnerBenefits() {
   const { theme } = useThemeStore();
@@ -21,10 +21,10 @@ export default function PartnerBenefits() {
   const mainItem = getMainPartner();
   const benefitCards = getBenefitCards();
 
-  // Загрузка данных при монтировании компонента
-  useEffect(() => {
-    fetchPartners(currentLocale);
-  }, [currentLocale]);
+  // // Загрузка данных при монтировании компонента
+  // useEffect(() => {
+  //   fetchPartners(currentLocale);
+  // }, [currentLocale]);
 
   // Enhanced screen size detection
   useEffect(() => {

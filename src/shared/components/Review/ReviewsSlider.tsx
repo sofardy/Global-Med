@@ -1,10 +1,10 @@
 "use client";
 
+import { API_BASE_URL } from "@/src/config/constants";
+import { useTranslation } from "@/src/hooks/useTranslation";
 import React, { useEffect, useState } from "react";
 import { UniversalSlider } from "../UniversalSlider";
-import { useTranslation } from "@/src/hooks/useTranslation";
 import { ReviewCard } from "./ReviewCard";
-import { API_BASE_URL } from "@/src/config/constants";
 
 // Tarjima matnlari
 const translations = {
@@ -21,6 +21,13 @@ const translations = {
       "Minglab bemorlar allaqachon klinikamizda malakali yordam olishgan",
     prevSlide: "Oldingi sharh",
     nextSlide: "Keyingi sharh",
+  },
+  en: {
+    title: "Trust Your Health to Us",
+    description:
+      "Thousands of patients have already received qualified care at our clinic",
+    prevSlide: "Previous review",
+    nextSlide: "Next review",
   },
 };
 

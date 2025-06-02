@@ -1,28 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import UniversalHeroSection from "@/src/shared/components/UniversalHeroSection";
-import { UniversalCard } from "@/src/shared/components/UniversalCard";
-import { useThemeStore } from "@/src/store/theme";
-import { useLanguageStore } from "@/src/store/language";
-import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import { API_BASE_URL } from "@/src/config/constants";
 import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
-import axios from "axios";
+import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import { UniversalCard } from "@/src/shared/components/UniversalCard";
+import UniversalHeroSection from "@/src/shared/components/UniversalHeroSection";
 import {
-  LightbulbIcon,
-  EyeIcon,
-  ButterflyIcon,
-  MedicalIcon,
   AngelIcon,
   BlobShape,
+  ButterflyIcon,
   ButterflyWingsIcon,
   DocumentPenIcon,
+  EyeIcon,
+  LightbulbIcon,
   MedicalMicroscopeIcon,
   ThyroidIcon,
 } from "@/src/shared/ui/Icon";
-import BonesIcon from "@/src/shared/ui/Icon/BonesIcon";
-import NoseIcon from "@/src/shared/ui/Icon/NoseIcon";
-import { API_BASE_URL } from "@/src/config/constants";
+import { useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const serviceIconMap: { [key: string]: React.ReactNode } = {
   "lor-247": <LightbulbIcon size={80} />,
@@ -70,6 +67,8 @@ export default function ServicesPage() {
     imageAlt:
       currentLocale === "uz"
         ? "Klinikamizdagi tibbiy xizmatlar"
+        : currentLocale === "en"
+        ? "Medical services at our clinic"
         : "Медицинские услуги в нашей клинике",
     // mainCard: {
     //   title: currentLocale === 'uz'
@@ -153,13 +152,21 @@ export default function ServicesPage() {
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <p className="text-xl text-light-text dark:text-dark-text">
-              Загрузка услуг...
+              {currentLocale === "uz"
+                ? "Xizmatlar yuklanmoqda..."
+                : currentLocale === "en"
+                ? "Loading services..."
+                : "Загрузка услуг..."}
             </p>
           </div>
         ) : error ? (
           <div className="flex justify-center items-center h-64">
             <p className="text-xl text-red-500">
-              Ошибка при загрузке данных. Пожалуйста, попробуйте позже.
+              {currentLocale === "uz"
+                ? "Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring."
+                : currentLocale === "en"
+                ? "Error loading data. Please try again later."
+                : "Ошибка при загрузке данных. Пожалуйста, попробуйте позже."}
             </p>
           </div>
         ) : (
@@ -173,12 +180,20 @@ export default function ServicesPage() {
                     service.card_description || service.mini_description
                   }
                   additionalInfo={`${
-                    currentLocale === "uz" ? "Xizmatlar: " : "Услуги: "
+                    currentLocale === "uz"
+                      ? "Xizmatlar: "
+                      : currentLocale === "en"
+                      ? "Services: "
+                      : "Услуги: "
                   }${service.services_list.length}`}
                   icon={service.icon}
                   link={`/services/${service.slug}`}
                   buttonText={` ${
-                    currentLocale === "uz" ? "Batafsil" : "Подробнее"
+                    currentLocale === "uz"
+                      ? "Batafsil"
+                      : currentLocale === "en"
+                      ? "Learn More"
+                      : "Подробнее"
                   }`}
                   className="h-full"
                   iconPosition="center"

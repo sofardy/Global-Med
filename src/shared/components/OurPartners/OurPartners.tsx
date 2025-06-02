@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { API_BASE_URL } from "@/src/config/constants";
-import { useLanguageStore } from "@/src/store/language";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { checkupDetailTranslations } from "@/src/shared/mocks/checkupHeroData";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { useLanguageStore } from "@/src/store/language";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import "swiper/css";
+import { Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 interface PartnersGalleryData {
   key: string;
@@ -32,7 +32,7 @@ const fetchHomePageData = async (
   language: string
 ): Promise<HomePageContent | null> => {
   try {
-    const response = await axios.get<HomePageResponse>(
+    const response: any = await axios.get<HomePageResponse>(
       `${API_BASE_URL}/pages/home`,
       {
         headers: {
@@ -41,7 +41,7 @@ const fetchHomePageData = async (
         },
       }
     );
-    return response.data.data.content;
+    return response?.data?.data?.content;
   } catch (error) {
     console.error("Error fetching home page data:", error);
     return null;
@@ -58,6 +58,9 @@ const OurPartners = () => {
   const getTitle = () => {
     if (currentLocale === "uz") {
       return "Bizning hamkorlar";
+    }
+    if (currentLocale === "en") {
+      return "Our Partners";
     }
     return "Наши партнеры";
   };
@@ -81,13 +84,15 @@ const OurPartners = () => {
         <div className="text-xl text-light-text dark:text-dark-text">
           {currentLocale === "uz"
             ? "Hamkorlarni yuklash..."
+            : currentLocale === "en"
+            ? "Loading partners..."
             : "Загрузка партнеров..."}
         </div>
       </div>
     );
   }
 
-  if (partnerImages.length === 0) {
+  if (partnerImages?.length === 0) {
     return null;
   }
 
@@ -113,7 +118,7 @@ const OurPartners = () => {
           speed={3000}
           className="partners-swiper"
         >
-          {partnerImages.map((image, index) => (
+          {partnerImages?.map((image: any, index: any) => (
             <SwiperSlide key={index} className="!w-[375px]">
               <div
                 className="bg-white dark:bg-dark-block flex items-center justify-center p-6 duration-300"

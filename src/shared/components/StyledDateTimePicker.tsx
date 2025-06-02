@@ -2,14 +2,17 @@
 
 import dynamic from "next/dynamic";
 
-const DateTimePicker = dynamic(() => import("./DateTimePicker"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex items-center justify-center min-h-[200px]">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-    </div>
-  ),
-});
+const DateTimePicker = dynamic<StyledDateTimePickerProps>(
+  () => import("./DateTimePicker").then((mod) => mod.DateTimePicker),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    ),
+  }
+);
 
 interface StyledDateTimePickerProps {
   selectedDate: string;
@@ -17,6 +20,7 @@ interface StyledDateTimePickerProps {
   onDateChange: (date: string) => void;
   onTimeChange: (time: string) => void;
   availableTimes?: string[];
+  theme: "light" | "dark";
 }
 
 export default function StyledDateTimePicker(props: StyledDateTimePickerProps) {

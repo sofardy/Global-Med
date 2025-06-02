@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useThemeStore } from "../../store/theme";
 import { useLanguageStore } from "../../store/language";
+import { useThemeStore } from "../../store/theme";
 
 const localization = {
   ru: {
@@ -17,12 +17,18 @@ const localization = {
     system: "Tizim mavzusi",
     toggle: "Mavzuni o'zgartirish",
   },
+  en: {
+    dark: "Dark Theme",
+    light: "Light Theme",
+    system: "System Theme",
+    toggle: "Toggle Theme",
+  },
 };
 
 export const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useThemeStore();
   const { currentLocale } = useLanguageStore();
-  const t = localization[currentLocale];
+  const t: any = localization[currentLocale as keyof typeof localization];
 
   return (
     <button

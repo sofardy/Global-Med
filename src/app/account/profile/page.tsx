@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import DatePicker from "react-date-picker";
-import "react-date-picker/dist/DatePicker.css";
-import "react-calendar/dist/Calendar.css";
-import { useThemeStore } from "@/src/store/theme";
+import { API_BASE_URL } from "@/src/config/constants";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
 import axios from "axios";
-import { API_BASE_URL } from "@/src/config/constants";
 import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import "react-calendar/dist/Calendar.css";
+import DatePicker from "react-date-picker";
+import "react-date-picker/dist/DatePicker.css";
 
 // Axios interceptor for handling 401 errors
 axios.interceptors.response.use(
@@ -110,6 +110,31 @@ const translations = {
     },
     successMessage: "O'zgarishlar muvaffaqiyatli saqlandi",
     errorMessage: "Ma'lumotlarni saqlashda xatolik yuz berdi",
+  },
+  en: {
+    patientPersonalData: "Patient Personal Information",
+    firstName: "First Name",
+    lastName: "Last Name",
+    birthDate: "Date of Birth",
+    gender: "Gender",
+    accountData: "Account Information",
+    phoneNumber: "Phone Number",
+    changeNumber: "Change Number",
+    cancel: "Cancel",
+    phoneChangeInfo:
+      "To change your phone number, you need to verify the new number using a one-time SMS code",
+    saveChanges: "Save Changes",
+    genders: {
+      female: "Female",
+      male: "Male",
+    },
+    validation: {
+      required: "This field is required",
+      invalidName: "Name should contain only letters",
+      invalidPhone: "Invalid phone number format",
+    },
+    successMessage: "Changes saved successfully",
+    errorMessage: "Error saving data",
   },
 };
 

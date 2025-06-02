@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import AnalysisRecommendations from "@/src/shared/components/AnalysisRecommendations";
 import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
-import { translations } from "@/src/shared/mocks/analysisData";
-import AnalysisRecommendations from "@/src/shared/components/AnalysisRecommendations";
+import { translations as analysisTranslations } from "@/src/shared/mocks/analysisData";
 import { AnimatedButton } from "@/src/shared/ui/Button/AnimatedButton";
+import { useContext, useEffect, useState } from "react";
 
-import axios from "axios";
 import { API_BASE_URL } from "@/src/config/constants";
+import axios from "axios";
 
-import httpClient from "@/src/shared/services/HttpClient";
-import { useLanguageStore } from "@/src/store/language";
 import { GBContext } from "@/src/context/globalize-breadcrumb";
+import { useLanguageStore } from "@/src/store/language";
 
 interface AnalysisItem {
   uuid: string;
@@ -33,9 +32,32 @@ interface PageProps {
   params: { id: string };
 }
 
+const translations = {
+  error: {
+    ru: "Не удалось загрузить данные анализа",
+    uz: "Tahlil ma'lumotlarini yuklashda xatolik yuz berdi",
+    en: "Failed to load analysis data",
+  },
+  symptomsTitle: {
+    ru: "Симптомы, при которых следует сдать анализы:",
+    uz: "Simptomlar, analizlarni o'tkazish kerak bo'lgan holatlari:",
+    en: "Symptoms that require testing:",
+  },
+  showMore: {
+    ru: "Показать все",
+    uz: "Barchasini ko'rsatish",
+    en: "Show all",
+  },
+  showLess: {
+    ru: "Свернуть",
+    uz: "Yig'ish",
+    en: "Show less",
+  },
+};
+
 export default function Page({ params }: PageProps) {
   const id = params?.id || "coagulogramma";
-  const { t } = useTranslation(translations);
+  const { t } = useTranslation(analysisTranslations);
   const [analysis, setAnalysis] = useState<AnalysisItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +67,6 @@ export default function Page({ params }: PageProps) {
 
   const { currentLocale } = useLanguageStore();
 
-  // Загрузка данных анализа
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
@@ -55,7 +76,7 @@ export default function Page({ params }: PageProps) {
           {
             headers: {
               "Content-Type": "application/json",
-              "X-Language": currentLocale || "ru", // Используем currentLocale с fallback на 'ru'
+              "X-Language": currentLocale || "ru",
             },
           }
         );
@@ -64,7 +85,9 @@ export default function Page({ params }: PageProps) {
         setError(null);
       } catch (err) {
         console.error(`Error fetching analysis with slug ${id}:`, err);
-        setError("Не удалось загрузить данные анализа");
+        setError(
+          translations.error[currentLocale as keyof typeof translations.error]
+        );
       } finally {
         setLoading(false);
       }
@@ -73,7 +96,6 @@ export default function Page({ params }: PageProps) {
     fetchAnalysis();
   }, [id, currentLocale]);
 
-  // Определение мобильной версии
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -84,7 +106,6 @@ export default function Page({ params }: PageProps) {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Скролл к форме записи
   const handleAppointment = () => {
     const appointmentSection = document.getElementById("appointment-section");
     if (appointmentSection) {
@@ -107,14 +128,18 @@ export default function Page({ params }: PageProps) {
       <main className="overflow-hidden">
         <div className="container mx-auto px-4 py-12">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <p>{error || "Не удалось загрузить информацию об анализе."}</p>
+            <p>
+              {error ||
+                translations.error[
+                  currentLocale as keyof typeof translations.error
+                ]}
+            </p>
           </div>
         </div>
       </main>
     );
   }
 
-  // Ограничение списка цен для мобильной версии
   const displayedPrices =
     isMobile && !showAllPrices
       ? analysis.medical_tests_list.slice(0, 5)
@@ -122,7 +147,6 @@ export default function Page({ params }: PageProps) {
 
   return (
     <main className="overflow-hidden">
-      {/* Баннер */}
       <div className="w-full rounded-xl sm:rounded-2xl overflow-hidden mb-8 md:mb-12 relative bg-light-accent">
         <div
           className="absolute -right-[10px] -bottom-[180px] w-[1400px] h-[500px] pointer-events-none z-[1] hidden md:block"
@@ -175,7 +199,6 @@ export default function Page({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Контент */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
         <div className="bg-white dark:bg-dark-block rounded-xl p-6 sm:p-8 h-[700px] overflow-y-auto">
           <h2 className="text-[38px] sm:text-[40px] md:text-[56px] font-medium mb-6 text-light-text dark:text-dark-text leading-[1]">
@@ -186,9 +209,11 @@ export default function Page({ params }: PageProps) {
           </p>
 
           <h3 className="text-lg sm:text-xl font-medium mb-4 text-light-text dark:text-dark-text">
-            {currentLocale === "ru"
-              ? "Симптомы, при которых следует сдать анализы:"
-              : "Simptomlar, analizlarni o'tkazish kerak bo'lgan holatlari:"}
+            {
+              translations.symptomsTitle[
+                currentLocale as keyof typeof translations.symptomsTitle
+              ]
+            }
           </h3>
 
           <ul className="space-y-3">
@@ -232,7 +257,15 @@ export default function Page({ params }: PageProps) {
                 onClick={() => setShowAllPrices(!showAllPrices)}
                 className="flex items-center gap-2 px-6 py-3 border border-gray-300 rounded-xl text-light-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <span>{showAllPrices ? "Свернуть" : "Показать все"}</span>
+                <span>
+                  {showAllPrices
+                    ? translations.showLess[
+                        currentLocale as keyof typeof translations.showLess
+                      ]
+                    : translations.showMore[
+                        currentLocale as keyof typeof translations.showMore
+                      ]}
+                </span>
                 <svg
                   className={`w-5 h-5 transform transition-transform ${
                     showAllPrices ? "rotate-180" : ""
@@ -254,15 +287,12 @@ export default function Page({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Рекомендации */}
       <AnalysisRecommendations />
 
-      {/* Секция записи */}
       <div id="appointment-section">
         <AppointmentSection />
       </div>
 
-      {/* Контактная информация */}
       <ContactInfo />
     </main>
   );

@@ -11,12 +11,12 @@ interface TranslationOptions {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LocaleMessages = Record<Locale, Record<string, any>>;
 
-export function useTranslation<T extends LocaleMessages>(localization: T) {
+export function useTranslation(localization: any): any {
   const { currentLocale } = useLanguageStore();
 
   // Проверяем, есть ли сообщения для текущего языка, иначе используем резервный
   const messages = useMemo(() => {
-    const locale = currentLocale as keyof T;
+    const locale = currentLocale;
     // Если локализация для выбранного языка существует, используем её
     if (localization[locale]) {
       return localization[locale];
@@ -67,6 +67,5 @@ export function useTranslation<T extends LocaleMessages>(localization: T) {
 
     return (typeof result === "string" ? result : key) as unknown as R;
   };
-
   return { t, messages, currentLocale };
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
 import ComprehensiveApproach from "@/src/shared/components/ComprehensiveApproach";
 import ContactForm from "@/src/shared/components/ContactForm";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import PartnerBenefits from "@/src/shared/components/PartnerBenefits";
 import WhyChooseUs from "@/src/shared/components/WhyChooseUs";
-import { usePartnersStore } from "@/src/store/partners";
 import { useLanguageStore } from "@/src/store/language";
+import { usePartnersStore } from "@/src/store/partners";
+import { useEffect } from "react";
 
 export default function Partners() {
   const { fetchPartners, loading, error } = usePartnersStore();

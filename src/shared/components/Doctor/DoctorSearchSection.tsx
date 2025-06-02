@@ -32,6 +32,18 @@ interface SpecialtiesDropdownProps {
 }
 
 const translations = {
+  en: {
+    title: "Find a Specialist",
+    searchByName: "Search by Name",
+    searchBySpecialty: "Search by Specialty",
+    inputPlaceholder: "Enter full name",
+    selectPlaceholder: "All Specialties",
+    findButton: "Find Doctor",
+    modalTitle: "Select Specialty",
+    loading: "Loading...",
+    noResults: "No doctors found",
+    loadingSpecialties: "Loading specialties...",
+  },
   ru: {
     title: "Найдите специалиста",
     searchByName: "Поиск по ФИО",

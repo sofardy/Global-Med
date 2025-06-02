@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useThemeStore } from "@/src/store/theme";
-import { useLanguageStore } from "@/src/store/language";
+import { API_BASE_URL } from "@/src/config/constants";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { LoginIcon } from "@/src/shared/ui/Icon";
+import { useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import "react-calendar/dist/Calendar.css";
 import DatePicker from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css";
-import "react-calendar/dist/Calendar.css";
-import axios from "axios";
-import { API_BASE_URL } from "@/src/config/constants";
 
 // Переводы
 const translations = {
@@ -60,9 +60,33 @@ const translations = {
     birthDate: "Tug'ilgan sana",
     continueButton: "Davom etish",
     phoneError: "To'liq telefon raqamini kiriting",
-    resendCode: "Qayta yuborish {{countdown}} soniyadan so‘ng",
+    resendCode: "Qayta yuborish {{countdown}} soniyadan so'ng",
     resendCodeDefault: "Kodni qayta yuborish",
-    invalidCode: "Noto‘g‘ri tasdiqlash kodi.",
+    invalidCode: "Noto'g'ri tasdiqlash kodi.",
+  },
+  en: {
+    title: "Patient Portal Login",
+    phoneLabel: "Enter your phone number",
+    sendSmsButton: "Send SMS Code",
+    privacyText: "By clicking 'Send SMS Code', you agree to our",
+    privacyLink: "privacy policy",
+    smsVerificationText: "Enter 4 digits from the incoming SMS",
+    confirmCodeButton: "Confirm Code",
+    changeNumberButton: "Change Number",
+    personalDataTitle: "Personal Information",
+    personalDataDesc:
+      "To access clinic services, please provide your basic information",
+    firstName: "First Name",
+    lastName: "Last Name",
+    gender: "Gender",
+    male: "Male",
+    female: "Female",
+    birthDate: "Date of Birth",
+    continueButton: "Continue",
+    phoneError: "Please enter a complete phone number",
+    resendCode: "Resend in {{countdown}} seconds",
+    resendCodeDefault: "Resend Code",
+    invalidCode: "Invalid verification code.",
   },
 };
 

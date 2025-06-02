@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useThemeStore } from "@/src/store/theme";
-import { useLanguageStore } from "@/src/store/language";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
   CalendarIcon,
   GlobeIcon,
@@ -48,11 +48,25 @@ const translations = {
     cancel: "Bekor qilish",
     exit: "Chiqish",
   },
+  en: {
+    myAppointments: "My Results",
+    analyses: "Medical Tests",
+    profile: "Profile",
+    doctors: "Doctors",
+    backToMainSite: "Back to Main Site",
+    changeLanguage: "Change Language",
+    logout: "Logout",
+    personalAccount: "Personal Account",
+    logoutConfirmation: "Logout Confirmation",
+    logoutConfirmationMessage:
+      "Are you sure you want to logout from your account?",
+    cancel: "Cancel",
+    exit: "Exit",
+  },
 };
 
 export default function AccountSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { theme } = useThemeStore();
   const { currentLocale, setLocale } = useLanguageStore();
   const { t } = useTranslation(translations);
@@ -264,6 +278,28 @@ export default function AccountSidebar() {
                   />
                 </span>
                 O'zbek
+              </button>
+              <button
+                onClick={() => {
+                  setLocale("en");
+                  setIsLanguageOpen(false);
+                  window.location.reload();
+                }}
+                className={`
+                 flex items-center w-full 
+                 px-4 py-3 
+                 transition-colors 
+                 hover:bg-gray-100 dark:hover:bg-gray-800
+               `}
+              >
+                <span className="w-6 h-4 mr-3 flex-shrink-0 border border-gray-200 dark:border-gray-700">
+                  <img
+                    src="/icon/icon-uk.png"
+                    className="w-full h-full object-cover"
+                    alt="English"
+                  />
+                </span>
+                English
               </button>
             </div>
           )}
