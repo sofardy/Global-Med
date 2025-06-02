@@ -141,7 +141,7 @@ const translations = {
 
 export default function Clinic() {
   const { theme } = useThemeStore();
-  const { t, currentLocale } = useTranslation(translations);
+  const { t, currentLocale }: any = useTranslation(translations);
   const [pageData, setPageData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -154,6 +154,7 @@ export default function Clinic() {
           `${API_BASE_URL}/pages/clinic`,
           {
             headers: {
+              "Content-Type": "application/json",
               "X-Language": currentLocale,
             },
           }
@@ -364,21 +365,8 @@ export default function Clinic() {
         </div>
       </div>
 
-      {/* Компоненты с данными администраторов и оборудования */}
-      {/* <MedicalEquipmentSlider /> */}
-
-      {/* Передаем данные администраторов в компонент */}
-      {/* <AdministrationSlider administrators={administrators} /> */}
-
       <CareerForm />
 
-      {/* Используем форматированные сертификаты */}
-      {/* <CertificatesSlider 
-        certificates={formattedCertificates}
-        title="Доверие и качество"
-        description="Все наши медицинские услуги лицензированы и соответствуют строгим стандартам"
-      />
-       */}
       <ContactInfo />
     </main>
   );

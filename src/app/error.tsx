@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Error({
   reset,
@@ -14,7 +14,8 @@ export default function Error({
         Ошибка
       </h1>
       <p className="text-lg text-light-text/80 dark:text-dark-text/80 mb-10 text-center max-w-md">
-        При загрузке страницы произошла ошибка. Пожалуйста, попробуйте обновить страницу.
+        При загрузке страницы произошла ошибка. Пожалуйста, попробуйте обновить
+        страницу.
       </p>
       <div className="flex gap-4">
         <button
@@ -23,7 +24,10 @@ export default function Error({
         >
           Повторить попытку
         </button>
-        <Link href="/" className="px-6 py-3 border border-light-text dark:border-dark-text rounded-xl hover:bg-light-bg dark:hover:bg-dark-bg transition-colors">
+        <Link
+          href="/"
+          className="px-6 py-3 border border-light-text dark:border-dark-text rounded-xl hover:bg-light-bg dark:hover:bg-dark-bg transition-colors"
+        >
           Вернуться на главную
         </Link>
       </div>

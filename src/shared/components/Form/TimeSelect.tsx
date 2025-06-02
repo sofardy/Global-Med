@@ -1,3 +1,5 @@
+import { Listbox } from "@headlessui/react";
+import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
 import { useThemeStore } from "@/src/store/theme";
@@ -25,7 +27,7 @@ export const TimeSelect: React.FC<TimeSelectProps> = ({
   const hoverBg = theme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800";
 
   return (
-    <Sele value={value} onChange={onChange}>
+    <Listbox value={value} onChange={onChange}>
       <div className="relative">
         <Listbox.Button
           className={`
@@ -59,13 +61,19 @@ export const TimeSelect: React.FC<TimeSelectProps> = ({
             <Listbox.Option
               key={time}
               value={time}
-              className={({ active }) => `
+              className={({ active }: { active: boolean }) => `
                 relative cursor-pointer select-none py-2 pl-4 pr-9
                 ${active ? "bg-[#00C78B] text-white" : textColor}
                 ${hoverBg}
               `}
             >
-              {({ selected, active }) => (
+              {({
+                selected,
+                active,
+              }: {
+                selected: boolean;
+                active: boolean;
+              }) => (
                 <>
                   <span
                     className={`block truncate ${
@@ -89,6 +97,6 @@ export const TimeSelect: React.FC<TimeSelectProps> = ({
           ))}
         </Listbox.Options>
       </div>
-    </Sele>
+    </Listbox>
   );
 };

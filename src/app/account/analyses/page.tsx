@@ -27,6 +27,16 @@ const translations = {
     downloadShort: "Yuklab olish",
     laboratory: "Laboratoriya shifokori",
   },
+  en: {
+    emptyState: "You have no test results yet...",
+    loadMore: "Load More",
+    loading: "Loading...",
+    showEmpty: "Show Empty State",
+    showResults: "Show Results",
+    download: "Download Results",
+    downloadShort: "Download",
+    laboratory: "Laboratory Doctor",
+  },
 };
 
 export default function Analyses() {
@@ -133,7 +143,7 @@ export default function Analyses() {
         <EmptyState />
       ) : (
         <div>
-          {testResults.map((result) => (
+          {testResults?.map((result: any) => (
             <div
               key={result.id}
               className="bg-white dark:bg-dark-block rounded-2xl mb-4 px-4 sm:px-6 md:px-10 py-4 sm:py-6 shadow-sm"

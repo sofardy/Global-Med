@@ -155,6 +155,37 @@ export default function ComprehensiveApproach(): JSX.Element {
         icon: <HeartIconk2 />,
       },
     ],
+    en: [
+      {
+        title: "Comprehensive Medical Check-ups",
+        description:
+          "Regular health diagnostics and assessment of staff using advanced technologies for early disease detection",
+        icon: <MedicalTrackerIcon />,
+      },
+      {
+        title: "Corporate Insurance",
+        description: "Individually designed insurance programs",
+        icon: <DocumentIcon />,
+      },
+      {
+        title: "Prevention and Vaccination",
+        description:
+          "Development and implementation of disease prevention measures",
+        icon: <PencilIcon />,
+      },
+      {
+        title: "On-site Medical Services",
+        description:
+          "Organization of on-site examinations and consultations in the office, saving employees' time and providing prompt assistance",
+        icon: <ClipboardIcon />,
+      },
+      {
+        title: "Personalized Support",
+        description:
+          "Individual approach to each client: from developing examination programs to supporting corporate health improvement projects",
+        icon: <HeartIconk2 />,
+      },
+    ],
   };
 
   // Заголовки и подзаголовки для разных языков
@@ -168,6 +199,11 @@ export default function ComprehensiveApproach(): JSX.Element {
       title: "Xodimlarning sog'lig'iga kompleks yondashuv",
       subtitle:
         "Qulay va sifatli tibbiy hamrohlik orqali xodimlarga g'amxo'rlik darajasini oshiramiz",
+    },
+    en: {
+      title: "Comprehensive Approach to Employee Health",
+      subtitle:
+        "Enhancing staff care through convenient and quality medical support",
     },
   };
 

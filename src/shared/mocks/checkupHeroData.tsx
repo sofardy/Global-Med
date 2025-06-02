@@ -7,6 +7,7 @@ import {
   MuscleIcon,
   PacifierIcon,
   PregnancyIcon,
+    // @ts-ignore
 } from "@/src/shared/ui/Icon";
 import NeuronIcon from "../ui/Icon/NeuronIcon";
 
@@ -62,6 +63,7 @@ export const checkupItemsData = [
       uz: "Jarrohlik aralashuvidan oldin umumiy sog'liq holatini baholash va xavflarni kamaytirish uchun kompleks tekshiruvlar",
       en: "Comprehensive studies to assess overall health status and reduce risks before surgical intervention",
     },
+    // @ts-ignore
     iconPath: <HealthMonitorIcon size={190} />,
     stats: [
       {
@@ -86,6 +88,7 @@ export const checkupItemsData = [
       uz: "Gormonal fon, reproduktiv tizim va umumiy o'zini yaxshi his qilishni nazorat qilish uchun kompleks tekshiruv",
       en: "Comprehensive examination for monitoring hormonal balance, reproductive system, and general well-being",
     },
+    // @ts-ignore
     iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
       {
@@ -107,6 +110,7 @@ export const checkupItemsData = [
       uz: "Gormonlar, reproduktiv tizim va organizmning umumiy holatini chuqur tahlil qilish bilan kengaytirilgan diagnostika",
       en: "Extended diagnostics with in-depth analysis of hormones, reproductive system, and overall body condition",
     },
+    // @ts-ignore
     iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
       {
@@ -131,6 +135,7 @@ export const checkupItemsData = [
       uz: "Gormonal muvozanat, reproduktiv funktsiya va organizmning umumiy holatini baholash uchun kompleks tekshiruv",
       en: "Comprehensive examination to assess hormonal balance, reproductive function, and overall body condition",
     },
+    // @ts-ignore
     iconPath: <LocationPinIcon size={190} />,
     stats: [
       {
@@ -152,6 +157,7 @@ export const checkupItemsData = [
       uz: "Urologik sog'liq, gormonal fon va yashirin infektsiyalarni tekshirishni o'z ichiga olgan kompleks tekshiruv",
       en: "Comprehensive examination including urological health check, hormonal balance, and hidden infections",
     },
+    // @ts-ignore
     iconPath: <LocationPinIcon size={190} />,
     stats: [
       {
@@ -173,6 +179,8 @@ export const checkupItemsData = [
       uz: "Gormonal muvozanat, reproduktiv funktsiya va organizmning umumiy holatini baholash uchun kengaytirilgan kompleks tekshiruv",
       en: "Extended comprehensive examination to assess hormonal balance, reproductive function, and overall body condition",
     },
+    // @ts-ignore
+    // @ts-ignore
     iconPath: <LocationPinIcon size={190} />,
     stats: [
       {
@@ -197,6 +205,7 @@ export const checkupItemsData = [
       uz: "Urologik sog'liq, gormonal fon va yashirin infektsiyalarni tekshirishni o'z ichiga olgan kengaytirilgan kompleks tekshiruv",
       en: "Extended comprehensive examination including urological health check, hormonal balance, and hidden infections",
     },
+    // @ts-ignore
     iconPath: <LocationPinIcon size={190} />,
     stats: [
       {
@@ -218,6 +227,7 @@ export const checkupItemsData = [
       uz: "Erkaklar va ayollar uchun umumiy sog'liq holatini baholash va kasallik xavflarini aniqlashga yordam beradigan kompleks tekshiruv",
       en: "Comprehensive examination for men and women, helping to assess overall health status and identify disease risks",
     },
+    // @ts-ignore
     iconPath: <ButterflyLogoSmallIcon size={190} />,
     stats: [
       {
@@ -239,6 +249,7 @@ export const checkupItemsData = [
       uz: "Erkaklar va ayollar uchun batafsil diagnostika, chuqur tahlillar va shifokorlar maslahatlari bilan kengaytirilgan kompleks tekshiruv",
       en: "Extended comprehensive examination for men and women with detailed diagnostics, in-depth analyses, and doctor consultations",
     },
+    // @ts-ignore
     iconPath: <ButterflyLogoSmallIcon size={190} />,
     stats: [
       {
@@ -260,6 +271,7 @@ export const checkupItemsData = [
       uz: "Homiladorlikni rejalashtirgan ayollar uchun muhim tahlillar, ultratovush tekshiruvi va sog'lom homiladorlik uchun tayyorlash uchun mutaxassislar maslahatlarini o'z ichiga olgan kompleks tekshiruv",
       en: "Comprehensive examination for women planning pregnancy, including important tests, ultrasound, and specialist consultations for preparing for healthy conception",
     },
+    // @ts-ignore
     iconPath: <PregnancyIcon size={190} />,
     stats: [
       {
@@ -281,6 +293,7 @@ export const checkupItemsData = [
       uz: "Organizmning farzand ko'rishga tayyorligini tekshirish uchun tahlillar va reproduktiv funktsiya diagnostikasini o'z ichiga olgan erkaklar sog'lig'i bo'yicha kompleks tekshiruv",
       en: "Comprehensive examination of men's health, including tests and diagnostics of reproductive function to ensure the body's readiness for conception",
     },
+    // @ts-ignore
     iconPath: <NeuronIcon size={190} />,
     stats: [
       {
@@ -305,6 +318,7 @@ export const checkupItemsData = [
       uz: "Umumiy sog'liq holatini, yurak, tomirlar ishlashini, gormonal fonni baholash va yoshga bog'liq o'zgarishlarni oldini olish uchun kompleks tekshiruv",
       en: "Comprehensive examination to assess overall health status, heart and vascular function, hormonal balance, and prevention of age-related changes",
     },
+    // @ts-ignore
     iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
       {
@@ -329,6 +343,7 @@ export const checkupItemsData = [
       uz: "Yurak, tomirlar, gormonal muvozanat va faol va to'liq hayot uchun sog'liqning asosiy ko'rsatkichlarini tekshirishni o'z ichiga olgan kompleks tekshiruv",
       en: "Comprehensive examination including heart, vascular, hormonal balance checks, and key health indicators for an active and fulfilling life",
     },
+    // @ts-ignore
     iconPath: <LocationPinIcon size={190} />,
     stats: [
       {
@@ -353,6 +368,7 @@ export const checkupItemsData = [
       uz: "Bog'chaga kirish uchun tahlillar, mutaxassislar ko'rigi va zarur tekshiruvlarni o'z ichiga olgan kompleks tekshiruv",
       en: "Comprehensive examination including tests, specialist examinations, and necessary studies for kindergarten admission",
     },
+    // @ts-ignore
     iconPath: <PacifierIcon size={190} />,
     stats: [
       {
@@ -377,6 +393,7 @@ export const checkupItemsData = [
       uz: "Jismoniy holatni saqlash uchun yurak, tomirlar, bo'g'imlar holatini va asosiy vitaminlar va mikroelementlar darajasini aniqlash bo'yicha kompleks baholash",
       en: "Comprehensive assessment of heart, vascular, and joint condition, and determination of key vitamins and microelements levels for maintaining physical fitness",
     },
+    // @ts-ignore
     iconPath: <MuscleIcon size={190} />,
     stats: [
       {
@@ -401,6 +418,7 @@ export const checkupItemsData = [
       uz: "Qandli diabetni erta aniqlash, nazorat qilish va oldini olish uchun kompleks tekshiruv",
       en: "Comprehensive examination for early detection, control, and prevention of diabetes",
     },
+    // @ts-ignore
     iconPath: <ConnectionsIcon size={190} />,
     stats: [
       {
