@@ -93,6 +93,38 @@ const translations = {
     selectCheckupProgram: "Tekshiruv dasturini tanlang",
     notFound: "Tanlangan xizmat topilmadi",
   },
+  en: {
+    title: "Online Appointment",
+    alertMessage:
+      "Please note: patients who have booked a check-up receive priority for doctor appointments and tests. Therefore, your appointment time may be shifted by 10-15 minutes.",
+    selectService: "Select Service",
+    selectSpecialty: "Select Specialty",
+    serviceOptions: [
+      { value: "doctor", label: "Doctor Appointment" },
+      { value: "analysis", label: "Medical Tests" },
+      { value: "checkup", label: "Health Check-up" },
+    ],
+    selectDoctor: "Select Doctor",
+    primaryAppointment: "Primary Appointment",
+    secondaryAppointment: "Follow-up Appointment",
+    selectDate: "Select Date",
+    selectTime: "Select Time",
+    emptyTime: "--:--",
+    bookAnalysis: "Book Medical Tests",
+    bookCheckup: "Book Health Check-up",
+    pleaseSelectTime: "Please select a time",
+    loading: "Loading...",
+    loadingSpecializations: "Loading specializations...",
+    errorLoading: "Error loading data",
+    noResults: "No available options",
+    tryAgain: "Try Again",
+    appointmentSuccess: "You have successfully booked your appointment!",
+    appointmentError: "Error booking appointment. Please try again later.",
+    unauthorized: "Authorization required for booking",
+    selectAnalysisType: "Select Test Type",
+    selectCheckupProgram: "Select Check-up Program",
+    notFound: "Selected service not found",
+  },
 };
 
 // Функция для получения специализаций с сервера

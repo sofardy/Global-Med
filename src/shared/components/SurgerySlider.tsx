@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
-import { UniversalSlider } from "../components/UniversalSlider";
-import { useThemeStore } from "@/src/store/theme";
 import { useTranslation } from "@/src/hooks/useTranslation";
-import { UniversalCard } from "../components/UniversalCard";
+import { useThemeStore } from "@/src/store/theme";
 import Image from "next/image";
+import React from "react";
+import { UniversalCard } from "../components/UniversalCard";
+import { UniversalSlider } from "../components/UniversalSlider";
 import { surgeryData } from "../mocks/surgeryData";
 import { applyColorToIcon, getIconColorByTheme } from "../utils/iconUtils";
 

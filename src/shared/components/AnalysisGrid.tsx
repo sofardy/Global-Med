@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { UniversalCard } from "./UniversalCard";
-import { useThemeStore } from "@/src/store/theme";
-import { useTranslation } from "@/src/hooks/useTranslation";
-import Link from "next/link";
-import { ArrowDownIcon } from "../ui/Icon";
-import { getAnalysisIcon } from "@/src/config/iconMapping";
-import { AnalysisItem } from "@/src/types/analysis";
-import { useLanguageStore } from "@/src/store/language";
 import { useAnalyses } from "@/src/hooks/useAnalyses";
+import { useTranslation } from "@/src/hooks/useTranslation";
+import { useThemeStore } from "@/src/store/theme";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
+import { ArrowDownIcon } from "../ui/Icon";
+import { UniversalCard } from "./UniversalCard";
 
 interface AnalysisGridProps {
   title?: string;
@@ -42,6 +39,17 @@ const translations = {
     showLess: "Kamroq ko'rsatish",
     loading: "Tahlillar yuklanmoqda...",
     error: "Tahlil ma'lumotlarini yuklab bo'lmadi",
+  },
+  en: {
+    title: "Medical Tests",
+    description:
+      "We offer a wide range of tests using modern equipment for accurate diagnosis of your health",
+    allAnalyses: "All Types of Tests",
+    detailsButton: "Learn More",
+    showMore: "Show More",
+    showLess: "Show Less",
+    loading: "Loading tests...",
+    error: "Failed to load test data",
   },
 };
 

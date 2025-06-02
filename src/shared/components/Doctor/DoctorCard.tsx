@@ -1,9 +1,9 @@
 // src/shared/components/Doctor/DoctorCard.tsx
 "use client";
 
-import React, { useState } from "react";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import Link from "next/link";
+import React, { useState } from "react";
 
 interface DoctorCardProps {
   id: string;
@@ -23,6 +23,10 @@ const translations = {
   uz: {
     experience: "Ish staji",
     appointmentButton: "Qabulga yozilish",
+  },
+  en: {
+    experience: "Experience",
+    appointmentButton: "Book an Appointment",
   },
 };
 

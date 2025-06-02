@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "@/src/config/constants";
+import { getAnalysisIcon } from "@/src/config/iconMapping";
+import { useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { UniversalCard } from "../components/UniversalCard";
 import { applyColorToIcon, getIconColorByTheme } from "../utils/iconUtils";
-import { useThemeStore } from "@/src/store/theme";
-import { useLanguageStore } from "@/src/store/language";
-import { API_BASE_URL } from "@/src/config/constants";
-import axios from "axios";
-import { getAnalysisIcon } from "@/src/config/iconMapping";
 
 interface AnalysisItem {
   uuid: string;
@@ -102,16 +102,32 @@ export const AnalysisGridTho = () => {
   const canShowMore = isMobile && visibleGroups < groupedData.length;
 
   // Локализация текста кнопки "Показать ещё"
-  const showMoreText =
-    currentLocale === "uz"
-      ? `Yana ${Math.min(
-          itemsPerGroup,
-          analyses.length - visibleItems.length
-        )} tahlillarni ko'rsating`
-      : `Показать ещё ${Math.min(
-          itemsPerGroup,
-          analyses.length - visibleItems.length
-        )} анализа`;
+  const showMoreText = {
+    ru: `Показать ещё ${Math.min(
+      itemsPerGroup,
+      analyses.length - visibleItems.length
+    )} анализа`,
+    uz: `Yana ${Math.min(
+      itemsPerGroup,
+      analyses.length - visibleItems.length
+    )} tahlillarni ko'rsating`,
+    en: `Show ${Math.min(
+      itemsPerGroup,
+      analyses.length - visibleItems.length
+    )} more analyses`,
+  };
+
+  const errorText = {
+    ru: "Ошибка при загрузке данных",
+    uz: "Ma'lumotlarni yuklashda xatolik yuz berdi",
+    en: "Error loading data",
+  };
+
+  const buttonText = {
+    ru: "Подробнее",
+    uz: "Batafsil",
+    en: "Learn More",
+  };
 
   if (loading) {
     return (
@@ -125,11 +141,7 @@ export const AnalysisGridTho = () => {
     return (
       <div className="mt-20">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>
-            {currentLocale === "uz"
-              ? "Ma'lumotlarni yuklashda xatolik yuz berdi"
-              : error}
-          </p>
+          <p>{errorText[currentLocale as keyof typeof errorText]}</p>
         </div>
       </div>
     );
@@ -144,12 +156,12 @@ export const AnalysisGridTho = () => {
               variant="analysis-card"
               title={analysis.name}
               description={analysis.mini_description || ""}
-              additionalInfo={`${
-                Math.floor(Math.random() * 10) + 5
-              } показателей`} // Генерируем случайное количество или можете заменить на реальное, если API его предоставляет
+              additionalInfo={`${Math.floor(Math.random() * 10) + 5} ${
+                currentLocale === "en" ? "indicators" : "показателей"
+              }`}
               icon={analysis.icon}
               link={`/analysis/${analysis.slug}`}
-              buttonText={currentLocale === "ru" ? "Подробнее" : "Batafsil"}
+              buttonText={buttonText[currentLocale as keyof typeof buttonText]}
               className="h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]"
             />
           </div>
@@ -162,7 +174,7 @@ export const AnalysisGridTho = () => {
             onClick={showMoreItems}
             className="px-6 py-3 bg-light-accent text-white rounded-xl hover:bg-light-accent/90 transition-colors"
           >
-            {showMoreText}
+            {showMoreText[currentLocale as keyof typeof showMoreText]}
           </button>
         </div>
       )}

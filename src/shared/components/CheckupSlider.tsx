@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { UniversalSlider } from "../components/UniversalSlider";
-import { UniversalCard } from "../components/UniversalCard";
-import { useThemeStore } from "@/src/store/theme";
-import { useTranslation } from "@/src/hooks/useTranslation";
-import { PregnancyIcon, ButterflyLogoSmallIcon } from "../ui/Icon";
-import { useCheckups } from "@/src/hooks/useCheckups";
 import { CheckupItem } from "@/src/app/api/checkups";
+import { useCheckups } from "@/src/hooks/useCheckups";
+import { useTranslation } from "@/src/hooks/useTranslation";
 import { useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
+import React from "react";
+import { UniversalCard } from "../components/UniversalCard";
+import { UniversalSlider } from "../components/UniversalSlider";
+import { ButterflyLogoSmallIcon, PregnancyIcon } from "../ui/Icon";
 
 // Локализация
 const translations = {
@@ -36,6 +36,18 @@ const translations = {
     detailsButton: "Batafsil",
     checks: "tekshiruv",
     time: "soat",
+  },
+  en: {
+    title: "Complete your check-up in one visit",
+    description:
+      "Quick examination to detect hidden diseases and monitor your health condition",
+    prevSlide: "Previous slide",
+    nextSlide: "Next slide",
+    loading: "Loading check-ups...",
+    error: "Failed to load check-up data",
+    detailsButton: "Learn More",
+    checks: "tests",
+    time: "hours",
   },
 };
 

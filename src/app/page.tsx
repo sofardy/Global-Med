@@ -1,20 +1,19 @@
 "use client";
 
-import { HeroBanner } from "../shared/components/HeroBanner/HeroBanner";
-import { SymptomSelector } from "../shared/components/SymptomSelector/SymptomSelector";
-import { MedicalServices } from "../shared/components/MedicalServices/MedicalServices";
-import { CheckupSlider } from "../shared/components/CheckupSlider";
 import { AnalysisGrid } from "../shared/components/AnalysisGrid";
-import { SurgerySlider } from "../shared/components/SurgerySlider";
 import { AppointmentSection } from "../shared/components/AppointmentSection";
-import { VideoBanner } from "../shared/components/VideoBanner";
 import { BenefitsGrid } from "../shared/components/BenefitsGrid";
-import { MedicalGallery } from "../shared/components/MedicalGallery";
-import { DoctorsSlider } from "../shared/components/DoctorsSlider";
-import { ReviewsSlider } from "../shared/components/Review/ReviewsSlider";
 import CareerForm from "../shared/components/CareerForm";
+import { CheckupSlider } from "../shared/components/CheckupSlider";
 import { ContactInfo } from "../shared/components/ContactInfo";
+import { DoctorsSlider } from "../shared/components/DoctorsSlider";
+import { HeroBanner } from "../shared/components/HeroBanner/HeroBanner";
+import { MedicalGallery } from "../shared/components/MedicalGallery";
+import { MedicalServices } from "../shared/components/MedicalServices/MedicalServices";
 import OurPartners from "../shared/components/OurPartners/OurPartners";
+import { ReviewsSlider } from "../shared/components/Review/ReviewsSlider";
+import { SurgerySlider } from "../shared/components/SurgerySlider";
+import { VideoBanner } from "../shared/components/VideoBanner";
 
 export default function Home() {
   return (
@@ -31,7 +30,7 @@ export default function Home() {
       <BenefitsGrid />
       <MedicalGallery />
       <DoctorsSlider />
-      <CareerForm />x
+      <CareerForm />
       <ReviewsSlider />
       <OurPartners />
       <ContactInfo />

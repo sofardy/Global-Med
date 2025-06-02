@@ -1,16 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
-import { useThemeStore } from "@/src/store/theme";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useThemeStore } from "@/src/store/theme";
+import React from "react";
 import { UniversalCard } from "../components/UniversalCard";
-import { applyColorToIcon, getIconColorByTheme } from "../utils/iconUtils";
-import {
-  CalculatorIcon,
-  HealthPlusIcon,
-  HeartDoubleIcon,
-  StethoscopeIconk2,
-} from "../ui/Icon";
+import { HealthPlusIcon, HeartDoubleIcon, StethoscopeIconk2 } from "../ui/Icon";
 import MobileDeviceIcon from "../ui/Icon/MobileDeviceIcon";
+import { applyColorToIcon, getIconColorByTheme } from "../utils/iconUtils";
 
 // Переводы для компонента
 const translations = {
@@ -94,6 +89,46 @@ const translations = {
       },
     ],
   },
+  en: {
+    title: "A Clinic That Cares About Your Health",
+    description:
+      "We combine advanced medical technologies, comfortable conditions, and a team of experienced specialists to provide quality treatment for every patient",
+    readMore: "Learn More About the Clinic",
+    benefits: [
+      {
+        id: "inpatient",
+        title: "Inpatient Treatment",
+        subtitle: "",
+        description:
+          "Comfortable rooms, 24/7 care, and individual approach to each patient",
+        iconPath: <MobileDeviceIcon />,
+      },
+      {
+        id: "venography",
+        title: "Vein X-Ray",
+        subtitle: "",
+        description:
+          "One of the first clinics offering advanced vascular diagnostics with high precision",
+        iconPath: <StethoscopeIconk2 />,
+      },
+      {
+        id: "spring-water",
+        title: "Spring and Rare Water",
+        subtitle: "",
+        description:
+          "Using pure natural water with unique composition for wellness programs",
+        iconPath: <HeartDoubleIcon />,
+      },
+      {
+        id: "high-level",
+        title: "High-Level Medicine",
+        subtitle: "",
+        description:
+          "Modern equipment, expert team, and quality service for your health",
+        iconPath: <HealthPlusIcon />,
+      },
+    ],
+  },
 };
 
 export interface BenefitsGridProps {
@@ -144,18 +179,22 @@ export const BenefitsGrid: React.FC<BenefitsGridProps> = ({
                 </h2>
               </div>
               <p className="text-base lg:text-[18px] mt-10 mb-12 tracking-normal leading-[160%] space-y-2">
-                {gridDescription.split(". ").map((sentence, index) => (
-                  <span key={index} className="block">
-                    {sentence}
-                    {index < gridDescription.split(". ").length - 1 ? "." : ""}
-                  </span>
-                ))}
+                {gridDescription
+                  .split(". ")
+                  .map((sentence: any, index: number) => (
+                    <span key={index} className="block">
+                      {sentence}
+                      {index < gridDescription.split(". ").length - 1
+                        ? "."
+                        : ""}
+                    </span>
+                  ))}
               </p>
             </div>
 
             <a
               href={readMoreLink}
-              className="relative z-10 h-[58px] inline-flex items-center justify-center border border-white  dark:border-white text-white dark:hover:bg-light-accent hover:bg-white hover:text-[#02c78a] dark:text-white hover:bg-light-accent hover:text-white hover:border-light-accent rounded-2xl px-6 py-3 transition-colors mt-auto self-start"
+              className="relative z-10 h-[58px] inline-flex items-center justify-center border border-white  dark:border-white text-white dark:hover:bg-light-accent hover:bg-white hover:text-[#02c78a] dark:text-white hover:bg-light-accent hover:border-light-accent rounded-2xl px-6 py-3 transition-colors mt-auto self-start"
             >
               <span className="tracking-wide">{gridReadMoreText}</span>
               <svg

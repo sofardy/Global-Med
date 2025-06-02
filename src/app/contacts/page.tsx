@@ -5,7 +5,7 @@ export default function Contacts() {
   return (
     <main>
       <ContactForm />
-       <ContactInfo />
+      <ContactInfo />
     </main>
   );
 }

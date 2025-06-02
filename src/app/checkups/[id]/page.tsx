@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, ReactNode, useContext } from "react";
+import { API_BASE_URL } from "@/src/config/constants";
+import { GBContext } from "@/src/context/globalize-breadcrumb";
 import { useTranslation } from "@/src/hooks/useTranslation";
-import { checkupDetailTranslations } from "@/src/shared/mocks/checkupHeroData";
-import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
 import { BenefitsCheckUps } from "@/src/shared/components/BenefitScheckUps";
+import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import { checkupDetailTranslations } from "@/src/shared/mocks/checkupHeroData";
 import {
   AnimatedButton,
   AnimatedButtonWrapper,
 } from "@/src/shared/ui/Button/AnimatedButton";
-import axios from "axios";
 import { useLanguageStore } from "@/src/store/language";
-import { GBContext } from "@/src/context/globalize-breadcrumb";
-import { API_BASE_URL } from "@/src/config/constants";
+import axios from "axios";
+import { ReactNode, useContext, useEffect, useState } from "react";
 
 interface MedicalTest {
   value: ReactNode;
@@ -59,7 +59,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
   const [isMobile, setIsMobile] = useState(false);
 
   const { currentLocale } = useLanguageStore();
-  const { title, setTitle }: any = useContext(GBContext);
+  const { setTitle }: any = useContext(GBContext);
   // Загрузка данных из API
   useEffect(() => {
     const fetchCheckupDetail = async () => {
@@ -72,11 +72,10 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
           {
             headers: {
               "Content-Type": "application/json",
-              "X-Language": currentLocale || "ru", // Используем currentLocale с fallback на 'ru'
+              "X-Language": currentLocale, // Используем currentLocale с fallback на 'ru'
             },
           }
         );
-        console.log("Получен ответ:", response.data);
 
         // API возвращает объект с полем data, содержащим данные о чек-апе
         if (response.data && response.data.data) {
@@ -144,7 +143,11 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-xl text-light-text dark:text-dark-text">
-          Загрузка информации...
+          {currentLocale === "uz"
+            ? "Ma'lumotlar yuklanmoqda..."
+            : currentLocale === "en"
+            ? "Loading information..."
+            : "Загрузка информации..."}
         </div>
       </div>
     );
@@ -155,9 +158,20 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
     return (
       <div className="flex flex-col justify-center items-center h-64 p-4">
         <div className="text-xl text-red-500 mb-4">
-          Произошла ошибка при загрузке данных
+          {currentLocale === "uz"
+            ? "Ma'lumotlarni yuklashda xatolik yuz berdi"
+            : currentLocale === "en"
+            ? "An error occurred while loading data"
+            : "Произошла ошибка при загрузке данных"}
         </div>
-        <div className="text-sm">Сообщение: {error.message}</div>
+        <div className="text-sm">
+          {currentLocale === "uz"
+            ? "Xabar: "
+            : currentLocale === "en"
+            ? "Message: "
+            : "Сообщение: "}
+          {error.message}
+        </div>
       </div>
     );
   }
@@ -167,7 +181,11 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-xl text-light-text dark:text-dark-text">
-          Чек-ап не найден
+          {currentLocale === "uz"
+            ? "Tekshiruv topilmadi"
+            : currentLocale === "en"
+            ? "Check-up not found"
+            : "Чек-ап не найден"}
         </div>
       </div>
     );

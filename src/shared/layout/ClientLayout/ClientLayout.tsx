@@ -1,12 +1,11 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { TopBar } from "../TopBar/TopBar";
-import { Footer } from "../Footer/Footer";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import { ThemeToggle } from "../../components/ThemeToggle";
-import { Route } from "../../config/routes";
 import { useLanguageStore } from "@/src/store/language";
+import { usePathname } from "next/navigation";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import { Route } from "../../config/routes";
+import { Footer } from "../Footer/Footer";
+import { TopBar } from "../TopBar/TopBar";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -15,7 +14,7 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children, routes }: ClientLayoutProps) {
   const pathname = usePathname();
-  const { currentLocale } = useLanguageStore();
+  const { currentLocale }: any = useLanguageStore();
 
   const hideHeaderFooter = pathname?.startsWith("/account");
 
@@ -31,7 +30,7 @@ export default function ClientLayout({ children, routes }: ClientLayoutProps) {
         <Breadcrumbs locale={currentLocale} routes={routes} />
       )}
 
-      <main className="min-h-screen">{children}</main>
+      <main className="min-h-screen pt-4">{children}</main>
 
       {!hideHeaderFooter && <Footer />}
     </div>

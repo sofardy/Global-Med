@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
-import { useThemeStore } from "@/src/store/theme";
+import { API_BASE_URL } from "@/src/config/constants";
 import { useTranslation } from "@/src/hooks/useTranslation";
-import Link from "next/link";
-import Image from "next/image";
+import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import Modal from "@/src/shared/components/Modal/Modal";
 import { ArrowDownIcon } from "@/src/shared/ui/Icon";
-import { ContactInfo } from "@/src/shared/components/ContactInfo";
-import { getDoctors, Doctor as ApiDoctor } from "../../api/doctors";
-import axios from "axios";
-import { API_BASE_URL } from "@/src/config/constants";
+import { useThemeStore } from "@/src/store/theme";
 import { formatPrice } from "@/src/utils/formatPrice";
+import axios from "axios";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Doctor as ApiDoctor, getDoctors } from "../../api/doctors";
 
 // Интерфейсы
 interface DropdownPosition {
@@ -96,6 +96,26 @@ const translations = {
     error: "Ma'lumotlarni yuklashda xatolik yuz berdi",
     noResults: "Shifokorlar topilmadi",
     tryAgain: "Qayta urinib ko'ring",
+  },
+  en: {
+    title: "Find a Doctor",
+    nameSearch: "Enter full name",
+    specialtySearch: "All specialties",
+    findButton: "Find Doctor",
+    experience: "Experience",
+    qualification: "Highest category",
+    languages: "Languages",
+    cost: "Consultation fee",
+    phone: "Phone for appointment",
+    detailsButton: "More about doctor",
+    appointmentButton: "Book an appointment",
+    years: "years",
+    modalTitle: "Select specialty",
+    loading: "Loading...",
+    loadingSpecializations: "Loading specialties...",
+    error: "Error loading data",
+    noResults: "No doctors found",
+    tryAgain: "Try again",
   },
 };
 

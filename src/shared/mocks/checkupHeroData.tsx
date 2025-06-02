@@ -1,9 +1,7 @@
-import React from "react";
 import {
   ButterflyLogoSmallIcon,
   ConnectionsIcon,
   HealthMonitorIcon,
-  LightbulbIcon,
   LocationPinIcon,
   MagnifyingGlassIcon,
   MuscleIcon,
@@ -14,22 +12,39 @@ import NeuronIcon from "../ui/Icon/NeuronIcon";
 
 export const checkupHeroData = {
   imageUrl: "/images/checkup-doctor.png",
-  imageAlt: "Медицинский осмотр",
+  imageAlt: {
+    ru: "Медицинский осмотр",
+    uz: "Tibbiy ko'rik",
+    en: "Medical examination",
+  },
   mainCard: {
-    title: "Чек-ап",
-    description:
-      "Это комплексное медицинское обследование, которое помогает выявить скрытые заболевания, оценить общее состояние здоровья и предотвратить возможные риски. Мы разработали программы для разных возрастов и потребностей, чтобы вы могли провести диагностику здоровья максимально быстро и комфортно.",
+    title: {
+      ru: "Чек-ап",
+      uz: "Chek-ap",
+      en: "Check-up",
+    },
+    description: {
+      ru: "Это комплексное медицинское обследование, которое помогает выявить скрытые заболевания, оценить общее состояние здоровья и предотвратить возможные риски. Мы разработали программы для разных возрастов и потребностей, чтобы вы могли провести диагностику здоровья максимально быстро и комфортно.",
+      uz: "Bu yashirin kasalliklarni aniqlashga, umumiy sog'liq holatini baholashga va mumkin bo'lgan xavflarni oldini olishga yordam beradigan kompleks tibbiy tekshiruv. Biz turli yosh va ehtiyojlar uchun dasturlarni ishlab chiqdik, shunda siz sog'liqni tez va qulay tekshirishingiz mumkin.",
+      en: "This is a comprehensive medical examination that helps identify hidden diseases, assess overall health status, and prevent potential risks. We have developed programs for different ages and needs, allowing you to undergo health diagnostics as quickly and comfortably as possible.",
+    },
   },
   secondaryCards: [
     {
       title: "16",
-      description:
-        "видов чек-апов — для мужчин, женщин и детей, включая базовые и специализированные программы",
+      description: {
+        ru: "видов чек-апов — для мужчин, женщин и детей, включая базовые и специализированные программы",
+        uz: "turli chek-aplar — erkaklar, ayollar va bolalar uchun, shu jumladan asosiy va maxsuslashtirilgan dasturlar",
+        en: "types of check-ups — for men, women, and children, including basic and specialized programs",
+      },
     },
     {
       title: "1 000+",
-      description:
-        "человек ежегодно проходят у нас чек-апы, доверяя экспертам диагностику здоровья",
+      description: {
+        ru: "человек ежегодно проходят у нас чек-апы, доверяя экспертам диагностику здоровья",
+        uz: "kishi har yili bizda chek-aplardan o'tadi, sog'liq diagnostikasini mutaxassislarga ishonib topshiradi",
+        en: "people undergo check-ups with us annually, entrusting health diagnostics to our experts",
+      },
     },
   ],
 };
@@ -37,178 +52,362 @@ export const checkupHeroData = {
 export const checkupItemsData = [
   {
     id: "planned-operation",
-    title: "Плановая операция",
-    description:
-      "Комплекс исследований для оценки общего состояния здоровья и снижения рисков перед хирургическим вмешательством",
+    title: {
+      ru: "Плановая операция",
+      uz: "Rejali operatsiya",
+      en: "Planned Surgery",
+    },
+    description: {
+      ru: "Комплекс исследований для оценки общего состояния здоровья и снижения рисков перед хирургическим вмешательством",
+      uz: "Jarrohlik aralashuvidan oldin umumiy sog'liq holatini baholash va xavflarni kamaytirish uchun kompleks tekshiruvlar",
+      en: "Comprehensive studies to assess overall health status and reduce risks before surgical intervention",
+    },
     iconPath: <HealthMonitorIcon size={190} />,
     stats: [
-      { icon: "doc", value: "11 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "11 исследований", uz: "11 ta tekshiruv", en: "11 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "womens-health",
-    title: "Женское здоровье",
-    description:
-      "Комплексное обследование для контроля гормонального фона, репродуктивной системы и общего самочувствия",
+    title: {
+      ru: "Женское здоровье",
+      uz: "Ayollar sog'lig'i",
+      en: "Women's Health",
+    },
+    description: {
+      ru: "Комплексное обследование для контроля гормонального фона, репродуктивной системы и общего самочувствия",
+      uz: "Gormonal fon, reproduktiv tizim va umumiy o'zini yaxshi his qilishni nazorat qilish uchun kompleks tekshiruv",
+      en: "Comprehensive examination for monitoring hormonal balance, reproductive system, and general well-being",
+    },
     iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
-      { icon: "doc", value: "6 исследований" },
-      { icon: "time", value: "1 час" },
+      {
+        icon: "doc",
+        value: { ru: "6 исследований", uz: "6 ta tekshiruv", en: "6 tests" },
+      },
+      { icon: "time", value: { ru: "1 час", uz: "1 soat", en: "1 hour" } },
     ],
   },
   {
     id: "premium-womens-health",
-    title: "Премиум. Женское здоровье",
-    description:
-      "Расширенная диагностика с углубленным анализом гормонов, репродуктивной системы и общего состояния организма",
+    title: {
+      ru: "Премиум. Женское здоровье",
+      uz: "Premium. Ayollar sog'lig'i",
+      en: "Premium. Women's Health",
+    },
+    description: {
+      ru: "Расширенная диагностика с углубленным анализом гормонов, репродуктивной системы и общего состояния организма",
+      uz: "Gormonlar, reproduktiv tizim va organizmning umumiy holatini chuqur tahlil qilish bilan kengaytirilgan diagnostika",
+      en: "Extended diagnostics with in-depth analysis of hormones, reproductive system, and overall body condition",
+    },
     iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
-      { icon: "doc", value: "9 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "9 исследований", uz: "9 ta tekshiruv", en: "9 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "mens-health-under-40",
-    title: "Мужское здоровье до 40 лет",
-    description:
-      "Комплексное обследование для оценки гормонального баланса, репродуктивной функции и общего состояния организма",
+    title: {
+      ru: "Мужское здоровье до 40 лет",
+      uz: "40 yoshgacha erkaklar sog'lig'i",
+      en: "Men's Health Under 40",
+    },
+    description: {
+      ru: "Комплексное обследование для оценки гормонального баланса, репродуктивной функции и общего состояния организма",
+      uz: "Gormonal muvozanat, reproduktiv funktsiya va organizmning umumiy holatini baholash uchun kompleks tekshiruv",
+      en: "Comprehensive examination to assess hormonal balance, reproductive function, and overall body condition",
+    },
     iconPath: <LocationPinIcon size={190} />,
     stats: [
-      { icon: "doc", value: "5 исследований" },
-      { icon: "time", value: "1 час" },
+      {
+        icon: "doc",
+        value: { ru: "5 исследований", uz: "5 ta tekshiruv", en: "5 tests" },
+      },
+      { icon: "time", value: { ru: "1 час", uz: "1 soat", en: "1 hour" } },
     ],
   },
   {
     id: "mens-health-over-40",
-    title: "Мужское здоровье 40+ лет",
-    description:
-      "Комплексное обследование, включающее проверку урологического здоровья, гормонального фона и скрытых инфекций",
+    title: {
+      ru: "Мужское здоровье 40+ лет",
+      uz: "40+ yosh erkaklar sog'lig'i",
+      en: "Men's Health 40+",
+    },
+    description: {
+      ru: "Комплексное обследование, включающее проверку урологического здоровья, гормонального фона и скрытых инфекций",
+      uz: "Urologik sog'liq, gormonal fon va yashirin infektsiyalarni tekshirishni o'z ichiga olgan kompleks tekshiruv",
+      en: "Comprehensive examination including urological health check, hormonal balance, and hidden infections",
+    },
     iconPath: <LocationPinIcon size={190} />,
     stats: [
-      { icon: "doc", value: "5 исследований" },
-      { icon: "time", value: "1 час" },
+      {
+        icon: "doc",
+        value: { ru: "5 исследований", uz: "5 ta tekshiruv", en: "5 tests" },
+      },
+      { icon: "time", value: { ru: "1 час", uz: "1 soat", en: "1 hour" } },
     ],
   },
   {
     id: "premium-mens-health-under-40",
-    title: "Премиум. Мужское здоровье до 40 лет",
-    description:
-      "Расширенное комплексное обследование для оценки гормонального баланса, репродуктивной функции и общего состояния организма",
+    title: {
+      ru: "Премиум. Мужское здоровье до 40 лет",
+      uz: "Premium. 40 yoshgacha erkaklar sog'lig'i",
+      en: "Premium. Men's Health Under 40",
+    },
+    description: {
+      ru: "Расширенное комплексное обследование для оценки гормонального баланса, репродуктивной функции и общего состояния организма",
+      uz: "Gormonal muvozanat, reproduktiv funktsiya va organizmning umumiy holatini baholash uchun kengaytirilgan kompleks tekshiruv",
+      en: "Extended comprehensive examination to assess hormonal balance, reproductive function, and overall body condition",
+    },
     iconPath: <LocationPinIcon size={190} />,
     stats: [
-      { icon: "doc", value: "7 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "7 исследований", uz: "7 ta tekshiruv", en: "7 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "premium-mens-health-over-40",
-    title: "Премиум. Мужское здоровье 40+ лет",
-    description:
-      "Расширенное комплексное обследование, включающее проверку урологического здоровья, гормонального фона и скрытых инфекций",
+    title: {
+      ru: "Премиум. Мужское здоровье 40+ лет",
+      uz: "Premium. 40+ yosh erkaklar sog'lig'i",
+      en: "Premium. Men's Health 40+",
+    },
+    description: {
+      ru: "Расширенное комплексное обследование, включающее проверку урологического здоровья, гормонального фона и скрытых инфекций",
+      uz: "Urologik sog'liq, gormonal fon va yashirin infektsiyalarni tekshirishni o'z ichiga olgan kengaytirilgan kompleks tekshiruv",
+      en: "Extended comprehensive examination including urological health check, hormonal balance, and hidden infections",
+    },
     iconPath: <LocationPinIcon size={190} />,
     stats: [
-      { icon: "doc", value: "11 исследований" },
-      { icon: "time", value: "2 часа" },
+      {
+        icon: "doc",
+        value: { ru: "11 исследований", uz: "11 ta tekshiruv", en: "11 tests" },
+      },
+      { icon: "time", value: { ru: "2 часа", uz: "2 soat", en: "2 hours" } },
     ],
   },
   {
     id: "healthy-family",
-    title: "Здоровая семья",
-    description:
-      "Комплексное обследование для мужчин и женщин, помогающее оценить общее состояние здоровья и выявить риски заболеваний",
+    title: {
+      ru: "Здоровая семья",
+      uz: "Sog'lom oila",
+      en: "Healthy Family",
+    },
+    description: {
+      ru: "Комплексное обследование для мужчин и женщин, помогающее оценить общее состояние здоровья и выявить риски заболеваний",
+      uz: "Erkaklar va ayollar uchun umumiy sog'liq holatini baholash va kasallik xavflarini aniqlashga yordam beradigan kompleks tekshiruv",
+      en: "Comprehensive examination for men and women, helping to assess overall health status and identify disease risks",
+    },
     iconPath: <ButterflyLogoSmallIcon size={190} />,
     stats: [
-      { icon: "doc", value: "11 исследований" },
-      { icon: "time", value: "2 часа" },
+      {
+        icon: "doc",
+        value: { ru: "11 исследований", uz: "11 ta tekshiruv", en: "11 tests" },
+      },
+      { icon: "time", value: { ru: "2 часа", uz: "2 soat", en: "2 hours" } },
     ],
   },
   {
     id: "premium-healthy-family",
-    title: "Премиум. Здоровая семья",
-    description:
-      "Расширенное комплексное обследование для мужчин и женщин с детальной диагностикой, углубленными анализами и консультациями врачей",
+    title: {
+      ru: "Премиум. Здоровая семья",
+      uz: "Premium. Sog'lom oila",
+      en: "Premium. Healthy Family",
+    },
+    description: {
+      ru: "Расширенное комплексное обследование для мужчин и женщин с детальной диагностикой, углубленными анализами и консультациями врачей",
+      uz: "Erkaklar va ayollar uchun batafsil diagnostika, chuqur tahlillar va shifokorlar maslahatlari bilan kengaytirilgan kompleks tekshiruv",
+      en: "Extended comprehensive examination for men and women with detailed diagnostics, in-depth analyses, and doctor consultations",
+    },
     iconPath: <ButterflyLogoSmallIcon size={190} />,
     stats: [
-      { icon: "doc", value: "20 исследований" },
-      { icon: "time", value: "3 часа" },
+      {
+        icon: "doc",
+        value: { ru: "20 исследований", uz: "20 ta tekshiruv", en: "20 tests" },
+      },
+      { icon: "time", value: { ru: "3 часа", uz: "3 soat", en: "3 hours" } },
     ],
   },
   {
     id: "want-to-be-mother",
-    title: "Хочу стать мамой",
-    description:
-      "Комплексное обследование для женщин, планирующих беременность, включающее важные анализы, УЗИ и консультации специалистов для подготовки к здоровому зачатию",
+    title: {
+      ru: "Хочу стать мамой",
+      uz: "Ona bo'lishni xohlayman",
+      en: "Want to be a Mother",
+    },
+    description: {
+      ru: "Комплексное обследование для женщин, планирующих беременность, включающее важные анализы, УЗИ и консультации специалистов для подготовки к здоровому зачатию",
+      uz: "Homiladorlikni rejalashtirgan ayollar uchun muhim tahlillar, ultratovush tekshiruvi va sog'lom homiladorlik uchun tayyorlash uchun mutaxassislar maslahatlarini o'z ichiga olgan kompleks tekshiruv",
+      en: "Comprehensive examination for women planning pregnancy, including important tests, ultrasound, and specialist consultations for preparing for healthy conception",
+    },
     iconPath: <PregnancyIcon size={190} />,
     stats: [
-      { icon: "doc", value: "12 исследований" },
-      { icon: "time", value: "2 часа" },
+      {
+        icon: "doc",
+        value: { ru: "12 исследований", uz: "12 ta tekshiruv", en: "12 tests" },
+      },
+      { icon: "time", value: { ru: "2 часа", uz: "2 soat", en: "2 hours" } },
     ],
   },
   {
     id: "want-to-be-father",
-    title: "Хочу стать папой",
-    description:
-      "Комплексное обследование мужского здоровья, включающее анализы и диагностику репродуктивной функции, чтобы убедиться в готовности организма к зачатию ребенка",
+    title: {
+      ru: "Хочу стать папой",
+      uz: "Ota bo'lishni xohlayman",
+      en: "Want to be a Father",
+    },
+    description: {
+      ru: "Комплексное обследование мужского здоровья, включающее анализы и диагностику репродуктивной функции, чтобы убедиться в готовности организма к зачатию ребенка",
+      uz: "Organizmning farzand ko'rishga tayyorligini tekshirish uchun tahlillar va reproduktiv funktsiya diagnostikasini o'z ichiga olgan erkaklar sog'lig'i bo'yicha kompleks tekshiruv",
+      en: "Comprehensive examination of men's health, including tests and diagnostics of reproductive function to ensure the body's readiness for conception",
+    },
     iconPath: <NeuronIcon size={190} />,
     stats: [
-      { icon: "doc", value: "10 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "10 исследований", uz: "10 ta tekshiruv", en: "10 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "golden-age-55-plus-women",
-    title: "Золотой возраст 55+ (женщины)",
-    description:
-      "Комплексное обследование для оценки общего состояния здоровья, работы сердца, сосудов, гормонального фона и профилактики возрастных изменений",
+    title: {
+      ru: "Золотой возраст 55+ (женщины)",
+      uz: "Oltin yosh 55+ (ayollar)",
+      en: "Golden Age 55+ (Women)",
+    },
+    description: {
+      ru: "Комплексное обследование для оценки общего состояния здоровья, работы сердца, сосудов, гормонального фона и профилактики возрастных изменений",
+      uz: "Umumiy sog'liq holatini, yurak, tomirlar ishlashini, gormonal fonni baholash va yoshga bog'liq o'zgarishlarni oldini olish uchun kompleks tekshiruv",
+      en: "Comprehensive examination to assess overall health status, heart and vascular function, hormonal balance, and prevention of age-related changes",
+    },
     iconPath: <MagnifyingGlassIcon size={190} />,
     stats: [
-      { icon: "doc", value: "9 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "9 исследований", uz: "9 ta tekshiruv", en: "9 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "golden-age-55-plus-men",
-    title: "Золотой возраст 55+ (мужчины)",
-    description:
-      "Комплексное обследование, включающее проверку сердца, сосудов, гормонального баланса и ключевых показателей здоровья для активной и полноценной жизни",
+    title: {
+      ru: "Золотой возраст 55+ (мужчины)",
+      uz: "Oltin yosh 55+ (erkaklar)",
+      en: "Golden Age 55+ (Men)",
+    },
+    description: {
+      ru: "Комплексное обследование, включающее проверку сердца, сосудов, гормонального баланса и ключевых показателей здоровья для активной и полноценной жизни",
+      uz: "Yurak, tomirlar, gormonal muvozanat va faol va to'liq hayot uchun sog'liqning asosiy ko'rsatkichlarini tekshirishni o'z ichiga olgan kompleks tekshiruv",
+      en: "Comprehensive examination including heart, vascular, hormonal balance checks, and key health indicators for an active and fulfilling life",
+    },
     iconPath: <LocationPinIcon size={190} />,
     stats: [
-      { icon: "doc", value: "10 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "10 исследований", uz: "10 ta tekshiruv", en: "10 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "healthy-child-kindergarten",
-    title: "Здоровый ребенок. Детский сад",
-    description:
-      "Комплексное обследование, включающее анализы, осмотры специалистов и необходимые исследования для поступления в детский сад",
+    title: {
+      ru: "Здоровый ребенок. Детский сад",
+      uz: "Sog'lom bola. Bog'cha",
+      en: "Healthy Child. Kindergarten",
+    },
+    description: {
+      ru: "Комплексное обследование, включающее анализы, осмотры специалистов и необходимые исследования для поступления в детский сад",
+      uz: "Bog'chaga kirish uchun tahlillar, mutaxassislar ko'rigi va zarur tekshiruvlarni o'z ichiga olgan kompleks tekshiruv",
+      en: "Comprehensive examination including tests, specialist examinations, and necessary studies for kindergarten admission",
+    },
     iconPath: <PacifierIcon size={190} />,
     stats: [
-      { icon: "doc", value: "10 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "10 исследований", uz: "10 ta tekshiruv", en: "10 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "fitness-control",
-    title: "Фитнес-контроль",
-    description:
-      "Комплексная оценка состояния сердца, сосудов, суставов и определение уровня ключевых витаминов и микроэлементов для поддержания физической формы",
+    title: {
+      ru: "Фитнес-контроль",
+      uz: "Fitnes-kontrol",
+      en: "Fitness Control",
+    },
+    description: {
+      ru: "Комплексная оценка состояния сердца, сосудов, суставов и определение уровня ключевых витаминов и микроэлементов для поддержания физической формы",
+      uz: "Jismoniy holatni saqlash uchun yurak, tomirlar, bo'g'imlar holatini va asosiy vitaminlar va mikroelementlar darajasini aniqlash bo'yicha kompleks baholash",
+      en: "Comprehensive assessment of heart, vascular, and joint condition, and determination of key vitamins and microelements levels for maintaining physical fitness",
+    },
     iconPath: <MuscleIcon size={190} />,
     stats: [
-      { icon: "doc", value: "8 исследований" },
-      { icon: "time", value: "1,5 часа" },
+      {
+        icon: "doc",
+        value: { ru: "8 исследований", uz: "8 ta tekshiruv", en: "8 tests" },
+      },
+      {
+        icon: "time",
+        value: { ru: "1,5 часа", uz: "1,5 soat", en: "1.5 hours" },
+      },
     ],
   },
   {
     id: "diabetes",
-    title: "Сахарный диабет",
-    description:
-      "Комплексное обследование для раннего выявления, контроля и профилактики сахарного диабета",
+    title: {
+      ru: "Сахарный диабет",
+      uz: "Qandli diabet",
+      en: "Diabetes",
+    },
+    description: {
+      ru: "Комплексное обследование для раннего выявления, контроля и профилактики сахарного диабета",
+      uz: "Qandli diabetni erta aniqlash, nazorat qilish va oldini olish uchun kompleks tekshiruv",
+      en: "Comprehensive examination for early detection, control, and prevention of diabetes",
+    },
     iconPath: <ConnectionsIcon size={190} />,
     stats: [
-      { icon: "doc", value: "6 исследований" },
-      { icon: "time", value: "1 час" },
+      {
+        icon: "doc",
+        value: { ru: "6 исследований", uz: "6 ta tekshiruv", en: "6 tests" },
+      },
+      { icon: "time", value: { ru: "1 час", uz: "1 soat", en: "1 hour" } },
     ],
   },
 ];
@@ -356,5 +555,77 @@ export const checkupDetailTranslations = {
       },
     ],
     ourPartnersTitle: "Bizning hamkorlarimiz",
+  },
+  en: {
+    title: "Check-up: Planned Surgery",
+    description:
+      "Comprehensive examination before surgery helps assess overall health status, identify potential risks, and prepare the body for surgical intervention. Includes key tests and diagnostic studies necessary for safe surgery and quick recovery.",
+    duration: "1.5 hours",
+    price: "1,605,000 UZS",
+    instrumentalExams: "instrumental examinations",
+    labTests: "laboratory tests",
+    doctorConsultation: "doctor consultation",
+    bookButton: "Schedule a Check-up",
+    programTitle: "Diagnostic Program",
+    programDescription:
+      "The pre-surgery diagnostic program includes 11 key studies that help get a complete picture of the body's condition. The examination takes about 1.5 hours, after which the doctor can evaluate the results and, if necessary, prescribe additional examinations depending on the profile of the upcoming surgical intervention.",
+    faqItems: [
+      {
+        title: "Complete Blood Count",
+        content:
+          "Basic study that evaluates the number of red and white blood cells, hemoglobin, platelets, and other indicators",
+      },
+      {
+        title: "Urinalysis",
+        content:
+          "Allows assessment of kidney function and detection of possible inflammatory processes in the urinary tract",
+      },
+      {
+        title: "Coagulogram",
+        content:
+          "Coagulogram is a comprehensive analysis of blood clotting. Includes INR, APTT, fibrinogen, and prothrombin time indicators, allowing assessment of thrombosis and bleeding risks",
+      },
+      {
+        title: "Chest X-ray",
+        content:
+          "Study that allows assessment of lung tissue condition and detection of pathological changes",
+      },
+      {
+        title: "ECG",
+        content:
+          "Electrocardiography is a method of studying the heart's electrical activity to detect rhythm disorders and other pathologies",
+      },
+      {
+        title: "Screening for Hepatitis, HIV, and Syphilis",
+        content:
+          "Mandatory study before any surgical intervention to assess infectious status",
+      },
+      {
+        title: "Blood Type and Rh Factor",
+        content:
+          "Necessary for preparing compatible blood in case transfusion is needed",
+      },
+      {
+        title: "Biochemical Blood Analysis",
+        content:
+          "Comprehensive assessment of liver, kidney, and other organ functions",
+      },
+      {
+        title: "Lower Extremity Vein Ultrasound",
+        content:
+          "Ultrasound dopplerographic examination of veins to assess the risk of thromboembolic complications",
+      },
+      {
+        title: "Therapist Examination",
+        content:
+          "Specialist consultation for general health assessment and potential risks",
+      },
+      {
+        title: "Additional Examinations by Specialist Profile",
+        content:
+          "Depend on the nature of the upcoming surgery and may include additional diagnostic procedures",
+      },
+    ],
+    ourPartnersTitle: "Our Partners",
   },
 };

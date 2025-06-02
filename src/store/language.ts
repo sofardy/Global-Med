@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
-export type Locale = "ru" | "uz";
+export type Locale = "ru" | "uz" | "en";
 
 interface LanguageState {
   currentLocale: Locale;
@@ -16,21 +16,16 @@ export const useLanguageStore = create<LanguageState>()(
       setLocale: (locale: Locale) => set({ currentLocale: locale }),
       toggleLocale: () =>
         set((state) => ({
-          currentLocale: state.currentLocale === "ru" ? "uz" : "ru",
+          currentLocale:
+            state.currentLocale === "ru"
+              ? "uz"
+              : state.currentLocale === "uz"
+              ? "en"
+              : "ru",
         })),
     }),
     {
       name: "language-storage",
-      storage: createJSONStorage(() =>
-        typeof window !== "undefined"
-          ? localStorage
-          : {
-              getItem: () => null,
-              setItem: () => null,
-              removeItem: () => null,
-            }
-      ),
-      skipHydration: true,
     }
   )
 );

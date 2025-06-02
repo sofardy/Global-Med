@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { ClockIcon, CheckIcon, PacifierIcon } from "../../../shared/ui/Icon";
-import { useThemeStore } from "../../../store/theme";
-import { useTranslation } from "../../../hooks/useTranslation";
-import axios from "axios";
 import { API_BASE_URL } from "@/src/config/constants";
+import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
+import { CheckIcon, ClockIcon, PacifierIcon } from "../../../shared/ui/Icon";
+import { useThemeStore } from "../../../store/theme";
 
 // Интерфейс для типизации данных записи на приём
 interface Appointment {
@@ -59,6 +59,21 @@ const translations = {
     tryAgain: "Qayta urinib ko'ring",
     unauthorized: "Avtorizatsiya talab qilinadi",
     recordNumber: "Zapisi №",
+  },
+  en: {
+    emptyState: "You have no appointments yet ...",
+    loadMore: "Load More",
+    loading: "Loading...",
+    upcomingAppointment: "Upcoming Appointment",
+    completedAppointment: "Appointment Completed",
+    cancelledAppointment: "Cancelled",
+    confirmed: "Appointment Confirmed",
+    confirmedShort: "Confirmed",
+    doctor: "Doctor:",
+    errorLoading: "Error loading appointments",
+    tryAgain: "Try Again",
+    unauthorized: "Authorization required",
+    recordNumber: "Record №",
   },
 };
 

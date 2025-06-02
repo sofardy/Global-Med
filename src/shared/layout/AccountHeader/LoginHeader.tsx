@@ -1,27 +1,29 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useThemeStore } from "@/src/store/theme";
-import { useLanguageStore } from "@/src/store/language";
+import { API_BASE_URL } from "@/src/config/constants";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import {
-  LogoutIcon,
+  CalendarIcon,
+  GlobeIcon,
+  LabIcon,
+  LocationIconk2,
   LogoIcon,
   LogoTextIcon,
-  UserIcon,
+  LogoutIcon,
   NotificationIcon,
-  CalendarIcon,
-  LabIcon,
   PulseIcon,
-  LocationIconk2,
-  GlobeIcon,
+  UserIcon,
 } from "@/src/shared/ui/Icon";
+import { Locale, useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
+import axios from "axios";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 // Translations
-const translations = {
+const translations: any = {
   ru: {
     appointment: "Записаться на прием",
     profile: "Профиль",
@@ -36,6 +38,10 @@ const translations = {
     myTests: "Анализы",
     doctors: "Врачи",
     changeLanguage: "Сменить язык",
+    readAll: "Прочитать все",
+    showAll: "Показать все",
+    noNotifications: "Нет уведомлений",
+    showMore: "Показать еще",
   },
   uz: {
     appointment: "Qabulga yozilish",
@@ -51,6 +57,29 @@ const translations = {
     myTests: "Mening tahlillarim",
     doctors: "Shifokorlar",
     changeLanguage: "Tilni o'zgartirish",
+    readAll: "Barchasini o'qish",
+    showAll: "Barchasini ko'rsatish",
+    noNotifications: "Bildirishnomalar yo'q",
+    showMore: "Ko'proq ko'rsatish",
+  },
+  en: {
+    appointment: "Make an Appointment",
+    profile: "Profile",
+    logout: "Logout",
+    notifications: "Notifications",
+    backToMainSite: "Back to Main Site",
+    appointmentDetails:
+      "You can view appointment details on the 'My Appointments' page.",
+    menu: "Menu",
+    account: "Account",
+    myAppointments: "My Appointments",
+    myTests: "My Tests",
+    doctors: "Doctors",
+    changeLanguage: "Change Language",
+    readAll: "Read All",
+    showAll: "Show All",
+    noNotifications: "No Notifications",
+    showMore: "Show More",
   },
 };
 
@@ -59,8 +88,12 @@ interface Notification {
   id: string;
   date: string;
   time: string;
-  message: string;
-  isRead: boolean;
+  title: string;
+  description: string;
+  service_name: string;
+  service_type: string;
+  status: string;
+  updated_at: string;
 }
 
 export default function AccountHeader() {
@@ -76,7 +109,7 @@ export default function AccountHeader() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   // Refs for dropdowns
   const notificationsRef = useRef<HTMLDivElement>(null);
@@ -88,51 +121,11 @@ export default function AccountHeader() {
   const languages = [
     { code: "uz", label: "UZ" },
     { code: "ru", label: "RU" },
+    { code: "en", label: "EN" },
   ];
 
-  // Mock notifications data
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "1",
-      date: "19 мая, 2025",
-      time: "20:31",
-      message:
-        "Ваша запись на прием к врачу Мирбабаева Саодат Аманбаевна была подтверждена.",
-      isRead: false,
-    },
-    {
-      id: "2",
-      date: "19 мая, 2025",
-      time: "20:31",
-      message:
-        "Ваша запись на прием к врачу Ибрагимов Рустам Искандарович была подтверждена.",
-      isRead: false,
-    },
-    {
-      id: "3",
-      date: "19 мая, 2025",
-      time: "20:31",
-      message:
-        "Ваша запись на прием к врачу Алиева Нигора Рахимовна была подтверждена.",
-      isRead: true,
-    },
-    {
-      id: "4",
-      date: "18 мая, 2025",
-      time: "15:45",
-      message:
-        "Результаты ваших анализов готовы. Вы можете ознакомиться с ними в личном кабинете.",
-      isRead: true,
-    },
-    {
-      id: "5",
-      date: "17 мая, 2025",
-      time: "09:20",
-      message:
-        "Напоминаем о записи на прием завтра в 10:00 к врачу Рахманов Анвар Тахирович.",
-      isRead: true,
-    },
-  ]);
+  // State for notifications
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // State for showing limited notifications
   const [showAllNotifications, setShowAllNotifications] = useState(false);
@@ -189,13 +182,36 @@ export default function AccountHeader() {
     };
   }, [isSidebarOpen]);
 
-  // Check for unread notifications
+  // Fetch notifications from API
   useEffect(() => {
-    const hasUnread = notifications.some(
-      (notification) => !notification.isRead
-    );
-    setHasUnreadNotifications(hasUnread);
-  }, [notifications]);
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get(
+          `${API_BASE_URL}/appointments/notifications`,
+          {
+            headers: {
+              "X-language": currentLocale,
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data) {
+          setNotifications(response.data);
+          // Check if there are any unread notifications
+          const hasUnread = response.data.some(
+            (notification: Notification) => notification.status === "pending"
+          );
+          setHasUnreadNotifications(hasUnread);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    fetchNotifications();
+  }, [currentLocale]);
 
   // Handle logout
 
@@ -233,17 +249,35 @@ export default function AccountHeader() {
   };
 
   // Handle marking all notifications as read
-  const markAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        isRead: true,
-      }))
-    );
+  const markAllAsRead = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.put(
+        `${API_BASE_URL}/appointments/notifications/read-all`,
+        {},
+        {
+          headers: {
+            "X-language": currentLocale,
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update local state
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) => ({
+          ...notification,
+          status: "read",
+        }))
+      );
+      setHasUnreadNotifications(false);
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
+    }
   };
 
   // Change language
-  const handleLanguageChange = (locale: "ru" | "uz") => {
+  const handleLanguageChange = (locale: Locale) => {
     setLocale(locale);
     setIsLangMenuOpen(false);
   };
@@ -331,7 +365,7 @@ export default function AccountHeader() {
                       onClick={markAllAsRead}
                       className="text-sm text-light-accent hover:underline"
                     >
-                      Прочитать все
+                      {t("readAll")}
                     </button>
                   )}
                 </div>
@@ -346,18 +380,20 @@ export default function AccountHeader() {
                         <div
                           key={notification.id}
                           className={`p-4 ${
-                            notification.isRead ? "" : "bg-light-accent/5"
+                            notification.status === "pending"
+                              ? "bg-light-accent/5"
+                              : ""
                           }`}
                         >
                           <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
                             <span>{notification.date}</span>
                             <span>{notification.time}</span>
                           </div>
-                          <p className="text-light-text dark:text-dark-text">
-                            {notification.message}
+                          <p className="text-light-text dark:text-dark-text font-medium">
+                            {notification.title}
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            {t("appointmentDetails")}
+                            {notification.description}
                           </p>
                         </div>
                       ))}
@@ -368,27 +404,14 @@ export default function AccountHeader() {
                             onClick={() => setShowAllNotifications(true)}
                             className="text-light-accent hover:underline text-sm font-medium"
                           >
-                            Показать все ({notifications.length})
-                          </button>
-                        </div>
-                      )}
-
-                      {showAllNotifications && notifications.length > 3 && (
-                        <div className="p-4 text-center border-t border-gray-200 dark:border-gray-700">
-                          <button
-                            onClick={() => {
-                              console.log("Load more notifications");
-                            }}
-                            className="text-light-accent hover:underline text-sm font-medium"
-                          >
-                            Показать еще
+                            {t("showAll")} ({notifications.length})
                           </button>
                         </div>
                       )}
                     </div>
                   ) : (
                     <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                      Нет уведомлений
+                      {t("noNotifications")}
                     </div>
                   )}
                 </div>
@@ -620,7 +643,7 @@ export default function AccountHeader() {
                     onClick={markAllAsRead}
                     className="text-sm text-light-accent"
                   >
-                    Прочитать все
+                    {t("readAll")}
                   </button>
                 )}
               </div>
@@ -635,17 +658,20 @@ export default function AccountHeader() {
                       <div
                         key={notification.id}
                         className={`p-4 rounded-xl ${
-                          notification.isRead
-                            ? "bg-gray-100 dark:bg-gray-800"
-                            : "bg-light-accent/5 border-l-4 border-light-accent"
+                          notification.status === "pending"
+                            ? "bg-light-accent/5"
+                            : ""
                         }`}
                       >
                         <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
                           <span>{notification.date}</span>
                           <span>{notification.time}</span>
                         </div>
-                        <p className="text-light-text dark:text-dark-text text-sm">
-                          {notification.message}
+                        <p className="text-light-text dark:text-dark-text font-medium">
+                          {notification.title}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          {notification.description}
                         </p>
                       </div>
                     ))}
@@ -655,13 +681,13 @@ export default function AccountHeader() {
                         onClick={() => setShowAllNotifications(true)}
                         className="w-full p-3 text-light-accent border border-light-accent/30 hover:bg-light-accent/5 rounded-xl text-sm font-medium transition-colors"
                       >
-                        Показать все ({notifications.length})
+                        {t("showMore")} ({notifications.length})
                       </button>
                     )}
                   </>
                 ) : (
                   <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                    Нет уведомлений
+                    {t("noNotifications")}
                   </div>
                 )}
               </div>
@@ -702,11 +728,9 @@ export default function AccountHeader() {
                           ? "bg-light-accent text-white"
                           : "bg-gray-100 dark:bg-gray-800 text-light-text dark:text-dark-text"
                       }`}
-                      onClick={() =>
-                        handleLanguageChange(lang.code as "ru" | "uz")
-                      }
+                      onClick={() => handleLanguageChange(lang.code as Locale)}
                     >
-                      {lang.code.toUpperCase()}
+                      {lang.label}
                     </button>
                   ))}
                 </div>

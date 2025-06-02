@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 import LoginHeader from "@/src/shared/layout/AccountHeader/LoginHeader";
+import dynamic from "next/dynamic";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const AccountSidebar = dynamic(
   () => import("../../shared/components/AccountSidebar"),

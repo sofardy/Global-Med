@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { UniversalCard } from "../UniversalCard";
+import { API_BASE_URL } from "@/src/config/constants";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
-import Link from "next/link";
-import { applyColorToIcon, getIconColorByTheme } from "../../utils/iconUtils";
-import { ArrowDownIcon } from "../../ui/Icon";
 import axios from "axios";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import {
-  LightbulbIcon,
-  EyeIcon,
-  ButterflyIcon,
-  MedicalIcon,
   AngelIcon,
+  ArrowDownIcon,
   BlobShape,
+  ButterflyIcon,
   ButterflyWingsIcon,
   DocumentPenIcon,
+  EyeIcon,
+  LightbulbIcon,
+  MedicalIcon,
   MedicalMicroscopeIcon,
   ThyroidIcon,
 } from "../../ui/Icon";
-import { useLanguageStore } from "@/src/store/language";
+import { UniversalCard } from "../UniversalCard";
 
 interface Service {
   uuid: string;
@@ -57,6 +57,18 @@ const translations = {
     error: "Ma'lumotlarni yuklashda xatolik yuz berdi",
     servicesCountLabel: "xizmatlar",
   },
+  en: {
+    title: "Complete range of\nmedical services\nin one clinic",
+    description:
+      "Our clinic combines leading medical specialties,\nproviding comprehensive diagnosis, treatment and patient care.\nExperienced specialists, modern equipment\nand 24/7 assistance — all for your health",
+    viewAllServices: "All Services",
+    moreButton: "Learn More",
+    showMore: "Show More",
+    showLess: "Show Less",
+    loading: "Loading services...",
+    error: "Error loading data",
+    servicesCountLabel: "services",
+  },
 };
 
 const getServiceIcon = (slug: string) => {
@@ -78,8 +90,8 @@ const getServiceIcon = (slug: string) => {
 
 export const MedicalServices = () => {
   const { t } = useTranslation(translations);
-  const { theme } = useThemeStore();
   const { currentLocale } = useLanguageStore();
+  const { theme } = useThemeStore();
   const [showAllItems, setShowAllItems] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,15 +101,12 @@ export const MedicalServices = () => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "https://globalmed.kelyanmedia.com/api/services",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "X-Language": currentLocale || "ru",
-            },
-          }
-        );
+        const response = await axios.get(`${API_BASE_URL}/services`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Language": currentLocale,
+          },
+        });
 
         if (response.data?.data && Array.isArray(response.data.data)) {
           setServices(response.data.data);
@@ -140,7 +149,7 @@ export const MedicalServices = () => {
                 <div className="text-3xl md:text-4xl lg:text-[56px] font-medium tracking-[0.01em] leading-tight">
                   {t("title")
                     .split("\n")
-                    .map((line, index) => (
+                    .map((line: any, index: any) => (
                       <span key={index} className="block mb-4">
                         {line}
                       </span>
@@ -151,7 +160,7 @@ export const MedicalServices = () => {
               <p className="text-base lg:text-[18px] mt-10 mb-12 tracking-normal leading-[160%] space-y-2">
                 {t("description")
                   .split("\n")
-                  .map((line, index) => (
+                  .map((line: any, index: any) => (
                     <span key={index} className="block">
                       {line}
                     </span>

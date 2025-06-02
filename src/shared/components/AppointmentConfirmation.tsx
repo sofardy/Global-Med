@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-import { useThemeStore } from "@/src/store/theme";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useThemeStore } from "@/src/store/theme";
 
 // Translation object
 const translations = {
@@ -37,6 +36,22 @@ const translations = {
     service: "Xizmat:",
     doctor: "Shifokor:",
     cost: "Narx:",
+  },
+  en: {
+    doctorTitle: "You have booked a doctor's appointment",
+    checkupTitle: "You have booked a health check-up",
+    analysisTitle: "You have booked medical tests",
+    defaultTitle: "You have booked an appointment",
+    baseInstruction:
+      "Please bring your ID card with you before your first visit to the clinic",
+    additionalInstruction:
+      "and any current medical tests and examinations (if available)",
+    appointmentDate: "Appointment Date",
+    appointmentTime: "Appointment Time",
+    address: "Address",
+    service: "Service:",
+    doctor: "Doctor:",
+    cost: "Cost:",
   },
 };
 

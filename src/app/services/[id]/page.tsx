@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
-import { useThemeStore } from "@/src/store/theme";
+import { API_BASE_URL } from "@/src/config/constants";
+import { GBContext } from "@/src/context/globalize-breadcrumb";
 import { useTranslation } from "@/src/hooks/useTranslation";
-import DoctorBenefits from "@/src/shared/components/DoctorBenefits";
 import { AppointmentSection } from "@/src/shared/components/AppointmentSection";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
+import DoctorBenefits from "@/src/shared/components/DoctorBenefits";
 import { AnimatedButton } from "@/src/shared/ui/Button/AnimatedButton";
+import { useThemeStore } from "@/src/store/theme";
 import axios from "axios";
-import { GBContext } from "@/src/context/globalize-breadcrumb";
-import { API_BASE_URL } from "@/src/config/constants";
+import { useContext, useEffect, useState } from "react";
 
 // Data type definitions
 interface ServicePrice {
@@ -54,6 +54,19 @@ export interface ServiceDetailProps {
 
 // Translations for the services page
 const translations = {
+  en: {
+    appointmentButton: "Schedule an Appointment",
+    serviceTitle: "Services Provided",
+    symptomsTitle: "Symptoms that require specialist consultation:",
+    backToServices: "Back to Services",
+    showMore: "Show More",
+    showLess: "Show Less",
+    showMoreServices: "All Services and Prices",
+    showLessServices: "Collapse Price List",
+    loading: "Loading data...",
+    error: "An error occurred while loading data. Please try again later.",
+    serviceError: "Error loading service data",
+  },
   ru: {
     appointmentButton: "Записаться на прием",
     serviceTitle: "Оказываемые услуги",
@@ -66,6 +79,7 @@ const translations = {
     loading: "Загрузка данных...",
     error:
       "Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.",
+    serviceError: "Ошибка при загрузке данных услуги",
   },
   uz: {
     appointmentButton: "Qabulga yozilish",
@@ -79,6 +93,7 @@ const translations = {
     loading: "Ma'lumotlarni yuklash...",
     error:
       "Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",
+    serviceError: "Xizmat ma'lumotlarini yuklashda xatolik yuz berdi",
   },
 };
 
@@ -109,7 +124,7 @@ export default function ServiceDetail({ params }: ServiceDetailProps) {
           `${API_BASE_URL}/services/${id}`,
           {
             headers: {
-              "X-Language": currentLocale === "uz" ? "uz" : "ru",
+              "X-Language": currentLocale,
             },
           }
         );

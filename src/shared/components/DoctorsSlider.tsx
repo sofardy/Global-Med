@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useTranslation } from "@/src/hooks/useTranslation";
+import { useDoctorsStore } from "@/src/store/doctors";
 import React, { useEffect } from "react";
 import { UniversalSlider } from "../components/UniversalSlider";
 import { DoctorCard } from "./DoctorCard";
-import { useTranslation } from "@/src/hooks/useTranslation";
-import { useDoctorsStore } from "@/src/store/doctors";
 
 // Translations
 const translations = {
@@ -26,6 +26,16 @@ const translations = {
     nextSlide: "Keyingi slayd",
     loading: "Shifokorlar yuklanmoqda...",
     error: "Shifokorlar ro'yxatini yuklab bo'lmadi",
+  },
+  en: {
+    title: "Team of Experienced Doctors by Your Side",
+    description:
+      "Individual approach, modern treatment methods, and attentive care for each patient",
+    buttonText: "Schedule an Appointment",
+    prevSlide: "Previous slide",
+    nextSlide: "Next slide",
+    loading: "Loading doctors...",
+    error: "Failed to load the list of doctors",
   },
 };
 

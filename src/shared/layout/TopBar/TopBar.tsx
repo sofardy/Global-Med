@@ -1,30 +1,30 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useThemeStore } from "../../../store/theme";
-import { useLanguageStore } from "../../../store/language";
-import { useTranslation } from "../../../hooks/useTranslation";
-import { translations } from "./translations";
-import { CONTACT_INFO } from "../../constants/contact";
+import React, { useEffect, useRef, useState } from "react";
 import { useClientLocale } from "../../../hooks/useClientLocale";
+import { useTranslation } from "../../../hooks/useTranslation";
+import { useLanguageStore } from "../../../store/language";
+import { useThemeStore } from "../../../store/theme";
+import { CONTACT_INFO } from "../../constants/contact";
+import { translations } from "./translations";
 
 // Импорт компонентов иконок
 import {
   ArrowDownIcon,
   Clock24Icon,
   LogoIcon,
-  UserIcon,
-  PhoneIcon,
-  WhatsappIcon,
   LogoTextIcon,
+  PhoneIcon,
+  UserIcon,
+  WhatsappIcon,
 } from "../../ui/Icon";
 
 interface Route {
   path: string;
-  translationKey: keyof typeof translations.ru.routes;
+  translationKey: any;
   hasSubmenu?: boolean;
 }
 
@@ -57,6 +57,7 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
   const languages = [
     { code: "uz", label: "UZ" },
     { code: "ru", label: "RU" },
+    { code: "en", label: "EN" },
   ];
 
   // Отслеживаем размер экрана и устанавливаем компактный режим при необходимости
@@ -173,7 +174,7 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
   }, []);
 
   // Переключение языка
-  const handleLanguageChange = (locale: "ru" | "uz") => {
+  const handleLanguageChange = (locale: "ru" | "uz" | "en") => {
     setLocale(locale);
     setIsLangMenuOpen(false);
     // Use requestAnimationFrame to ensure the locale is saved before reload
@@ -601,43 +602,35 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
                     <button
                       key={lang.code}
                       className={`
-            flex items-center w-full px-4 py-3 text-left
-            ${
-              theme === "light"
-                ? "text-light-text hover:bg-light-bg"
-                : "text-dark-text hover:bg-dark-bg"
-            } 
-            ${currentLocale === lang.code ? "font-medium" : "font-normal"}
-            ${lang.code === languages[0].code ? "rounded-t-2xl" : ""}
-            ${
-              lang.code === languages[languages.length - 1].code
-                ? "rounded-b-2xl"
-                : ""
-            }
-            transition-colors duration-200
-          `}
+            flex items-center w-full px-4 py-3 text-left text-sm
+            ${theme === "light" ? "text-light-text" : "text-dark-text"} ${
+                        currentLocale === lang.code ? "bg-light-accent/10" : ""
+                      }`}
                       onClick={() =>
-                        handleLanguageChange(lang.code as "ru" | "uz")
+                        handleLanguageChange(lang.code as "ru" | "uz" | "en")
                       }
                     >
-                      <div className="h-6 mr-2 flex items-center">
+                      <div className="w-8 h-6 mr-2 flex items-center">
                         {lang.code === "uz" && (
-                          <span className="text-sm">
-                            <img
-                              src="/icon/icon-uzbekistan.svg"
-                              className="w-[20px] h-[14px]"
-                              alt="uz"
-                            />
-                          </span>
+                          <img
+                            src="/icon/icon-uzbekistan.svg"
+                            className="w-[20px] h-[14px]"
+                            alt="uz"
+                          />
                         )}
                         {lang.code === "ru" && (
-                          <span className="text-sm">
-                            <img
-                              src="/icon/icon-russia.svg"
-                              className="w-[20px] h-[14px]"
-                              alt="ru"
-                            />
-                          </span>
+                          <img
+                            src="/icon/icon-russia.svg"
+                            className="w-[20px] h-[14px]"
+                            alt="ru"
+                          />
+                        )}
+                        {lang.code === "en" && (
+                          <img
+                            src="/icon/icon-uk.png"
+                            className="w-[20px] h-[14px]"
+                            alt="en"
+                          />
                         )}
                       </div>
                       {lang.label}
@@ -923,7 +916,7 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
                             }`
                       }`}
                       onClick={() =>
-                        handleLanguageChange(lang.code as "ru" | "uz")
+                        handleLanguageChange(lang.code as "ru" | "uz" | "en")
                       }
                     >
                       <div className="flex items-center justify-center">
@@ -939,6 +932,13 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
                             src="/icon/icon-russia.svg"
                             className="w-[24px] h-[16px]"
                             alt="ru"
+                          />
+                        )}
+                        {lang.code === "en" && (
+                          <img
+                            src="/icon/icon-uk.png"
+                            className="w-[24px] h-[16px]"
+                            alt="en"
                           />
                         )}
                       </div>
@@ -1043,7 +1043,9 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
                  ${theme === "light" ? "text-light-text" : "text-dark-text"} ${
                     currentLocale === lang.code ? "bg-light-accent/10" : ""
                   }`}
-                  onClick={() => handleLanguageChange(lang.code as "ru" | "uz")}
+                  onClick={() =>
+                    handleLanguageChange(lang.code as "ru" | "uz" | "en")
+                  }
                 >
                   <div className="w-8 h-6 mr-2 flex items-center">
                     {lang.code === "uz" && (
@@ -1058,6 +1060,13 @@ export const TopBar: React.FC<HeaderProps> = ({ routes }) => {
                         src="/icon/icon-russia.svg"
                         className="w-[20px] h-[14px]"
                         alt="ru"
+                      />
+                    )}
+                    {lang.code === "en" && (
+                      <img
+                        src="/icon/icon-uk.png"
+                        className="w-[20px] h-[14px]"
+                        alt="en"
                       />
                     )}
                   </div>
