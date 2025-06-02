@@ -91,7 +91,7 @@ export default function Checkups() {
   // Функция для получения иконки из мока по slug
   const getIconBySlug = (slug: string) => {
     // Ищем соответствующий элемент в моковых данных
-    const mockItem = checkupItemsData.find((item) => item.id === slug);
+    const mockItem = checkupItemsData.find((item: any) => item.id === slug);
 
     // Если нашли элемент, возвращаем его иконку, иначе возвращаем дефолтную
     return mockItem ? mockItem.iconPath : "/icons/medical-check.svg";

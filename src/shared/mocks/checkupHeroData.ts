@@ -1,3 +1,23 @@
+export const checkupHeroData = {
+  imageUrl: "/images/checkup-hero.jpg",
+  imageAlt: "Medical check-up",
+};
+
+export const checkupItemsData = [
+  {
+    id: "basic",
+    iconPath: "/icons/basic-check.svg",
+  },
+  {
+    id: "advanced",
+    iconPath: "/icons/advanced-check.svg",
+  },
+  {
+    id: "premium",
+    iconPath: "/icons/premium-check.svg",
+  },
+];
+
 export const checkupDetailTranslations = {
   ru: {
     // ... existing code ...
