@@ -164,9 +164,7 @@ export const HeroBanner: React.FC = () => {
           {/* Локация внизу - с добавлением ссылки на Яндекс.Карты */}
           <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 md:left-12 lg:left-50 flex items-center z-10">
             <a
-              href={`https://yandex.ru/maps/?text=${encodeURIComponent(
-                t("location")
-              )}`}
+              href={`https://yandex.uz/maps/10335/tashkent/house/YkAYdAZjTEEOQFprfX5yeXRmYA==/?ll=69.213548%2C41.238854&z=16`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center hover:opacity-80 transition-opacity group"

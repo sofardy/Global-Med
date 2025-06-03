@@ -1,6 +1,6 @@
+import axios, { AxiosRequestConfig } from "axios";
 import { useEffect, useState } from "react";
 import { useLanguageStore } from "../store/language";
-import axios, { AxiosRequestConfig } from "axios";
 
 export function useApi<T>(url: string, config?: AxiosRequestConfig) {
   const { currentLocale } = useLanguageStore();
@@ -33,4 +33,4 @@ export function useApi<T>(url: string, config?: AxiosRequestConfig) {
   }, [url, currentLocale, JSON.stringify(config)]);
 
   return { data, loading, error };
-} 
+}

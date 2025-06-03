@@ -30,7 +30,7 @@ export default function ClientLayout({ children, routes }: ClientLayoutProps) {
         <Breadcrumbs locale={currentLocale} routes={routes} />
       )}
 
-      <main className="min-h-screen pt-4">{children}</main>
+      <main className="min-h-screen">{children}</main>
 
       {!hideHeaderFooter && <Footer />}
     </div>

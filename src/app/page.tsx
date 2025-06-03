@@ -19,8 +19,6 @@ export default function Home() {
   return (
     <main>
       <HeroBanner />
-      {/*<SymptomSelector />*/}
-
       <MedicalServices />
       <CheckupSlider />
       <AnalysisGrid />

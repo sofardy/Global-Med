@@ -5,6 +5,7 @@ import { useTranslation } from "@/src/hooks/useTranslation";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import Modal from "@/src/shared/components/Modal/Modal";
 import { ArrowDownIcon } from "@/src/shared/ui/Icon";
+import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
 import { formatPrice } from "@/src/utils/formatPrice";
 import axios from "axios";
@@ -546,18 +547,6 @@ const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor): Doctor => {
   };
 };
 
-// Функция для получения списка специализаций
-const fetchSpecializations = async (): Promise<Specialization[]> => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/specializations`);
-    console.log("Получены специализации:", response.data);
-    return response.data.data || [];
-  } catch (error) {
-    console.error("Ошибка при загрузке специализаций:", error);
-    return [];
-  }
-};
-
 // Основной компонент страницы врачей
 export default function DoctorsPage() {
   const { t } = useTranslation(translations);
@@ -573,8 +562,24 @@ export default function DoctorsPage() {
 
   // Состояние для специализаций
   const [specializations, setSpecializations] = useState<Specialization[]>([]);
+  const { currentLocale }: any = useLanguageStore();
   const [loadingSpecializations, setLoadingSpecializations] =
     useState<boolean>(true);
+  // Функция для получения списка специализаций
+  const fetchSpecializations = async (): Promise<Specialization[]> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/specializations`, {
+        headers: {
+          "X-Language": currentLocale,
+        },
+      });
+      console.log("Получены специализации:", response.data);
+      return response.data.data || [];
+    } catch (error) {
+      console.error("Ошибка при загрузке специализаций:", error);
+      return [];
+    }
+  };
 
   // Получение списка специализаций при монтировании компонента
   useEffect(() => {

@@ -72,7 +72,7 @@ const CheckupDetail = ({ params }: { params: { id: string } }) => {
           {
             headers: {
               "Content-Type": "application/json",
-              "X-Language": currentLocale, // Используем currentLocale с fallback на 'ru'
+              "X-Language": currentLocale,
             },
           }
         );

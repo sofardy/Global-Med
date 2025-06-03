@@ -200,7 +200,7 @@ const DoctorSearchSection: React.FC = () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/specializations`, {
           headers: {
-            "X-Language": currentLocale === "uz" ? "uz" : "ru",
+            "X-Language": currentLocale,
           },
         });
         console.log("Loaded specializations:", response.data.data);

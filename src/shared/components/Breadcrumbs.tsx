@@ -1,17 +1,17 @@
 "use client";
 
-import React, { Suspense, useContext } from "react";
+import { GBContext } from "@/src/context/globalize-breadcrumb";
+import { Route } from "@/src/shared/config/routes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Route } from "@/src/shared/config/routes";
-import { GBContext } from "@/src/context/globalize-breadcrumb";
+import React, { Suspense, useContext } from "react";
 
 interface BreadcrumbsProps {
   className?: string;
   separator?: React.ReactNode;
   hideHome?: boolean;
   hideCurrent?: boolean;
-  locale: "uz" | "ru";
+  locale: "uz" | "ru" | "en";
   routes: Route[];
 }
 
@@ -54,6 +54,25 @@ const translations = {
       analysis_detail: "Анализ",
     },
   },
+  en: {
+    home: "Home",
+    labels: {
+      services: "Services",
+      checkups: "Checkups",
+      analysis: "Analyses",
+      partners: "Partners",
+      clinic: "About Clinic",
+      contacts: "Contacts",
+      doctors: "Doctors",
+      dietolog: "Dietitian",
+      checkup: "Checkup",
+      service: "Service",
+      doctor: "Doctor",
+      partner: "Partner",
+      contact: "Contact",
+      analysis_detail: "Analysis",
+    },
+  },
 };
 
 function BreadcrumbsContent({
@@ -68,7 +87,7 @@ function BreadcrumbsContent({
   const { title }: any = useContext(GBContext);
   if (!pathname || !(locale in translations)) return null;
 
-  const supportedLocales = ["uz", "ru"];
+  const supportedLocales = ["uz", "ru", "en"];
   const localePrefix = `/${locale}`;
   const cleanedPath = pathname.startsWith(localePrefix)
     ? pathname.slice(localePrefix.length)

@@ -49,7 +49,7 @@ export default function Checkups() {
         const response = await axios.get(`${API_BASE_URL}/checkups`, {
           headers: {
             "Content-Type": "application/json",
-            "X-Language": currentLocale, // Используем currentLocale с fallback на 'ru'
+            "X-Language": currentLocale,
           },
         });
         setCheckupItems(response.data.data);

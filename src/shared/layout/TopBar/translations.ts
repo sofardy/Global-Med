@@ -52,6 +52,7 @@ export const translations: any = {
         ourServices: "About us",
         aboutClinic: "About us",
         contacts: "Contacts",
+        more: "More",
       },
       language: "Language",
     },

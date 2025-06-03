@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/src/config/constants";
 import CareerForm from "@/src/shared/components/CareerForm";
 import { ContactInfo } from "@/src/shared/components/ContactInfo";
 import { HeartIconk2, MedicalCrossIcon } from "@/src/shared/ui/Icon";
+import { useLanguageStore } from "@/src/store/language";
 import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -141,7 +142,8 @@ const translations = {
 
 export default function Clinic() {
   const { theme } = useThemeStore();
-  const { t, currentLocale }: any = useTranslation(translations);
+  const { t }: any = useTranslation(translations);
+  const { currentLocale } = useLanguageStore();
   const [pageData, setPageData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

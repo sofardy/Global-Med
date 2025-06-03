@@ -1,5 +1,6 @@
 "use client";
 import { API_BASE_URL } from "@/src/config/constants";
+import { useLanguageStore } from "@/src/store/language";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -79,7 +80,8 @@ const translations = {
 
 const AppointmentHistory = () => {
   const { theme } = useThemeStore();
-  const { t, currentLocale } = useTranslation(translations);
+  const { t } = useTranslation(translations);
+  const { currentLocale } = useLanguageStore();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
