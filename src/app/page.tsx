@@ -16,36 +16,31 @@ import { ReviewsSlider } from "../shared/components/Review/ReviewsSlider";
 import { SurgerySlider } from "../shared/components/SurgerySlider";
 import { VideoBanner } from "../shared/components/VideoBanner";
 import { useHomeStore } from "../store/home";
-import { useLanguageStore } from "../store/language";
 
 export default function Home() {
-  const { fetchHomeData } = useHomeStore();
-  const currentLocale = useLanguageStore();
+  const { fetchHomeData }: any = useHomeStore();
+  const currentLocaleLang = JSON.parse(
+    localStorage.getItem("language-storage") || "{}"
+  )?.state?.currentLocale;
+
   useEffect(() => {
-    fetchHomeData();
-  }, [currentLocale]);
+    fetchHomeData(currentLocaleLang);
+  }, [currentLocaleLang]);
+
   return (
     <main>
-      {/* done */}
       <HeroBanner />
-      {/* done */}
       <MedicalServices />
-      {/* done */}
       <CheckupSlider />
-      {/* done */}
       <AnalysisGrid />
-      {/* done */}
       <SurgerySlider />
       <AppointmentSection />
       <VideoBanner />
       <BenefitsGrid />
       <MedicalGallery />
       <DoctorsSlider />
-      {/* done */}
       <CareerForm />
-      {/* done */}
       <ReviewsSlider />
-      {/* done */}
       <OurPartners />
       <ContactInfo />
     </main>

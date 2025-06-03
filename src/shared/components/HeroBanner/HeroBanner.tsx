@@ -18,30 +18,14 @@ import { LocationIcon } from "../../ui/Icon";
 
 export const HeroBanner: React.FC = () => {
   const { t } = useTranslation(heroTranslations);
-  const {
-    // fetchHomeData,
-    // partnersGallery,
-    heroBanners,
-    // services,
-    // medicalTests,
-    // servicesSlider,
-    // team,
-    // form,
-    // reviews,
-    // contacts,
-    isLoading,
-    error,
-  } = useHomeStore();
+  const { heroBanners, isLoading }: any = useHomeStore();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-
+  console.log(heroBanners);
   // Получаем данные слайдов из переводов
   // const slides = t("slides", { returnObjects: true });
-  const slidesArray = Array.isArray(heroBanners) ? heroBanners : [];
-
-  // Ref для Swiper инстанса
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  console.log("HeroBanner", heroBanners);
   const swiperRef = useRef<any>(null);
 
   // Обработчик изменения индекса слайда
@@ -76,7 +60,7 @@ export const HeroBanner: React.FC = () => {
 
   return (
     <div className="relative w-full h-[500px] sm:h-[500px] md:h-[480px] lg:h-[700px] rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-40 mt-4">
-      {isLoading || slidesArray.length === 0 ? (
+      {isLoading || heroBanners?.length === 0 ? (
         <div className="absolute inset-0 w-full h-full bg-gray-100 animate-pulse">
           {/* Skeleton loader for image */}
           <div className="absolute inset-0 bg-gray-200"></div>
@@ -114,7 +98,7 @@ export const HeroBanner: React.FC = () => {
             allowTouchMove={true}
             className="h-full w-full"
           >
-            {slidesArray.map((slide, index) => (
+            {heroBanners?.map((slide: any, index: any) => (
               <SwiperSlide key={`slide-${index}`} className="w-full">
                 <div className="relative w-full h-full">
                   {/* Фоновое изображение с позиционированием 50% справа */}
@@ -137,7 +121,7 @@ export const HeroBanner: React.FC = () => {
                       {/* Заголовок с переносами строк */}
                       <h1
                         dangerouslySetInnerHTML={{
-                          __html: slide.title,
+                          __html: slide?.title,
                         }}
                         className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#094A54] mb-3 sm:mb-4 md:mb-5 leading-[1.15]"
                       ></h1>
@@ -164,9 +148,9 @@ export const HeroBanner: React.FC = () => {
           </Swiper>
 
           {/* Кастомные индикаторы слайдов - только для планшетов и десктопов */}
-          {slidesArray.length > 1 && (
+          {heroBanners?.length > 1 && (
             <div className="hidden sm:flex absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 space-x-4 z-10">
-              {slidesArray.map((_, index) => (
+              {heroBanners?.map((_: any, index: any) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
