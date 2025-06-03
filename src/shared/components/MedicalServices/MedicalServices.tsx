@@ -88,7 +88,7 @@ export const MedicalServices = () => {
           headers: {
             "Content-Type": "application/json",
             "X-Language": (() => {
-              const stored = window?.localStorage.getItem("language-storage");
+              const stored = window?.localStorage?.getItem("language-storage");
               if (!stored) return "ru";
               try {
                 const parsed = JSON.parse(stored);

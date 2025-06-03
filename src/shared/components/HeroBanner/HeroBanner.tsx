@@ -22,14 +22,9 @@ export const HeroBanner: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  console.log(heroBanners);
-  // Получаем данные слайдов из переводов
-  // const slides = t("slides", { returnObjects: true });
-  console.log("HeroBanner", heroBanners);
+
   const swiperRef = useRef<any>(null);
 
-  // Обработчик изменения индекса слайда
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSlideChange = (swiper: any) => {
     setActiveIndex(swiper.activeIndex);
   };

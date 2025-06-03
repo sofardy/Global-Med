@@ -20,7 +20,7 @@ import { useHomeStore } from "../store/home";
 export default function Home() {
   const { fetchHomeData }: any = useHomeStore();
   const currentLocaleLang = JSON.parse(
-    localStorage.getItem("language-storage") || "{}"
+    window?.localStorage?.getItem("language-storage") || "{}"
   )?.state?.currentLocale;
 
   useEffect(() => {
