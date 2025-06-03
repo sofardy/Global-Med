@@ -1,58 +1,12 @@
-import { API_BASE_URL } from "@/src/config/constants";
-import { useTranslation } from "@/src/hooks/useTranslation";
-import { checkupDetailTranslations } from "@/src/shared/mocks/checkupHeroData";
+import { useHomeStore } from "@/src/store/home";
 import { useLanguageStore } from "@/src/store/language";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-interface PartnersGalleryData {
-  key: string;
-  image: string[];
-}
-
-interface HomePageContent {
-  partners_gallery?: {
-    data: PartnersGalleryData;
-    type: string;
-  };
-}
-
-interface HomePageResponse {
-  data: {
-    title: string;
-    slug: string;
-    content: HomePageContent;
-  };
-}
-
-const fetchHomePageData = async (
-  language: string
-): Promise<HomePageContent | null> => {
-  try {
-    const response: any = await axios.get<HomePageResponse>(
-      `${API_BASE_URL}/pages/home`,
-      {
-        headers: {
-          "X-Language": language,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response?.data?.data?.content;
-  } catch (error) {
-    console.error("Error fetching home page data:", error);
-    return null;
-  }
-};
-
 const OurPartners = () => {
   const { currentLocale } = useLanguageStore();
-  const { t } = useTranslation(checkupDetailTranslations);
-  const [partnerImages, setPartnerImages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { partnersGallery, isLoading }: any = useHomeStore();
 
   // Переводы заголовка
   const getTitle = () => {
@@ -65,20 +19,7 @@ const OurPartners = () => {
     return "Наши партнеры";
   };
 
-  useEffect(() => {
-    const loadPartners = async () => {
-      setLoading(true);
-      const data = await fetchHomePageData(currentLocale || "ru");
-      if (data?.partners_gallery?.data?.image) {
-        setPartnerImages(data.partners_gallery.data.image);
-      }
-      setLoading(false);
-    };
-
-    loadPartners();
-  }, [currentLocale]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-32">
         <div className="text-xl text-light-text dark:text-dark-text">
@@ -92,7 +33,7 @@ const OurPartners = () => {
     );
   }
 
-  if (partnerImages?.length === 0) {
+  if (partnersGallery?.image?.length === 0) {
     return null;
   }
 
@@ -118,7 +59,7 @@ const OurPartners = () => {
           speed={3000}
           className="partners-swiper"
         >
-          {partnerImages?.map((image: any, index: any) => (
+          {partnersGallery?.image?.map((image: any, index: any) => (
             <SwiperSlide key={index} className="!w-[375px]">
               <div
                 className="bg-white dark:bg-dark-block flex items-center justify-center p-6 duration-300"

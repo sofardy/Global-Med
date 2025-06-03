@@ -1,22 +1,21 @@
 // src/shared/layout/Footer/Footer.tsx
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import Link from "next/link";
-import { useThemeStore } from "@/src/store/theme";
-import { useTranslation } from "@/src/hooks/useTranslation";
-import { translations } from "./translations";
-import { CONTACT_INFO } from "@/src/shared/constants/contact";
-import {
-  TelegramIcon,
-  InstagramIcon,
-  WhatsapppIcon,
-  FacebookIcon,
-} from "../../ui/Icon";
-import MuscleIcon from "../../ui/Icon/MuscleIcon";
-import axios from "axios";
 import { API_BASE_URL } from "@/src/config/constants";
+import { useTranslation } from "@/src/hooks/useTranslation";
+import { CONTACT_INFO } from "@/src/shared/constants/contact";
 import { useLanguageStore } from "@/src/store/language";
+import { useThemeStore } from "@/src/store/theme";
+import axios from "axios";
+import Link from "next/link";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  TelegramIcon,
+  WhatsapppIcon,
+} from "../../ui/Icon";
+import { translations } from "./translations";
 
 // Types for translation items
 interface LinkItem {
@@ -174,7 +173,7 @@ export const Footer: React.FC = () => {
     () => [
       {
         id: "telegram",
-        url: "https://t.me/globalmedcenter",
+        url: "https://t.me/globalmed",
         icon: TelegramIcon,
         label: "Telegram",
       },

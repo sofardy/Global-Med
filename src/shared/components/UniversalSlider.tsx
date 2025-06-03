@@ -32,8 +32,8 @@ export interface UniversalSliderProps {
   customNextButton?: ReactNode;
   showPagination?: boolean;
   paginationClassName?: string;
-  title?: string | ReactNode;
-  description?: string | ReactNode;
+  title?: string | ReactNode | any;
+  description?: string | ReactNode | any;
   titleClassName?: string;
   descriptionClassName?: string;
   className?: string;

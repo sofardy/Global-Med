@@ -10,6 +10,7 @@ import { AppointmentForm } from "../AppointmentForm";
 import { heroTranslations } from "./translations";
 
 // Импорт стилей Swiper
+import { useHomeStore } from "@/src/store/home";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -17,14 +18,27 @@ import { LocationIcon } from "../../ui/Icon";
 
 export const HeroBanner: React.FC = () => {
   const { t } = useTranslation(heroTranslations);
-
+  const {
+    // fetchHomeData,
+    // partnersGallery,
+    heroBanners,
+    // services,
+    // medicalTests,
+    // servicesSlider,
+    // team,
+    // form,
+    // reviews,
+    // contacts,
+    isLoading,
+    error,
+  } = useHomeStore();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   // Получаем данные слайдов из переводов
-  const slides = t("slides", { returnObjects: true });
-  const slidesArray = Array.isArray(slides) ? slides : [];
+  // const slides = t("slides", { returnObjects: true });
+  const slidesArray = Array.isArray(heroBanners) ? heroBanners : [];
 
   // Ref для Swiper инстанса
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62,9 +76,26 @@ export const HeroBanner: React.FC = () => {
 
   return (
     <div className="relative w-full h-[500px] sm:h-[500px] md:h-[480px] lg:h-[700px] rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-40 mt-4">
-      {slidesArray.length === 0 ? (
-        <div className="absolute inset-0 w-full h-full bg-dark-bg flex items-center justify-center">
-          <p className="text-white text-xl">Слайды не загружены</p>
+      {isLoading || slidesArray.length === 0 ? (
+        <div className="absolute inset-0 w-full h-full bg-gray-100 animate-pulse">
+          {/* Skeleton loader for image */}
+          <div className="absolute inset-0 bg-gray-200"></div>
+
+          {/* Skeleton loader for content */}
+          <div className="relative h-full px-8 md:px-12 lg:px-50 flex flex-col justify-center">
+            <div className="max-w-[700px]">
+              {/* Title skeleton */}
+              <div className="h-12 sm:h-14 md:h-16 lg:h-20 bg-gray-300 rounded-lg mb-3 sm:mb-4 md:mb-5 w-3/4"></div>
+              <div className="h-12 sm:h-14 md:h-16 lg:h-20 bg-gray-300 rounded-lg mb-3 sm:mb-4 md:mb-5 w-1/2"></div>
+
+              {/* Subtitle skeleton */}
+              <div className="h-6 sm:h-7 md:h-8 bg-gray-300 rounded-lg mb-5 sm:mb-6 md:mb-8 w-full"></div>
+              <div className="h-6 sm:h-7 md:h-8 bg-gray-300 rounded-lg mb-5 sm:mb-6 md:mb-8 w-2/3"></div>
+
+              {/* Button skeleton */}
+              <div className="h-12 sm:h-14 bg-gray-300 rounded-xl w-48"></div>
+            </div>
+          </div>
         </div>
       ) : (
         <>
@@ -90,7 +121,7 @@ export const HeroBanner: React.FC = () => {
                   <div className="absolute inset-0 w-full h-full">
                     <div className="relative w-full h-full">
                       <Image
-                        src={slide.image}
+                        src={slide.images[0]}
                         fill
                         alt={slide.title}
                         className="object-cover object-[70%_center]"
@@ -104,26 +135,16 @@ export const HeroBanner: React.FC = () => {
                   <div className="relative h-full px-8 md:px-12 lg:px-50 flex flex-col justify-center">
                     <div className="max-w-[700px]">
                       {/* Заголовок с переносами строк */}
-                      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#094A54] mb-3 sm:mb-4 md:mb-5 leading-[1.15]">
-                        {slide.title_parts ? (
-                          <>
-                            {slide.title_parts.map(
-                              (part: string, i: number) => (
-                                <React.Fragment key={i}>
-                                  {part}
-                                  {i < slide.title_parts.length - 1 && <br />}
-                                </React.Fragment>
-                              )
-                            )}
-                          </>
-                        ) : (
-                          slide.title
-                        )}
-                      </h1>
+                      <h1
+                        dangerouslySetInnerHTML={{
+                          __html: slide.title,
+                        }}
+                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#094A54] mb-3 sm:mb-4 md:mb-5 leading-[1.15]"
+                      ></h1>
 
                       {/* Описание */}
                       <p className="text-base sm:text-lg md:text-xl text-[#094A54] mb-5 sm:mb-6 md:mb-8">
-                        {slide.description}
+                        {slide?.subtitle}
                       </p>
 
                       {/* Анимированная кнопка */}

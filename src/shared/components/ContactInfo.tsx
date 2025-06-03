@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useHomeStore } from "@/src/store/home";
 import { useThemeStore } from "@/src/store/theme";
 import React from "react";
 import {
@@ -120,6 +121,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
 export const ContactInfo: React.FC = () => {
   const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
+  const { contacts, isLoading }: any = useHomeStore();
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-4 sm:gap-5 md:gap-6 mt-10 sm:mt-16 md:mt-20">
@@ -127,10 +129,10 @@ export const ContactInfo: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
           <ContactCard title={t("phone")} showCircle={true}>
             <a
-              href="tel:+998712005550"
+              href={`tel:${contacts?.phone?.replace(/\D/g, "")}`}
               className="block text-xl sm:text-2xl md:text-3xl font-medium text-[#173F46] dark:text-white group-hover:text-white"
             >
-              +998 (71) 200-55-50
+              {contacts?.phone}
             </a>
           </ContactCard>
 
@@ -138,10 +140,10 @@ export const ContactInfo: React.FC = () => {
             <div className="emergency-wrapper relative inline-block">
               <div className="emergency-fog"></div>
               <a
-                href="tel:1142"
+                href={`tel:${contacts?.emergency}`}
                 className="relative block text-2xl sm:text-3xl md:text-4xl font-medium text-red-500 dark:text-red-500 z-10"
               >
-                1142
+                {contacts?.emergency}
               </a>
             </div>
           </ContactCard>
@@ -149,43 +151,44 @@ export const ContactInfo: React.FC = () => {
 
         <ContactCard title={t("address")}>
           <p className="text-xl sm:text-2xl md:text-3xl font-medium text-[#173F46] dark:text-white group-hover:text-white">
-            {t("contactAddress")}
+            {contacts?.address}
           </p>
         </ContactCard>
 
         <ContactCard title={t("socialNetworks")}>
           <div className="flex flex-wrap gap-3 sm:gap-4">
-            {socialNetworks.map((network) => (
-              <a
-                key={network.id}
-                href={network.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-colors duration-300 ${
-                  theme === "light"
-                    ? "bg-[#174F4B] hover:bg-[#0e3e3a] text-white"
-                    : "bg-white hover:bg-gray-100 text-[#174F4B]"
-                } group-hover:bg-white group-hover:text-[#00c78b]`}
-              >
-                <network.icon size={18} className="sm:hidden" />
-                <network.icon size={20} className="hidden sm:block md:hidden" />
-                <network.icon size={24} className="hidden md:block" />
-              </a>
-            ))}
+            {contacts?.socials?.map((network: any, index: number) => {
+              const Icon = socialNetworks[index]?.icon;
+              return (
+                <a
+                  key={index}
+                  href={network.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                    theme === "light"
+                      ? "bg-[#174F4B] hover:bg-[#0e3e3a] text-white"
+                      : "bg-white hover:bg-gray-100 text-[#174F4B]"
+                  } group-hover:bg-white group-hover:text-[#00c78b]`}
+                >
+                  {Icon && (
+                    <>
+                      <Icon size={18} className="sm:hidden" />
+                      <Icon size={20} className="hidden sm:block md:hidden" />
+                      <Icon size={24} className="hidden md:block" />
+                    </>
+                  )}
+                </a>
+              );
+            })}
           </div>
         </ContactCard>
       </div>
 
       <div className="w-full md:w-1/2 h-[250px] sm:h-[300px] md:h-auto rounded-xl overflow-hidden mt-4 md:mt-0">
-        <iframe
-          src="https://yandex.ru/map-widget/v1/?um=constructor%3A814dab4e89ae7688d50b426c78f5575bb00ad1682f17d1620045ba50c37f5691&amp;source=constructor"
-          width="100%"
-          height="100%"
-          frameBorder="0"
-          title="Глобал Медикал центр"
-          className="w-full h-full"
-          allow="geolocation"
-          loading="lazy"
+        <div
+          style={{ width: "100%", height: "100%" }}
+          dangerouslySetInnerHTML={{ __html: contacts?.iframe }}
         />
       </div>
 
@@ -217,9 +220,9 @@ export const ContactInfo: React.FC = () => {
             transform: translate(-50%, -50%) scale(1);
           }
           50% {
-            opacity: 0.1; /* Much lower opacity to make it almost disappear */
+            opacity: 0.1;
             filter: blur(8px);
-            transform: translate(-50%, -50%) scale(0.8); /* Smaller scale */
+            transform: translate(-50%, -50%) scale(0.8);
           }
           100% {
             opacity: 0.7;

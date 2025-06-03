@@ -5,6 +5,7 @@
 import { useFormValidation } from "@/src/hooks/useFormValidation";
 import { useTranslation } from "@/src/hooks/useTranslation";
 import Modal from "@/src/shared/components/Modal/Modal";
+import { useHomeStore } from "@/src/store/home";
 import { useThemeStore } from "@/src/store/theme";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
@@ -12,9 +13,6 @@ import { FormService } from "../services/FormService";
 
 const translations = {
   ru: {
-    title: "Станьте частью команды экспертов в медицине",
-    description:
-      "Работайте в команде медицинских специалистов — в стабильной и профессиональной среде, где уважают опыт и ценят вклад каждого сотрудника.",
     aboutButton: "Подробнее О клинике",
     namePlaceholder: "Имя",
     phonePlaceholder: "+998 (__) ___-__-__",
@@ -41,9 +39,6 @@ const translations = {
     uploadFile: "Загрузить файл",
   },
   uz: {
-    title: "Tibbiyotda ekspertlar jamoasiga qo'shiling",
-    description:
-      "Tajribangizni qadrlaydigan, rivojlanishni qo'llab-quvvatlaydigan va karyera o'sishi uchun sharoit yaratadigan dinamik va professional muhitda ishlang",
     aboutButton: "Klinika haqida batafsil",
     namePlaceholder: "Ism",
     phonePlaceholder: "+998 (__) ___-__-__",
@@ -70,9 +65,6 @@ const translations = {
     uploadFile: "Faylni yuklash",
   },
   en: {
-    title: "Join Our Team of Medical Experts",
-    description:
-      "Work in a team of medical professionals — in a stable and professional environment where experience is respected and each employee's contribution is valued",
     aboutButton: "Learn More About the Clinic",
     namePlaceholder: "Name",
     phonePlaceholder: "+998 (__) ___-__-__",
@@ -103,6 +95,7 @@ const translations = {
 const CareerForm = () => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
+  const { form, isLoading }: any = useHomeStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Модальные окна
@@ -258,12 +251,29 @@ const CareerForm = () => {
           {/* Content */}
           <div className="relative z-10 flex flex-col h-full">
             <div>
-              <h2 className="text-3xl md:text-4xl font-medium mb-6">
-                {t("title")}
-              </h2>
-              <p className="text-base md:text-lg mb-8 max-w-md">
-                {t("description")}
-              </p>
+              {isLoading ? (
+                <div className="animate-pulse">
+                  <div className="h-8 md:h-10 lg:h-12 bg-white/20 rounded-lg w-3/4 mb-4"></div>
+                  <div className="h-4 md:h-5 lg:h-6 bg-white/20 rounded-lg w-full mb-2"></div>
+                  <div className="h-4 md:h-5 lg:h-6 bg-white/20 rounded-lg w-5/6 mb-2"></div>
+                  <div className="h-4 md:h-5 lg:h-6 bg-white/20 rounded-lg w-4/6"></div>
+                </div>
+              ) : (
+                <>
+                  <h2
+                    dangerouslySetInnerHTML={{
+                      __html: form?.title,
+                    }}
+                    className="text-3xl md:text-4xl font-medium mb-6"
+                  ></h2>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: form?.subtitle,
+                    }}
+                    className="text-base md:text-lg mb-8 max-w-md"
+                  ></p>
+                </>
+              )}
             </div>
 
             <div className="mt-auto">

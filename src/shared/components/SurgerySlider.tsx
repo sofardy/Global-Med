@@ -2,6 +2,7 @@
 "use client";
 
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useHomeStore } from "@/src/store/home";
 import { useThemeStore } from "@/src/store/theme";
 import Image from "next/image";
 import React from "react";
@@ -91,10 +92,9 @@ export const SurgerySlider: React.FC<SurgerySliderProps> = ({
   className,
 }) => {
   const { t } = useTranslation(surgeryData);
-
+  const { servicesSlider, isLoading }: any = useHomeStore();
   // Получаем локализованные данные
-  const sliderTitle = title || t("title") || "";
-  const sliderDescription = description || t("description") || "";
+
   const services = t("services", { returnObjects: true }) as any[];
   const detailsButtonText = t("detailsButton");
 
@@ -117,10 +117,6 @@ export const SurgerySlider: React.FC<SurgerySliderProps> = ({
     return lines;
   };
 
-  // Разделение текстов на строки
-  const titleLines = splitTextIntoLines(sliderTitle, 2);
-  const descriptionLines = splitTextIntoLines(sliderDescription, 3);
-
   // Создаем слайды с карточками
   const slides = services.map((service) => (
     <ServiceCardWithImage
@@ -138,23 +134,21 @@ export const SurgerySlider: React.FC<SurgerySliderProps> = ({
 
   // Создаем компоненты заголовка и описания
   const titleComponent = (
-    <h2 className="text-3xl md:text-[40px] font-bold text-[#173F46] dark:text-white">
-      {titleLines.map((line, index) => (
-        <span key={index} className="block">
-          {line}
-        </span>
-      ))}
-    </h2>
+    <p
+      dangerouslySetInnerHTML={{
+        __html: servicesSlider?.title,
+      }}
+      className="text-3xl md:text-[40px] font-bold text-[#173F46] dark:text-white"
+    ></p>
   );
 
   const descriptionComponent = (
-    <p className="text-base md:text-lg text-[#173F46] dark:text-white">
-      {descriptionLines.map((line, index) => (
-        <span key={index} className="block">
-          {line}
-        </span>
-      ))}
-    </p>
+    <p
+      dangerouslySetInnerHTML={{
+        __html: servicesSlider?.subtitle,
+      }}
+      className="text-base md:text-lg text-[#173F46] dark:text-white"
+    ></p>
   );
 
   // Использование универсального слайдера

@@ -39,7 +39,6 @@ export default function Checkups() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { currentLocale } = useLanguageStore();
-  console.log(currentLocale, "currentLocale");
 
   // Загрузка данных с API при монтировании компонента
   useEffect(() => {
@@ -66,8 +65,6 @@ export default function Checkups() {
 
     fetchCheckups();
   }, [currentLocale]);
-
-  console.log(currentLocale, "currentLocale");
 
   const [dataPagesCheckup, setDataPagesCheckup] = useState(null);
   useEffect(() => {
