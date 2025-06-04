@@ -10,6 +10,7 @@ import { AppointmentForm } from "../AppointmentForm";
 import { heroTranslations } from "./translations";
 
 // Импорт стилей Swiper
+import { useHomeStore } from "@/src/store/home";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -17,21 +18,13 @@ import { LocationIcon } from "../../ui/Icon";
 
 export const HeroBanner: React.FC = () => {
   const { t } = useTranslation(heroTranslations);
-
+  const { heroBanners, isLoading }: any = useHomeStore();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Получаем данные слайдов из переводов
-  const slides = t("slides", { returnObjects: true });
-  const slidesArray = Array.isArray(slides) ? slides : [];
-
-  // Ref для Swiper инстанса
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const swiperRef = useRef<any>(null);
 
-  // Обработчик изменения индекса слайда
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSlideChange = (swiper: any) => {
     setActiveIndex(swiper.activeIndex);
   };
@@ -62,9 +55,26 @@ export const HeroBanner: React.FC = () => {
 
   return (
     <div className="relative w-full h-[500px] sm:h-[500px] md:h-[480px] lg:h-[700px] rounded-2xl overflow-hidden mb-6 sm:mb-8 md:mb-40 mt-4">
-      {slidesArray.length === 0 ? (
-        <div className="absolute inset-0 w-full h-full bg-dark-bg flex items-center justify-center">
-          <p className="text-white text-xl">Слайды не загружены</p>
+      {isLoading || heroBanners?.length === 0 ? (
+        <div className="absolute inset-0 w-full h-full bg-gray-100 animate-pulse">
+          {/* Skeleton loader for image */}
+          <div className="absolute inset-0 bg-gray-200"></div>
+
+          {/* Skeleton loader for content */}
+          <div className="relative h-full px-8 md:px-12 lg:px-50 flex flex-col justify-center">
+            <div className="max-w-[700px]">
+              {/* Title skeleton */}
+              <div className="h-12 sm:h-14 md:h-16 lg:h-20 bg-gray-300 rounded-lg mb-3 sm:mb-4 md:mb-5 w-3/4"></div>
+              <div className="h-12 sm:h-14 md:h-16 lg:h-20 bg-gray-300 rounded-lg mb-3 sm:mb-4 md:mb-5 w-1/2"></div>
+
+              {/* Subtitle skeleton */}
+              <div className="h-6 sm:h-7 md:h-8 bg-gray-300 rounded-lg mb-5 sm:mb-6 md:mb-8 w-full"></div>
+              <div className="h-6 sm:h-7 md:h-8 bg-gray-300 rounded-lg mb-5 sm:mb-6 md:mb-8 w-2/3"></div>
+
+              {/* Button skeleton */}
+              <div className="h-12 sm:h-14 bg-gray-300 rounded-xl w-48"></div>
+            </div>
+          </div>
         </div>
       ) : (
         <>
@@ -83,14 +93,14 @@ export const HeroBanner: React.FC = () => {
             allowTouchMove={true}
             className="h-full w-full"
           >
-            {slidesArray.map((slide, index) => (
+            {heroBanners?.map((slide: any, index: any) => (
               <SwiperSlide key={`slide-${index}`} className="w-full">
                 <div className="relative w-full h-full">
                   {/* Фоновое изображение с позиционированием 50% справа */}
                   <div className="absolute inset-0 w-full h-full">
                     <div className="relative w-full h-full">
                       <Image
-                        src={slide.image}
+                        src={slide.images[0]}
                         fill
                         alt={slide.title}
                         className="object-cover object-[70%_center]"
@@ -104,26 +114,16 @@ export const HeroBanner: React.FC = () => {
                   <div className="relative h-full px-8 md:px-12 lg:px-50 flex flex-col justify-center">
                     <div className="max-w-[700px]">
                       {/* Заголовок с переносами строк */}
-                      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#094A54] mb-3 sm:mb-4 md:mb-5 leading-[1.15]">
-                        {slide.title_parts ? (
-                          <>
-                            {slide.title_parts.map(
-                              (part: string, i: number) => (
-                                <React.Fragment key={i}>
-                                  {part}
-                                  {i < slide.title_parts.length - 1 && <br />}
-                                </React.Fragment>
-                              )
-                            )}
-                          </>
-                        ) : (
-                          slide.title
-                        )}
-                      </h1>
+                      <h1
+                        dangerouslySetInnerHTML={{
+                          __html: slide?.title,
+                        }}
+                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#094A54] mb-3 sm:mb-4 md:mb-5 leading-[1.15]"
+                      ></h1>
 
                       {/* Описание */}
                       <p className="text-base sm:text-lg md:text-xl text-[#094A54] mb-5 sm:mb-6 md:mb-8">
-                        {slide.description}
+                        {slide?.subtitle}
                       </p>
 
                       {/* Анимированная кнопка */}
@@ -143,9 +143,9 @@ export const HeroBanner: React.FC = () => {
           </Swiper>
 
           {/* Кастомные индикаторы слайдов - только для планшетов и десктопов */}
-          {slidesArray.length > 1 && (
+          {heroBanners?.length > 1 && (
             <div className="hidden sm:flex absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 space-x-4 z-10">
-              {slidesArray.map((_, index) => (
+              {heroBanners?.map((_: any, index: any) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
@@ -164,9 +164,7 @@ export const HeroBanner: React.FC = () => {
           {/* Локация внизу - с добавлением ссылки на Яндекс.Карты */}
           <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 md:left-12 lg:left-50 flex items-center z-10">
             <a
-              href={`https://yandex.ru/maps/?text=${encodeURIComponent(
-                t("location")
-              )}`}
+              href={`https://yandex.uz/maps/10335/tashkent/house/YkAYdAZjTEEOQFprfX5yeXRmYA==/?ll=69.213548%2C41.238854&z=16`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center hover:opacity-80 transition-opacity group"

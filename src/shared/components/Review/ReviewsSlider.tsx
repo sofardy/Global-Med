@@ -2,6 +2,7 @@
 
 import { API_BASE_URL } from "@/src/config/constants";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useHomeStore } from "@/src/store/home";
 import React, { useEffect, useState } from "react";
 import { UniversalSlider } from "../UniversalSlider";
 import { ReviewCard } from "./ReviewCard";
@@ -58,6 +59,7 @@ export const ReviewsSlider: React.FC<ReviewsSliderProps> = ({
 }) => {
   const { t, currentLocale } = useTranslation(translations);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const { reviews: reviewsText, isLoading }: any = useHomeStore();
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -76,10 +78,6 @@ export const ReviewsSlider: React.FC<ReviewsSliderProps> = ({
 
     fetchReviews();
   }, [currentLocale]);
-
-  // Title va description fallback bilan
-  const sliderTitle = title || t("title") || "";
-  const sliderDescription = description || t("description") || "";
 
   // Har bir review uchun ReviewCard
   const slides = reviews.map((review, index) => (
@@ -105,14 +103,20 @@ export const ReviewsSlider: React.FC<ReviewsSliderProps> = ({
     <UniversalSlider
       slides={slides}
       title={
-        <h2 className="text-3xl md:text-5xl font-medium text-light-text dark:text-dark-text mb-4">
-          {sliderTitle}
-        </h2>
+        <h2
+          dangerouslySetInnerHTML={{
+            __html: reviewsText?.title,
+          }}
+          className="text-3xl md:text-5xl font-medium text-light-text dark:text-dark-text mb-4"
+        ></h2>
       }
       description={
-        <p className="text-base md:text-lg text-light-text dark:text-dark-text mb-6">
-          {sliderDescription}
-        </p>
+        <p
+          dangerouslySetInnerHTML={{
+            __html: reviewsText?.subtitle,
+          }}
+          className="text-base md:text-lg text-light-text dark:text-dark-text mb-6"
+        ></p>
       }
       slidesPerView={1}
       slidesPerMobileView={1}

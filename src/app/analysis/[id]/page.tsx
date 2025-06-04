@@ -76,7 +76,7 @@ export default function Page({ params }: PageProps) {
           {
             headers: {
               "Content-Type": "application/json",
-              "X-Language": currentLocale || "ru",
+              "X-Language": currentLocale,
             },
           }
         );

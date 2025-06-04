@@ -4,6 +4,7 @@
 import { CheckupItem } from "@/src/app/api/checkups";
 import { useCheckups } from "@/src/hooks/useCheckups";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useHomeStore } from "@/src/store/home";
 import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
 import React from "react";
@@ -84,40 +85,30 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
   const { currentLocale } = useLanguageStore();
-
+  const { checkups: checkupsText, isLoading }: any = useHomeStore();
   // Используем существующий хук для получения чек-апов
   const { checkups, loading, error } = useCheckups(currentLocale);
 
-  // Получаем локализованные данные
-  const sliderTitle = title || t("title") || "";
-  const sliderDescription = description || t("description") || "";
-
-  // Разделение текстов на строки
-  const titleLines = splitTextIntoLines(sliderTitle, 2);
-  const descriptionLines = splitTextIntoLines(sliderDescription, 3);
-
   // Готовим заголовок с разбивкой на строки
   const formattedTitle = (
-    <h2 className="text-3xl md:text-[40px] font-bold text-light-text dark:text-dark-text">
-      {titleLines.map((line, index) => (
-        <span key={index} className="block">
-          {line}
-        </span>
-      ))}
-    </h2>
+    <p
+      dangerouslySetInnerHTML={{
+        __html: checkupsText?.title,
+      }}
+      className="text-3xl md:text-[40px] font-bold text-light-text dark:text-dark-text"
+    ></p>
   );
 
   // Готовим описание с разбивкой на строки
   const formattedDescription = (
     <div className="flex flex-col">
       <div className="mb-4 w-full">
-        <p className="text-light-text dark:text-dark-text text-base md:text-lg">
-          {descriptionLines.map((line, index) => (
-            <span key={index} className="block">
-              {line}
-            </span>
-          ))}
-        </p>
+        <p
+          dangerouslySetInnerHTML={{
+            __html: checkupsText?.subtitle,
+          }}
+          className="text-light-text dark:text-dark-text text-base md:text-lg"
+        ></p>
       </div>
     </div>
   );

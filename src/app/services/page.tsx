@@ -102,7 +102,16 @@ export default function ServicesPage() {
           `${API_BASE_URL}/services`,
           {
             headers: {
-              "X-Language": currentLocale || "ru",
+              "X-Language": (() => {
+                const stored = window?.localStorage.getItem("language-storage");
+                if (!stored) return "ru";
+                try {
+                  const parsed = JSON.parse(stored);
+                  return parsed?.state?.currentLocale || "ru";
+                } catch {
+                  return "ru";
+                }
+              })(),
             },
           }
         );
@@ -127,7 +136,16 @@ export default function ServicesPage() {
       try {
         const response = await fetch(`${API_BASE_URL}/pages/services`, {
           headers: {
-            "X-Language": currentLocale,
+            "X-Language": (() => {
+              const stored = window?.localStorage.getItem("language-storage");
+              if (!stored) return "ru";
+              try {
+                const parsed = JSON.parse(stored);
+                return parsed?.state?.currentLocale || "ru";
+              } catch {
+                return "ru";
+              }
+            })(),
           },
         });
         const result = await response.json();

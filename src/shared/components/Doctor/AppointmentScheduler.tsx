@@ -55,7 +55,7 @@ const translations = {
     title: "Onlayn qabulga yoziling",
     selectDay: "Siz uchun qulay kunni tanlang",
     selectTime: "Siz uchun qulay vaqtni tanlang",
-    noTimeSlots: "Tanlangan sana uchun mavjud vaqt oraliqları yo'q",
+    noTimeSlots: "Tanlangan sana uchun mavjud vaqt oraliqlari yo'q",
     bookAppointment: "Qabulga yozilish",
     loading: "Mavjud kunlar yuklanmoqda...",
     error: "Yuklashda xatolik yuz berdi",
@@ -118,35 +118,85 @@ const isSameDay = (date1: Date, date2: Date): boolean => {
   );
 };
 
-const getDayName = (date: Date): string => {
-  const days = [
-    "Воскресенье",
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота",
-  ];
-  return days[date.getDay()];
+const getDayName = (date: Date, locale: string = "ru"): string => {
+  const days = {
+    ru: [
+      "Воскресенье",
+      "Понедельник",
+      "Вторник",
+      "Среда",
+      "Четверг",
+      "Пятница",
+      "Суббота",
+    ],
+    uz: [
+      "Yakshanba",
+      "Dushanba",
+      "Seshanba",
+      "Chorshanba",
+      "Payshanba",
+      "Juma",
+      "Shanba",
+    ],
+    en: [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ],
+  };
+  return days[locale as keyof typeof days][date.getDay()];
 };
 
-const getMonthName = (date: Date): string => {
-  const months = [
-    "января",
-    "февраля",
-    "марта",
-    "апреля",
-    "мая",
-    "июня",
-    "июля",
-    "августа",
-    "сентября",
-    "октября",
-    "ноября",
-    "декабря",
-  ];
-  return months[date.getMonth()];
+const getMonthName = (date: Date, locale: string = "ru"): string => {
+  const months = {
+    ru: [
+      "января",
+      "февраля",
+      "марта",
+      "апреля",
+      "мая",
+      "июня",
+      "июля",
+      "августа",
+      "сентября",
+      "октября",
+      "ноября",
+      "декабря",
+    ],
+    uz: [
+      "yanvar",
+      "fevral",
+      "mart",
+      "aprel",
+      "may",
+      "iyun",
+      "iyul",
+      "avgust",
+      "sentabr",
+      "oktabr",
+      "noyabr",
+      "dekabr",
+    ],
+    en: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+  };
+  return months[locale as keyof typeof months][date.getMonth()];
 };
 
 // Моковые данные

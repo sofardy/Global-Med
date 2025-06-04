@@ -2,6 +2,7 @@
 
 import { useAnalyses } from "@/src/hooks/useAnalyses";
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { useHomeStore } from "@/src/store/home";
 import { useThemeStore } from "@/src/store/theme";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
@@ -19,9 +20,6 @@ interface AnalysisGridProps {
 // Локализация
 const translations = {
   ru: {
-    title: "Анализы",
-    description:
-      "Мы предлагаем широкий спектр анализов с использованием современного оборудования для точной диагностики вашего здоровья",
     allAnalyses: "Все виды анализов",
     detailsButton: "Подробнее",
     showMore: "Показать ещё",
@@ -30,9 +28,6 @@ const translations = {
     error: "Не удалось загрузить данные анализов",
   },
   uz: {
-    title: "Tahlillar",
-    description:
-      "Biz zamonaviy uskunalardan foydalangan holda sog'lig'ingizni aniq tashxislash uchun keng ko'lamli tahlillarni taklif etamiz",
     allAnalyses: "Barcha tahlil turlari",
     detailsButton: "Batafsil",
     showMore: "Ko'proq ko'rsatish",
@@ -41,9 +36,6 @@ const translations = {
     error: "Tahlil ma'lumotlarini yuklab bo'lmadi",
   },
   en: {
-    title: "Medical Tests",
-    description:
-      "We offer a wide range of tests using modern equipment for accurate diagnosis of your health",
     allAnalyses: "All Types of Tests",
     detailsButton: "Learn More",
     showMore: "Show More",
@@ -63,7 +55,7 @@ export const AnalysisGrid: React.FC<AnalysisGridProps> = ({
   const { theme } = useThemeStore();
   const { t, currentLocale } = useTranslation(translations);
   const [visibleItems, setVisibleItems] = useState(itemsPerPage);
-
+  const { medicalTests: analysesText, isLoading }: any = useHomeStore();
   const { analyses, loading, error } = useAnalyses();
 
   const isFirstRender = useRef(true);
@@ -75,9 +67,6 @@ export const AnalysisGrid: React.FC<AnalysisGridProps> = ({
       isFirstRender.current = false;
     }
   }, [currentLocale, itemsPerPage]);
-
-  const localizedTitle = title || t("title");
-  const localizedDescription = description || t("description");
   const localizedButtonText = buttonText || t("allAnalyses");
 
   const handleShowMore = () => {
@@ -111,12 +100,23 @@ export const AnalysisGrid: React.FC<AnalysisGridProps> = ({
 
           {/* Контент блока */}
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4">
-              {localizedTitle}
-            </h2>
-            <p className="text-sm md:text-base lg:text-lg mb-6 md:mb-8">
-              {localizedDescription}
-            </p>
+            {isLoading ? (
+              <div className="animate-pulse">
+                <div className="h-8 md:h-10 lg:h-12 bg-white/20 rounded-lg w-3/4 mb-4"></div>
+                <div className="h-4 md:h-5 lg:h-6 bg-white/20 rounded-lg w-full mb-2"></div>
+                <div className="h-4 md:h-5 lg:h-6 bg-white/20 rounded-lg w-5/6 mb-2"></div>
+                <div className="h-4 md:h-5 lg:h-6 bg-white/20 rounded-lg w-4/6"></div>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4">
+                  {analysesText?.title}
+                </h2>
+                <p className="text-sm md:text-base lg:text-lg mb-6 md:mb-8">
+                  {analysesText?.subtitle}
+                </p>
+              </>
+            )}
           </div>
           <Link
             href={buttonLink || "/analysis"}

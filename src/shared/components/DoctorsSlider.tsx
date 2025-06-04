@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { useDoctorsStore } from "@/src/store/doctors";
+import { useHomeStore } from "@/src/store/home";
 import React, { useEffect } from "react";
 import { UniversalSlider } from "../components/UniversalSlider";
 import { DoctorCard } from "./DoctorCard";
@@ -8,9 +9,6 @@ import { DoctorCard } from "./DoctorCard";
 // Translations
 const translations = {
   ru: {
-    title: "Команда опытных врачей рядом с вами",
-    description:
-      "Индивидуальный подход, современные методы лечения и внимательное отношение к каждому пациенту",
     buttonText: "Записаться на прием",
     prevSlide: "Предыдущий слайд",
     nextSlide: "Следующий слайд",
@@ -18,9 +16,6 @@ const translations = {
     error: "Не удалось загрузить список врачей",
   },
   uz: {
-    title: "Tajribali shifokorlar jamoasi siz bilan birga",
-    description:
-      "Individual yondashuv, zamonaviy davolash usullari va har bir bemorga e'tiborli munosabat",
     buttonText: "Qabulga yozilish",
     prevSlide: "Oldingi slayd",
     nextSlide: "Keyingi slayd",
@@ -28,9 +23,6 @@ const translations = {
     error: "Shifokorlar ro'yxatini yuklab bo'lmadi",
   },
   en: {
-    title: "Team of Experienced Doctors by Your Side",
-    description:
-      "Individual approach, modern treatment methods, and attentive care for each patient",
     buttonText: "Schedule an Appointment",
     prevSlide: "Previous slide",
     nextSlide: "Next slide",
@@ -46,6 +38,7 @@ export interface DoctorsSliderProps {
 export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
   className = "",
 }) => {
+  const { team, isLoading }: any = useHomeStore();
   const { t } = useTranslation(translations);
   const { doctors, loading, error, fetchDoctors } = useDoctorsStore();
 
@@ -73,30 +66,24 @@ export const DoctorsSlider: React.FC<DoctorsSliderProps> = ({
     return lines;
   };
 
-  // Форматирование заголовка и описания на несколько строк
-  const titleLines = splitTextIntoLines(t("title"), 2);
-  const descriptionLines = splitTextIntoLines(t("description"), 3);
-
   // Создание компонента заголовка с разрывами строк
   const titleComponent = (
-    <h2 className="text-3xl md:text-5xl font-medium text-light-text dark:text-dark-text leading-tight">
-      {titleLines.map((line, index) => (
-        <span key={index} className="block">
-          {line}
-        </span>
-      ))}
-    </h2>
+    <h2
+      dangerouslySetInnerHTML={{
+        __html: team?.title,
+      }}
+      className="text-3xl md:text-5xl font-medium text-light-text dark:text-dark-text leading-tight"
+    ></h2>
   );
 
   // Создание компонента описания с разрывами строк
   const descriptionComponent = (
-    <p className="text-base md:text-lg text-light-text dark:text-dark-text">
-      {descriptionLines.map((line, index) => (
-        <span key={index} className="block">
-          {line}
-        </span>
-      ))}
-    </p>
+    <p
+      dangerouslySetInnerHTML={{
+        __html: team?.subtitle,
+      }}
+      className="text-base md:text-lg text-light-text dark:text-dark-text"
+    ></p>
   );
 
   // Обработка состояний загрузки и ошибки

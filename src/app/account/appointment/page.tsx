@@ -127,52 +127,10 @@ const translations = {
   },
 };
 
-// Функция для получения специализаций с сервера
-const fetchSpecializations = async (): Promise<Specialization[]> => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/specializations`);
-    console.log("Получены специализации:", response.data);
-    return response.data.data || [];
-  } catch (error) {
-    console.error("Ошибка при загрузке специализаций:", error);
-    return [];
-  }
-};
-
-// Функция для отправки запроса на запись
-const createAppointment = async (appointmentData: any) => {
-  const token = window.localStorage.getItem("authToken");
-  const tokenType = window.localStorage.getItem("tokenType");
-
-  if (!token || !tokenType) {
-    throw new Error("Unauthorized");
-  }
-
-  try {
-    console.log("Sending appointment data:", appointmentData);
-    const response = await axios.post(
-      `${API_BASE_URL}/appointments`,
-      appointmentData,
-      {
-        headers: {
-          Authorization: `${tokenType} ${token}`,
-          "X-Language": "ru",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Error creating appointment:", error);
-    throw error;
-  }
-};
-
 export default function DynamicAppointmentBooking() {
+  const { currentLocale } = useLanguageStore();
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
-  const { currentLocale } = useLanguageStore();
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
 
@@ -209,6 +167,51 @@ export default function DynamicAppointmentBooking() {
   // Ссылки на выпадающие списки
   const serviceDropdownRef = useRef<HTMLDivElement>(null);
   const specialtyDropdownRef = useRef<HTMLDivElement>(null);
+  // Функция для получения специализаций с сервера
+  const fetchSpecializations = async (): Promise<Specialization[]> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/specializations`, {
+        headers: {
+          "X-Language": currentLocale,
+        },
+      });
+      console.log("Получены специализации:", response.data);
+      return response.data.data || [];
+    } catch (error) {
+      console.error("Ошибка при загрузке специализаций:", error);
+      return [];
+    }
+  };
+
+  // Функция для отправки запроса на запись
+  const createAppointment = async (appointmentData: any) => {
+    const token = window.localStorage.getItem("authToken");
+    const tokenType = window.localStorage.getItem("tokenType");
+
+    if (!token || !tokenType) {
+      throw new Error("Unauthorized");
+    }
+
+    try {
+      console.log("Sending appointment data:", appointmentData);
+      const response = await axios.post(
+        `${API_BASE_URL}/appointments`,
+        appointmentData,
+        {
+          headers: {
+            Authorization: `${tokenType} ${token}`,
+            "X-Language": "ru",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      throw error;
+    }
+  };
 
   // Инициализация текущей даты
   useEffect(() => {

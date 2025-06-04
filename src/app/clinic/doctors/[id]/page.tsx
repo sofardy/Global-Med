@@ -109,7 +109,7 @@ export default function DoctorDetailPage(): JSX.Element {
 
         const response = await fetch(`${API_BASE_URL}/doctors/${doctorId}`, {
           headers: {
-            "X-Language": currentLocale === "uz" ? "uz" : "ru",
+            "X-Language": currentLocale,
           },
         });
 

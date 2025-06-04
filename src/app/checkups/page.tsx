@@ -39,7 +39,6 @@ export default function Checkups() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { currentLocale } = useLanguageStore();
-  console.log(currentLocale, "currentLocale");
 
   // Загрузка данных с API при монтировании компонента
   useEffect(() => {
@@ -49,7 +48,7 @@ export default function Checkups() {
         const response = await axios.get(`${API_BASE_URL}/checkups`, {
           headers: {
             "Content-Type": "application/json",
-            "X-Language": currentLocale, // Используем currentLocale с fallback на 'ru'
+            "X-Language": currentLocale,
           },
         });
         setCheckupItems(response.data.data);
@@ -66,8 +65,6 @@ export default function Checkups() {
 
     fetchCheckups();
   }, [currentLocale]);
-
-  console.log(currentLocale, "currentLocale");
 
   const [dataPagesCheckup, setDataPagesCheckup] = useState(null);
   useEffect(() => {

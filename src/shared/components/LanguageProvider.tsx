@@ -1,7 +1,7 @@
 "use client";
 
 import { useClientSide } from "@/src/hooks/useClientSide";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useLayoutEffect } from "react";
 import { useLanguageStore } from "../../store/language";
 
 interface LanguageProviderProps {
@@ -12,7 +12,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const { setLocale } = useLanguageStore();
   const isClient = useClientSide();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isClient) return;
 
     const storedValue = localStorage.getItem("language-storage");

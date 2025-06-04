@@ -1,10 +1,12 @@
 "use client";
-
-import PatientLogin from "@/src/shared/components/PatientLogin";
-import LoginHeader from "@/src/shared/layout/AccountHeader/LoginHeader";
-import React from "react";
+import { useRouter } from "next/navigation";
 
 export default function AccountLogin() {
+  const router = useRouter();
+
+  if (window.location.pathname.includes("/account")) {
+    router.push("/account/profile");
+  }
   return (
     <div className="min-h-screen flex flex-col bg-light-bg dark:bg-dark-bg">
       {/* <LoginHeader /> */}

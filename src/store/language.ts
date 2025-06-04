@@ -16,12 +16,7 @@ export const useLanguageStore = create<LanguageState>()(
       setLocale: (locale: Locale) => set({ currentLocale: locale }),
       toggleLocale: () =>
         set((state) => ({
-          currentLocale:
-            state.currentLocale === "ru"
-              ? "uz"
-              : state.currentLocale === "uz"
-              ? "en"
-              : "ru",
+          currentLocale: state.currentLocale,
         })),
     }),
     {
