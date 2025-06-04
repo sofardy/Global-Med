@@ -1,7 +1,26 @@
 import { create } from "zustand";
 import { API_BASE_URL } from "../config/constants";
 
-export const useHomeStore = create((set) => ({
+interface HomeData {
+  partnersGallery: any;
+  heroBanners: any;
+  services: any;
+  medicalTests: any;
+  servicesSlider: any;
+  team: any;
+  checkups: any;
+  form: any;
+  reviews: any;
+  contacts: any;
+}
+
+interface HomeState extends HomeData {
+  isLoading: boolean;
+  error: string | null;
+  setHomeData: (locale: string) => Promise<void>;
+}
+
+export const useHomeStore = create<HomeState>((set) => ({
   // Initial states
   partnersGallery: null,
   heroBanners: null,
@@ -17,7 +36,7 @@ export const useHomeStore = create((set) => ({
   error: null,
 
   // Fetch data action
-  fetchHomeData: async (locale: string) => {
+  setHomeData: async (locale: string) => {
     try {
       set({ isLoading: true, error: null });
 

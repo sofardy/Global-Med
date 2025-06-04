@@ -87,16 +87,7 @@ export const MedicalServices = () => {
         const response = await axios.get(`${API_BASE_URL}/services`, {
           headers: {
             "Content-Type": "application/json",
-            "X-Language": (() => {
-              const stored = window?.localStorage?.getItem("language-storage");
-              if (!stored) return "ru";
-              try {
-                const parsed = JSON.parse(stored);
-                return parsed?.state?.currentLocale || "ru";
-              } catch {
-                return "ru";
-              }
-            })(),
+            "X-Language": currentLocale,
           },
         });
 

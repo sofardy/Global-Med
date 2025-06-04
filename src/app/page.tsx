@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useClientSide } from "../hooks/useClientSide";
 import { AnalysisGrid } from "../shared/components/AnalysisGrid";
 import { AppointmentSection } from "../shared/components/AppointmentSection";
 import { BenefitsGrid } from "../shared/components/BenefitsGrid";
@@ -16,16 +17,57 @@ import { ReviewsSlider } from "../shared/components/Review/ReviewsSlider";
 import { SurgerySlider } from "../shared/components/SurgerySlider";
 import { VideoBanner } from "../shared/components/VideoBanner";
 import { useHomeStore } from "../store/home";
+import { useLanguageStore } from "../store/language";
 
 export default function Home() {
-  const { fetchHomeData }: any = useHomeStore();
-  const currentLocaleLang = JSON.parse(
-    window?.localStorage?.getItem("language-storage") || "{}"
-  )?.state?.currentLocale;
+  const { setHomeData, isLoading, error } = useHomeStore();
+  const { currentLocale } = useLanguageStore();
+  const isClient = useClientSide();
 
   useEffect(() => {
-    fetchHomeData(currentLocaleLang);
-  }, [currentLocaleLang]);
+    // isClient bo'lganda va locale mavjud bo'lganda fetch qilish
+    if (isClient && currentLocale) {
+      const fetchData = async () => {
+        await setHomeData(currentLocale);
+      };
+      fetchData();
+    }
+  }, [currentLocale, isClient, setHomeData]);
+
+  // Loading holatini ko'rsatish
+  if (isLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Yuklanmoqda...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // Error holatini ko'rsatish
+  if (error) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 dark:text-red-400 mb-4">
+            Xatolik yuz berdi: {error}
+          </p>
+          <button
+            onClick={async () => {
+              if (isClient && currentLocale) {
+                await setHomeData(currentLocale);
+              }
+            }}
+            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+          >
+            Qayta urinish
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main>
