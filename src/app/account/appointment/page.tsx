@@ -379,7 +379,7 @@ export default function DynamicAppointmentBooking() {
       specialization: apiDoctor.specialization || "Специалист",
       experience: apiDoctor.experience_years || "Н/Д",
       qualification: apiDoctor.qualification || "Врач",
-      category: apiDoctor.category || "",
+      category: apiDoctor.category || "category",
       languages: formatLanguages(apiDoctor.languages),
       price: formatPrice(apiDoctor.price_from),
       photoUrl: apiDoctor.image_url || "/images/doctor-placeholder.png",
