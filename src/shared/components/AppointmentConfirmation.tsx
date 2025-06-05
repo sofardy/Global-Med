@@ -19,7 +19,7 @@ const translations = {
     address: "Адрес",
     service: "Услуга:",
     doctor: "Врач:",
-    cost: "Стоимость:",
+    price: "Стоимость:",
   },
   uz: {
     doctorTitle: "Siz shifokor qabuliga yozildingiz",
@@ -35,7 +35,7 @@ const translations = {
     address: "Manzil",
     service: "Xizmat:",
     doctor: "Shifokor:",
-    cost: "Narx:",
+    price: "Narx:",
   },
   en: {
     doctorTitle: "You have booked a doctor's appointment",
@@ -51,7 +51,7 @@ const translations = {
     address: "Address",
     service: "Service:",
     doctor: "Doctor:",
-    cost: "Cost:",
+    price: "price:",
   },
 };
 
@@ -62,7 +62,7 @@ interface AppointmentConfirmationProps {
   address: string;
   service: string;
   doctor?: string;
-  cost: string | number;
+  price: string | number;
   number?: string;
 }
 
@@ -73,7 +73,7 @@ export default function AppointmentConfirmation({
   address,
   service,
   doctor,
-  cost,
+  price,
 }: AppointmentConfirmationProps) {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
@@ -109,12 +109,12 @@ export default function AppointmentConfirmation({
     return baseText;
   };
 
-  // Format cost display
-  const formatCost = () => {
-    if (typeof cost === "number") {
-      return new Intl.NumberFormat("ru-RU").format(cost) + " сум";
+  // Format price display
+  const formatprice = () => {
+    if (typeof price === "number") {
+      return new Intl.NumberFormat("ru-RU").format(price) + " сум";
     }
-    return cost;
+    return price;
   };
 
   return (
@@ -260,7 +260,7 @@ export default function AppointmentConfirmation({
         </div>
       </div>
 
-      {/* Service and cost information */}
+      {/* Service and price information */}
       <div className="space-y-2">
         <div className="flex items-start">
           <span className={`${mutedTextColor} mr-2 text-sm md:text-base`}>
@@ -288,12 +288,12 @@ export default function AppointmentConfirmation({
 
         <div className="flex items-start">
           <span className={`${mutedTextColor} mr-2 text-sm md:text-base`}>
-            {t("cost")}
+            {t("price")}
           </span>
           <span
             className={`${textColor} font-medium text-sm md:text-base flex-1`}
           >
-            {formatCost()}
+            {formatprice()}
           </span>
         </div>
       </div>

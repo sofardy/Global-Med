@@ -193,14 +193,13 @@ export default function DynamicAppointmentBooking() {
     }
 
     try {
-      console.log("Sending appointment data:", appointmentData);
       const response = await axios.post(
         `${API_BASE_URL}/appointments`,
         appointmentData,
         {
           headers: {
             Authorization: `${tokenType} ${token}`,
-            "X-Language": "ru",
+            "X-Language": currentLocale,
             "Content-Type": "application/json",
           },
         }
@@ -375,14 +374,14 @@ export default function DynamicAppointmentBooking() {
   function formatDoctorData(apiDoctor: ApiDoctor) {
     return {
       id: apiDoctor.uuid,
-      name: apiDoctor.full_name || "Н/Д",
-      specialization: apiDoctor.specialization || "Специалист",
-      experience: apiDoctor.experience_years || "Н/Д",
-      qualification: apiDoctor.qualification || "Врач",
-      category: apiDoctor.category || "category",
+      name: apiDoctor.full_name,
+      specialization: apiDoctor.specialization,
+      experience: apiDoctor.experience_years,
+      qualification: apiDoctor.qualification,
+      category: apiDoctor.category,
       languages: formatLanguages(apiDoctor.languages),
       price: formatPrice(apiDoctor.price_from),
-      photoUrl: apiDoctor.image_url || "/images/doctor-placeholder.png",
+      photoUrl: apiDoctor.image_url,
     };
   }
 
@@ -433,7 +432,7 @@ export default function DynamicAppointmentBooking() {
         specialty: selectedSpecialty,
         appointmentType,
         number: response.number,
-        cost: 125000, // Можно получать из API или других источников
+        price: response.price, // Можно получать из API или других источников
       });
 
       setIsBooked(true);
@@ -514,7 +513,7 @@ export default function DynamicAppointmentBooking() {
         date: selectedDate,
         time: selectedTime,
         number: response.number,
-        cost: selectedService === "analysis" ? 50000 : 200000,
+        price: response.price,
       });
 
       setIsBooked(true);
@@ -591,7 +590,7 @@ export default function DynamicAppointmentBooking() {
         doctor={
           bookingDetails.service === "doctor" ? bookingDetails.name : undefined
         }
-        cost={bookingDetails.cost}
+        price={bookingDetails.price}
       />
     );
   }
@@ -927,6 +926,10 @@ export default function DynamicAppointmentBooking() {
                           "12:00",
                           "14:00",
                           "15:00",
+                          "16:00",
+                          "17:00",
+                          "18:00",
+                          "19:00",
                         ],
                       }}
                       onBookAppointment={handleDoctorBooking}
@@ -986,6 +989,8 @@ export default function DynamicAppointmentBooking() {
                     "15:00",
                     "16:00",
                     "17:00",
+                    "18:00",
+                    "19:00",
                   ].map((time) => (
                     <option key={time} value={time}>
                       {time}

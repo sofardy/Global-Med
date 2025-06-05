@@ -133,27 +133,33 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
             </p>
 
             <ul className="mb-3 md:mb-6 space-y-1 md:space-y-2">
-              <li
-                className={`flex items-start ${mutedTextColor} text-xs sm:text-sm md:text-base`}
-              >
-                <span className={`${mutedTextColor} mr-2`}>•</span>
-                <span>
-                  {t("experiencePrefix")} {doctor.experience}{" "}
-                  {t("experienceSuffix")}
-                </span>
-              </li>
-              <li
-                className={`flex items-start ${mutedTextColor} text-xs sm:text-sm md:text-base`}
-              >
-                <span className={`${mutedTextColor} mr-2`}>•</span>
-                <span>{doctor.qualification}</span>
-              </li>
-              <li
-                className={`flex items-start ${mutedTextColor} text-xs sm:text-sm md:text-base`}
-              >
-                <span className={`${mutedTextColor} mr-2`}>•</span>
-                <span>{doctor.category}</span>
-              </li>
+              {doctor.experience !== "" && doctor.experience !== null && (
+                <li
+                  className={`flex items-start ${mutedTextColor} text-xs sm:text-sm md:text-base`}
+                >
+                  <span className={`${mutedTextColor} mr-2`}>•</span>
+                  <span>
+                    {t("experiencePrefix")} {doctor.experience}{" "}
+                    {t("experienceSuffix")}
+                  </span>
+                </li>
+              )}
+              {doctor.qualification !== "" && doctor.qualification !== null && (
+                <li
+                  className={`flex items-start ${mutedTextColor} text-xs sm:text-sm md:text-base`}
+                >
+                  <span className={`${mutedTextColor} mr-2`}>•</span>
+                  <span>{doctor.qualification}</span>
+                </li>
+              )}
+              {doctor.category !== "" && doctor.category !== null && (
+                <li
+                  className={`flex items-start ${mutedTextColor} text-xs sm:text-sm md:text-base`}
+                >
+                  <span className={`${mutedTextColor} mr-2`}>•</span>
+                  <span>{doctor.category}</span>
+                </li>
+              )}
             </ul>
           </div>
         </div>

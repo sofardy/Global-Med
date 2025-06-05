@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { useThemeStore } from "@/src/store/theme";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 const AnimatedCounter = ({ end, duration = 4000, className = "" }) => {
@@ -156,7 +156,7 @@ const InfoCard = ({
 
 const UniversalHeroSection = ({ imageUrl, imageAlt, data, className = "" }) => {
   const items = data?.data?.content?.info?.data?.items || [];
-  console.log(items);
+
   return (
     <div className={`w-full ${className}`}>
       <div className="w-full h-[200px] sm:h-[200px] md:h-[300px] lg:h-[400px] xl:h-[500px] relative rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-5">

@@ -5,8 +5,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { ContactInfo } from "../ContactInfo";
-import AppointmentScheduler from "./AppointmentScheduler";
-import CertificatesSlider from "./CertificateCard";
 
 // Define types for the doctor data
 export interface Education {
@@ -326,13 +324,13 @@ export default function DoctorDetail({
       </div>
 
       {/* Секция сертификатов - используем реальные данные врача или тестовые */}
-      <CertificatesSlider
+      {/* <CertificatesSlider
         certificates={doctor.certificates || certificatesData}
         title={t("certificates.title")}
         description={t("certificates.description")}
-      />
+      /> */}
 
-      <AppointmentScheduler />
+      {/* <AppointmentScheduler /> */}
       <ContactInfo />
     </div>
   );
