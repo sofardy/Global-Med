@@ -2,15 +2,16 @@
 import { useEffect, useState } from "react";
 import { CheckupItem, CheckupsResponse } from "../app/api/checkups";
 import httpClient from "../shared/services/HttpClient";
-import { API_BASE_URL } from "@/src/config/constants";
 
 // Обновляем функции fetchCheckups и fetchCheckupBySlug
 export const fetchCheckups = async (
   locale: string
 ): Promise<CheckupsResponse> => {
-  const response = await httpClient.get<CheckupsResponse>(
-    `/checkups?locale=${locale}`
-  );
+  const response = await httpClient.get<CheckupsResponse>(`/checkups`, {
+    headers: {
+      "X-Language": locale,
+    },
+  });
   return response;
 };
 
@@ -19,9 +20,28 @@ export const fetchCheckupBySlug = async (
   locale: string
 ): Promise<CheckupItem> => {
   const response = await httpClient.get<{ data: CheckupItem }>(
-    `/checkups/${slug}?locale=${locale}`
+    `/checkups/${slug}`,
+    {
+      headers: {
+        "X-Language": locale,
+      },
+    }
   );
   return response.data;
+};
+
+// Error messages for different locales
+const getErrorMessage = (locale: string): string => {
+  switch (locale) {
+    case "ru":
+      return "Ошибка при загрузке данных";
+    case "uz":
+      return "Ma'lumotlarni yuklashda xatolik yuz berdi";
+    case "en":
+      return "Error loading data";
+    default:
+      return "Ma'lumotlarni yuklashda xatolik yuz berdi";
+  }
 };
 
 export const useCheckups = (currentLocale: string) => {
@@ -38,7 +58,7 @@ export const useCheckups = (currentLocale: string) => {
         setError(null);
       } catch (err) {
         setError(
-          err instanceof Error ? err : new Error("Ошибка при загрузке данных")
+          err instanceof Error ? err : new Error(getErrorMessage(currentLocale))
         );
       } finally {
         setLoading(false);
@@ -67,7 +87,7 @@ export const useCheckupDetail = (slug: string, currentLocale: string) => {
         setError(null);
       } catch (err) {
         setError(
-          err instanceof Error ? err : new Error("Ошибка при загрузке данных")
+          err instanceof Error ? err : new Error(getErrorMessage(currentLocale))
         );
       } finally {
         setLoading(false);

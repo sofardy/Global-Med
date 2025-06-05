@@ -2,8 +2,10 @@
 
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { useHomeStore } from "@/src/store/home";
+import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -118,10 +120,105 @@ const ContactCard: React.FC<ContactCardProps> = ({
   );
 };
 
+// Skeleton Loading Components
+const SkeletonCard: React.FC<{ showCircle?: boolean; className?: string }> = ({
+  showCircle = false,
+  className = "",
+}) => {
+  return (
+    <div
+      className={`bg-white dark:bg-dark-block rounded-2xl p-5 sm:p-6 md:p-8 relative overflow-hidden ${className}`}
+    >
+      {showCircle && (
+        <div className="absolute right-4 sm:right-6 md:right-8 top-4 sm:top-6 md:top-8 w-3 h-3 sm:w-4 sm:h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+      )}
+      <div className="h-4 sm:h-5 bg-gray-200 dark:bg-gray-700 rounded mb-2 sm:mb-3 md:mb-4 w-20 animate-pulse"></div>
+      <div className="space-y-2">
+        <div className="h-6 sm:h-7 md:h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-32"></div>
+      </div>
+    </div>
+  );
+};
+
+const SkeletonAddressCard: React.FC = () => {
+  return (
+    <div className="bg-white dark:bg-dark-block rounded-2xl p-5 sm:p-6 md:p-8 relative overflow-hidden">
+      <div className="h-4 sm:h-5 bg-gray-200 dark:bg-gray-700 rounded mb-2 sm:mb-3 md:mb-4 w-16 animate-pulse"></div>
+      <div className="space-y-2">
+        <div className="h-6 sm:h-7 md:h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full"></div>
+        <div className="h-6 sm:h-7 md:h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4"></div>
+      </div>
+    </div>
+  );
+};
+
+const SkeletonSocialCard: React.FC = () => {
+  return (
+    <div className="bg-white dark:bg-dark-block rounded-2xl p-5 sm:p-6 md:p-8 relative overflow-hidden">
+      <div className="h-4 sm:h-5 bg-gray-200 dark:bg-gray-700 rounded mb-2 sm:mb-3 md:mb-4 w-40 animate-pulse"></div>
+      <div className="flex flex-wrap gap-3 sm:gap-4">
+        {[1, 2, 3, 4].map((index) => (
+          <div
+            key={index}
+            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"
+          ></div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SkeletonMap: React.FC = () => {
+  return (
+    <div className="w-full h-full sm:h-[300px] md:h-auto bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse flex items-center justify-center">
+      <div className="text-gray-400 dark:text-gray-500 text-lg">
+        <svg
+          className="w-12 h-12 mx-auto mb-2"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fillRule="evenodd"
+            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 export const ContactInfo: React.FC = () => {
   const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
-  const { contacts, isLoading }: any = useHomeStore();
+  const { currentLocale } = useLanguageStore();
+  const { contacts, isLoading, setHomeData }: any = useHomeStore();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname !== "/") {
+      setHomeData(currentLocale);
+    }
+  }, [currentLocale, pathname, setHomeData]);
+
+  // Show skeleton loading when data is loading
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex flex-col md:flex-row gap-4 sm:gap-5 md:gap-6 mt-10 sm:mt-16 md:mt-20">
+        <div className="w-full md:w-1/2 flex flex-col gap-4 sm:gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+            <SkeletonCard showCircle={true} />
+            <SkeletonCard showCircle={true} />
+          </div>
+          <SkeletonAddressCard />
+          <SkeletonSocialCard />
+        </div>
+        <div className="w-full md:w-1/2 mt-4 md:mt-0 h-full flex items-center justify-center">
+          <SkeletonMap />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-4 sm:gap-5 md:gap-6 mt-10 sm:mt-16 md:mt-20">

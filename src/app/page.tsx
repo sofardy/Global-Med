@@ -34,13 +34,55 @@ export default function Home() {
     }
   }, [currentLocale, isClient, setHomeData]);
 
+  // Get loading text based on current locale
+  const getLoadingText = () => {
+    switch (currentLocale) {
+      case "ru":
+        return "Загрузка...";
+      case "uz":
+        return "Yuklanmoqda...";
+      case "en":
+        return "Loading...";
+      default:
+        return "Yuklanmoqda...";
+    }
+  };
+
+  // Get error text based on current locale
+  const getErrorText = () => {
+    switch (currentLocale) {
+      case "ru":
+        return "Произошла ошибка";
+      case "uz":
+        return "Xatolik yuz berdi";
+      case "en":
+        return "An error occurred";
+      default:
+        return "Xatolik yuz berdi";
+    }
+  };
+
+  // Get retry button text based on current locale
+  const getRetryText = () => {
+    switch (currentLocale) {
+      case "ru":
+        return "Попробовать снова";
+      case "uz":
+        return "Qayta urinish";
+      case "en":
+        return "Try again";
+      default:
+        return "Qayta urinish";
+    }
+  };
+
   // Loading holatini ko'rsatish
   if (isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Yuklanmoqda...</p>
+          <p className="text-gray-600 dark:text-gray-400">{getLoadingText()}</p>
         </div>
       </main>
     );
@@ -52,7 +94,7 @@ export default function Home() {
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 mb-4">
-            Xatolik yuz berdi: {error}
+            {getErrorText()}: {error}
           </p>
           <button
             onClick={async () => {
@@ -62,7 +104,7 @@ export default function Home() {
             }}
             className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
           >
-            Qayta urinish
+            {getRetryText()}
           </button>
         </div>
       </main>
