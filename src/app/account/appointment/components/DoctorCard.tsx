@@ -152,7 +152,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                 className={`flex items-start ${mutedTextColor} text-xs sm:text-sm md:text-base`}
               >
                 <span className={`${mutedTextColor} mr-2`}>•</span>
-                <span>{doctor.degree}</span>
+                <span>{doctor.category}</span>
               </li>
             </ul>
           </div>
