@@ -2,12 +2,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { ReactNode, useState, useEffect } from "react";
-import Link from "next/link";
+import { useTranslation } from "@/src/hooks/useTranslation";
+import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
-import Image from "next/image";
-import { applyColorToIcon, getIconColorByTheme } from "../utils/iconUtils";
+import Link from "next/link";
+import React, { ReactNode, useEffect, useState } from "react";
+import { getIconColorByTheme } from "../utils/iconUtils";
 import { EnhancedLink } from "./EnhancedLink";
+
+// Translations for investigations and time text
+const translations = {
+  ru: {
+    investigations: "исследований",
+    minutes: "минут",
+    hours: "часов",
+    hour: "час",
+    minute: "минута",
+  },
+  uz: {
+    investigations: "ta tekshiruv",
+    minutes: "daqiqa",
+    hours: "soat",
+    hour: "soat",
+    minute: "daqiqa",
+  },
+  en: {
+    investigations: "investigations",
+    minutes: "minutes",
+    hours: "hours",
+    hour: "hour",
+    minute: "minute",
+  },
+};
 
 export interface UniversalCardProps {
   title: string;
@@ -115,6 +141,8 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
   heightMobile,
 }) => {
   const { theme } = useThemeStore();
+  const { currentLocale } = useLanguageStore();
+  const { t } = useTranslation(translations);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const finalIconColor = getIconColorByTheme(theme, iconColor);
@@ -348,7 +376,7 @@ export const UniversalCard: React.FC<UniversalCardProps> = ({
                   isHovered ? "text-white" : ""
                 }`}
               >
-                {investigationsCount} исследований
+                {investigationsCount} {t("investigations")}
               </span>
             </div>
           )}

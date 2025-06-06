@@ -25,6 +25,11 @@ const translations = {
     detailsButton: "Подробнее",
     checks: "исследований",
     time: "часа",
+    minutes: "минут",
+    hour: "час",
+    hours: "часов",
+    minute: "минута",
+    minutesGenitive: "минут",
   },
   uz: {
     title: "Bir tashrif davomida tekshiruvdan o'ting",
@@ -37,6 +42,11 @@ const translations = {
     detailsButton: "Batafsil",
     checks: "tekshiruv",
     time: "soat",
+    minutes: "daqiqa",
+    hour: "soat",
+    hours: "soat",
+    minute: "daqiqa",
+    minutesGenitive: "daqiqa",
   },
   en: {
     title: "Complete your check-up in one visit",
@@ -49,27 +59,15 @@ const translations = {
     detailsButton: "Learn More",
     checks: "tests",
     time: "hours",
+    minutes: "minutes",
+    hour: "hour",
+    hours: "hours",
+    minute: "minute",
+    minutesGenitive: "minutes",
   },
 };
 
 // Разделение текста на строки
-const splitTextIntoLines = (text: string, lineCount: number) => {
-  if (!text) return [];
-
-  const words = text.split(" ");
-  const wordsPerLine = Math.ceil(words.length / lineCount);
-
-  const lines = [];
-  for (let i = 0; i < lineCount; i++) {
-    const startIndex = i * wordsPerLine;
-    const endIndex = Math.min(startIndex + wordsPerLine, words.length);
-    if (startIndex < words.length) {
-      lines.push(words.slice(startIndex, endIndex).join(" "));
-    }
-  }
-
-  return lines;
-};
 
 export interface CheckupSliderProps {
   title?: string;
@@ -137,7 +135,7 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
   const formatDuration = (duration: string | number | undefined): string => {
     // Если duration не передан или не является числом, возвращаем значение по умолчанию
     if (duration === undefined || duration === null) {
-      return `2 ${t("time")}`;
+      return `2 ${t("hours")}`;
     }
 
     // Преобразуем входное значение в число минут
@@ -146,22 +144,45 @@ export const CheckupSlider: React.FC<CheckupSliderProps> = ({
 
     // Если не удалось преобразовать в число, возвращаем значение по умолчанию
     if (isNaN(minutes)) {
-      return `2 ${t("time")}`;
+      return `2 ${t("hours")}`;
     }
 
     // Преобразуем минуты в часы и минуты
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
 
+    // Функция для получения правильной формы слова "час" в русском языке
+    const getHourForm = (hours: number): string => {
+      if (currentLocale === "ru") {
+        if (hours === 1) return t("hour");
+        if (hours >= 2 && hours <= 4) return t("time"); // "часа"
+        return t("hours"); // "часов"
+      }
+      // Для узбекского и английского используем базовые формы
+      return hours === 1 ? t("hour") : t("hours");
+    };
+
+    // Функция для получения правильной формы слова "минута" в русском языке
+    const getMinuteForm = (minutes: number): string => {
+      if (currentLocale === "ru") {
+        if (minutes === 1) return t("minute");
+        if (minutes >= 2 && minutes <= 4) return "минуты";
+        return t("minutesGenitive"); // "минут"
+      }
+      // Для узбекского и английского используем базовые формы
+      return minutes === 1 ? t("minute") : t("minutes");
+    };
+
     // Формируем строку времени
     if (hours === 0) {
-      return `${remainingMinutes} мин`;
+      return `${remainingMinutes} ${getMinuteForm(remainingMinutes)}`;
     } else if (remainingMinutes === 0) {
-      return `${hours} ${t("time")}`;
+      return `${hours} ${getHourForm(hours)}`;
     } else {
-      // Округляем минуты до десятых долей часа
-      const formattedHours = hours + Math.round(remainingMinutes / 6) / 10;
-      return `${formattedHours} ${t("time")}`;
+      // Показываем часы и минуты отдельно для лучшей читаемости
+      return `${hours} ${getHourForm(
+        hours
+      )} ${remainingMinutes} ${getMinuteForm(remainingMinutes)}`;
     }
   };
   // Создаем слайды с карточками из данных API
