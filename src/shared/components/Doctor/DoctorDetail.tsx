@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/src/hooks/useTranslation";
+import { formatPrice } from "@/src/utils/formatPrice";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -263,7 +264,7 @@ export default function DoctorDetail({
                     {t("appointmentCost")}:
                   </span>{" "}
                   <span className="text-[#23464e] dark:text-white">
-                    {doctor.appointmentCost}
+                    {formatPrice(doctor.appointmentCost)}
                   </span>
                 </div>
               )}
