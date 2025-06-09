@@ -70,19 +70,23 @@ const translations = {
     phone: "Телефон для записи",
     detailsButton: "Подробнее о враче",
     appointmentButton: "Записаться на прием",
-    years: "год",
+    years: "лет",
     modalTitle: "Выберите специализацию",
     loading: "Загрузка...",
     loadingSpecializations: "Загрузка специализаций...",
     error: "Ошибка при загрузке данных",
     noResults: "Врачи не найдены",
     tryAgain: "Попробовать снова",
+    defaultLanguageRu: "русский",
+    defaultLanguageUz: "узбекский",
+    defaultQualification: "Высшая категория",
+    phoneNumber: "+998 (71) 200-55-50",
   },
   uz: {
     title: "Shifokor qidirish",
-    nameSearch: "Ismi-sharifni kiriting",
-    specialtySearch: "Barcha ixtisosliklar",
-    findButton: "Shifokorni topish",
+    nameSearch: "Ism-sharifni kiriting",
+    specialtySearch: "Barcha mutaxassisliklar",
+    findButton: "Shifokornni topish",
     experience: "Tajriba",
     qualification: "Oliy toifa",
     languages: "Tillar",
@@ -91,12 +95,16 @@ const translations = {
     detailsButton: "Shifokor haqida batafsil",
     appointmentButton: "Qabulga yozilish",
     years: "yil",
-    modalTitle: "Ixtisoslikni tanlang",
+    modalTitle: "Mutaxassislikni tanlang",
     loading: "Yuklanmoqda...",
-    loadingSpecializations: "Ixtisosliklar yuklanmoqda...",
-    error: "Ma'lumotlarni yuklashda xatolik yuz berdi",
+    loadingSpecializations: "Mutaxassisliklar yuklanmoqda...",
+    error: "Ma'lumotlarni yuklashda xatolik",
     noResults: "Shifokorlar topilmadi",
-    tryAgain: "Qayta urinib ko'ring",
+    tryAgain: "Qayta urinish",
+    defaultLanguageRu: "Rus tili",
+    defaultLanguageUz: "O'zbek tili",
+    defaultQualification: "Oliy toifa",
+    phoneNumber: "+998 (71) 200-55-50",
   },
   en: {
     title: "Find a Doctor",
@@ -117,6 +125,10 @@ const translations = {
     error: "Error loading data",
     noResults: "No doctors found",
     tryAgain: "Try again",
+    defaultLanguageRu: "Russian",
+    defaultLanguageUz: "Uzbek",
+    defaultQualification: "Highest category",
+    phoneNumber: "+998 (71) 200-55-50",
   },
 };
 
@@ -303,7 +315,7 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
                 {t("phone")}
               </div>
               <div className={`${textColor} text-[16px]`}>
-                +998 (71) 200-55-50
+                {t("phoneNumber")}
               </div>
             </Link>
           </div>
@@ -524,19 +536,19 @@ const SearchSection: React.FC<{
   );
 };
 
-const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor): Doctor => {
+const convertApiDoctorToUiDoctor = (apiDoctor: ApiDoctor, t: any): Doctor => {
   const languagesArray = apiDoctor.languages
     ? typeof apiDoctor.languages === "string"
       ? apiDoctor.languages.split(",").map((lang: string) => lang.trim())
-      : ["русский", "узбекский"]
-    : ["русский", "узбекский"];
+      : [t("defaultLanguageRu"), t("defaultLanguageUz")]
+    : [t("defaultLanguageRu"), t("defaultLanguageUz")];
 
   return {
     id: apiDoctor.uuid,
     name: apiDoctor.full_name,
     specialty: apiDoctor.specialization,
     experience: apiDoctor.experience_years.replace(/\D/g, ""),
-    qualification: apiDoctor.category || "Высшая категория",
+    qualification: apiDoctor.category || t("defaultQualification"),
     degree: apiDoctor.qualification || "",
     languages: languagesArray,
     cost: apiDoctor.price_from
@@ -623,7 +635,9 @@ export default function DoctorsPage() {
       const response = await getDoctors(filters, pageToFetch);
       console.log("Получен ответ API:", response);
 
-      const convertedDoctors = response.data.map(convertApiDoctorToUiDoctor);
+      const convertedDoctors = response.data.map((doctor: ApiDoctor) =>
+        convertApiDoctorToUiDoctor(doctor, t)
+      );
       setDoctors(convertedDoctors);
       setTotalPages(response.meta.last_page);
       setCurrentPage(response.meta.current_page);

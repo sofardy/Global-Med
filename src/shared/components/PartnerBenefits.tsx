@@ -74,10 +74,10 @@ export default function PartnerBenefits() {
 
   // Dynamic sizing based on screen size
   const getMinHeight = () => {
-    if (isMobile) return "min-h-[250px]";
-    if (isTablet) return "min-h-[300px]";
-    if (isLaptop) return "min-h-[350px]";
-    return "min-h-[450px]";
+    if (isMobile) return "min-h-[250px] h-full";
+    if (isTablet) return "min-h-[300px] h-full";
+    if (isLaptop) return "min-h-[350px] h-full";
+    return "min-h-[450px] h-full";
   };
 
   // Функция для рендера SVG из строки
