@@ -97,15 +97,23 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
             </div>
           </div>
 
-          <button
-            className={`w-full py-4 rounded-xl font-medium transition-all duration-300 ${
+          <Link
+            href={`/account/appointment?doctor=${slug}`}
+            // onClick={() => {
+            //   window.location.href = `/account/appointment?doctor=${slug}`;
+            // }}
+            // onClick={() => {
+            //   window.location.reload();
+            //   window.location.href = `/account/appointment?doctor=${slug}`;
+            // }}
+            className={`w-full py-4 text-center w-full rounded-xl font-medium transition-all duration-300 ${
               isHovered
                 ? "bg-light-accent text-white"
                 : "bg-white dark:bg-dark-block border border-light-text dark:border-dark-text text-light-text dark:text-dark-text"
             }`}
           >
             {t("appointmentButton")}
-          </button>
+          </Link>
         </div>
       </div>
     </Link>

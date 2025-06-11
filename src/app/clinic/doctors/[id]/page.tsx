@@ -162,6 +162,7 @@ export default function DoctorDetailPage(): JSX.Element {
   // Преобразуем данные из API в формат, ожидаемый компонентом DoctorDetail
   const doctorData = {
     id: doctor.uuid,
+    slug: doctor.slug,
     name: doctor.full_name,
     specialization: doctor.specialization,
     photoUrl: doctor.image_url,

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { ContactInfo } from "../ContactInfo";
+import Link from "next/link";
 
 // Define types for the doctor data
 export interface Education {
@@ -23,6 +24,7 @@ export interface Certificate {
 
 export interface Doctor {
   id?: string;
+  slug: string;
   name: string;
   specialization: string;
   photoUrl?: string;
@@ -213,7 +215,7 @@ export default function DoctorDetail({
               {doctor.specialization}
             </p>
 
-            <div className="space-y-5">
+            <div className="space-y-5 mb-10">
               {doctor.qualification && (
                 <div>
                   <span className="text-[#23464e]/90 dark:text-white/90 font-semibold">
@@ -270,12 +272,13 @@ export default function DoctorDetail({
               )}
             </div>
 
-            <button
-              onClick={doctor.onAppointmentClick}
+            <Link
+              href={`/account/appointment?doctor=${doctor.slug}`}
+              // onClick={doctor.onAppointmentClick}
               className="px-8 py-4 mt-[20px] rounded-[12px] bg-transparent text-[#23464e] dark:text-white border-2 border-[#23464e] dark:border-white hover:bg-[#00c78b] hover:text-white hover:border-[#00c78b] transition-all duration-300 font-medium w-full md:w-auto"
             >
               {t("bookAppointment")}
-            </button>
+            </Link>
           </div>
         </div>
       </div>

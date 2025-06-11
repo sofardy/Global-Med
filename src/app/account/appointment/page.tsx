@@ -9,7 +9,7 @@ import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
 import { AnalysisItem } from "@/src/types/analysis";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { fetchAnalyses } from "../../api/analyses";
 import { CheckupItem, fetchCheckups } from "../../api/checkups";
@@ -44,7 +44,7 @@ const translations = {
     secondaryAppointment: "Повторный прием",
     selectDate: "Выберите дату",
     selectTime: "Выберите время",
-    emptyTime: "--:--",
+    emptyTime: "10:00",
     bookAnalysis: "Записаться на сдачу анализов",
     bookCheckup: "Записаться на прохождение чек-апа",
     pleaseSelectTime: "Пожалуйста, выберите время",
@@ -76,7 +76,7 @@ const translations = {
     secondaryAppointment: "Takroriy qabul",
     selectDate: "Sanani tanlang",
     selectTime: "Vaqtni tanlang",
-    emptyTime: "--:--",
+    emptyTime: "10:00",
     bookAnalysis: "Tahlil topshirishga yozilish",
     bookCheckup: `Tekshiruvdan o'tishga yozilish`,
     pleaseSelectTime: "Iltimos, vaqtni tanlang",
@@ -109,7 +109,7 @@ const translations = {
     secondaryAppointment: "Follow-up Appointment",
     selectDate: "Select Date",
     selectTime: "Select Time",
-    emptyTime: "--:--",
+    emptyTime: "10:00",
     bookAnalysis: "Book Medical Tests",
     bookCheckup: "Book Health Check-up",
     pleaseSelectTime: "Please select a time",
@@ -133,16 +133,37 @@ export default function DynamicAppointmentBooking() {
   const { t } = useTranslation(translations);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // URL parametrlarini o'qish
+  const searchParams = new URLSearchParams(
+    typeof window !== "undefined" ? window.location.search : ""
+  );
+  const doctorSpecializationFromUrl = searchParams.get("doctorSpecialization")
+    ? decodeURIComponent(searchParams.get("doctorSpecialization")!)
+    : null;
+  const doctorSlug = searchParams.get("doctor");
+
+  // Helper function to get today's date
+  const getTodayDate = () => {
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(today.getDate()).padStart(2, "0")}`;
+  };
 
   // Состояния для управления формой бронирования
-  const [selectedService, setSelectedService] = useState<ServiceType | "">("");
+  const [selectedService, setSelectedService] = useState<ServiceType | "">(
+    "doctor"
+  );
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("");
   const [selectedSpecialtyUuid, setSelectedSpecialtyUuid] =
     useState<string>("");
   const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
   const [isSpecialtyDropdownOpen, setIsSpecialtyDropdownOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayDate());
+  const [selectedTime, setSelectedTime] = useState<string>("10:00");
   const [appointmentType, setAppointmentType] =
     useState<AppointmentType>("primary");
   const [isBooked, setIsBooked] = useState<boolean>(false);
@@ -167,6 +188,7 @@ export default function DynamicAppointmentBooking() {
   // Ссылки на выпадающие списки
   const serviceDropdownRef = useRef<HTMLDivElement>(null);
   const specialtyDropdownRef = useRef<HTMLDivElement>(null);
+
   // Функция для получения специализаций с сервера
   const fetchSpecializations = async (): Promise<Specialization[]> => {
     try {
@@ -212,17 +234,26 @@ export default function DynamicAppointmentBooking() {
     }
   };
 
-  // Инициализация текущей даты
-  useEffect(() => {
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-    setSelectedDate(formattedDate);
-  }, []);
-
   // Загрузка специализаций при первом рендере
   useEffect(() => {
+    const fetchDoctor = async () => {
+      if (doctorSlug) {
+        const response = await axios.get(
+          `${API_BASE_URL}/doctors/${doctorSlug}`,
+          {
+            headers: {
+              "X-Language": currentLocale,
+            },
+          }
+        );
+
+        setSelectedSpecialty(response.data?.data.specialization);
+        handleSpecialtyChange(response.data?.data.specialization);
+        setSelectedSpecialtyUuid(response.data?.data.specialization_uuid);
+        fetchDoctors(response.data?.data.specialization_uuid);
+      }
+    };
+
     const loadSpecializations = async () => {
       try {
         setLoadingSpecializations(true);
@@ -235,9 +266,10 @@ export default function DynamicAppointmentBooking() {
       }
     };
 
+    fetchDoctor();
     loadSpecializations();
-  }, []);
-
+  }, [currentLocale, pathname]); // til o'zgarganida qayta yuklash
+  console.log(selectedSpecialty);
   // Загрузка списка анализов или чек-апов при выборе услуги
   useEffect(() => {
     let isMounted = true;
@@ -308,6 +340,17 @@ export default function DynamicAppointmentBooking() {
     setShowDoctors(false);
     setDoctors([]);
   }, [selectedService]);
+
+  // // Til o'zgarganida state larni reset qilish
+  // useEffect(() => {
+  //   if (!doctorSpecializationFromUrl) {
+  //     // Agar URL dan specialty kelmagan bo'lsa, reset qilish
+  //     setSelectedSpecialty("");
+  //     setSelectedSpecialtyUuid("");
+  //     setShowDoctors(false);
+  //     setDoctors([]);
+  //   }
+  // }, [currentLocale]);
 
   // Форматирование даты и времени для API
   const formatDateTimeForApi = (date: string, time: string): string => {
@@ -978,7 +1021,7 @@ export default function DynamicAppointmentBooking() {
                     backgroundPosition: "right 1rem center",
                   }}
                 >
-                  <option value="">{t("emptyTime")}</option>
+                  <option value="10:00">{t("emptyTime")}</option>
                   {[
                     "08:00",
                     "09:00",
