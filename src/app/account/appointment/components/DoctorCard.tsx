@@ -66,15 +66,15 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
 
-  // Default to a predetermined date, matching the screenshot
-  const [selectedDate, setSelectedDate] = useState("2025-05-19");
-  const [selectedTime, setSelectedTime] = useState("");
-
-  // Format today's date as minimum selectable date
+  // Format today's date as default and minimum selectable date
   const today = new Date();
   const formattedToday = `${today.getFullYear()}-${String(
     today.getMonth() + 1
   ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  // Default to today's date
+  const [selectedDate, setSelectedDate] = useState(formattedToday);
+  const [selectedTime, setSelectedTime] = useState("");
 
   const handleAppointment = () => {
     if (!selectedTime) {
@@ -139,8 +139,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                 >
                   <span className={`${mutedTextColor} mr-2`}>•</span>
                   <span>
-                    {t("experiencePrefix")} {doctor.experience}{" "}
-                    {t("experienceSuffix")}
+                    {t("experiencePrefix")} {doctor.experience}
                   </span>
                 </li>
               )}

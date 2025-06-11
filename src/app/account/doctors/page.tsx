@@ -328,8 +328,12 @@ const DoctorCard: React.FC<{ doctor: Doctor }> = ({ doctor }) => {
               {t("detailsButton")}
             </Link>
             <Link
-              href="/account/appointment"
+              href={`/account/appointment?doctor=${doctor.slug}`}
               className="px-6 py-3 text-center bg-light-accent text-white rounded-xl hover:bg-[#5ab696] transition-colors"
+              onClick={() => {
+                window.location.reload();
+                window.location.href = `/account/appointment?doctor=${doctor.slug}`;
+              }}
             >
               {t("appointmentButton")}
             </Link>
