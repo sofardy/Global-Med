@@ -1,17 +1,17 @@
 "use client";
 
 import { useTranslation } from "@/src/hooks/useTranslation";
-import { useHomeStore } from "@/src/store/home";
 import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
 import { usePathname } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FacebookIcon,
   InstagramIcon,
   TelegramIcon,
   WhatsapppIcon,
 } from "../ui/Icon";
+import { API_BASE_URL } from "@/src/config/constants";
 
 type LocaleMessages = {
   ru: {
@@ -192,14 +192,53 @@ export const ContactInfo: React.FC = () => {
   const { t } = useTranslation(translations);
   const { theme } = useThemeStore();
   const { currentLocale } = useLanguageStore();
-  const { contacts, isLoading, setHomeData }: any = useHomeStore();
   const pathname = usePathname();
 
+  // Local state for contacts data
+  const [contacts, setContacts] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   useEffect(() => {
-    if (pathname !== "/") {
-      setHomeData(currentLocale);
-    }
-  }, [currentLocale, pathname, setHomeData]);
+    const fetchContacts = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch(`${API_BASE_URL}/settings/contacts`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Language": currentLocale,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch contacts data");
+        }
+
+        const json = await response.json();
+        // Some endpoints wrap payload in `.data`, others return plain object
+        const payload = json?.data || json;
+
+        const mapped = {
+          phone: payload?.phone?.number || "",
+          phoneLink: payload?.phone?.link || "",
+          emergency: payload?.emergency_phone?.number || "",
+          address: payload?.address?.text || "",
+          addressLink: payload?.address?.link || "",
+          socials: payload?.social_networks || [],
+          iframe: payload?.map_iframe || "",
+        };
+
+        setContacts(mapped);
+      } catch (error) {
+        console.error("Error fetching contacts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Fetch contacts on mount and whenever locale changes
+    fetchContacts();
+  }, [currentLocale, pathname]);
 
   // Show skeleton loading when data is loading
   if (isLoading) {
@@ -226,7 +265,10 @@ export const ContactInfo: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
           <ContactCard title={t("phone")} showCircle={true}>
             <a
-              href={`tel:${contacts?.phone?.replace(/\D/g, "")}`}
+              href={
+                contacts?.phoneLink ||
+                `tel:${contacts?.phone?.replace(/\D/g, "")}`
+              }
               className="block text-xl sm:text-2xl md:text-3xl font-medium text-[#173F46] dark:text-white group-hover:text-white"
             >
               {contacts?.phone}
@@ -281,14 +323,12 @@ export const ContactInfo: React.FC = () => {
           </div>
         </ContactCard>
       </div>
-
       <div className="w-full md:w-1/2 h-[250px] sm:h-[300px] md:h-auto rounded-xl overflow-hidden mt-4 md:mt-0">
         <div
           style={{ width: "100%", height: "100%" }}
           dangerouslySetInnerHTML={{ __html: contacts?.iframe }}
         />
       </div>
-
       <style jsx global>{`
         .emergency-fog {
           position: absolute;

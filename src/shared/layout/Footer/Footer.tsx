@@ -3,7 +3,6 @@
 
 import { API_BASE_URL } from "@/src/config/constants";
 import { useTranslation } from "@/src/hooks/useTranslation";
-import { CONTACT_INFO } from "@/src/shared/constants/contact";
 import { useLanguageStore } from "@/src/store/language";
 import { useThemeStore } from "@/src/store/theme";
 import axios from "axios";
@@ -21,6 +20,20 @@ import { translations } from "./translations";
 interface LinkItem {
   title: string;
   link: string;
+}
+
+interface FooterGroup {
+  title: string;
+  items: {
+    url: string;
+    label: string;
+  }[];
+}
+
+interface SocialNetwork {
+  name: string;
+  url: string;
+  icon: string;
 }
 
 // Компонент ссылки футера
@@ -127,30 +140,24 @@ const SectionTitle: React.FC<{
 };
 
 // Компонент "Смотреть все"
-const ViewAllLink: React.FC<{ href: string; children: React.ReactNode }> = ({
-  href,
-  children,
-}) => {
-  const { theme } = useThemeStore();
-  const textColor = theme === "dark" ? "text-white" : "text-light-text";
+// const ViewAllLink: React.FC<{ href: string; children: React.ReactNode }> = ({
+//   href,
+//   children,
+// }) => {
+//   const { theme } = useThemeStore();
+//   const textColor = theme === "dark" ? "text-white" : "text-light-text";
 
-  return (
-    <Link
-      href={href}
-      className={`${textColor} underline font-semibold text-lg`}
-    >
-      {children}
-    </Link>
-  );
-};
+//   return (
+//     <Link
+//       href={href}
+//       className={`${textColor} underline font-semibold text-lg`}
+//     >
+//       {children}
+//     </Link>
+//   );
+// };
 
 // Тип для социальной сети
-interface SocialNetwork {
-  id: string;
-  url: string;
-  icon: React.FC<{ size: number; color: string; className?: string }>;
-  label: string;
-}
 
 export const Footer: React.FC = () => {
   const { theme } = useThemeStore();
@@ -161,12 +168,29 @@ export const Footer: React.FC = () => {
   const [serviceLinks, setServiceLinks] = useState<LinkItem[]>([]);
   const [checkupLinks, setCheckupLinks] = useState<LinkItem[]>([]);
   const [analysisLinks, setAnalysisLinks] = useState<LinkItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dataFetched, setDataFetched] = useState<boolean>(false); // Флаг для отслеживания загрузки
+  const [footerLinks, setFooterLinks] = useState<FooterGroup[]>([]);
+  const [socialLinks, setSocialLinks] = useState<SocialNetwork[]>([]);
+  const [copyright, setCopyright] = useState<string>("© Global Medical Center");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const bgColor = theme === "dark" ? "bg-dark-block" : "bg-white";
   const textColorMuted =
     theme === "dark" ? "text-white/60" : "text-light-text/60";
+
+  // Иконки соцсетей мэппинг
+  const socialIconMap: Record<
+    string,
+    React.FC<{ size: number; color: string; className?: string }>
+  > = {
+    telegram: TelegramIcon,
+    instagram: InstagramIcon,
+    whatsapp: WhatsapppIcon,
+    whatsappapp: WhatsapppIcon,
+    facebook: FacebookIcon,
+  };
+
+  const isExternalLink = (url: string) => /^(https?:|mailto:|tel:)/.test(url);
 
   // Данные для социальных сетей - мемоизируем их
   const socialNetworks = useMemo(
@@ -225,8 +249,6 @@ export const Footer: React.FC = () => {
   const fetchData = useCallback(async () => {
     if (dataFetched) return; // Предотвращаем повторные запросы
 
-    setIsLoading(true);
-
     try {
       // Используем Promise.all для параллельных запросов
       const [servicesResponse, checkupsResponse, analysesResponse] =
@@ -276,8 +298,6 @@ export const Footer: React.FC = () => {
       setServiceLinks(fallbackServiceLinks);
       setCheckupLinks(fallbackCheckupLinks);
       setAnalysisLinks(fallbackAnalysisLinks);
-    } finally {
-      setIsLoading(false);
     }
   }, [
     currentLocale,
@@ -300,122 +320,199 @@ export const Footer: React.FC = () => {
   const displayAnalysisLinks =
     analysisLinks.length > 0 ? analysisLinks : fallbackAnalysisLinks;
 
+  // Fetch footer data from /settings/footer
+  useEffect(() => {
+    const fetchFooter = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`${API_BASE_URL}/settings/footer`, {
+          headers: { "X-Language": currentLocale },
+        });
+
+        const payload = res.data?.data || res.data;
+        console.log("Footer data received:", payload); // Debug log
+
+        setFooterLinks(payload.links || []);
+        setSocialLinks(payload.social_networks || []);
+        setCopyright(payload.copyright || "© Global Medical Center");
+      } catch (err) {
+        console.error("Error fetching footer settings:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFooter();
+  }, [currentLocale]);
+
+  // Find groups by title patterns
+  const servicesGroup = footerLinks.find((g) =>
+    /услуги|xizmat|services|Xizmatlar/i.test(g.title)
+  );
+  const checkupGroup = footerLinks.find((g) =>
+    /чек|tekshir|check-?up|Chek-aplar/i.test(g.title)
+  );
+  const analysesGroup = footerLinks.find((g) =>
+    /комплекс|анализ|analysis|analiz|Tahlil komplekslari/i.test(g.title)
+  );
+  const navGroup = footerLinks.find((g) =>
+    /навига|naviga|navigation|Navigatsiya/i.test(g.title)
+  );
+  const contactsGroup = footerLinks.find((g) =>
+    /контакт|kontakt|contacts|Kontaktlar/i.test(g.title)
+  );
+  const addressGroup = footerLinks.find((g) =>
+    /адрес|address|manzil|Manzil/i.test(g.title)
+  );
+
   return (
     <footer className="mt-40">
       {/* Main footer content */}
       <div className={`rounded-2xl p-8 md:p-10 ${bgColor}`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Services column */}
-          <div>
-            <SectionTitle>{t("sections.services")}</SectionTitle>
-            <ul className="space-y-3">
-              {displayServiceLinks.map((item) => (
-                <li key={item.link}>
-                  <FooterLink href={item.link}>{item.title}</FooterLink>
-                </li>
-              ))}
-              <li className="pt-2">
-                <ViewAllLink href="/services">
-                  {t("viewAll.services")}
-                </ViewAllLink>
-              </li>
-            </ul>
-          </div>
-
-          {/* Checkups column */}
-          <div>
-            <SectionTitle>{t("sections.checkups")}</SectionTitle>
-            <ul className="space-y-3">
-              {displayCheckupLinks.map((item) => (
-                <li key={item.link}>
-                  <FooterLink href={item.link}>{item.title}</FooterLink>
-                </li>
-              ))}
-              <li className="pt-2">
-                <ViewAllLink href="/checkups">
-                  {t("viewAll.checkups")}
-                </ViewAllLink>
-              </li>
-            </ul>
-
-            <SectionTitle className="mt-8">
-              {t("sections.analyses")}
-            </SectionTitle>
-            <ul className="space-y-3">
-              {displayAnalysisLinks.map((item) => (
-                <li key={item.link}>
-                  <FooterLink href={item.link}>{item.title}</FooterLink>
-                </li>
-              ))}
-              <li className="pt-2">
-                <ViewAllLink href="/analysis">
-                  {t("viewAll.analyses")}
-                </ViewAllLink>
-              </li>
-            </ul>
-          </div>
-
-          {/* Navigation column */}
-          <div>
-            <SectionTitle>{t("sections.navigation")}</SectionTitle>
-            <ul className="space-y-3">
-              {navigationLinks.map((item) => (
-                <li key={item.link}>
-                  <FooterLink href={item.link}>{item.title}</FooterLink>
-                </li>
-              ))}
-              <li>
-                <FooterLink href={"#career-form"}>
-                  {currentLocale === "ru" ? "Вакансии" : "Vakansiyalar"}
-                </FooterLink>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contacts and Address column */}
-          <div>
-            <SectionTitle>{t("sections.contacts")}</SectionTitle>
-            <ul className="space-y-4 mb-8">
-              <li>
-                <ExternalLink href={`mailto:${CONTACT_INFO.email}`}>
-                  {CONTACT_INFO.email}
-                </ExternalLink>
-              </li>
-              <li>
-                <ExternalLink
-                  href={`tel:${CONTACT_INFO.phone.replace(/[\s()-]/g, "")}`}
-                >
-                  {CONTACT_INFO.phone}
-                </ExternalLink>
-              </li>
-              <li className={textColorMuted}>
-                {t("emergency")}:{" "}
-                <ExternalLink href="tel:1142">1142</ExternalLink>
-              </li>
-              <li className={textColorMuted}>
-                {t("telegramBot")}:{" "}
-                <ExternalLink href="https://t.me/globalmed_bot">
-                  @globalmed_bot
-                </ExternalLink>
-              </li>
-            </ul>
-
-            <SectionTitle className="mb-4">
-              {t("sections.address")}
-            </SectionTitle>
-            <p className={`${textColorMuted} mb-6 text-lg`}>{t("address")}</p>
-
-            {/* Social media icons */}
-            <div className="flex gap-4">
-              {socialNetworks.map((network) => (
-                <SocialIcon
-                  key={network.id}
-                  href={network.url}
-                  icon={network.icon}
-                  label={network.label}
-                />
-              ))}
+          {/* Column 1: Services */}
+          {servicesGroup && (
+            <div>
+              <SectionTitle>{servicesGroup.title}</SectionTitle>
+              <ul className="space-y-3">
+                {servicesGroup.items.map((item) => (
+                  <li key={item.url}>
+                    <FooterLink
+                      href={item.url}
+                      isExternal={isExternalLink(item.url)}
+                    >
+                      {item.label}
+                    </FooterLink>
+                  </li>
+                ))}
+              </ul>
             </div>
+          )}
+
+          {/* Column 2: Checkups + Analyses */}
+          <div className="space-y-8">
+            {checkupGroup && (
+              <>
+                <SectionTitle>{checkupGroup.title}</SectionTitle>
+                <ul className="space-y-3 mb-6">
+                  {checkupGroup.items.map((item) => (
+                    <li key={item.url}>
+                      <FooterLink
+                        href={item.url}
+                        isExternal={isExternalLink(item.url)}
+                      >
+                        {item.label}
+                      </FooterLink>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {analysesGroup && (
+              <>
+                <SectionTitle>{analysesGroup.title}</SectionTitle>
+                <ul className="space-y-3">
+                  {analysesGroup.items.map((item) => (
+                    <li key={item.url}>
+                      <FooterLink
+                        href={item.url}
+                        isExternal={isExternalLink(item.url)}
+                      >
+                        {item.label}
+                      </FooterLink>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+
+          {/* Column 3: Navigation */}
+          {navGroup && (
+            <div>
+              <SectionTitle>{navGroup.title}</SectionTitle>
+              <ul className="space-y-3">
+                {navGroup.items.map((item) => (
+                  <li key={item.url}>
+                    <FooterLink
+                      href={item.url}
+                      isExternal={isExternalLink(item.url)}
+                    >
+                      {item.label}
+                    </FooterLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Column 4: Contacts + Address + Socials */}
+          <div>
+            {contactsGroup && (
+              <>
+                <SectionTitle>{contactsGroup.title}</SectionTitle>
+                <ul className="space-y-3 mb-6">
+                  {contactsGroup.items.map((item) => (
+                    <li key={item.url}>
+                      <FooterLink
+                        href={item.url}
+                        isExternal={isExternalLink(item.url)}
+                      >
+                        {item.label}
+                      </FooterLink>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {addressGroup && (
+              <>
+                <SectionTitle>{addressGroup.title}</SectionTitle>
+                <ul className="space-y-3 mb-6">
+                  {addressGroup.items.map((item) => (
+                    <li key={item.url}>
+                      <FooterLink
+                        href={item.url}
+                        isExternal={isExternalLink(item.url)}
+                      >
+                        {item.label}
+                      </FooterLink>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {socialLinks.length > 0 && (
+              <>
+                <SectionTitle>Social Networks</SectionTitle>
+                <div className="flex gap-4">
+                  {socialLinks.map((sn, index) => {
+                    const key = sn.name?.toLowerCase();
+                    const IconComp = socialIconMap[key];
+                    if (IconComp) {
+                      return (
+                        <SocialIcon
+                          key={`${sn.url}-${index}`}
+                          href={sn.url}
+                          icon={IconComp}
+                          label={sn.name}
+                        />
+                      );
+                    }
+                    return (
+                      <a
+                        key={`${sn.url}-${index}`}
+                        href={sn.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 flex items-center justify-center"
+                        dangerouslySetInnerHTML={{ __html: sn.icon }}
+                      />
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -424,7 +521,7 @@ export const Footer: React.FC = () => {
       <div className={`p-6 md:p-8 rounded-2xl mt-4 ${bgColor}`}>
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className={`${textColorMuted} text-lg mb-4 md:mb-0`}>
-            2025 © Global Medical Center
+            {copyright}
           </div>
 
           <FooterLink href="/privacy-policy" className="mb-4 md:mb-0">
