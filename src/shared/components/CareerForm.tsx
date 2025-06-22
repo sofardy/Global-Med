@@ -92,7 +92,15 @@ const translations = {
   },
 };
 
-const CareerForm = () => {
+interface CareerFormProps {
+  title?: string;
+  subtitle?: string;
+}
+
+const CareerForm: React.FC<CareerFormProps> = ({
+  title: propTitle,
+  subtitle: propSubtitle,
+}) => {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
   const { form, isLoading }: any = useHomeStore();
@@ -262,13 +270,13 @@ const CareerForm = () => {
                 <>
                   <h2
                     dangerouslySetInnerHTML={{
-                      __html: form?.title,
+                      __html: propTitle || form?.title || "",
                     }}
                     className="text-3xl md:text-4xl font-medium mb-6"
                   ></h2>
                   <p
                     dangerouslySetInnerHTML={{
-                      __html: form?.subtitle,
+                      __html: propSubtitle || form?.subtitle || "",
                     }}
                     className="text-base md:text-lg mb-8 max-w-md"
                   ></p>

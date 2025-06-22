@@ -11,6 +11,8 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { useThemeStore } from "../../store/theme";
+import AdministrationSlider from "@/src/shared/components/Doctor/AdministrationSlider";
+import CertificatesSlider from "@/src/shared/components/Doctor/CertificateCard";
 
 // Типы для данных из API
 interface ApiResponse {
@@ -39,6 +41,12 @@ interface ApiResponse {
           }>;
         };
         type: string;
+      };
+      section_form: {
+        data: {
+          title: string;
+          subtitle: string;
+        };
       };
     };
   };
@@ -297,6 +305,9 @@ export default function Clinic() {
       expiryDate: cert.subtitle,
     })) || [];
 
+  // Section form data
+  const sectionFormData = pageData?.data?.content?.section_form?.data;
+
   return (
     <main>
       <div>
@@ -365,9 +376,22 @@ export default function Clinic() {
             number="04"
           />
         </div>
+
+        {/* Administration Slider */}
+        {administrators.length > 0 && (
+          <AdministrationSlider administrators={administrators} />
+        )}
+
+        {/* Certificates Slider */}
+        {formattedCertificates.length > 0 && (
+          <CertificatesSlider certificates={formattedCertificates} />
+        )}
       </div>
 
-      <CareerForm />
+      <CareerForm
+        title={sectionFormData?.title}
+        subtitle={sectionFormData?.subtitle}
+      />
 
       <ContactInfo />
     </main>

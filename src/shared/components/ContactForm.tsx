@@ -96,7 +96,16 @@ export const localization = {
   },
 };
 
-export default function ContactForm(): JSX.Element {
+// Props interface
+export interface ContactFormProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export default function ContactForm({
+  title,
+  subtitle,
+}: ContactFormProps): JSX.Element {
   const { theme } = useThemeStore();
   const { t } = useTranslation(localization); // `useTranslation` hook'ini chaqirish
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] =
@@ -238,11 +247,11 @@ export default function ContactForm(): JSX.Element {
           } md:w-1/4`}
         >
           <div>
-            <h2 className="text-light-text dark:text-dark-text mb-4">
-              {t("contactForm.title")}
-            </h2>
+            <h1 className="text-light-text dark:text-dark-text mb-4 font-semibold text-xl">
+              {title || t("contactForm.title")}
+            </h1>
             <p className="text-light-text/80 dark:text-dark-text/80">
-              {t("contactForm.subtitle")}
+              {subtitle || t("contactForm.subtitle")}
             </p>
           </div>
         </div>
