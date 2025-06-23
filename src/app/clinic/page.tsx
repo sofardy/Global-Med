@@ -378,14 +378,14 @@ export default function Clinic() {
         </div>
 
         {/* Administration Slider */}
-        {administrators.length > 0 && (
+{/*         {administrators.length > 0 && (
           <AdministrationSlider administrators={administrators} />
-        )}
+        )} */}
 
         {/* Certificates Slider */}
-        {formattedCertificates.length > 0 && (
+{/*         {formattedCertificates.length > 0 && (
           <CertificatesSlider certificates={formattedCertificates} />
-        )}
+        )} */}
       </div>
 
       <CareerForm
