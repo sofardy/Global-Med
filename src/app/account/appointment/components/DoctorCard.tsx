@@ -7,7 +7,32 @@ import DatePicker from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 
-// Переводы
+// Doctor interface to define the structure of doctor data
+interface Doctor {
+  id: string;
+  name: string;
+  specialty: string;
+  experience: string;
+  qualification: string;
+  degree?: string; // Если это поле используется в компоненте
+  category?: string; // Добавляем поле category
+  languages?: string[]; // Добавляем поле languages как массив строк
+  price?: string; // Добавляем поле price
+  photoUrl: string;
+  availableTimes: string[];
+}
+
+interface DoctorCardProps {
+  doctor: Doctor;
+  onBookAppointment: (details: {
+    doctorId: string;
+    name: string;
+    date: string;
+    time: string;
+  }) => void;
+}
+
+// Restore translations object
 const translations = {
   ru: {
     experiencePrefix: "Стаж",
@@ -37,31 +62,6 @@ const translations = {
     emptyTimeOption: "--:--",
   },
 };
-
-// Doctor interface to define the structure of doctor data
-interface Doctor {
-  id: string;
-  name: string;
-  specialty: string;
-  experience: string;
-  qualification: string;
-  degree?: string; // Если это поле используется в компоненте
-  category?: string; // Добавляем поле category
-  languages?: string[]; // Добавляем поле languages как массив строк
-  price?: string; // Добавляем поле price
-  photoUrl: string;
-  availableTimes: string[];
-}
-
-interface DoctorCardProps {
-  doctor: Doctor;
-  onBookAppointment: (details: {
-    doctorId: string;
-    name: string;
-    date: string;
-    time: string;
-  }) => void;
-}
 
 export const DoctorCard: React.FC<DoctorCardProps> = ({
   doctor,
@@ -169,7 +169,8 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                 >
                   <span className={`${mutedTextColor} mr-2`}>•</span>
                   <span>
-                    {t("experiencePrefix")} {doctor.experience}
+                    {t("experiencePrefix")} {doctor.experience}{" "}
+                    {t("experienceSuffix")}
                   </span>
                 </li>
               )}
