@@ -20,6 +20,7 @@ const translations = {
     service: "Услуга:",
     doctor: "Врач:",
     price: "Стоимость:",
+    recordNumber: "Номер записи:",
   },
   uz: {
     doctorTitle: "Siz shifokor qabuliga yozildingiz",
@@ -36,6 +37,7 @@ const translations = {
     service: "Xizmat:",
     doctor: "Shifokor:",
     price: "Narx:",
+    recordNumber: "Qayd raqami:",
   },
   en: {
     doctorTitle: "You have booked a doctor's appointment",
@@ -52,6 +54,7 @@ const translations = {
     service: "Service:",
     doctor: "Doctor:",
     price: "price:",
+    recordNumber: "Record Number:",
   },
 };
 
@@ -74,6 +77,7 @@ export default function AppointmentConfirmation({
   service,
   doctor,
   price,
+  number,
 }: AppointmentConfirmationProps) {
   const { theme } = useThemeStore();
   const { t } = useTranslation(translations);
@@ -282,6 +286,19 @@ export default function AppointmentConfirmation({
               className={`${textColor} font-medium text-sm md:text-base flex-1`}
             >
               {doctor}
+            </span>
+          </div>
+        )}
+
+        {number && (
+          <div className="flex items-start">
+            <span className={`${mutedTextColor} mr-2 text-sm md:text-base`}>
+              {t("recordNumber")}
+            </span>
+            <span
+              className={`${textColor} font-medium text-sm md:text-base flex-1`}
+            >
+              {number}
             </span>
           </div>
         )}

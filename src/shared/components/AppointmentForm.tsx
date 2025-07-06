@@ -11,7 +11,9 @@ import React, {
 } from "react";
 import { useFormValidation } from "../../hooks/useFormValidation";
 import { ArrowDownIcon } from "../ui/Icon";
+import Link from "next/link";
 import { ValidationRules } from "../utils/formValidation";
+import PrivacyPolicyLink from "./PrivacyPolicyLink";
 
 interface AppointmentFormProps {
   onSuccess?: (formData: any) => void;
@@ -289,7 +291,7 @@ export const AppointmentForm = forwardRef<any, AppointmentFormProps>(
               htmlFor="appointment-consent"
               className="ml-3 text-base md:text-lg text-gray-500 dark:text-gray-400"
             >
-              {t("modal.consentText")}
+              <PrivacyPolicyLink text={t("modal.consentText")} />
             </label>
           </div>
           {formErrors.consent && (

@@ -6,8 +6,10 @@ import { useTranslation } from "@/src/hooks/useTranslation"; // `useTranslation`
 import Modal from "@/src/shared/components/Modal/Modal";
 import { useThemeStore } from "@/src/store/theme";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState } from "react";
 import { FormService } from "../services/FormService";
+import PrivacyPolicyLink from "./PrivacyPolicyLink";
 
 interface FormData {
   name: string;
@@ -343,7 +345,7 @@ export default function ContactForm({
                     : "text-gray-600 dark:text-gray-300"
                 }`}
               >
-                {t("contactForm.consent")}
+                <PrivacyPolicyLink text={t("contactForm.consent")} />
               </label>
             </div>
 

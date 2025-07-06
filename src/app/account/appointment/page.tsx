@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import { fetchAnalyses } from "../../api/analyses";
 import { CheckupItem, fetchCheckups } from "../../api/checkups";
 import { Doctor as ApiDoctor, getDoctors } from "../../api/doctors";
+import { formatDateToDDMMYYYY } from "@/src/shared/components/Form/LocalizedDatePicker";
 import DoctorCard from "./components/DoctorCard";
 
 // Интерфейс для специализаций
@@ -622,11 +623,15 @@ export default function DynamicAppointmentBooking() {
       return serviceOption ? serviceOption.label : "";
     };
 
+    // Format date for display
+    const displayDate = bookingDetails.date
+      ? formatDateToDDMMYYYY(new Date(bookingDetails.date))
+      : formatDateToDDMMYYYY(new Date(selectedDate));
+
     return (
       <AppointmentConfirmation
         type={bookingDetails.service}
-        number={bookingDetails.number}
-        date={bookingDetails.date || selectedDate}
+        date={displayDate}
         time={bookingDetails.time}
         address="г. Ташкент, ул. Янги Сергели, д. 35"
         service={`${getServiceLabel()}: ${bookingDetails.specialty}`}
@@ -634,6 +639,7 @@ export default function DynamicAppointmentBooking() {
           bookingDetails.service === "doctor" ? bookingDetails.name : undefined
         }
         price={bookingDetails.price}
+        number={bookingDetails.number}
       />
     );
   }

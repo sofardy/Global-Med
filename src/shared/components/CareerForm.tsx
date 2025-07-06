@@ -10,6 +10,7 @@ import { useThemeStore } from "@/src/store/theme";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import { FormService } from "../services/FormService";
+import PrivacyPolicyLink from "./PrivacyPolicyLink";
 
 const translations = {
   ru: {
@@ -436,7 +437,7 @@ const CareerForm: React.FC<CareerFormProps> = ({
                 htmlFor="consent"
                 className="ml-3 block text-sm text-light-text dark:text-dark-text"
               >
-                {t("consent")}
+                <PrivacyPolicyLink text={t("consent")} />
               </label>
             </div>
             {formErrors.consent && (

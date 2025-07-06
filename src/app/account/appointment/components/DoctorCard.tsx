@@ -1,7 +1,11 @@
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { useThemeStore } from "@/src/store/theme";
+import { useLanguageStore } from "@/src/store/language";
 import Image from "next/image";
 import React, { useState } from "react";
+import DatePicker from "react-date-picker";
+import "react-date-picker/dist/DatePicker.css";
+import "react-calendar/dist/Calendar.css";
 
 // Переводы
 const translations = {
@@ -64,34 +68,62 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
   onBookAppointment,
 }) => {
   const { theme } = useThemeStore();
+  const { currentLocale } = useLanguageStore();
   const { t } = useTranslation(translations);
 
   // Format today's date as default and minimum selectable date
   const today = new Date();
-  const formattedToday = `${today.getFullYear()}-${String(
-    today.getMonth() + 1
-  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const minDateForInput = today;
 
   // Default to today's date
-  const [selectedDate, setSelectedDate] = useState(formattedToday);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(today);
   const [selectedTime, setSelectedTime] = useState("");
 
+  // DatePicker locale
+  const getDatePickerLocale = (locale: string) => {
+    switch (locale) {
+      case "ru":
+        return "ru-RU";
+      case "uz":
+        return "uz-UZ";
+      case "en":
+        return "en-US";
+      default:
+        return "ru-RU";
+    }
+  };
+
+  // Fix for react-date-picker value type
+  const handleDateChange = (
+    value: Date | [Date | null, Date | null] | null
+  ) => {
+    if (Array.isArray(value)) {
+      setSelectedDate(value[0] ?? null);
+    } else {
+      setSelectedDate(value);
+    }
+  };
+
   const handleAppointment = () => {
-    if (!selectedTime) {
+    if (!selectedTime || !selectedDate) {
       alert(t("pleaseSelectTime"));
       return;
     }
-
-    // Call the passed onBookAppointment callback
+    // Format date as YYYY-MM-DD for API
+    const apiDate = selectedDate
+      ? `${selectedDate.getFullYear()}-${String(
+          selectedDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+      : "";
     onBookAppointment({
       doctorId: doctor.id,
       name: doctor.name,
-      date: selectedDate,
+      date: apiDate,
       time: selectedTime,
     });
   };
 
-  // Определяем цвета в зависимости от темы
+  // Theme-based styles
   const cardBg = theme === "light" ? "bg-white" : "bg-dark-block";
   const textColor = theme === "light" ? "text-[#094A54]" : "text-white";
   const mutedTextColor = theme === "light" ? "text-[#94A3A6]" : "text-gray-400";
@@ -120,7 +152,6 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
               />
             </div>
           </div>
-
           {/* Doctor Details */}
           <div className="flex-1">
             <h3
@@ -131,7 +162,6 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
             <p className={`${textColor} mb-2 md:mb-4 text-sm md:text-base`}>
               {doctor.specialty}
             </p>
-
             <ul className="mb-3 md:mb-6 space-y-1 md:space-y-2">
               {doctor.experience !== "" && doctor.experience !== null && (
                 <li
@@ -163,7 +193,6 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
           </div>
         </div>
       </div>
-
       {/* Booking Section */}
       <div className={`p-3 sm:p-4 md:p-8 ${cardBg} border-t ${borderColor}`}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-end">
@@ -174,15 +203,42 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
             >
               {t("selectDate")}
             </div>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              min={formattedToday}
-              className={`w-full h-9 sm:h-10 md:h-14 px-2 sm:px-3 md:px-4 rounded-xl border ${inputBorderColor} ${inputBgColor} ${textColor} focus:outline-none focus:ring-2 ${accentColor} text-xs sm:text-sm md:text-base`}
-            />
+            <div className="border-[1px] border-gray-200 rounded-xl">
+              <style jsx global>{`
+                .react-date-picker__wrapper {
+                  border: none !important;
+                  box-shadow: none !important;
+                  background: transparent !important;
+                }
+              `}</style>
+              <DatePicker
+                value={selectedDate}
+                onChange={handleDateChange}
+                minDate={minDateForInput}
+                locale={getDatePickerLocale(currentLocale)}
+                format="dd.MM.yyyy"
+                className={`w-full h-9 sm:h-10 md:h-14 px-2 sm:px-3 md:px-4 rounded-xl ${inputBgColor} ${textColor} focus:outline-none focus:ring-2 ${accentColor} text-xs sm:text-sm md:text-base`}
+                clearIcon={null}
+                calendarIcon={
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke={theme === "light" ? "#094A54" : "#fff"}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                }
+              />
+            </div>
           </div>
-
           {/* Time Selection */}
           <div>
             <div
@@ -210,7 +266,6 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
               ))}
             </select>
           </div>
-
           {/* Booking Button */}
           <div className="md:text-right h-9 sm:h-10 md:h-[49px]">
             <button
