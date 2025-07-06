@@ -749,12 +749,6 @@ export default function PatientLogin() {
                   monthPlaceholder="мм"
                   yearPlaceholder="гггг"
                   maxDate={new Date()}
-                  calendarClassName={`${
-                    theme === "dark" ? "dark-calendar" : ""
-                  }`}
-                  formatDay={(locale, date) =>
-                    date.getDate().toString().padStart(2, "0")
-                  }
                 />
               </div>
             </div>
