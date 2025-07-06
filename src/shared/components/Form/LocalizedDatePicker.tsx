@@ -86,9 +86,11 @@ const LocalizedDatePicker: React.FC<LocalizedDatePickerProps> = ({
 
   const themeClasses = isDark ? darkClasses : lightClasses;
 
-  const handleDateChange = (date: any) => {
+  const handleDateChange = (date: Date | [Date | null, Date | null] | null) => {
     if (date instanceof Date) {
       onChange(date);
+    } else if (Array.isArray(date)) {
+      onChange(date[0] ?? null);
     } else {
       onChange(null);
     }
@@ -124,14 +126,6 @@ const LocalizedDatePicker: React.FC<LocalizedDatePickerProps> = ({
           </svg>
         }
         className="w-full"
-        calendarClassName={`
-          ${
-            isDark
-              ? "bg-dark-bg border-gray-700 text-white"
-              : "bg-white border-gray-200 text-[#094A54]"
-          }
-          rounded-xl shadow-lg border
-        `}
       />
     </div>
   );
