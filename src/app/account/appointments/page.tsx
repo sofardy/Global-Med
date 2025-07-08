@@ -197,22 +197,26 @@ const AppointmentHistory = () => {
   );
 
   // Получение иконки и текста статуса
-  const getStatusDetails = (status: string, status_type: string) => {
+  const getStatusDetails = (
+    status: string,
+    status_type: string,
+    color: string
+  ) => {
     console.log(status, status_type + " TYPE");
     if (status_type === "pending") {
       return {
-        icon: <ClockIcon size={20} color="#F59E0B" />,
-        text: <span className="text-[#F59E0B]">{status}</span>,
+        icon: <ClockIcon size={20} color={color} />,
+        text: <span style={{ color: color }}>{status}</span>,
       };
     } else if (status_type === "confirmed") {
       return {
-        icon: <CheckIcon size={20} color="#10B981" />,
-        text: <span className="text-[#10B981]">{status}</span>,
+        icon: <CheckIcon size={20} color={color} />,
+        text: <span style={{ color: color }}>{status}</span>,
       };
     } else if (status_type === "cancelled") {
       return {
-        icon: <CheckIcon size={20} color="#EF4444" />,
-        text: <span className="text-[#EF4444]">{status}</span>,
+        icon: <CheckIcon size={20} color={color} />,
+        text: <span style={{ color: color }}>{status}</span>,
       };
     } else {
       return { icon: null, text: null };
@@ -257,7 +261,8 @@ const AppointmentHistory = () => {
           {appointments.map((appointment, index) => {
             const statusDetails = getStatusDetails(
               appointment.status,
-              appointment?.status_type
+              appointment?.status_type,
+              appointment.acceptance_status?.color
             );
             // const isConfirmed = true; // Все записи считаем подтвержденными, как на скриншоте
 
