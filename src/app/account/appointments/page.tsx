@@ -218,6 +218,11 @@ const AppointmentHistory = () => {
         icon: <CheckIcon size={20} color={color} />,
         text: <span style={{ color: color }}>{status}</span>,
       };
+    } else if (status_type === "completed") {
+      return {
+        icon: <CheckIcon size={20} color={color} />,
+        text: <span style={{ color: color }}>{status}</span>,
+      };
     } else {
       return { icon: null, text: null };
     }
