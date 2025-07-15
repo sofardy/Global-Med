@@ -2,6 +2,7 @@
 
 import { useTranslation } from "@/src/hooks/useTranslation";
 import { useThemeStore } from "@/src/store/theme";
+import { useLanguageStore } from "@/src/store/language";
 import { API_BASE_URL } from "@/src/config/constants";
 import { useEffect, useState } from "react";
 
@@ -45,6 +46,7 @@ const translations = {
 
 export default function PrivacyPolicyPage() {
   const { theme } = useThemeStore();
+  const { currentLocale } = useLanguageStore();
   const { t } = useTranslation(translations);
   const [data, setData] = useState<PrivacyPolicyData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,12 @@ export default function PrivacyPolicyPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${API_BASE_URL}/pages/privacy-policy`);
+        const response = await fetch(`${API_BASE_URL}/pages/privacy-policy`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Language": currentLocale,
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -73,7 +80,7 @@ export default function PrivacyPolicyPage() {
     };
 
     fetchPrivacyPolicy();
-  }, []);
+  }, [currentLocale]);
 
   // Theme-based styling
   const isDark = theme === "dark";
