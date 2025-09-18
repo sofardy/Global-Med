@@ -9,6 +9,7 @@ import { FloatingComponents } from "../shared/components/FloatingComponents";
 import { PageTransition } from "../shared/components/PageTransition";
 import ClientLayout from "../shared/layout/ClientLayout/ClientLayout";
 import AmoCrmScript from "../shared/components/AmoCrmScript";
+import YandexMetrikaScript from "../shared/components/YandexMetrikaScript";
 import GlobalizeBreadcrumb from "../context/globalize-breadcrumb";
 const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
               <ClientLayout routes={routes}>{children}</ClientLayout>
               <FloatingComponents />
               <AmoCrmScript />
+              <YandexMetrikaScript />
             </LanguageProvider>
           </ThemeProvider>
         </GlobalizeBreadcrumb>
