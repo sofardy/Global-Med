@@ -26,6 +26,7 @@ export default function GoogleTagManagerScript() {
       document.head.appendChild(scriptElement);
       
       // Добавляем noscript элемент для случаев когда JavaScript отключен
+      // Google Tag Manager требует размещения noscript сразу после открывающего тега <body>
       const noscriptElement = document.createElement('noscript');
       noscriptElement.innerHTML = '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NWCG8LN8" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
       // Вставляем в начало body, если есть первый элемент, иначе просто добавляем
