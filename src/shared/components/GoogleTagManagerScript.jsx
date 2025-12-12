@@ -28,7 +28,12 @@ export default function GoogleTagManagerScript() {
       // Добавляем noscript элемент для случаев когда JavaScript отключен
       const noscriptElement = document.createElement('noscript');
       noscriptElement.innerHTML = '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NWCG8LN8" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
-      document.body.insertBefore(noscriptElement, document.body.firstChild);
+      // Вставляем в начало body, если есть первый элемент, иначе просто добавляем
+      if (document.body.firstChild) {
+        document.body.insertBefore(noscriptElement, document.body.firstChild);
+      } else {
+        document.body.appendChild(noscriptElement);
+      }
     }
   }, []);
 
