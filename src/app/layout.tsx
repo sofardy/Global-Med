@@ -10,6 +10,7 @@ import { PageTransition } from "../shared/components/PageTransition";
 import ClientLayout from "../shared/layout/ClientLayout/ClientLayout";
 import AmoCrmScript from "../shared/components/AmoCrmScript";
 import YandexMetrikaScript from "../shared/components/YandexMetrikaScript";
+import GoogleTagManagerScript from "../shared/components/GoogleTagManagerScript";
 import GlobalizeBreadcrumb from "../context/globalize-breadcrumb";
 const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text`}
       >
+        <GoogleTagManagerScript />
         <GlobalizeBreadcrumb>
           <ThemeProvider>
             <LanguageProvider>
