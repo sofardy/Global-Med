@@ -224,7 +224,7 @@ export default function ContactForm({ title, subtitle }: ContactFormProps): JSX.
 
 	return (
 		<>
-			<div id="contact-info-section" className={`w-full flex flex-col md:flex-row gap-5 mt-0 overflow-hidden`}>
+			<div id="contact-info-section" className={`w-full flex flex-col md:flex-row gap-5 mt-8 overflow-hidden`}>
 				<div className={`p-6 md:p-8 rounded-2xl ${theme === "dark" ? "bg-dark-block" : "bg-light-block"} md:w-1/4`}>
 					<div>
 						<h1 className="text-light-text dark:text-dark-text mb-4 font-semibold text-xl">
